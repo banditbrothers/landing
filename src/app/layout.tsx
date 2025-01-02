@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Bandit Brothers",
-  description: "One stop destination for your bandana needs",
+  description: "One Stop Shop for your Bandana Needs",
 };
 
 export default function RootLayout({
