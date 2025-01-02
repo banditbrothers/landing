@@ -16,6 +16,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Bandit Brothers",
   description: "One Stop Shop for your Bandana Needs",
+  openGraph: {
+    images: "/logo-full.png",
+    type: "website",
+  },
+  twitter: {
+    images: "/logo-full.png",
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({
