@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import Header from "@/components/header";
 import FeatureCard from "@/components/featureCard";
 import TestimonialCard from "@/components/testimonialCard";
+import Footer from "@/components/footer";
 
 export default function LandingPage() {
   useEffect(() => {
@@ -31,7 +32,7 @@ export default function LandingPage() {
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <Image
           src="/placeholder.svg?height=1080&width=1920"
-          alt="Cyclist wearing RideBand"
+          alt="Biker wearing Bandit Brothers"
           layout="fill"
           objectFit="cover"
           quality={100}
@@ -53,7 +54,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Experience the ultimate comfort and protection with RideBand
+            Experience the ultimate comfort and protection with Bandit Brothers
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -64,7 +65,7 @@ export default function LandingPage() {
               size="lg"
               className="bg-white text-gray-800 hover:bg-gray-200 transition-colors duration-300"
             >
-              Discover RideBand
+              Discover Bandit Brothers
             </Button>
           </motion.div>
         </div>
@@ -74,7 +75,7 @@ export default function LandingPage() {
       <section id="features" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-16">
-            Why Cyclists Love RideBand
+            Why Bikers Love Bandit Brothers
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -126,13 +127,13 @@ export default function LandingPage() {
               {
                 name: "Alex R.",
                 quote:
-                  "RideBand is a game-changer for my daily commutes. It's comfortable and keeps me protected from the elements.",
+                  "Bandit Brothers is a game-changer for my daily commutes. It's comfortable and keeps me protected from the elements.",
                 image: "/placeholder.svg?height=100&width=100",
               },
               {
                 name: "Sarah L.",
                 quote:
-                  "I love how versatile RideBand is. It's perfect for both casual rides and intense training sessions.",
+                  "I love how versatile Bandit Brothers is. It's perfect for both casual rides and intense training sessions.",
                 image: "/placeholder.svg?height=100&width=100",
               },
               {
@@ -155,66 +156,19 @@ export default function LandingPage() {
             Ready to Enhance Your Ride?
           </h2>
           <p className="text-xl mb-10">
-            Join thousands of satisfied cyclists and experience the RideBand
-            difference today.
+            Join thousands of satisfied Bikers and experience the Bandit
+            Brothers difference today.
           </p>
           <Button
             size="lg"
             className="bg-white text-gray-800 hover:bg-gray-200 transition-colors duration-300"
           >
-            Shop RideBand Now
+            Shop Bandit Brothers Now
           </Button>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-100 text-gray-600 py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-4 md:mb-0 flex items-center">
-              <Image
-                src="/placeholder.svg?height=40&width=40"
-                alt="RideBand Logo"
-                width={40}
-                height={40}
-                className="rounded-full mr-2"
-              />
-              <span className="text-xl font-bold">RideBand</span>
-            </div>
-            <nav>
-              <ul className="flex space-x-6">
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-gray-800 transition-colors duration-300"
-                  >
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-gray-800 transition-colors duration-300"
-                  >
-                    Terms of Service
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-gray-800 transition-colors duration-300"
-                  >
-                    Contact Us
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-          <div className="mt-8 text-center text-sm">
-            © {new Date().getFullYear()} RideBand. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -28,19 +28,12 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <Image
-            src="/placeholder.svg?height=40&width=40"
-            alt="RideBand Logo"
-            width={40}
-            height={40}
+            src="/logo.svg"
+            alt="Bandit Brothers Logo"
+            width={120}
+            height={120}
             className="rounded-full"
           />
-          <span
-            className={`text-xl font-bold ${
-              isScrolled ? "text-gray-800" : "text-white"
-            }`}
-          >
-            RideBand
-          </span>
         </div>
         <nav>
           <ul className="flex space-x-6">
