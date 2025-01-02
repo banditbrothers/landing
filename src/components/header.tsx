@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import Logo from "./Logo";
+import { whatsappShopNowLink } from "@/data/socials";
+import { scrollTo } from "@/utils/helpers";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -34,6 +36,10 @@ export default function Header() {
             <li>
               <a
                 href="#features"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollTo("features");
+                }}
                 className={`hover:text-gray-300 transition-colors duration-300 ${
                   isScrolled ? "text-gray-600" : "text-white"
                 }`}
@@ -44,6 +50,10 @@ export default function Header() {
             <li>
               <a
                 href="#testimonials"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollTo("testimonials");
+                }}
                 className={`hover:text-gray-300 transition-colors duration-300 ${
                   isScrolled ? "text-gray-600" : "text-white"
                 }`}
@@ -53,7 +63,9 @@ export default function Header() {
             </li>
             <li>
               <a
-                href="#cta"
+                href={whatsappShopNowLink}
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`hover:text-gray-300 transition-colors duration-300 ${
                   isScrolled ? "text-gray-600" : "text-white"
                 }`}

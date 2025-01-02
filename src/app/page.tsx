@@ -10,6 +10,8 @@ import TestimonialCard from "@/components/testimonialCard";
 import Footer from "@/components/footer";
 import { features } from "@/data/features";
 import { testimonials } from "@/data/testimonials";
+import { whatsappShopNowLink } from "@/data/socials";
+import { scrollTo } from "@/utils/helpers";
 
 export default function LandingPage() {
   useEffect(() => {
@@ -49,7 +51,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Look Cool, Stay Cool
+            Stay Cool, Stay Comfy
           </motion.h1>
           <motion.p
             className="text-xl md:text-2xl mb-8"
@@ -67,15 +69,18 @@ export default function LandingPage() {
             <Button
               size="lg"
               className="bg-white text-gray-800 hover:bg-gray-200 transition-colors duration-300"
+              onClick={() => {
+                scrollTo("features");
+              }}
             >
-              Discover Bandit Brothers
+              Learn More
             </Button>
           </motion.div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-gray-50">
+      <section id="features" className="py-20 bg-gray-50 scroll-mt-16">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-16">
             Why Bikers Love Bandit Brothers
@@ -89,7 +94,7 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-20">
+      <section id="testimonials" className="py-20 scroll-mt-16">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-16">
             What Our Riders Say
@@ -103,7 +108,7 @@ export default function LandingPage() {
       </section>
 
       {/* Call to Action Section */}
-      <section id="cta" className="bg-gray-900 text-white py-20">
+      <section id="cta" className="bg-gray-900 text-white py-20 scroll-mt-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-6">
             Ready to Enhance Your Ride?
@@ -115,6 +120,9 @@ export default function LandingPage() {
           <Button
             size="lg"
             className="bg-white text-gray-800 hover:bg-gray-200 transition-colors duration-300"
+            onClick={() =>
+              window.open(whatsappShopNowLink, "_blank", "noreferrer noopener")
+            }
           >
             Shop Bandit Brothers Now
           </Button>

@@ -3,18 +3,26 @@ export const testimonials = [
     name: "Ashutosh D.",
     quote:
       "Tried a lot of bandana and balaclava but always felt it needed more style. This product is perfect blend of style, comfort and performance.",
-    image: "/users/ashutosh-profile.jpeg",
+    image: "/users/ashutosh-profile.webp",
   },
   {
-    name: "Alex R.",
-    quote:
-      "Bandit Brothers is a game-changer for my daily commutes. It's comfortable and keeps me protected from the elements.",
-    image: "/placeholder.svg?height=100&width=100",
+    name: "Abdeali S.",
+    quote: "Designs are very good. Looks amazing.",
+    image: "/users/abdeali-profile.webp",
   },
   {
-    name: "Mike T.",
-    quote:
-      "The UV protection is fantastic. I no longer worry about sunburn on long summer rides.",
-    image: "/placeholder.svg?height=100&width=100",
+    name: "Mohammad F.",
+    quote: "Fabric is super soft and comfy. Highly recommended.",
+    image: "/users/mohammad-profile.webp",
+  },
+  {
+    name: "Taariq M.",
+    quote: "Material is soft and Breathable. Tried over several long rides",
+    image: "/users/taariq-profile.webp",
+  },
+  {
+    name: "Aleesha J.",
+    quote: "Very nice. Soft material",
+    image: "/users/default-profile.webp",
   },
 ];

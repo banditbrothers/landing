@@ -1,3 +1,4 @@
+import { whatsappKnowMoreLink } from "@/data/socials";
 import Logo from "./Logo";
 
 export default function Footer() {
@@ -28,7 +29,9 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="#"
+                  href={whatsappKnowMoreLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:text-gray-800 transition-colors duration-300"
                 >
                   Contact Us
