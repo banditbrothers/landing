@@ -1,24 +1,3 @@
-export const testmonials = [
-  {
-    name: "Alex R.",
-    quote:
-      "Bandit Brothers is a game-changer for my daily commutes. It's comfortable and keeps me protected from the elements.",
-    image: "/placeholder.svg?height=100&width=100",
-  },
-  {
-    name: "Sarah L.",
-    quote:
-      "I love how versatile Bandit Brothers is. It's perfect for both casual rides and intense training sessions.",
-    image: "/placeholder.svg?height=100&width=100",
-  },
-  {
-    name: "Mike T.",
-    quote:
-      "The UV protection is fantastic. I no longer worry about sunburn on long summer rides.",
-    image: "/placeholder.svg?height=100&width=100",
-  },
-];
-
 export const features = [
   {
     title: "Moisture-Wicking",
