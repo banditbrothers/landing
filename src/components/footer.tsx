@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Logo from "./Logo";
 
 export default function Footer() {
   return (
@@ -6,13 +6,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0 flex items-center">
-            <Image
-              src="/logo.svg"
-              alt="Bandit Brothers Logo"
-              width={120}
-              height={120}
-              className="rounded-full mr-2"
-            />
+            <Logo size={120} />
           </div>
           <nav>
             <ul className="flex space-x-6">

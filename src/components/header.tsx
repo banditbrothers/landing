@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { motion } from "motion/react";
+import Logo from "./Logo";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -27,13 +27,7 @@ export default function Header() {
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <Image
-            src="/logo.svg"
-            alt="Bandit Brothers Logo"
-            width={120}
-            height={120}
-            className="rounded-full"
-          />
+          <Logo size={120} />
         </div>
         <nav>
           <ul className="flex space-x-6">
@@ -64,7 +58,7 @@ export default function Header() {
                   isScrolled ? "text-gray-600" : "text-white"
                 }`}
               >
-                Shop Now
+                Shop
               </a>
             </li>
           </ul>
