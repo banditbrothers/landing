@@ -8,7 +8,8 @@ import Header from "@/components/header";
 import FeatureCard from "@/components/featureCard";
 import TestimonialCard from "@/components/testimonialCard";
 import Footer from "@/components/footer";
-import { features, testmonials } from "@/mock/data";
+import { features } from "@/data/features";
+import { testimonials } from "@/data/testimonials";
 
 export default function LandingPage() {
   useEffect(() => {
@@ -32,10 +33,11 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <Image
-          src="/placeholder.svg?height=1080&width=1920"
+          src="/hero-bg.png?height=1080&width=1920"
           alt="Biker wearing Bandit Brothers"
-          layout="fill"
-          objectFit="cover"
+          fill
+          priority
+          style={{ objectFit: "cover" }}
           quality={100}
           className="absolute z-0"
         />
@@ -93,7 +95,7 @@ export default function LandingPage() {
             What Our Riders Say
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testmonials.map((testimonial, index) => (
+            {testimonials.map((testimonial, index) => (
               <TestimonialCard key={index} {...testimonial} />
             ))}
           </div>
