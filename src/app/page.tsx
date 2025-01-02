@@ -33,7 +33,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <Image
-          src="/hero-bg.png?height=1080&width=1920"
+          src="/hero-bg.webp?height=1080&width=1920"
           alt="Biker wearing Bandit Brothers"
           fill
           priority
@@ -49,7 +49,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Ride in Style, Stay Cool
+            Look Cool, Stay Cool
           </motion.h1>
           <motion.p
             className="text-xl md:text-2xl mb-8"
