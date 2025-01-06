@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { whatsappShopNowLink } from "@/data/socials";
+
 import { scrollTo } from "@/utils/helpers";
 import {
   Accordion,
@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/accordion";
 import { Features } from "@/components/features";
 import { Testimonials } from "@/components/testimonials";
+import { ProductLibrary } from "@/components/product";
+import { getWhatsappShopNowLink } from "@/data/socials";
 
 export default function LandingPage() {
   useEffect(() => {
@@ -84,6 +86,12 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <ProductLibrary />
+
+      <Features />
+
+      <Testimonials />
+
       {/* FAQ Section */}
       <section id="faq" className="py-20 bg-gray-50 scroll-mt-16">
         <div className="container mx-auto px-4">
@@ -92,6 +100,28 @@ export default function LandingPage() {
           </h2>
           <div className="max-w-3xl mx-auto">
             <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="description">
+                <AccordionTrigger>
+                  <AccordionTitle>Description</AccordionTitle>
+                </AccordionTrigger>
+                <AccordionContent>
+                  We use premium, breathable fabrics that are specifically
+                  chosen for motorcycle wear. Our materials are tested for
+                  durability and comfort in various weather conditions.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="wash-and-care">
+                <AccordionTrigger>
+                  <AccordionTitle>Wash and Care</AccordionTitle>
+                </AccordionTrigger>
+                <AccordionContent>
+                  Yes, we ship worldwide! Shipping times and costs vary
+                  depending on your location. You can view specific shipping
+                  details during checkout.
+                </AccordionContent>
+              </AccordionItem>
+
               <AccordionItem value="additional-information">
                 <AccordionTrigger>
                   <AccordionTitle>Additional Information</AccordionTitle>
@@ -127,28 +157,6 @@ export default function LandingPage() {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="description">
-                <AccordionTrigger>
-                  <AccordionTitle>Description</AccordionTitle>
-                </AccordionTrigger>
-                <AccordionContent>
-                  We use premium, breathable fabrics that are specifically
-                  chosen for motorcycle wear. Our materials are tested for
-                  durability and comfort in various weather conditions.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="wash-and-care">
-                <AccordionTrigger>
-                  <AccordionTitle>Wash and Care</AccordionTitle>
-                </AccordionTrigger>
-                <AccordionContent>
-                  Yes, we ship worldwide! Shipping times and costs vary
-                  depending on your location. You can view specific shipping
-                  details during checkout.
-                </AccordionContent>
-              </AccordionItem>
-
               <AccordionItem value="shipping-and-return-policy">
                 <AccordionTrigger>
                   <AccordionTitle>Shipping and Return Policy</AccordionTitle>
@@ -164,10 +172,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <Features />
-
-      <Testimonials />
-
       {/* Call to Action Section */}
       <section id="cta" className="bg-gray-900 text-white py-20 scroll-mt-16">
         <div className="container mx-auto px-4 text-center">
@@ -182,7 +186,11 @@ export default function LandingPage() {
             size="lg"
             className="bg-white text-gray-800 hover:bg-gray-200 transition-colors duration-300"
             onClick={() =>
-              window.open(whatsappShopNowLink, "_blank", "noreferrer noopener")
+              window.open(
+                getWhatsappShopNowLink(),
+                "_blank",
+                "noreferrer noopener"
+              )
             }
           >
             Shop Bandit Brothers Now

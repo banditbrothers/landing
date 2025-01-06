@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import Logo from "./logo";
-import { whatsappShopNowLink } from "@/data/socials";
 import { scrollTo } from "@/utils/helpers";
+import { getWhatsappShopNowLink } from "@/data/socials";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -63,7 +63,7 @@ export default function Header() {
             </li>
             <li>
               <a
-                href={whatsappShopNowLink}
+                href={getWhatsappShopNowLink()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`hover:text-gray-300 transition-colors duration-300 ${
