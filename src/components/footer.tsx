@@ -1,6 +1,5 @@
 import { whatsappKnowMoreLink } from "@/data/socials";
-
-import Logo from "./logo";
+import { FullLogo } from "./fullLogo";
 
 export default function Footer() {
   return (
@@ -8,7 +7,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0 flex items-center">
-            <Logo size={120} />
+            <FullLogo size={120} />
           </div>
           <nav>
             <ul className="flex space-x-6">

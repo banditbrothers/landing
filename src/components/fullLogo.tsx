@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-function Logo({ size = 120 }: { size?: number }) {
+const FullLogo = ({ size = 120 }: { size?: number }) => {
   return (
     <Image
       src="/logo.svg"
@@ -10,6 +10,6 @@ function Logo({ size = 120 }: { size?: number }) {
       className="rounded-full mr-2"
     />
   );
-}
+};
 
-export default Logo;
+export { FullLogo };

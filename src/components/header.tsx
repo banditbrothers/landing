@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { scrollTo } from "@/utils/helpers";
 import { getWhatsappShopNowLink } from "@/data/socials";
 
-import Logo from "./logo";
+import { FullLogo } from "./fullLogo";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,7 +30,7 @@ export default function Header() {
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <Logo size={120} />
+          <FullLogo size={120} />
         </div>
         <nav>
           <ul className="flex space-x-6">
