@@ -88,10 +88,6 @@ export default function LandingPage() {
 
       <ProductLibrary />
 
-      <Features />
-
-      <Testimonials />
-
       {/* FAQ Section */}
       <section id="faq" className="py-20 bg-gray-50 scroll-mt-16">
         <div className="container mx-auto px-4">
@@ -171,6 +167,10 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      <Features />
+
+      <Testimonials />
 
       {/* Call to Action Section */}
       <section id="cta" className="bg-gray-900 text-white py-20 scroll-mt-16">

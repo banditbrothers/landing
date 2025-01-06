@@ -34,39 +34,30 @@ export const ProductLibrary = () => {
               {products.map((product) => (
                 <CarouselItem
                   key={product.id}
-                  className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4 cursor-pointer"
-                  onClick={() => setSelectedProduct(product)}
+                  className="basis-3/5 lg:basis-1/3 xl:basis-1/4"
                 >
-                  <div>
-                    <div className="flex flex-col items-center p-6">
-                      <div className="relative w-full aspect-square">
-                        <Image
-                          fill
-                          src={product.image}
-                          alt={product.name}
-                          className="object-cover rounded-md"
-                        />
-                      </div>
-                      <div className="flex flex-row justify-between w-full">
-                        <h3 className="text-xl font-semibold mt-4 mb-2">
-                          {product.name}
-                        </h3>
-                        <Button
-                          variant="default"
-                          onClick={() =>
-                            window.open(
-                              getWhatsappShopNowLink(product.name),
-                              "_blank",
-                              "noreferrer noopener"
-                            )
-                          }
-                          className="mt-2"
-                        >
-                          <ShoppingCartIcon />
-                        </Button>
+                  <button
+                    onClick={() => setSelectedProduct(product)}
+                    className="w-full h-full"
+                  >
+                    <div>
+                      <div className="flex flex-col items-center p-6">
+                        <div className="relative w-full aspect-square">
+                          <Image
+                            fill
+                            src={product.image}
+                            alt={product.name}
+                            className="object-cover rounded-md"
+                          />
+                        </div>
+                        <div className="flex flex-row justify-between w-full">
+                          <h3 className="text-xl font-semibold mt-4 mb-2">
+                            {product.name}
+                          </h3>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 </CarouselItem>
               ))}
             </CarouselContent>
