@@ -5,11 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import Header from "@/components/header";
-import FeatureCard from "@/components/featureCard";
-import TestimonialCard from "@/components/testimonialCard";
 import Footer from "@/components/footer";
-import { features } from "@/data/features";
-import { testimonials } from "@/data/testimonials";
 import { whatsappShopNowLink } from "@/data/socials";
 import { scrollTo } from "@/utils/helpers";
 import {
@@ -19,6 +15,8 @@ import {
   AccordionTitle,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Features } from "@/components/features";
+import { Testimonials } from "@/components/testimonials";
 
 export default function LandingPage() {
   useEffect(() => {
@@ -166,33 +164,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-gray-50 scroll-mt-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16">
-            Why Bikers Love Bandit Brothers
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <FeatureCard key={index} {...feature} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <Features />
 
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 scroll-mt-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16">
-            What Our Riders Say
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <TestimonialCard key={index} {...testimonial} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <Testimonials />
 
       {/* Call to Action Section */}
       <section id="cta" className="bg-gray-900 text-white py-20 scroll-mt-16">
