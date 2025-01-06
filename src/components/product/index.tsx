@@ -1,16 +1,9 @@
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "../ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import { products } from "@/data/products";
+import { Product, products } from "@/data/products";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { ShoppingCartIcon } from "../icons";
 import { getWhatsappShopNowLink } from "@/data/socials";
 
@@ -21,48 +14,24 @@ export const ProductLibrary = () => {
 
   return (
     <section id="product-library" className="py-20 scroll-mt-16">
-      <div className="container mx-auto px-4">
+      <div className=" mx-auto">
         <h2 className="text-4xl font-bold text-center mb-16">Our Products</h2>
 
         <div className="mx-auto">
           <Carousel
-            opts={{ align: "center", loop: true }}
+            opts={{ align: "center", loop: true, watchDrag: true }}
             className="w-full"
-            plugins={[WheelGesturesPlugin()]}
+            plugins={[]}
           >
             <CarouselContent>
               {products.map((product) => (
-                <CarouselItem
+                <ProductCard
                   key={product.id}
-                  className="basis-3/5 lg:basis-1/3 xl:basis-1/4"
-                >
-                  <button
-                    onClick={() => setSelectedProduct(product)}
-                    className="w-full h-full"
-                  >
-                    <div>
-                      <div className="flex flex-col items-center p-6">
-                        <div className="relative w-full aspect-square">
-                          <Image
-                            fill
-                            src={product.image}
-                            alt={product.name}
-                            className="object-cover rounded-md"
-                          />
-                        </div>
-                        <div className="flex flex-row justify-between w-full">
-                          <h3 className="text-xl font-semibold mt-4 mb-2">
-                            {product.name}
-                          </h3>
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                </CarouselItem>
+                  product={product}
+                  onClick={() => setSelectedProduct(product)}
+                />
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
           </Carousel>
         </div>
       </div>
@@ -110,5 +79,37 @@ export const ProductLibrary = () => {
         </DialogContent>
       </Dialog>
     </section>
+  );
+};
+
+export const ProductCard = ({
+  product,
+  onClick,
+}: {
+  product: Product;
+  onClick: () => void;
+}) => {
+  return (
+    <CarouselItem className="basis-3/5 md:basis-1/2 lg:basis-1/4">
+      <button onClick={onClick} className="w-full h-full">
+        <div>
+          <div className="flex flex-col items-center">
+            <div className="relative w-full aspect-square">
+              <Image
+                fill
+                src={product.image}
+                alt={product.name}
+                className="object-cover rounded-md"
+              />
+            </div>
+            <div className="flex flex-row justify-between w-full">
+              <h3 className="text-xl font-semibold mt-4 mb-2 flex-auto">
+                {product.name}
+              </h3>
+            </div>
+          </div>
+        </div>
+      </button>
+    </CarouselItem>
   );
 };

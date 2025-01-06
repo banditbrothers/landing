@@ -1,4 +1,11 @@
-export const products = [
+export type Product = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+};
+
+export const products: Product[] = [
   {
     id: "abstract",
     name: "Be Colour - Fool",
@@ -13,7 +20,7 @@ export const products = [
   },
   {
     id: "bolt",
-    name: "Litt !!!",
+    name: "Awestruck",
     description: "Bolt",
     image: "/products/bolt.webp",
   },
