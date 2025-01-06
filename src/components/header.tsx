@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import Logo from "./Logo";
+import Logo from "./logo";
 import { whatsappShopNowLink } from "@/data/socials";
 import { scrollTo } from "@/utils/helpers";
 
