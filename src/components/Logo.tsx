@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function Logo({ size = 120 }: { size?: number }) {
+function Logo({ size = 120 }: { size?: number }) {
   return (
     <Image
       src="/logo.svg"
@@ -11,3 +11,5 @@ export default function Logo({ size = 120 }: { size?: number }) {
     />
   );
 }
+
+export default Logo;

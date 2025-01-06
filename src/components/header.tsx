@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import Logo from "./logo";
 import { scrollTo } from "@/utils/helpers";
 import { getWhatsappShopNowLink } from "@/data/socials";
+
+import Logo from "./logo";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);

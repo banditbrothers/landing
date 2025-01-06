@@ -1,4 +1,5 @@
 import { whatsappKnowMoreLink } from "@/data/socials";
+
 import Logo from "./logo";
 
 export default function Footer() {
