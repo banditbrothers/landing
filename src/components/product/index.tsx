@@ -6,6 +6,8 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { ShoppingCartIcon } from "../icons";
 import { getWhatsappShopNowLink } from "@/data/socials";
+import ClassNamesPlugin from "embla-carousel-class-names";
+import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 
 export const ProductLibrary = () => {
   const [selectedProduct, setSelectedProduct] = useState<
@@ -19,9 +21,9 @@ export const ProductLibrary = () => {
 
         <div className="mx-auto">
           <Carousel
-            opts={{ align: "center", loop: true, watchDrag: true }}
+            opts={{ align: "center", loop: true }}
             className="w-full"
-            plugins={[]}
+            plugins={[ClassNamesPlugin(), WheelGesturesPlugin()]}
           >
             <CarouselContent>
               {products.map((product) => (
@@ -91,25 +93,27 @@ export const ProductCard = ({
 }) => {
   return (
     <CarouselItem className="basis-3/5 md:basis-1/2 lg:basis-1/4">
-      <button onClick={onClick} className="w-full h-full">
-        <div>
-          <div className="flex flex-col items-center">
-            <div className="relative w-full aspect-square">
-              <Image
-                fill
-                src={product.image}
-                alt={product.name}
-                className="object-cover rounded-md"
-              />
-            </div>
-            <div className="flex flex-row justify-between w-full">
-              <h3 className="text-xl font-semibold mt-4 mb-2 flex-auto">
-                {product.name}
-              </h3>
+      <div className="w-full h-full scale-[0.9] transition-transform duration-300">
+        <button onClick={onClick} className="w-full h-full">
+          <div>
+            <div className="flex flex-col items-center">
+              <div className="relative w-full aspect-square">
+                <Image
+                  fill
+                  src={product.image}
+                  alt={product.name}
+                  className="object-cover rounded-md"
+                />
+              </div>
+              <div className="flex flex-row justify-between w-full">
+                <h3 className="text-xl font-semibold mt-4 mb-2 flex-auto">
+                  {product.name}
+                </h3>
+              </div>
             </div>
           </div>
-        </div>
-      </button>
+        </button>
+      </div>
     </CarouselItem>
   );
 };
