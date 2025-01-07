@@ -1,19 +1,16 @@
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
-import { Button } from "../ui/button";
+
 import Image from "next/image";
 import { Product, products } from "@/data/products";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { ShoppingCartIcon } from "../icons";
-import { getWhatsappShopNowLink } from "@/data/socials";
+
 import ClassNamesPlugin from "embla-carousel-class-names";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import AutoplayPlugin from "embla-carousel-autoplay";
+import { ProductDialog } from "./dialog";
 
 export const ProductLibrary = () => {
-  const [selectedProduct, setSelectedProduct] = useState<
-    (typeof products)[0] | null
-  >(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   return (
     <section id="product-library" className="py-20 scroll-mt-16">
@@ -33,6 +30,7 @@ export const ProductLibrary = () => {
                 inView: "",
               }),
               AutoplayPlugin({
+                active: !selectedProduct,
                 delay: 3000,
                 playOnInit: true,
                 stopOnInteraction: false,
@@ -53,48 +51,10 @@ export const ProductLibrary = () => {
         </div>
       </div>
 
-      <Dialog
-        open={!!selectedProduct}
-        onOpenChange={(open) => {
-          if (!open) setSelectedProduct(null);
-        }}
-      >
-        <DialogContent className="sm:max-w-[800px]">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedProduct ? selectedProduct.name : "Product"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="relative aspect-square">
-              {selectedProduct && (
-                <Image
-                  fill
-                  src={selectedProduct.image}
-                  alt={selectedProduct.name}
-                  className="object-cover rounded-md"
-                />
-              )}
-            </div>
-            <div className="flex flex-col justify-between">
-              <p className="text-gray-600">{selectedProduct?.description}</p>
-              <Button
-                variant="default"
-                onClick={() =>
-                  window.open(
-                    getWhatsappShopNowLink(selectedProduct?.name),
-                    "_blank",
-                    "noreferrer noopener"
-                  )
-                }
-                className="mt-4"
-              >
-                Shop Now <ShoppingCartIcon />
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ProductDialog
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+      />
     </section>
   );
 };

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { scrollTo } from "@/utils/helpers";
-import { getWhatsappShopNowLink } from "@/data/socials";
+import { getWhatsappShopNowLink } from "@/utils/whatsappMessageLinks";
 
 import { FullLogo } from "./fullLogo";
 

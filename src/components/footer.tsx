@@ -1,4 +1,4 @@
-import { whatsappKnowMoreLink } from "@/data/socials";
+import { whatsappKnowMoreLink } from "@/utils/whatsappMessageLinks";
 import { FullLogo } from "./fullLogo";
 
 export default function Footer() {
