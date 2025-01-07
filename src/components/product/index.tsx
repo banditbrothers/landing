@@ -8,6 +8,7 @@ import { ShoppingCartIcon } from "../icons";
 import { getWhatsappShopNowLink } from "@/data/socials";
 import ClassNamesPlugin from "embla-carousel-class-names";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
+import AutoplayPlugin from "embla-carousel-autoplay";
 
 export const ProductLibrary = () => {
   const [selectedProduct, setSelectedProduct] = useState<
@@ -23,7 +24,21 @@ export const ProductLibrary = () => {
           <Carousel
             opts={{ align: "center", loop: true }}
             className="w-full"
-            plugins={[ClassNamesPlugin(), WheelGesturesPlugin()]}
+            plugins={[
+              WheelGesturesPlugin({ wheelDraggingClass: "" }),
+              ClassNamesPlugin({
+                loop: "",
+                draggable: "",
+                dragging: "",
+                inView: "",
+              }),
+              AutoplayPlugin({
+                delay: 3000,
+                playOnInit: true,
+                stopOnInteraction: false,
+                stopOnMouseEnter: true,
+              }),
+            ]}
           >
             <CarouselContent>
               {products.map((product) => (
