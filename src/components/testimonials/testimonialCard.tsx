@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { motion } from "motion/react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface TestimonialCardProps {
   name: string;
@@ -21,13 +21,10 @@ export default function TestimonialCard({
       transition={{ duration: 0.5 }}
     >
       <div className="flex items-center mb-4">
-        <Image
-          src={image}
-          alt={name}
-          width={50}
-          height={50}
-          className="rounded-full mr-4"
-        />
+        <Avatar className="mr-4 h-12 w-12">
+          <AvatarImage src={image} />
+          <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+        </Avatar>
         <h3 className="font-semibold">{name}</h3>
       </div>
       <p className="text-gray-600 italic">&quot;{quote}&quot;</p>
