@@ -31,9 +31,29 @@ export const AdditionalInformation = () => {
                 <AccordionTitle>Wash and Care</AccordionTitle>
               </AccordionTrigger>
               <AccordionContent>
-                Yes, we ship worldwide! Shipping times and costs vary depending
-                on your location. You can view specific shipping details during
-                checkout.
+                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                  <li>
+                    Wash gently in cold water and let it drip dry in a breezy,
+                    shaded spot—no sunbathing allowed.
+                  </li>
+                  <li>
+                    No wringing, no harsh chemicals, and definitely no dry
+                    cleaning or dryers—keep it au naturel.
+                  </li>
+                  <li>
+                    For tough stains, use a soft brush with mild pH-neutral
+                    soap, but go easy to avoid pilling (not covered under
+                    warranty).
+                  </li>
+                  <li>
+                    Air dry completely before storing it in a cool, shady
+                    spot—it&apos;s more of a cool, indoorsy type.
+                  </li>
+                  <li>
+                    No DIY surgery, unauthorized repairs or
+                    alterations—warranty&apos;s off if you play doctor!
+                  </li>
+                </ul>
               </AccordionContent>
             </AccordionItem>
 
