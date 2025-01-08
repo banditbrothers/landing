@@ -18,7 +18,7 @@ export const testimonials = [
   {
     name: "Miqdad S.",
     quote:
-      "The best bandana out there for riders. fit is great and is very comfortable",
+      "The best bandana out there for riders. Fit is great and is very comfortable",
     image: "/users/miqdad-profile.webp",
   },
   {
