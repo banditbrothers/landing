@@ -18,7 +18,7 @@ export const testimonials = [
   {
     name: "Miqdad S.",
     quote:
-      "The best BALACLAVA out there for riders, period. Superb fit and it's very comfortable",
+      "The best bandana out there for riders. fit is great and is very comfortable",
     image: "/users/miqdad-profile.webp",
   },
   {
