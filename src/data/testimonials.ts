@@ -23,5 +23,6 @@ export const testimonials = [
   {
     name: "Aleesha J.",
     quote: "Very nice. Soft material",
+    image: "/users/aleesha-profile.webp", // will not load
   },
 ];
