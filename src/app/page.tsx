@@ -83,10 +83,10 @@ export default function LandingPage() {
 
       <ProductLibrary />
 
+      <Features />
+
       {/* FAQ Section */}
       <AdditionalInformation />
-
-      <Features />
 
       <Testimonials />
 

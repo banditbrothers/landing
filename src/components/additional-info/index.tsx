@@ -8,10 +8,10 @@ import {
 
 export const AdditionalInformation = () => {
   return (
-    <section id="faq" className="py-20 bg-gray-50 scroll-mt-16">
+    <section id="faq" className="py-20 scroll-mt-16">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-16">
-          Frequently Asked Questions
+          Product Specifications
         </h2>
         <div className="max-w-3xl mx-auto">
           <Accordion type="single" collapsible className="w-full">
