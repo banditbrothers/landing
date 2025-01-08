@@ -16,13 +16,14 @@ export const testimonials = [
     image: "/users/mohammad-profile.webp",
   },
   {
+    name: "Miqdad S.",
+    quote:
+      "The best BALACLAVA out there for riders, period. Superb fit and it's very comfortable",
+    image: "/users/miqdad-profile.webp",
+  },
+  {
     name: "Taariq M.",
     quote: "Material is soft and Breathable. Tried over several long rides",
     image: "/users/taariq-profile.webp",
-  },
-  {
-    name: "Aleesha J.",
-    quote: "Very nice. Soft material",
-    image: "/users/aleesha-profile.webp", // will not load
   },
 ];
