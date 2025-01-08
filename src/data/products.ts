@@ -7,8 +7,8 @@ export type Product = {
 };
 
 export const standardDescription = {
-  Dimension: "9in x 20in",
-  Material: "Quick-Dri DryFit Fabric",
+  Dimension: `9" x 20"`,
+  Material: "4 Way Quick-Dri DryFit Fabric",
 };
 
 export const products: Product[] = [

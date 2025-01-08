@@ -37,10 +37,17 @@ export const ProductDialog = ({ product, onClose }: ProductDialogProps) => {
           </div>
           <div className="flex flex-col justify-between">
             <div className="flex flex-col gap-6">
-              <div className="flex items-baseline gap-2">
-                <span className="text-sm font-medium">Bandits Bounty:</span>
-                <span className="text-base font-semibold">
-                  ₹{product?.price}
+              <div className="flex items-baseline flex-col">
+                <span className="text-sm font-medium">
+                  Bandit&apos;s Bounty
+                </span>
+                <span>
+                  <span className="text-base font-semibold">
+                    ₹{product?.price}
+                  </span>
+                  <span className="text-[10px] font-normal text-gray-500 ml-1">
+                    (excl. shipping)
+                  </span>
                 </span>
               </div>
 
@@ -52,7 +59,7 @@ export const ProductDialog = ({ product, onClose }: ProductDialogProps) => {
                 {Object.entries(standardDescription).map(([key, value]) => (
                   <div key={key} className="flex items-center">
                     <span className="font-semibold text-sm min-w-24">
-                      {key}:
+                      {key}
                     </span>
                     <span className="text-gray-700 text-sm">{value}</span>
                   </div>
