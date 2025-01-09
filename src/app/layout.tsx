@@ -20,11 +20,11 @@ export const metadata: Metadata = {
   title: "Bandit Brothers - Wear your Mischief",
   description: "One Stop Shop for your Bandana Needs",
   openGraph: {
-    images: "/logo-full-socials.webp",
+    images: "/logo-full-socials.png",
     type: "website",
   },
   twitter: {
-    images: "/logo-full-socials.webp",
+    images: "/logo-full-socials.png",
     card: "summary_large_image",
   },
 };
