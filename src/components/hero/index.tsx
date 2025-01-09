@@ -42,7 +42,7 @@ export const Hero = () => {
             variant="bandit-hover"
             onClick={() => scrollTo("features")}
           >
-            Learn More
+            Be A Brother
           </Button>
         </motion.div>
       </div>
