@@ -20,11 +20,6 @@ export const features = [
     icon: "🔄",
   },
   {
-    title: "Reflective Elements",
-    description: "Enhances visibility during low-light conditions",
-    icon: "✨",
-  },
-  {
     title: "Easy Care",
     description: "Machine washable and quick-drying",
     icon: "🧼",

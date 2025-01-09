@@ -23,9 +23,35 @@ export const AdditionalInformation = () => {
                 <AccordionTitle>Description</AccordionTitle>
               </AccordionTrigger>
               <AccordionContent>
-                We use premium, breathable fabrics that are specifically chosen
-                for motorcycle wear. Our materials are tested for durability and
-                comfort in various weather conditions.
+                <div className="flex flex-col gap-2">
+                  <div>
+                    <strong>Material</strong>
+                    <br />
+                    <span className="text-muted-foreground">
+                      Quick Dry Polyester-Spandex - 160 GSM
+                    </span>
+                  </div>
+                  <div>
+                    <strong>Weight</strong>
+                    <br />
+                    <span className="text-muted-foreground">50 grams</span>
+                  </div>
+                  <div>
+                    <strong>Country of Origin</strong>
+                    <br />
+                    <span className="text-muted-foreground">India</span>
+                  </div>
+                  <div>
+                    <strong>Sizing</strong>
+                    <br />
+                    <span className="text-muted-foreground">Free sizing</span>
+                  </div>
+                  <div>
+                    <strong>Closure Type</strong>
+                    <br />
+                    <span className="text-muted-foreground">Pull-On</span>
+                  </div>
+                </div>
               </AccordionContent>
             </AccordionItem>
 
@@ -57,41 +83,6 @@ export const AdditionalInformation = () => {
                     alterations—warranty&apos;s off if you play doctor!
                   </li>
                 </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="additional-information">
-              <AccordionTrigger>
-                <AccordionTitle>Additional Information</AccordionTitle>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="flex flex-col gap-2">
-                  <div>
-                    <strong>Material</strong>
-                    <br />
-                    Quick Dry Polyester-Spandex - 160 GSM
-                  </div>
-                  <div>
-                    <strong>Weight</strong>
-                    <br />
-                    50 grams
-                  </div>
-                  <div>
-                    <strong>Country of Origin</strong>
-                    <br />
-                    India
-                  </div>
-                  <div>
-                    <strong>Sizing</strong>
-                    <br />
-                    Free sizing
-                  </div>
-                  <div>
-                    <strong>Closure Type</strong>
-                    <br />
-                    Pull-On
-                  </div>
-                </div>
               </AccordionContent>
             </AccordionItem>
 
