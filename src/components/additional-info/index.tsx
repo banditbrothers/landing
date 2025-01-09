@@ -34,7 +34,7 @@ export const AdditionalInformation = () => {
                 <AccordionTitle>Wash and Care</AccordionTitle>
               </AccordionTrigger>
               <AccordionContent>
-                <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                <ul className="list-disc pl-5 space-y-2">
                   <li>
                     Wash gently in cold water and let it drip dry in a breezy,
                     shaded spot—no sunbathing allowed.
@@ -101,8 +101,12 @@ export const AdditionalInformation = () => {
               </AccordionTrigger>
               <AccordionContent>
                 We offer a 30-day return policy for unused items in original
-                packaging. Contact our customer service team through WhatsApp
-                for return instructions.
+                packaging. If the product is damaged or there are printing
+                errors, contact us through WhatsApp for return assistance. For
+                any returns / replacement claim, we will require a video
+                showcasing the product being unboxed and defect shown in the
+                video. Since its inner-wear we can only provide returns on
+                unused and undamaged products.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
