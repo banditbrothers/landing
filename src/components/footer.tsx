@@ -1,5 +1,6 @@
 import { whatsappKnowMoreLink } from "@/utils/whatsappMessageLinks";
 import { FullLogo } from "./fullLogo";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -12,30 +13,30 @@ export default function Footer() {
           <nav>
             <ul className="flex space-x-6">
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/privacy"
                   className="hover:text-gray-800 transition-colors duration-300"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/terms"
                   className="hover:text-gray-800 transition-colors duration-300"
                 >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href={whatsappKnowMoreLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-gray-800 transition-colors duration-300"
                 >
                   Contact Us
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
