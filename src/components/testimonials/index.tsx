@@ -3,7 +3,10 @@ import TestimonialCard from "./testimonialCard";
 
 export const Testimonials = () => {
   return (
-    <section id="testimonials" className="py-20 bg-gray-50 scroll-mt-16">
+    <section
+      id="testimonials"
+      className="py-20 bg-background text-foreground scroll-mt-16"
+    >
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-16">
           What Our Riders Say

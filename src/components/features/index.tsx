@@ -2,7 +2,10 @@ import { features } from "@/data/features";
 import FeatureCard from "./featureCard";
 export const Features = () => {
   return (
-    <section id="features" className="py-20 bg-gray-50 scroll-mt-16">
+    <section
+      id="features"
+      className="py-20 bg-background text-foreground scroll-mt-16"
+    >
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-16">
           Why Bikers Love Bandit Brothers

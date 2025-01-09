@@ -14,7 +14,7 @@ export default function TestimonialCard({
 }: TestimonialCardProps) {
   return (
     <motion.div
-      className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 fade-in"
+      className="bg-card p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 fade-in"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -25,9 +25,9 @@ export default function TestimonialCard({
           <AvatarImage src={image} />
           <AvatarFallback>{name.charAt(0)}</AvatarFallback>
         </Avatar>
-        <h3 className="font-semibold">{name}</h3>
+        <h3 className="font-semibold text-foreground">{name}</h3>
       </div>
-      <p className="text-gray-600 italic">&quot;{quote}&quot;</p>
+      <p className="text-muted-foreground italic">&quot;{quote}&quot;</p>
     </motion.div>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import Header from "@/components/header";
@@ -31,32 +30,32 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-gray-800">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
 
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <Image
-          src="/hero-bg.webp?height=1080&width=1920"
-          alt="Biker wearing Bandit Brothers"
-          fill
-          priority
-          style={{ objectFit: "cover" }}
-          quality={100}
-          className="absolute z-0"
-        />
-        <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
-        <div className="container mx-auto px-4 z-20 text-center text-white">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute z-0 w-full h-full object-cover"
+        >
+          <source src="/hero-bg.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-black/50 z-10"></div>
+        <div className="container mx-auto px-4 z-20 text-center">
           <motion.h1
-            className="text-5xl md:text-7xl font-bold mb-6"
+            className="text-5xl md:text-7xl font-bold mb-6 text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Stay Cool, Stay Comfy
+            Wear Your Mischief
           </motion.h1>
           <motion.p
-            className="text-xl md:text-2xl mb-8"
+            className="text-xl md:text-2xl mb-8 text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -70,7 +69,7 @@ export default function LandingPage() {
           >
             <Button
               size="lg"
-              className="bg-white text-gray-800 hover:bg-gray-200 transition-colors duration-300"
+              className="bg-white text-black hover:bg-white/90 transition-colors duration-300"
               onClick={() => {
                 scrollTo("features");
               }}
@@ -91,7 +90,10 @@ export default function LandingPage() {
       <Testimonials />
 
       {/* Call to Action Section */}
-      <section id="cta" className="bg-gray-900 text-white py-20 scroll-mt-16">
+      <section
+        id="cta"
+        className="bg-background text-foreground py-20 scroll-mt-16"
+      >
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-6">
             Ready to Enhance Your Ride?
@@ -102,7 +104,7 @@ export default function LandingPage() {
           </p>
           <Button
             size="lg"
-            className="bg-white text-gray-800 hover:bg-gray-200 transition-colors duration-300"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-300"
             onClick={() =>
               window.open(
                 getWhatsappShopNowLink(),

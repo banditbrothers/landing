@@ -28,9 +28,9 @@ export default function Header() {
     <motion.header
       className={`fixed w-full z-50 transition-all duration-300 ${
         !isHome
-          ? "bg-white shadow-md"
+          ? "bg-background"
           : isScrolled
-          ? "bg-white shadow-md"
+          ? "bg-background"
           : "bg-transparent"
       }`}
       initial={{ y: -100 }}
@@ -57,8 +57,8 @@ export default function Header() {
                     e.preventDefault();
                     scrollTo("features");
                   }}
-                  className={`hover:text-gray-300 transition-colors duration-300 ${
-                    isScrolled ? "text-gray-600" : "text-white"
+                  className={`hover:text-muted-foreground transition-colors duration-300 ${
+                    isScrolled ? "text-foreground" : "text-primary-foreground"
                   }`}
                 >
                   Features
@@ -71,8 +71,8 @@ export default function Header() {
                     e.preventDefault();
                     scrollTo("testimonials");
                   }}
-                  className={`hover:text-gray-300 transition-colors duration-300 ${
-                    isScrolled ? "text-gray-600" : "text-white"
+                  className={`hover:text-muted-foreground transition-colors duration-300 ${
+                    isScrolled ? "text-foreground" : "text-primary-foreground"
                   }`}
                 >
                   Testimonials
@@ -83,8 +83,8 @@ export default function Header() {
                   href={getWhatsappShopNowLink()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`hover:text-gray-300 transition-colors duration-300 ${
-                    isScrolled ? "text-gray-600" : "text-white"
+                  className={`hover:text-muted-foreground transition-colors duration-300 ${
+                    isScrolled ? "text-foreground" : "text-primary-foreground"
                   }`}
                 >
                   Shop

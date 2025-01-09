@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-100 text-gray-600 py-8">
+    <footer className="bg-primary-50 text-primary-600 py-8">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0 flex items-center">
@@ -15,7 +15,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/privacy"
-                  className="hover:text-gray-800 transition-colors duration-300"
+                  className="hover:text-primary-800 transition-colors duration-300"
                 >
                   Privacy Policy
                 </Link>
@@ -23,7 +23,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/terms"
-                  className="hover:text-gray-800 transition-colors duration-300"
+                  className="hover:text-primary-800 transition-colors duration-300"
                 >
                   Terms of Service
                 </Link>
@@ -33,7 +33,7 @@ export default function Footer() {
                   href={whatsappKnowMoreLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-gray-800 transition-colors duration-300"
+                  className="hover:text-primary-800 transition-colors duration-300"
                 >
                   Contact Us
                 </Link>
