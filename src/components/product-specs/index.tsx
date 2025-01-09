@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-export const AdditionalInformation = () => {
+export const ProductSpecifications = () => {
   return (
     <section
       id="faq"

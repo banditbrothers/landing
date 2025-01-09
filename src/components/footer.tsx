@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0 flex items-center">
-            <FullLogo size={120} />
+            <FullLogo size={180} />
           </div>
           <nav>
             <ul className="flex space-x-6">

@@ -1,6 +1,6 @@
 "use client";
 
-import Header from "@/components/header";
+import NavBar from "@/components/navbar";
 
 const termsOfService = `
 <style>
@@ -138,9 +138,9 @@ Calibri;mso-themecolor:text1;mso-themetint:166;"><strong><bdt class="question"><
 export default function Privacy() {
   return (
     <div>
-      <Header />
+      <NavBar />
       <div
-        className="px-5 py-4"
+        className="px-5 py-4 max-w-7xl mx-auto"
         dangerouslySetInnerHTML={{ __html: termsOfService }}
       ></div>
     </div>

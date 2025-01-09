@@ -1,27 +1,30 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import { Space_Grotesk } from "next/font/google";
+
 import { CSPostHogProvider } from "@/provider/posthog";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const Calera = localFont({
+  src: "../fonts/calera-display-regular-400.otf",
+  variable: "--font-calera",
+  preload: true,
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Bandit Brothers",
+  title: "Bandit Brothers - Wear your Mischief",
   description: "One Stop Shop for your Bandana Needs",
   openGraph: {
-    images: "/logo-full.png",
+    images: "/logo-full-socials.webp",
     type: "website",
   },
   twitter: {
-    images: "/logo-full.png",
+    images: "/logo-full-socials.webp",
     card: "summary_large_image",
   },
 };
@@ -33,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${spaceGrotesk.className} ${Calera.className}`}>
         <CSPostHogProvider>{children}</CSPostHogProvider>
       </body>
     </html>

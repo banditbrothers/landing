@@ -1,6 +1,6 @@
 "use client";
 
-import Header from "@/components/header";
+import NavBar from "@/components/navbar";
 
 const privacyPolicy = `
 <style>
@@ -62,9 +62,9 @@ word-break: break-word !important;
 export default function Privacy() {
   return (
     <div>
-      <Header />
+      <NavBar />
       <div
-        className="px-5 py-4"
+        className="px-5 py-4 max-w-7xl mx-auto"
         dangerouslySetInnerHTML={{ __html: privacyPolicy }}
       ></div>
     </div>
