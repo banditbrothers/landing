@@ -38,30 +38,34 @@ export const ProductDialog = ({ product, onClose }: ProductDialogProps) => {
           <div className="flex flex-col justify-between">
             <div className="flex flex-col gap-6">
               <div className="flex items-baseline flex-col">
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium text-foreground">
                   Bandit&apos;s Bounty
                 </span>
                 <span>
-                  <span className="text-base font-semibold">
+                  <span className="text-base font-semibold text-foreground">
                     ₹{product?.price}
                   </span>
-                  <span className="text-[10px] font-normal text-gray-500 ml-1">
+                  <span className="text-[10px] font-normal text-muted-foreground ml-1">
                     (excl. shipping)
                   </span>
                 </span>
               </div>
 
               <div className="flex flex-col">
-                <p className="text-gray-700 text-sm">{product?.description}</p>
+                <p className="text-foreground text-sm">
+                  {product?.description}
+                </p>
               </div>
 
               <div className="space-y-2">
                 {Object.entries(standardDescription).map(([key, value]) => (
                   <div key={key} className="flex items-center">
-                    <span className="font-semibold text-sm min-w-24">
+                    <span className="font-semibold text-sm min-w-24 text-foreground">
                       {key}
                     </span>
-                    <span className="text-gray-700 text-sm">{value}</span>
+                    <span className="text-muted-foreground text-sm">
+                      {value}
+                    </span>
                   </div>
                 ))}
               </div>
