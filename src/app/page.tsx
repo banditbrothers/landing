@@ -35,11 +35,11 @@ export default function LandingPage() {
 
       <ProductLibrary />
 
+      <ProductSpecifications />
+
       <Features />
 
       <Testimonials />
-
-      <ProductSpecifications />
 
       <section
         id="cta"
