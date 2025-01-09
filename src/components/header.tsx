@@ -57,9 +57,7 @@ export default function Header() {
                     e.preventDefault();
                     scrollTo("features");
                   }}
-                  className={`hover:text-muted-foreground transition-colors duration-300 ${
-                    isScrolled ? "text-foreground" : "text-primary-foreground"
-                  }`}
+                  className={`hover:text-muted-foreground transition-colors duration-300 text-foreground`}
                 >
                   Features
                 </Link>
@@ -71,9 +69,7 @@ export default function Header() {
                     e.preventDefault();
                     scrollTo("testimonials");
                   }}
-                  className={`hover:text-muted-foreground transition-colors duration-300 ${
-                    isScrolled ? "text-foreground" : "text-primary-foreground"
-                  }`}
+                  className={`hover:text-muted-foreground transition-colors duration-300 text-foreground`}
                 >
                   Testimonials
                 </Link>
@@ -83,9 +79,7 @@ export default function Header() {
                   href={getWhatsappShopNowLink()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`hover:text-muted-foreground transition-colors duration-300 ${
-                    isScrolled ? "text-foreground" : "text-primary-foreground"
-                  }`}
+                  className={`hover:text-muted-foreground transition-colors duration-300 text-foreground`}
                 >
                   Shop
                 </Link>
