@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import NavBar from "@/components/navbar";
 import Footer from "@/components/footer";
 
-import { Features } from "@/components/features";
-import { Testimonials } from "@/components/testimonials";
-import { ProductLibrary } from "@/components/product-showcase";
+import { ProductLibrary } from "@/components/product-showcase/product-showcase";
 import { getWhatsappShopNowLink } from "@/utils/whatsappMessageLinks";
-import { ProductSpecifications } from "@/components/product-specs";
-import { Hero } from "@/components/hero";
+import { ProductSpecifications } from "@/components/product-specs/product-specs";
+import { Hero } from "@/components/hero/hero";
+import { Features } from "@/components/features/features";
+import { Testimonials } from "@/components/testimonials/testimonials";
 
 export default function LandingPage() {
   useEffect(() => {
