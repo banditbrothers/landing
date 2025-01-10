@@ -24,6 +24,6 @@ export const testimonials = [
   {
     name: "Taariq M.",
     quote: "Material is soft and Breathable. Tried over several long rides",
-    image: "/users/taariq-profile.webp",
+    image: "",
   },
 ];

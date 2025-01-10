@@ -20,7 +20,10 @@ export const ProductDialog = ({ product, onClose }: ProductDialogProps) => {
         if (!open) onClose();
       }}
     >
-      <DialogContent className="sm:max-w-[800px]">
+      <DialogContent
+        aria-describedby="product-dialog"
+        className="sm:max-w-[800px]"
+      >
         <DialogHeader>
           <DialogTitle>{product ? product.name : "Product"}</DialogTitle>
         </DialogHeader>
