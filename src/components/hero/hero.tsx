@@ -4,7 +4,10 @@ import { Button } from "@/components/ui/button";
 
 export const Hero = () => {
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden">
+    <section
+      id="hero"
+      className="relative h-screen flex items-center justify-center overflow-hidden"
+    >
       <video
         autoPlay
         muted
@@ -30,7 +33,7 @@ export const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Experience the ultimate comfort and protection with Bandit Brothers
+          Experience ultimate comfort and look your style with Bandit Brothers
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -40,7 +43,7 @@ export const Hero = () => {
           <Button
             size="lg"
             variant="bandit-hover"
-            onClick={() => scrollTo("features")}
+            onClick={() => scrollTo("product-library")}
           >
             Be A Brother
           </Button>

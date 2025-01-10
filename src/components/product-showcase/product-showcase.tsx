@@ -8,6 +8,7 @@ import ClassNamesPlugin from "embla-carousel-class-names";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import AutoplayPlugin from "embla-carousel-autoplay";
 import { ProductDialog } from "./dialog";
+import { ArrowRightCircleIcon } from "../icons";
 
 export const ProductLibrary = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -69,25 +70,28 @@ export const ProductCard = ({
   return (
     <CarouselItem className="basis-3/5 md:basis-1/2 lg:basis-1/4">
       <div className="w-full h-full scale-[0.9] transition-transform duration-300">
-        <button onClick={onClick} className="w-full h-full">
-          <div>
-            <div className="flex flex-col items-center">
-              <div className="relative w-full aspect-square">
-                <Image
-                  fill
-                  src={product.image}
-                  alt={product.name}
-                  className="object-cover rounded-md"
-                />
-              </div>
-              <div className="flex flex-row justify-between w-full">
-                <h3 className="text-xl font-semibold mt-4 mb-2 flex-auto">
-                  {product.name}
-                </h3>
+        <div className="p-4 bg-card rounded-xl">
+          <button onClick={onClick} className="w-full h-full">
+            <div>
+              <div className="flex flex-col items-center">
+                <div className="relative w-full aspect-square">
+                  <Image
+                    fill
+                    src={product.image}
+                    alt={product.name}
+                    className="object-cover rounded-xl"
+                  />
+                </div>
+                <div className="flex flex-row w-full mt-4 mb-2 px-1 justify-between">
+                  <h3 className="text-xl font-semibold self-center">
+                    {product.name}
+                  </h3>
+                  <ArrowRightCircleIcon className="w-8 h-8 text-bandit-orange" />
+                </div>
               </div>
             </div>
-          </div>
-        </button>
+          </button>
+        </div>
       </div>
     </CarouselItem>
   );

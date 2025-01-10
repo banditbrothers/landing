@@ -5,11 +5,12 @@ import { motion } from "motion/react";
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import useDeviceType from "@/hooks/useDeviceType";
+import { scrollTo } from "@/utils/helpers";
+// import useDeviceType from "@/hooks/useDeviceType";
 
 export default function NavBar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const isMobile = useDeviceType();
+  // const isMobile = useDeviceType();
 
   const pathname = usePathname();
 
@@ -23,13 +24,6 @@ export default function NavBar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  let logoPosition;
-  if (isMobile) logoPosition = "justify-center";
-  else {
-    if (isHomePath) logoPosition = "justify-between";
-    else logoPosition = "justify-center";
-  }
 
   return (
     <motion.header
@@ -45,10 +39,18 @@ export default function NavBar() {
       transition={{ duration: 0.5 }}
     >
       <div
-        className={`container mx-auto px-4 py-4 flex items-center ${logoPosition}`}
+        className={`container mx-auto px-4 py-4 flex items-center justify-center`}
       >
         <div className="flex items-center space-x-2">
-          <Link href="/">
+          <Link
+            href="/"
+            onClick={(e) => {
+              if (isHomePath) {
+                e.preventDefault();
+                scrollTo("hero");
+              }
+            }}
+          >
             <h1 className="text-3xl text-bandit-orange font-calera">
               BANDIT BROTHERS
             </h1>
