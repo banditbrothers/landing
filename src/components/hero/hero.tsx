@@ -49,6 +49,8 @@ export const Hero = () => {
           </Button>
         </motion.div>
       </div>
+
+      {/* <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-b from-transparent to-black" /> */}
     </section>
   );
 };
