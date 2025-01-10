@@ -14,7 +14,7 @@ export const standardDescription = {
 export const products: Product[] = [
   {
     id: "abstract",
-    name: "Be Colour - Fool",
+    name: "Be Color - Fool",
     description:
       "An explosion of quirky fun! This print features a mash-up of vibrant animated characters that bring out your playful side. Perfect for standing out in any crowd!",
     image: "/products/abstract.webp",
