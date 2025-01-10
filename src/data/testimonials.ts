@@ -19,11 +19,11 @@ export const testimonials = [
     name: "Miqdad S.",
     quote:
       "The best bandana out there for riders. Fit is great and is very comfortable",
-    image: "/users/miqdad-profile.webp",
+    image: "",
   },
   {
     name: "Taariq M.",
     quote: "Material is soft and Breathable. Tried over several long rides",
-    image: "",
+    image: "/users/taariq-profile.webp",
   },
 ];
