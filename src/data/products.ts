@@ -54,7 +54,7 @@ export const products: Product[] = [
   },
   {
     id: "japanese",
-    name: "Moushi Moushi",
+    name: "Mooshi Mooshi",
     description:
       "Unleash your inner ninja with this fiery red head-wrap that screams stealth and style! Perfect for your next mission—whether it's braving the wild or dodging your neighbor's questions about your weekend. This isn't just a piece of fabric; it's your passport to awesomeness. Wear it like a ninja, own it like a bandit!",
     image: "/products/japanese.webp",
