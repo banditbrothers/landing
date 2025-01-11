@@ -1,7 +1,8 @@
 "use server";
 
 import * as admin from "firebase-admin";
-import serviceAccount from "../../firebase-service-account-admin.json";
+
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_ADMIN!);
 
 // Check if Firebase admin is already initialized to prevent multiple instances
 if (!admin.apps.length) {
