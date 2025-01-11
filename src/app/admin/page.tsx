@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { hash } from "@/utils/misc";
+import { LoaderPinwheelIcon } from "lucide-react";
 
 type FilterOrder =
   | {
@@ -36,6 +37,7 @@ type FilterOrder =
 
 function AdminPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [emailFilter, setEmailFilter] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
@@ -45,6 +47,7 @@ function AdminPage() {
     getOrders().then((orders) => {
       setOrders(orders);
       setFilteredOrders(orders);
+      setIsLoading(false);
     });
   }, []);
 
@@ -90,6 +93,13 @@ function AdminPage() {
     setDateRange(undefined);
     setFilteredOrders(orders);
   };
+
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <LoaderPinwheelIcon className="animate-spin" />
+      </div>
+    );
 
   return (
     <div className="container mx-auto py-10">
