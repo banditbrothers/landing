@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { scrollTo } from "@/utils/helpers";
+import { scrollTo } from "@/utils/misc";
 import { Button } from "@/components/ui/button";
 
 export const Hero = () => {

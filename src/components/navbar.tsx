@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { scrollTo } from "@/utils/helpers";
+import { scrollTo } from "@/utils/misc";
 // import useDeviceType from "@/hooks/useDeviceType";
 
 export default function NavBar() {
