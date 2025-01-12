@@ -1,4 +1,4 @@
-export type Product = {
+export type Design = {
   id: string;
   name: string;
   description: string;
@@ -11,7 +11,7 @@ export const standardDescription = {
   Material: "4 Way Quick-Dri DryFit Fabric",
 };
 
-export const products: Product[] = [
+export const designs: Design[] = [
   {
     id: "abstract",
     name: "Be Color - Fool",
@@ -22,7 +22,7 @@ export const products: Product[] = [
   },
   {
     id: "alien",
-    name: "Gimme some space",
+    name: "Gimme Some Space",
     description:
       "Beam me up, but make it stylish! This print features a cheeky UFOs cruising through a galaxy of twinkling stars, ready to abduct your sense of humor. A quirky cosmic vibe that's truly out of this world!",
     image: "/products/alien.webp",
@@ -38,7 +38,7 @@ export const products: Product[] = [
   },
   {
     id: "cat-trippy",
-    name: "Meow meow!!",
+    name: "Meow Meow!!",
     description:
       "Get whiskered away with this trippy feline vibe! A funky cat design with hypnotic colors, perfect for those who love a dose of quirky cool. Meow-some style guaranteed!",
     image: "/products/cat-trippy.webp",
@@ -62,7 +62,7 @@ export const products: Product[] = [
   },
   {
     id: "tea",
-    name: "Chai Pilaaa doo",
+    name: "Chai Pilaaa Doo",
     description:
       "As refreshing as your first sip, this print brews the timeless joy of tea with a splash of style. Perfect for tea lovers who wear their chai pride!",
     image: "/products/tea.webp",
@@ -77,3 +77,8 @@ export const products: Product[] = [
     price: 250,
   },
 ];
+
+export const designsObject = designs.reduce((acc, product) => {
+  const { id, ...rest } = product;
+  return { ...acc, [id]: rest };
+}, {} as Record<string, Omit<(typeof designs)[number], "id">>);

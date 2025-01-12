@@ -1,0 +1,40 @@
+"use client";
+
+import * as React from "react";
+
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Design } from "@/data/products";
+import { PlusIcon } from "../icons";
+
+export function DropdownMenuCheckboxes(props: {
+  designs: Design[];
+  selectedIds: string[];
+  onChange: (id: string, checked: boolean) => void;
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="default">
+          <PlusIcon className="w-4 h-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        {props.designs.map((design) => (
+          <DropdownMenuCheckboxItem
+            key={design.name}
+            checked={props.selectedIds.includes(design.id)}
+            onCheckedChange={(checked) => props.onChange(design.id, checked)}
+          >
+            {design.name}
+          </DropdownMenuCheckboxItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

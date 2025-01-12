@@ -35,9 +35,9 @@ export default function LandingPage() {
 
       <ProductLibrary />
 
-      <ProductSpecifications />
-
       <Features />
+
+      <ProductSpecifications />
 
       <Testimonials />
 

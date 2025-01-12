@@ -1,4 +1,4 @@
-import { Product } from "@/data/products";
+import { Design } from "@/data/products";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { ShoppingCartIcon } from "../icons";
 import { getWhatsappShopNowLink } from "@/utils/whatsappMessageLinks";
@@ -7,7 +7,7 @@ import Image from "next/image";
 import { standardDescription } from "@/data/products";
 
 type ProductDialogProps = {
-  product: Product | null;
+  product: Design | null;
   onClose: () => void;
 };
 

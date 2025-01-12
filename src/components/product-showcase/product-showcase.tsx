@@ -1,7 +1,7 @@
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 
 import Image from "next/image";
-import { Product, products } from "@/data/products";
+import { Design, designs } from "@/data/products";
 import { useState } from "react";
 
 import ClassNamesPlugin from "embla-carousel-class-names";
@@ -11,7 +11,7 @@ import { ProductDialog } from "./dialog";
 import { ArrowRightCircleIcon } from "../icons";
 
 export const ProductLibrary = () => {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Design | null>(null);
 
   return (
     <section id="product-library" className="py-20 scroll-mt-16">
@@ -40,7 +40,7 @@ export const ProductLibrary = () => {
             ]}
           >
             <CarouselContent>
-              {products.map((product) => (
+              {designs.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}
@@ -64,7 +64,7 @@ export const ProductCard = ({
   product,
   onClick,
 }: {
-  product: Product;
+  product: Design;
   onClick: () => void;
 }) => {
   return (
