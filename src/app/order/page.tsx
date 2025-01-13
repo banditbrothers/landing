@@ -489,7 +489,7 @@ function OrderPageContent() {
 
                     {coupon && (
                       <div className="flex justify-between items-center text-sm">
-                        <span>Discount</span>
+                        <span>Discount ({coupon.name})</span>
                         <span>- ₹{getDiscountAmount(subtotal, coupon)}</span>
                       </div>
                     )}
