@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Country, State, IState } from "country-state-city";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { designsObject, designs } from "@/data/products";
 import { DropdownMenuCheckboxes } from "@/components/orders/multiSelectDropdown";
 import { Badge } from "@/components/orders/badge";
@@ -21,8 +21,24 @@ import { createOrder, updateOrder } from "@/actions/firestore";
 import { Order } from "@/types/order";
 import { getTimestamp } from "@/utils/misc";
 import { useSearchParams } from "next/navigation";
+import LoadingScreen from "@/components/loadingScreen";
 
 const countries = Country.getAllCountries();
+
+const DEFAULT_VALUES = {
+  email: "",
+  name: "",
+  phone: "",
+  address: {
+    line1: "",
+    line2: "",
+    country: "IN",
+    state: "MH",
+    city: "",
+    zip: "",
+  },
+  products: [] as SelectedDesignsType[],
+};
 
 const orderFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -62,29 +78,17 @@ const calculateTotal = (products: SelectedDesignsType[]) => {
   return subtotal + SHIPPING_COST;
 };
 
-export default function OrderPage() {
+function OrderPageContent() {
   const [states, setStates] = useState<IState[]>([]);
   const [pendingPaymentOrder, setPendingPaymentOrder] = useState<Order | null>(null);
 
   const searchParams = useSearchParams();
   const paramDesignId = searchParams.get("design");
+  if (paramDesignId) DEFAULT_VALUES.products = [{ designId: paramDesignId, quantity: 1 }];
 
   const form = useForm({
     resolver: zodResolver(orderFormSchema),
-    defaultValues: {
-      email: "",
-      name: "",
-      phone: "",
-      address: {
-        line1: "",
-        line2: "",
-        country: "IN",
-        state: "MH",
-        city: "",
-        zip: "",
-      },
-      products: [{ designId: paramDesignId, quantity: 1 }] as SelectedDesignsType[],
-    },
+    defaultValues: DEFAULT_VALUES,
     mode: "onTouched",
   });
 
@@ -418,5 +422,13 @@ export default function OrderPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function OrderPage() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <OrderPageContent />
+    </Suspense>
   );
 }

@@ -14,8 +14,6 @@ export const getOrders = async (): Promise<Order[]> => {
 
 export const createOrder = async (order: Partial<Order>) => {
   const orderRef = await firestore().collection(Collections.orders).add(order);
-
-  console.log("added order", orderRef.id);
   return { ...order, id: orderRef.id } as Order;
 };
 

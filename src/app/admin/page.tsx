@@ -11,8 +11,8 @@ import { getOrders, updateOrder } from "@/actions/firestore";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getDate, getTimestamp, hash } from "@/utils/misc";
-import { LoaderPinwheelIcon } from "lucide-react";
 import { CheckIcon, XMarkIcon, EyeIcon } from "@/components/icons";
+import LoadingScreen from "@/components/loadingScreen";
 
 type FilterOrder =
   | {
@@ -90,12 +90,7 @@ function AdminPage() {
     }
   };
 
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <LoaderPinwheelIcon className="animate-spin" />
-      </div>
-    );
+  if (isLoading) return <LoadingScreen />;
 
   return (
     <div className="container mx-auto py-10">
@@ -238,7 +233,7 @@ export default function ProtectedAdminPage() {
             type="password"
             placeholder="Password"
             value={password}
-            className={`${error ? "border-red-500" : ""}`}
+            className={`${error ? "border-destructive" : ""}`}
             onChange={e => setPassword(e.target.value)}
           />
           <Button type="submit">Submit</Button>
