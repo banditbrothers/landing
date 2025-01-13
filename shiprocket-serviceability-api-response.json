@@ -1,0 +1,1997 @@
+{
+  "company_auto_shipment_insurance_setting": false,
+  "covid_zones": {
+    "delivery_zone": null,
+    "pickup_zone": null
+  },
+  "currency": "INR",
+  "data": {
+    "available_courier_companies": {
+      "air": [
+        {
+          "cod": 1,
+          "courier_name": "DTDC Air 500gm",
+          "estimated_delivery_days": "3",
+          "etd": 69.3,
+          "rate": 90.3
+        },
+        {
+          "cod": 1,
+          "courier_name": "Xpressbees Air",
+          "estimated_delivery_days": "3",
+          "etd": 64.8,
+          "rate": 93.8
+        },
+        {
+          "cod": 1,
+          "courier_name": "Delhivery Air",
+          "estimated_delivery_days": "3",
+          "etd": 59.2,
+          "rate": 106.2
+        },
+        {
+          "cod": 1,
+          "courier_name": "Blue Dart Air",
+          "estimated_delivery_days": "2",
+          "etd": 45.6,
+          "rate": 115.8
+        }
+      ],
+      "surface": [
+        {
+          "cod": 1,
+          "courier_name": "Amazon COD Surface 500gm",
+          "estimated_delivery_days": "3",
+          "etd": 61.8,
+          "rate": 67
+        },
+        {
+          "cod": 1,
+          "courier_name": "DTDC Surface",
+          "estimated_delivery_days": "3",
+          "etd": 69.6,
+          "rate": 96
+        },
+        {
+          "cod": 1,
+          "courier_name": "Delhivery Surface",
+          "estimated_delivery_days": "3",
+          "etd": 66.9,
+          "rate": 105.5
+        },
+        {
+          "cod": 1,
+          "courier_name": "Blue Dart Surface",
+          "estimated_delivery_days": "3",
+          "etd": 53.1,
+          "rate": 110.1
+        }
+      ],
+      "zone": "z_a"
+    },
+    "delivery": {
+      "city": "MUMBAI",
+      "local_region": 2,
+      "metro": 1,
+      "postcode": "400033",
+      "region": 3,
+      "ros": 0,
+      "state": "MAHARASHTRA",
+      "state_code": "MH"
+    },
+    "pickup": {
+      "city": "Mumbai",
+      "local_region": 2,
+      "metro": 1,
+      "postcode": "400008",
+      "region": 3,
+      "ros": 0,
+      "state": "MAHARASHTRA",
+      "state_code": "MH"
+    },
+    "rates": {
+      "Adivasi - Mysore Oil": {
+        "surface": {
+          "cod_charges": {
+            "min": "35.40",
+            "max": "35.40"
+          },
+          "zone_a": {
+            "min": "42.48",
+            "max": "7087.08"
+          },
+          "zone_b": {
+            "min": "47.2",
+            "max": "8265.9"
+          },
+          "zone_c": {
+            "min": "53.1",
+            "max": "9445.9"
+          },
+          "zone_d": {
+            "min": "56.64",
+            "max": "10623.54"
+          },
+          "zone_e": {
+            "min": "89.68",
+            "max": "14178.88"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "NA",
+            "max": "NA"
+          },
+          "zone_a": {
+            "min": "NA",
+            "max": "NA"
+          },
+          "zone_b": {
+            "min": "NA",
+            "max": "NA"
+          },
+          "zone_c": {
+            "min": "NA",
+            "max": "NA"
+          },
+          "zone_d": {
+            "min": "NA",
+            "max": "NA"
+          },
+          "zone_e": {
+            "min": "NA",
+            "max": "NA"
+          }
+        }
+      },
+      "Adivasi-Kengeri Oil": {
+        "surface": {
+          "cod_charges": {
+            "min": "0.00",
+            "max": "0.00"
+          },
+          "zone_a": {
+            "min": "108.56",
+            "max": "8562.08"
+          },
+          "zone_b": {
+            "min": "108.56",
+            "max": "8796.9"
+          },
+          "zone_c": {
+            "min": "108.56",
+            "max": "9660.56"
+          },
+          "zone_d": {
+            "min": "108.56",
+            "max": "11053.56"
+          },
+          "zone_e": {
+            "min": "108.56",
+            "max": "17837.47"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "NA",
+            "max": "NA"
+          },
+          "zone_a": {
+            "min": "NA",
+            "max": "NA"
+          },
+          "zone_b": {
+            "min": "NA",
+            "max": "NA"
+          },
+          "zone_c": {
+            "min": "NA",
+            "max": "NA"
+          },
+          "zone_d": {
+            "min": "NA",
+            "max": "NA"
+          },
+          "zone_e": {
+            "min": "NA",
+            "max": "NA"
+          }
+        }
+      },
+      "Advanced": {
+        "surface": {
+          "cod_charges": {
+            "min": "26.00",
+            "max": "26.00"
+          },
+          "zone_a": {
+            "min": "39",
+            "max": "7800"
+          },
+          "zone_b": {
+            "min": "45.1",
+            "max": "9300"
+          },
+          "zone_c": {
+            "min": "52.3",
+            "max": "11200"
+          },
+          "zone_d": {
+            "min": "57.3",
+            "max": "12520"
+          },
+          "zone_e": {
+            "min": "66.2",
+            "max": "13240"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "41.90",
+            "max": "47.20"
+          },
+          "zone_a": {
+            "min": "37.8",
+            "max": "59"
+          },
+          "zone_b": {
+            "min": "42.8",
+            "max": "68.7"
+          },
+          "zone_c": {
+            "min": "57.4",
+            "max": "73.9"
+          },
+          "zone_d": {
+            "min": "74.5",
+            "max": "87.4"
+          },
+          "zone_e": {
+            "min": "87.2",
+            "max": "123.7"
+          }
+        }
+      },
+      "Advanced Plus": {
+        "surface": {
+          "cod_charges": {
+            "min": "26.00",
+            "max": "26.00"
+          },
+          "zone_a": {
+            "min": "39",
+            "max": "7800"
+          },
+          "zone_b": {
+            "min": "45.1",
+            "max": "9300"
+          },
+          "zone_c": {
+            "min": "52.3",
+            "max": "11200"
+          },
+          "zone_d": {
+            "min": "57.3",
+            "max": "12520"
+          },
+          "zone_e": {
+            "min": "66.2",
+            "max": "13240"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "41.90",
+            "max": "47.20"
+          },
+          "zone_a": {
+            "min": "37.8",
+            "max": "59"
+          },
+          "zone_b": {
+            "min": "42.8",
+            "max": "68.7"
+          },
+          "zone_c": {
+            "min": "57.4",
+            "max": "73.9"
+          },
+          "zone_d": {
+            "min": "74.5",
+            "max": "87.4"
+          },
+          "zone_e": {
+            "min": "87.2",
+            "max": "123.7"
+          }
+        }
+      },
+      "Basic": {
+        "surface": {
+          "cod_charges": {
+            "min": "26.00",
+            "max": "26.00"
+          },
+          "zone_a": {
+            "min": "41",
+            "max": "8200"
+          },
+          "zone_b": {
+            "min": "47.6",
+            "max": "9700"
+          },
+          "zone_c": {
+            "min": "54.4",
+            "max": "11600"
+          },
+          "zone_d": {
+            "min": "59.1",
+            "max": "12800"
+          },
+          "zone_e": {
+            "min": "69",
+            "max": "13800"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "45.10",
+            "max": "50.80"
+          },
+          "zone_a": {
+            "min": "38.3",
+            "max": "63"
+          },
+          "zone_b": {
+            "min": "42.7",
+            "max": "73.3"
+          },
+          "zone_c": {
+            "min": "69",
+            "max": "85"
+          },
+          "zone_d": {
+            "min": "79.7",
+            "max": "96.2"
+          },
+          "zone_e": {
+            "min": "94.6",
+            "max": "133.5"
+          }
+        }
+      },
+      "Basic Plus": {
+        "surface": {
+          "cod_charges": {
+            "min": "30.00",
+            "max": "25.96"
+          },
+          "zone_a": {
+            "min": "34",
+            "max": "7599.2"
+          },
+          "zone_b": {
+            "min": "39",
+            "max": "9605.2"
+          },
+          "zone_c": {
+            "min": "43",
+            "max": "13806"
+          },
+          "zone_d": {
+            "min": "47",
+            "max": "13806"
+          },
+          "zone_e": {
+            "min": "69",
+            "max": "13806"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "30.40",
+            "max": "50.35"
+          },
+          "zone_a": {
+            "min": "35.4",
+            "max": "68.83"
+          },
+          "zone_b": {
+            "min": "38.8",
+            "max": "82.6"
+          },
+          "zone_c": {
+            "min": "57.4",
+            "max": "96.37"
+          },
+          "zone_d": {
+            "min": "62.4",
+            "max": "110.13"
+          },
+          "zone_e": {
+            "min": "82.6",
+            "max": "129.8"
+          }
+        }
+      },
+      "Diamond": {
+        "surface": {
+          "cod_charges": {
+            "min": "48.20",
+            "max": "26.00"
+          },
+          "zone_a": {
+            "min": "36.5",
+            "max": "7600"
+          },
+          "zone_b": {
+            "min": "39.1",
+            "max": "9000"
+          },
+          "zone_c": {
+            "min": "45.4",
+            "max": "10800"
+          },
+          "zone_d": {
+            "min": "48.5",
+            "max": "12280"
+          },
+          "zone_e": {
+            "min": "64.9",
+            "max": "12980"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "23.40",
+            "max": "39.00"
+          },
+          "zone_a": {
+            "min": "28.94",
+            "max": "51.6"
+          },
+          "zone_b": {
+            "min": "31.69",
+            "max": "57.1"
+          },
+          "zone_c": {
+            "min": "46.75",
+            "max": "65.1"
+          },
+          "zone_d": {
+            "min": "50.88",
+            "max": "71.4"
+          },
+          "zone_e": {
+            "min": "67.42",
+            "max": "103"
+          }
+        }
+      },
+      "Enterprise": {
+        "surface": {
+          "cod_charges": {
+            "min": "48.70",
+            "max": "26.00"
+          },
+          "zone_a": {
+            "min": "36.9",
+            "max": "7600"
+          },
+          "zone_b": {
+            "min": "39.5",
+            "max": "9000"
+          },
+          "zone_c": {
+            "min": "47.5",
+            "max": "10800"
+          },
+          "zone_d": {
+            "min": "50.7",
+            "max": "12280"
+          },
+          "zone_e": {
+            "min": "64.9",
+            "max": "12980"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "24.70",
+            "max": "39.00"
+          },
+          "zone_a": {
+            "min": "30.63",
+            "max": "54.3"
+          },
+          "zone_b": {
+            "min": "33.5",
+            "max": "60.2"
+          },
+          "zone_c": {
+            "min": "49.5",
+            "max": "66.1"
+          },
+          "zone_d": {
+            "min": "53.85",
+            "max": "72"
+          },
+          "zone_e": {
+            "min": "71.34",
+            "max": "108.7"
+          }
+        }
+      },
+      "Enterprise Custom 1": {
+        "surface": {
+          "cod_charges": {
+            "min": "48.70",
+            "max": "26.00"
+          },
+          "zone_a": {
+            "min": "36.9",
+            "max": "7600"
+          },
+          "zone_b": {
+            "min": "39.5",
+            "max": "9000"
+          },
+          "zone_c": {
+            "min": "47.5",
+            "max": "10800"
+          },
+          "zone_d": {
+            "min": "50.7",
+            "max": "12280"
+          },
+          "zone_e": {
+            "min": "64.9",
+            "max": "12980"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "24.70",
+            "max": "39.00"
+          },
+          "zone_a": {
+            "min": "30.63",
+            "max": "54.3"
+          },
+          "zone_b": {
+            "min": "33.5",
+            "max": "60.2"
+          },
+          "zone_c": {
+            "min": "49.5",
+            "max": "66.1"
+          },
+          "zone_d": {
+            "min": "53.85",
+            "max": "72"
+          },
+          "zone_e": {
+            "min": "71.34",
+            "max": "108.7"
+          }
+        }
+      },
+      "Enterprise Plus": {
+        "surface": {
+          "cod_charges": {
+            "min": "48.70",
+            "max": "26.00"
+          },
+          "zone_a": {
+            "min": "36.9",
+            "max": "7600"
+          },
+          "zone_b": {
+            "min": "39.5",
+            "max": "9000"
+          },
+          "zone_c": {
+            "min": "47.5",
+            "max": "10800"
+          },
+          "zone_d": {
+            "min": "50.7",
+            "max": "12280"
+          },
+          "zone_e": {
+            "min": "64.9",
+            "max": "12980"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "24.70",
+            "max": "39.00"
+          },
+          "zone_a": {
+            "min": "30.63",
+            "max": "54.3"
+          },
+          "zone_b": {
+            "min": "33.5",
+            "max": "60.2"
+          },
+          "zone_c": {
+            "min": "49.5",
+            "max": "66.1"
+          },
+          "zone_d": {
+            "min": "53.85",
+            "max": "72"
+          },
+          "zone_e": {
+            "min": "71.34",
+            "max": "108.7"
+          }
+        }
+      },
+      "HP Custom": {
+        "surface": {
+          "cod_charges": {
+            "min": "36.00",
+            "max": "40.00"
+          },
+          "zone_a": {
+            "min": "31.11",
+            "max": "41.9"
+          },
+          "zone_b": {
+            "min": "38.81",
+            "max": "45.2"
+          },
+          "zone_c": {
+            "min": "44.21",
+            "max": "45.2"
+          },
+          "zone_d": {
+            "min": "48.31",
+            "max": "49.7"
+          },
+          "zone_e": {
+            "min": "58.41",
+            "max": "85"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "38.00",
+            "max": "44.00"
+          },
+          "zone_a": {
+            "min": "32",
+            "max": "47.38"
+          },
+          "zone_b": {
+            "min": "35",
+            "max": "53.56"
+          },
+          "zone_c": {
+            "min": "46",
+            "max": "56.7"
+          },
+          "zone_d": {
+            "min": "50.9",
+            "max": "61.95"
+          },
+          "zone_e": {
+            "min": "64.1",
+            "max": "81.9"
+          }
+        }
+      },
+      "Lite": {
+        "surface": {
+          "cod_charges": {
+            "min": "26.00",
+            "max": "26.00"
+          },
+          "zone_a": {
+            "min": "41",
+            "max": "8200"
+          },
+          "zone_b": {
+            "min": "48.5",
+            "max": "9700"
+          },
+          "zone_c": {
+            "min": "58",
+            "max": "11600"
+          },
+          "zone_d": {
+            "min": "64",
+            "max": "12800"
+          },
+          "zone_e": {
+            "min": "69",
+            "max": "13800"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "48.80",
+            "max": "53.10"
+          },
+          "zone_a": {
+            "min": "45",
+            "max": "62.7"
+          },
+          "zone_b": {
+            "min": "52.8",
+            "max": "74"
+          },
+          "zone_c": {
+            "min": "73.7",
+            "max": "85.5"
+          },
+          "zone_d": {
+            "min": "80.7",
+            "max": "99.5"
+          },
+          "zone_e": {
+            "min": "111.9",
+            "max": "139.7"
+          }
+        }
+      },
+      "Lite Plus": {
+        "surface": {
+          "cod_charges": {
+            "min": "26.00",
+            "max": "26.00"
+          },
+          "zone_a": {
+            "min": "41",
+            "max": "8200"
+          },
+          "zone_b": {
+            "min": "48.5",
+            "max": "9700"
+          },
+          "zone_c": {
+            "min": "57.82",
+            "max": "11600"
+          },
+          "zone_d": {
+            "min": "62.54",
+            "max": "12800"
+          },
+          "zone_e": {
+            "min": "69",
+            "max": "13800"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "48.80",
+            "max": "52.90"
+          },
+          "zone_a": {
+            "min": "45",
+            "max": "53.3"
+          },
+          "zone_b": {
+            "min": "52.8",
+            "max": "61.4"
+          },
+          "zone_c": {
+            "min": "73.7",
+            "max": "84.3"
+          },
+          "zone_d": {
+            "min": "80.7",
+            "max": "99.1"
+          },
+          "zone_e": {
+            "min": "111.9",
+            "max": "139.7"
+          }
+        }
+      },
+      "Pro": {
+        "surface": {
+          "cod_charges": {
+            "min": "26.00",
+            "max": "26.00"
+          },
+          "zone_a": {
+            "min": "38",
+            "max": "7600"
+          },
+          "zone_b": {
+            "min": "42.6",
+            "max": "9000"
+          },
+          "zone_c": {
+            "min": "49.7",
+            "max": "10800"
+          },
+          "zone_d": {
+            "min": "56.1",
+            "max": "12280"
+          },
+          "zone_e": {
+            "min": "64.9",
+            "max": "12980"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "36.70",
+            "max": "44.90"
+          },
+          "zone_a": {
+            "min": "35.5",
+            "max": "57.9"
+          },
+          "zone_b": {
+            "min": "40.6",
+            "max": "64.2"
+          },
+          "zone_c": {
+            "min": "56.5",
+            "max": "71.8"
+          },
+          "zone_d": {
+            "min": "66.2",
+            "max": "81.5"
+          },
+          "zone_e": {
+            "min": "76.7",
+            "max": "113.5"
+          }
+        }
+      },
+      "Shiprocket Custom_Bikayi": {
+        "surface": {
+          "cod_charges": {
+            "min": "43.79",
+            "max": "43.79"
+          },
+          "zone_a": {
+            "min": "36.9",
+            "max": "36.9"
+          },
+          "zone_b": {
+            "min": "39.5",
+            "max": "39.5"
+          },
+          "zone_c": {
+            "min": "55.6",
+            "max": "55.6"
+          },
+          "zone_d": {
+            "min": "63.6",
+            "max": "63.6"
+          },
+          "zone_e": {
+            "min": "75.7",
+            "max": "75.7"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "45.50",
+            "max": "45.50"
+          },
+          "zone_a": {
+            "min": "46.2",
+            "max": "46.2"
+          },
+          "zone_b": {
+            "min": "51.4",
+            "max": "51.4"
+          },
+          "zone_c": {
+            "min": "61.1",
+            "max": "61.1"
+          },
+          "zone_d": {
+            "min": "67.6",
+            "max": "67.6"
+          },
+          "zone_e": {
+            "min": "84.5",
+            "max": "84.5"
+          }
+        }
+      },
+      "Shiprocket Custom_Meta": {
+        "surface": {
+          "cod_charges": {
+            "min": "28.00",
+            "max": "33.00"
+          },
+          "zone_a": {
+            "min": "32",
+            "max": "9400"
+          },
+          "zone_b": {
+            "min": "36",
+            "max": "11800"
+          },
+          "zone_c": {
+            "min": "41",
+            "max": "17000"
+          },
+          "zone_d": {
+            "min": "44",
+            "max": "17000"
+          },
+          "zone_e": {
+            "min": "64",
+            "max": "17000"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "33.00",
+            "max": "33.00"
+          },
+          "zone_a": {
+            "min": "36.58",
+            "max": "55.46"
+          },
+          "zone_b": {
+            "min": "38.94",
+            "max": "66.08"
+          },
+          "zone_c": {
+            "min": "51.92",
+            "max": "77.88"
+          },
+          "zone_d": {
+            "min": "55.46",
+            "max": "88.5"
+          },
+          "zone_e": {
+            "min": "82.6",
+            "max": "103.84"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Advanced": {
+        "surface": {
+          "cod_charges": {
+            "min": "44.60",
+            "max": "44.60"
+          },
+          "zone_a": {
+            "min": "44",
+            "max": "8239.2"
+          },
+          "zone_b": {
+            "min": "48.6",
+            "max": "9065.7"
+          },
+          "zone_c": {
+            "min": "55.5",
+            "max": "10364.1"
+          },
+          "zone_d": {
+            "min": "62",
+            "max": "11685.5"
+          },
+          "zone_e": {
+            "min": "77.1",
+            "max": "14588.9"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "43.00",
+            "max": "43.00"
+          },
+          "zone_a": {
+            "min": "48",
+            "max": "48"
+          },
+          "zone_b": {
+            "min": "56",
+            "max": "56"
+          },
+          "zone_c": {
+            "min": "70",
+            "max": "70"
+          },
+          "zone_d": {
+            "min": "82",
+            "max": "82"
+          },
+          "zone_e": {
+            "min": "109",
+            "max": "109"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Basic": {
+        "surface": {
+          "cod_charges": {
+            "min": "46.37",
+            "max": "46.37"
+          },
+          "zone_a": {
+            "min": "49.21",
+            "max": "9841.2"
+          },
+          "zone_b": {
+            "min": "55.11",
+            "max": "11021.2"
+          },
+          "zone_c": {
+            "min": "62.42",
+            "max": "12484.4"
+          },
+          "zone_d": {
+            "min": "69.03",
+            "max": "13806"
+          },
+          "zone_e": {
+            "min": "98.88",
+            "max": "19776.8"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "46.00",
+            "max": "46.00"
+          },
+          "zone_a": {
+            "min": "52",
+            "max": "52"
+          },
+          "zone_b": {
+            "min": "60",
+            "max": "60"
+          },
+          "zone_c": {
+            "min": "78",
+            "max": "78"
+          },
+          "zone_d": {
+            "min": "89",
+            "max": "89"
+          },
+          "zone_e": {
+            "min": "118",
+            "max": "118"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Boost Advanced": {
+        "surface": {
+          "cod_charges": {
+            "min": "44.60",
+            "max": "44.60"
+          },
+          "zone_a": {
+            "min": "47",
+            "max": "8643.8"
+          },
+          "zone_b": {
+            "min": "51.6",
+            "max": "9464.3"
+          },
+          "zone_c": {
+            "min": "58.5",
+            "max": "10764.7"
+          },
+          "zone_d": {
+            "min": "65",
+            "max": "12084.6"
+          },
+          "zone_e": {
+            "min": "80.1",
+            "max": "14985.2"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "43.00",
+            "max": "43.00"
+          },
+          "zone_a": {
+            "min": "51",
+            "max": "51"
+          },
+          "zone_b": {
+            "min": "59",
+            "max": "59"
+          },
+          "zone_c": {
+            "min": "73",
+            "max": "73"
+          },
+          "zone_d": {
+            "min": "85",
+            "max": "85"
+          },
+          "zone_e": {
+            "min": "112",
+            "max": "112"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Boost Basic": {
+        "surface": {
+          "cod_charges": {
+            "min": "46.37",
+            "max": "46.37"
+          },
+          "zone_a": {
+            "min": "52.21",
+            "max": "10442"
+          },
+          "zone_b": {
+            "min": "58.11",
+            "max": "11622"
+          },
+          "zone_c": {
+            "min": "65.42",
+            "max": "13084"
+          },
+          "zone_d": {
+            "min": "72.03",
+            "max": "14406"
+          },
+          "zone_e": {
+            "min": "101.88",
+            "max": "20376"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "46.00",
+            "max": "46.00"
+          },
+          "zone_a": {
+            "min": "55",
+            "max": "55"
+          },
+          "zone_b": {
+            "min": "63",
+            "max": "63"
+          },
+          "zone_c": {
+            "min": "81",
+            "max": "81"
+          },
+          "zone_d": {
+            "min": "92",
+            "max": "92"
+          },
+          "zone_e": {
+            "min": "121",
+            "max": "121"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Boost Diamond": {
+        "surface": {
+          "cod_charges": {
+            "min": "29.50",
+            "max": "29.50"
+          },
+          "zone_a": {
+            "min": "32.5",
+            "max": "5723.9"
+          },
+          "zone_b": {
+            "min": "36",
+            "max": "6304.5"
+          },
+          "zone_c": {
+            "min": "40.8",
+            "max": "7125.2"
+          },
+          "zone_d": {
+            "min": "46.7",
+            "max": "8185.8"
+          },
+          "zone_e": {
+            "min": "60.8",
+            "max": "10786.9"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "36.00",
+            "max": "36.00"
+          },
+          "zone_a": {
+            "min": "45",
+            "max": "45"
+          },
+          "zone_b": {
+            "min": "50",
+            "max": "50"
+          },
+          "zone_c": {
+            "min": "64",
+            "max": "64"
+          },
+          "zone_d": {
+            "min": "71",
+            "max": "71"
+          },
+          "zone_e": {
+            "min": "95",
+            "max": "95"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Boost Enterprise": {
+        "surface": {
+          "cod_charges": {
+            "min": "33.04",
+            "max": "33.04"
+          },
+          "zone_a": {
+            "min": "36",
+            "max": "6782.1"
+          },
+          "zone_b": {
+            "min": "39.6",
+            "max": "7362.8"
+          },
+          "zone_c": {
+            "min": "44.3",
+            "max": "8183.4"
+          },
+          "zone_d": {
+            "min": "50.2",
+            "max": "9363.4"
+          },
+          "zone_e": {
+            "min": "67.9",
+            "max": "12684.5"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "37.00",
+            "max": "37.00"
+          },
+          "zone_a": {
+            "min": "47",
+            "max": "47"
+          },
+          "zone_b": {
+            "min": "52",
+            "max": "52"
+          },
+          "zone_c": {
+            "min": "65",
+            "max": "65"
+          },
+          "zone_d": {
+            "min": "72",
+            "max": "72"
+          },
+          "zone_e": {
+            "min": "99",
+            "max": "99"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Boost Pro": {
+        "surface": {
+          "cod_charges": {
+            "min": "39.30",
+            "max": "39.30"
+          },
+          "zone_a": {
+            "min": "42.3",
+            "max": "7823.2"
+          },
+          "zone_b": {
+            "min": "46.3",
+            "max": "8543.6"
+          },
+          "zone_c": {
+            "min": "51.7",
+            "max": "9563.9"
+          },
+          "zone_d": {
+            "min": "59.3",
+            "max": "11024.2"
+          },
+          "zone_e": {
+            "min": "73.1",
+            "max": "13664.8"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "41.00",
+            "max": "41.00"
+          },
+          "zone_a": {
+            "min": "50",
+            "max": "50"
+          },
+          "zone_b": {
+            "min": "56",
+            "max": "56"
+          },
+          "zone_c": {
+            "min": "70",
+            "max": "70"
+          },
+          "zone_d": {
+            "min": "79",
+            "max": "79"
+          },
+          "zone_e": {
+            "min": "104",
+            "max": "104"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Boost Titanium": {
+        "surface": {
+          "cod_charges": {
+            "min": "24.78",
+            "max": "24.78"
+          },
+          "zone_a": {
+            "min": "27.8",
+            "max": "4644.6"
+          },
+          "zone_b": {
+            "min": "31.3",
+            "max": "5245.1"
+          },
+          "zone_c": {
+            "min": "37.2",
+            "max": "6186.3"
+          },
+          "zone_d": {
+            "min": "39.6",
+            "max": "6666.3"
+          },
+          "zone_e": {
+            "min": "56.1",
+            "max": "9369.3"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "34.00",
+            "max": "34.00"
+          },
+          "zone_a": {
+            "min": "43",
+            "max": "43"
+          },
+          "zone_b": {
+            "min": "48",
+            "max": "48"
+          },
+          "zone_c": {
+            "min": "62",
+            "max": "62"
+          },
+          "zone_d": {
+            "min": "69",
+            "max": "69"
+          },
+          "zone_e": {
+            "min": "93",
+            "max": "93"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Diamond": {
+        "surface": {
+          "cod_charges": {
+            "min": "29.50",
+            "max": "29.50"
+          },
+          "zone_a": {
+            "min": "29.5",
+            "max": "5322.9"
+          },
+          "zone_b": {
+            "min": "33",
+            "max": "5903.5"
+          },
+          "zone_c": {
+            "min": "37.8",
+            "max": "6724.2"
+          },
+          "zone_d": {
+            "min": "43.7",
+            "max": "7784.8"
+          },
+          "zone_e": {
+            "min": "57.8",
+            "max": "10385.9"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "36.00",
+            "max": "36.00"
+          },
+          "zone_a": {
+            "min": "42",
+            "max": "42"
+          },
+          "zone_b": {
+            "min": "47",
+            "max": "47"
+          },
+          "zone_c": {
+            "min": "61",
+            "max": "61"
+          },
+          "zone_d": {
+            "min": "68",
+            "max": "68"
+          },
+          "zone_e": {
+            "min": "92",
+            "max": "92"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Enterprise": {
+        "surface": {
+          "cod_charges": {
+            "min": "33.04",
+            "max": "33.00"
+          },
+          "zone_a": {
+            "min": "33",
+            "max": "6373.2"
+          },
+          "zone_b": {
+            "min": "36.6",
+            "max": "6963.8"
+          },
+          "zone_c": {
+            "min": "41.3",
+            "max": "7790.4"
+          },
+          "zone_d": {
+            "min": "47.2",
+            "max": "8970.4"
+          },
+          "zone_e": {
+            "min": "64.9",
+            "max": "12275.5"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "37.00",
+            "max": "37.00"
+          },
+          "zone_a": {
+            "min": "44",
+            "max": "44"
+          },
+          "zone_b": {
+            "min": "49",
+            "max": "49"
+          },
+          "zone_c": {
+            "min": "62",
+            "max": "62"
+          },
+          "zone_d": {
+            "min": "69",
+            "max": "69"
+          },
+          "zone_e": {
+            "min": "96",
+            "max": "96"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Pro": {
+        "surface": {
+          "cod_charges": {
+            "min": "39.30",
+            "max": "39.30"
+          },
+          "zone_a": {
+            "min": "39.3",
+            "max": "7412.6"
+          },
+          "zone_b": {
+            "min": "43.3",
+            "max": "8144.6"
+          },
+          "zone_c": {
+            "min": "48.7",
+            "max": "9159.7"
+          },
+          "zone_d": {
+            "min": "56.3",
+            "max": "10623.2"
+          },
+          "zone_e": {
+            "min": "70.1",
+            "max": "13267"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "41.00",
+            "max": "41.00"
+          },
+          "zone_a": {
+            "min": "47",
+            "max": "47"
+          },
+          "zone_b": {
+            "min": "53",
+            "max": "53"
+          },
+          "zone_c": {
+            "min": "67",
+            "max": "67"
+          },
+          "zone_d": {
+            "min": "76",
+            "max": "76"
+          },
+          "zone_e": {
+            "min": "101",
+            "max": "101"
+          }
+        }
+      },
+      "Shiprocket Prime Rapid Titanium": {
+        "surface": {
+          "cod_charges": {
+            "min": "24.78",
+            "max": "24.78"
+          },
+          "zone_a": {
+            "min": "24.8",
+            "max": "4251.5"
+          },
+          "zone_b": {
+            "min": "28.3",
+            "max": "4842.1"
+          },
+          "zone_c": {
+            "min": "34.2",
+            "max": "5787.3"
+          },
+          "zone_d": {
+            "min": "36.6",
+            "max": "6259.3"
+          },
+          "zone_e": {
+            "min": "53.1",
+            "max": "8976.3"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "34.00",
+            "max": "34.00"
+          },
+          "zone_a": {
+            "min": "40",
+            "max": "40"
+          },
+          "zone_b": {
+            "min": "45",
+            "max": "45"
+          },
+          "zone_c": {
+            "min": "59",
+            "max": "59"
+          },
+          "zone_d": {
+            "min": "66",
+            "max": "66"
+          },
+          "zone_e": {
+            "min": "90",
+            "max": "90"
+          }
+        }
+      },
+      "Shiprocket Prime Target Boost Diamond": {
+        "surface": {
+          "cod_charges": {
+            "min": "0.00",
+            "max": "0.00"
+          },
+          "zone_a": {
+            "min": "61",
+            "max": "6635.96"
+          },
+          "zone_b": {
+            "min": "66.9",
+            "max": "7815.96"
+          },
+          "zone_c": {
+            "min": "71.62",
+            "max": "8759.96"
+          },
+          "zone_d": {
+            "min": "78.7",
+            "max": "9471.5"
+          },
+          "zone_e": {
+            "min": "96.4",
+            "max": "11602.58"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "36.00",
+            "max": "36.00"
+          },
+          "zone_a": {
+            "min": "42",
+            "max": "42"
+          },
+          "zone_b": {
+            "min": "47",
+            "max": "47"
+          },
+          "zone_c": {
+            "min": "61",
+            "max": "61"
+          },
+          "zone_d": {
+            "min": "68",
+            "max": "68"
+          },
+          "zone_e": {
+            "min": "92",
+            "max": "92"
+          }
+        }
+      },
+      "Shiprocket Prime Target Boost Enterprise": {
+        "surface": {
+          "cod_charges": {
+            "min": "0.00",
+            "max": "0.00"
+          },
+          "zone_a": {
+            "min": "61",
+            "max": "7340.42"
+          },
+          "zone_b": {
+            "min": "70.44",
+            "max": "8523.96"
+          },
+          "zone_c": {
+            "min": "73.98",
+            "max": "9466.78"
+          },
+          "zone_d": {
+            "min": "79.88",
+            "max": "10177.14"
+          },
+          "zone_e": {
+            "min": "98.76",
+            "max": "12544.22"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "37.00",
+            "max": "37.00"
+          },
+          "zone_a": {
+            "min": "44",
+            "max": "44"
+          },
+          "zone_b": {
+            "min": "49",
+            "max": "49"
+          },
+          "zone_c": {
+            "min": "62",
+            "max": "62"
+          },
+          "zone_d": {
+            "min": "69",
+            "max": "69"
+          },
+          "zone_e": {
+            "min": "96",
+            "max": "96"
+          }
+        }
+      },
+      "Shiprocket Prime Target Boost Titanium": {
+        "surface": {
+          "cod_charges": {
+            "min": "0.00",
+            "max": "0.00"
+          },
+          "zone_a": {
+            "min": "54.28",
+            "max": "5924.78"
+          },
+          "zone_b": {
+            "min": "60.18",
+            "max": "7104.78"
+          },
+          "zone_c": {
+            "min": "64.9",
+            "max": "7813.96"
+          },
+          "zone_d": {
+            "min": "70.8",
+            "max": "8524.32"
+          },
+          "zone_e": {
+            "min": "88.5",
+            "max": "10655.4"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "34.00",
+            "max": "34.00"
+          },
+          "zone_a": {
+            "min": "40",
+            "max": "40"
+          },
+          "zone_b": {
+            "min": "45",
+            "max": "45"
+          },
+          "zone_c": {
+            "min": "59",
+            "max": "59"
+          },
+          "zone_d": {
+            "min": "66",
+            "max": "66"
+          },
+          "zone_e": {
+            "min": "90",
+            "max": "90"
+          }
+        }
+      },
+      "Shiprocket Prime Target Diamond": {
+        "surface": {
+          "cod_charges": {
+            "min": "0.00",
+            "max": "0.00"
+          },
+          "zone_a": {
+            "min": "56.64",
+            "max": "6396.78"
+          },
+          "zone_b": {
+            "min": "62.54",
+            "max": "7576.78"
+          },
+          "zone_c": {
+            "min": "67.26",
+            "max": "8520.78"
+          },
+          "zone_d": {
+            "min": "74.34",
+            "max": "9232.32"
+          },
+          "zone_e": {
+            "min": "92.04",
+            "max": "11363.4"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "36.00",
+            "max": "36.00"
+          },
+          "zone_a": {
+            "min": "42",
+            "max": "42"
+          },
+          "zone_b": {
+            "min": "47",
+            "max": "47"
+          },
+          "zone_c": {
+            "min": "61",
+            "max": "61"
+          },
+          "zone_d": {
+            "min": "68",
+            "max": "68"
+          },
+          "zone_e": {
+            "min": "92",
+            "max": "92"
+          }
+        }
+      },
+      "Shiprocket Prime Target Enterprise": {
+        "surface": {
+          "cod_charges": {
+            "min": "0.00",
+            "max": "0.00"
+          },
+          "zone_a": {
+            "min": "56.64",
+            "max": "7101.24"
+          },
+          "zone_b": {
+            "min": "66.08",
+            "max": "8284.78"
+          },
+          "zone_c": {
+            "min": "70.8",
+            "max": "9228.78"
+          },
+          "zone_d": {
+            "min": "76.7",
+            "max": "9939.14"
+          },
+          "zone_e": {
+            "min": "94.4",
+            "max": "12305.04"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "37.00",
+            "max": "37.00"
+          },
+          "zone_a": {
+            "min": "44",
+            "max": "44"
+          },
+          "zone_b": {
+            "min": "49",
+            "max": "49"
+          },
+          "zone_c": {
+            "min": "62",
+            "max": "62"
+          },
+          "zone_d": {
+            "min": "69",
+            "max": "69"
+          },
+          "zone_e": {
+            "min": "96",
+            "max": "96"
+          }
+        }
+      },
+      "Shiprocket Prime Target Titanium": {
+        "surface": {
+          "cod_charges": {
+            "min": "0.00",
+            "max": "0.00"
+          },
+          "zone_a": {
+            "min": "54.28",
+            "max": "5924.78"
+          },
+          "zone_b": {
+            "min": "60.18",
+            "max": "7104.78"
+          },
+          "zone_c": {
+            "min": "64.9",
+            "max": "7813.96"
+          },
+          "zone_d": {
+            "min": "70.8",
+            "max": "8524.32"
+          },
+          "zone_e": {
+            "min": "88.5",
+            "max": "10655.4"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "34.00",
+            "max": "34.00"
+          },
+          "zone_a": {
+            "min": "40",
+            "max": "40"
+          },
+          "zone_b": {
+            "min": "45",
+            "max": "45"
+          },
+          "zone_c": {
+            "min": "59",
+            "max": "59"
+          },
+          "zone_d": {
+            "min": "66",
+            "max": "66"
+          },
+          "zone_e": {
+            "min": "90",
+            "max": "90"
+          }
+        }
+      },
+      "Velocity Promo": {
+        "surface": {
+          "cod_charges": {
+            "min": "25.50",
+            "max": "35.91"
+          },
+          "zone_a": {
+            "min": "33.73",
+            "max": "44.7"
+          },
+          "zone_b": {
+            "min": "36.58",
+            "max": "44.98"
+          },
+          "zone_c": {
+            "min": "40.41",
+            "max": "49.5"
+          },
+          "zone_d": {
+            "min": "43.17",
+            "max": "56.7"
+          },
+          "zone_e": {
+            "min": "62.03",
+            "max": "88.03"
+          }
+        },
+        "air": {
+          "cod_charges": {
+            "min": "22.70",
+            "max": "39.00"
+          },
+          "zone_a": {
+            "min": "28.36",
+            "max": "51.6"
+          },
+          "zone_b": {
+            "min": "31.06",
+            "max": "57.1"
+          },
+          "zone_c": {
+            "min": "45.82",
+            "max": "65.1"
+          },
+          "zone_d": {
+            "min": "49.86",
+            "max": "76.1"
+          },
+          "zone_e": {
+            "min": "66.07",
+            "max": "103"
+          }
+        }
+      }
+    }
+  },
+  "dg_courier": 0,
+  "eligible_for_insurance": false,
+  "insurace_opted_at_order_creation": false,
+  "is_allow_templatized_pricing": false,
+  "is_latlong": 0,
+  "is_old_zone_opted": false,
+  "is_zone_from_mongo": false,
+  "label_generate_type": 0,
+  "on_new_zone": 0,
+  "seller_address": [],
+  "status": 200,
+  "user_insurance_manadatory": false
+}

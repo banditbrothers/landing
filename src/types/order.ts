@@ -7,6 +7,7 @@ export type Order = {
   email: string;
   phone: string;
   amount: number;
+  couponCode: string | null;
   address: {
     line1: string;
     line2: string;
@@ -23,4 +24,19 @@ export type Order = {
     status: OrderStatus;
     updatedAt: number;
   };
+};
+
+export type Coupon = {
+  id: string;
+  code: string;
+  type: "percentage" | "fixed";
+  discount: number;
+  createdAt: number;
+  expiresAt: number;
+  isActive: boolean;
+};
+
+export type SelectedDesignsType = {
+  designId: string;
+  quantity: number;
 };

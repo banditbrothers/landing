@@ -18,31 +18,20 @@ import { Badge } from "@/components/orders/badge";
 import Image from "next/image";
 import PaymentDrawer from "@/components/orders/paymentDrawer";
 import { createOrder, updateOrder } from "@/actions/firestore";
-import { Order } from "@/types/order";
+import { Coupon, Order, SelectedDesignsType } from "@/types/order";
 import { getTimestamp } from "@/utils/misc";
 import { useSearchParams } from "next/navigation";
 import LoadingScreen from "@/components/loadingScreen";
+import { validateCoupon } from "@/actions/validation";
+import { DEFAULT_ORDER_VALUES } from "@/constants/order";
+import { toast } from "sonner";
 
 const countries = Country.getAllCountries();
-
-const DEFAULT_VALUES = {
-  email: "",
-  name: "",
-  phone: "",
-  address: {
-    line1: "",
-    line2: "",
-    country: "IN",
-    state: "MH",
-    city: "",
-    zip: "",
-  },
-  products: [] as SelectedDesignsType[],
-};
 
 const orderFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   name: z.string().min(2, "Enter valid name"),
+  couponCode: z.string(),
   phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, {
     message: "Enter valid phone number",
   }),
@@ -62,11 +51,6 @@ const orderFormSchema = z.object({
   ),
 });
 
-type SelectedDesignsType = {
-  designId: string;
-  quantity: number;
-};
-
 const SHIPPING_COST = 100; // ₹100 for shipping
 
 const calculateTotal = (products: SelectedDesignsType[]) => {
@@ -78,17 +62,27 @@ const calculateTotal = (products: SelectedDesignsType[]) => {
   return subtotal + SHIPPING_COST;
 };
 
+const showErrorToast = (message: string) => {
+  toast.error(message, { position: "top-right" });
+};
+
+const showSuccessToast = (message: string) => {
+  toast.success(message);
+};
+
 function OrderPageContent() {
   const [states, setStates] = useState<IState[]>([]);
+  const [orderTotal, setOrderTotal] = useState(0);
+  const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [pendingPaymentOrder, setPendingPaymentOrder] = useState<Order | null>(null);
 
   const searchParams = useSearchParams();
   const paramDesignId = searchParams.get("design");
-  if (paramDesignId) DEFAULT_VALUES.products = [{ designId: paramDesignId, quantity: 1 }];
+  if (paramDesignId) DEFAULT_ORDER_VALUES.products = [{ designId: paramDesignId, quantity: 1 }];
 
   const form = useForm({
     resolver: zodResolver(orderFormSchema),
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: DEFAULT_ORDER_VALUES,
     mode: "onTouched",
   });
 
@@ -109,6 +103,11 @@ function OrderPageContent() {
     }
   }, [watchCountry]);
 
+  useEffect(() => {
+    const total = calculateTotal(watchProducts);
+    setOrderTotal(total);
+  }, [watchProducts]);
+
   const handleDesignChange = (id: string, checked: boolean, onChange: (designs: SelectedDesignsType[]) => void) => {
     let newDesignIds = [...selectedDesignsIds];
 
@@ -126,6 +125,7 @@ function OrderPageContent() {
     const order: Partial<Order> = {
       ...values,
       amount: orderTotal,
+      couponCode: coupon?.code ?? null,
       createdAt: getTimestamp(),
       payment: { status: "initiated", updatedAt: getTimestamp() },
     };
@@ -134,9 +134,22 @@ function OrderPageContent() {
     setPendingPaymentOrder(orderObj);
   };
 
+  const handleValidateCoupon = async () => {
+    const code = form.getValues("couponCode");
+    if (code.length > 0) {
+      const { isValid, coupon } = await validateCoupon(code);
+      if (isValid) setCoupon(coupon);
+      else {
+        showErrorToast("Invalid Coupon");
+        form.resetField("couponCode");
+      }
+    }
+  };
+
   const onPaymentComplete = async () => {
     await updateOrder(pendingPaymentOrder!.id, { payment: { status: "approval-pending", updatedAt: getTimestamp() } });
     setPendingPaymentOrder(null);
+    showSuccessToast("Order Placed");
     form.reset();
   };
 
@@ -147,7 +160,6 @@ function OrderPageContent() {
 
   const selectedDesignsIds = watchProducts.map(product => product.designId);
   const formIsReady = form.formState.isValid && selectedDesignsIds.length > 0;
-  const orderTotal = calculateTotal(watchProducts);
 
   return (
     <div className="mx-auto py-10 px-2 max-w-lg">
@@ -166,7 +178,11 @@ function OrderPageContent() {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="email@example.com" {...field} />
+                        <Input
+                          onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
+                          placeholder="email@example.com"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -180,7 +196,11 @@ function OrderPageContent() {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="John Doe" {...field} />
+                        <Input
+                          onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
+                          placeholder="John Doe"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -194,7 +214,11 @@ function OrderPageContent() {
                     <FormItem>
                       <FormLabel>Phone</FormLabel>
                       <FormControl>
-                        <Input placeholder="+919876543210" {...field} />
+                        <Input
+                          onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
+                          placeholder="+919876543210"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -208,7 +232,11 @@ function OrderPageContent() {
                     <FormItem>
                       <FormLabel>Address Line 1</FormLabel>
                       <FormControl>
-                        <Input placeholder="Apartment, suite, etc." {...field} />
+                        <Input
+                          onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
+                          placeholder="Apartment, suite, etc."
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -222,7 +250,11 @@ function OrderPageContent() {
                     <FormItem>
                       <FormLabel>Address Line 2 (Optional)</FormLabel>
                       <FormControl>
-                        <Input placeholder="" {...field} />
+                        <Input
+                          onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
+                          placeholder=""
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -287,7 +319,11 @@ function OrderPageContent() {
                       <FormItem>
                         <FormLabel>City</FormLabel>
                         <FormControl>
-                          <Input placeholder="Mumbai" {...field} />
+                          <Input
+                            onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
+                            placeholder="Mumbai"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -301,7 +337,11 @@ function OrderPageContent() {
                       <FormItem>
                         <FormLabel>Zip Code</FormLabel>
                         <FormControl>
-                          <Input placeholder="400001" {...field} />
+                          <Input
+                            onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
+                            placeholder="400001"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -358,9 +398,7 @@ function OrderPageContent() {
                                         field.onChange(!isNaN(intQty) ? intQty : 0);
                                       }}
                                       type="number"
-                                      onKeyDown={e => {
-                                        if (e.key === "Enter") e.preventDefault();
-                                      }}
+                                      onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
                                       className={`max-w-20 self-end ${
                                         formState.errors.products?.[index]?.quantity ? "border-destructive" : ""
                                       }`}
@@ -385,6 +423,33 @@ function OrderPageContent() {
 
                 {selectedDesignsIds.length > 0 && (
                   <div className="flex flex-col gap-2 py-4 mt-4 border-t">
+                    <div className="flex gap-2 mb-4">
+                      <FormField
+                        control={form.control}
+                        name="couponCode"
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormControl>
+                              <Input
+                                {...field}
+                                value={field.value ?? ""}
+                                placeholder="Enter coupon code"
+                                onKeyDown={e => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    handleValidateCoupon();
+                                  }
+                                }}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <Button type="button" onClick={handleValidateCoupon} variant="secondary">
+                        Apply
+                      </Button>
+                    </div>
+
                     <div className="flex justify-between items-center text-sm">
                       <span>Subtotal</span>
                       <span>₹{orderTotal - SHIPPING_COST}</span>

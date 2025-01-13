@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useState } from "react";
 import { TextTooltip } from "../tooltip";
 
-const upiId = "shamoilfederal@ybl";
+const upiId = "abbas.i.merchant@okaxis";
 const storeName = "Bandit Brothers";
 
 type PaymentDrawerProps = {

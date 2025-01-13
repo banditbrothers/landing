@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { Space_Grotesk } from "next/font/google";
 
 import { CSPostHogProvider } from "@/provider/posthog";
+import { Toaster } from "@/components/ui/sonner";
 
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
@@ -29,15 +30,17 @@ export const metadata: Metadata = {
   },
 };
 
+const theme = "dark";
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className={`${theme}`}>
       <body className={`${spaceGrotesk.className} ${Calera.className}`}>
         <CSPostHogProvider>{children}</CSPostHogProvider>
+        <Toaster theme={theme} richColors position="top-right" />
       </body>
     </html>
   );
