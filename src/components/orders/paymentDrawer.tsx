@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Order } from "@/types/order";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useState } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { TextTooltip } from "../tooltip";
 
 const upiId = "shamoilfederal@ybl";
 const storeName = "Bandit Brothers";
@@ -85,20 +85,11 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
               <Button variant="destructive" className="max-w-xs" onClick={() => setShowCancelDialog(true)}>
                 Cancel
               </Button>
-              <TooltipProvider delayDuration={200} disableHoverableContent={isPaymentShared}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a>
-                      <Button disabled={!isPaymentShared} variant="outline" onClick={onComplete} className="max-w-xs">
-                        Close
-                      </Button>
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Share the payment proof before closing</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <TextTooltip disabled={isPaymentShared} content="Share the payment proof before closing">
+                <Button disabled={!isPaymentShared} variant="outline" onClick={onComplete} className="max-w-xs">
+                  Close
+                </Button>
+              </TextTooltip>
             </div>
           </div>
         </DrawerContent>

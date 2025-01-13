@@ -15,10 +15,10 @@ export const getWhatsappShopNowLink = (name?: string) => {
 };
 
 export const getWhatsappSharePaymentScreenshotLink = (orderDetails: Order) => {
-  let message = `Hey, I've made the payment for my order \`${orderDetails.id}\`. \n\nOrder Details: \nName: ${orderDetails.name} \nEmail: ${orderDetails.email}`;
+  let message = `Hey, I've made the payment for my order. \n\n*Order Details* \nID: \`${orderDetails.id}\` \nName: ${orderDetails.name} \nEmail: ${orderDetails.email}`;
 
-  message += `\n\nProducts: ${orderDetails
-    .products!.map(product => `${designsObject[product.designId]!.name}: ${product.quantity}`)
+  message += `\n\n*Products* \n${orderDetails
+    .products!.map(product => `- ${designsObject[product.designId]!.name}: ${product.quantity}`)
     .join("\n")}`;
 
   message += `\n\nHere is the screenshot of the payment `;

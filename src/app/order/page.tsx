@@ -20,23 +20,9 @@ import PaymentDrawer from "@/components/orders/paymentDrawer";
 import { createOrder, updateOrder } from "@/actions/firestore";
 import { Order } from "@/types/order";
 import { getTimestamp } from "@/utils/misc";
+import { useSearchParams } from "next/navigation";
 
 const countries = Country.getAllCountries();
-
-const DEFAULT_FORM_VALUES = {
-  email: "",
-  name: "",
-  phone: "",
-  address: {
-    line1: "",
-    line2: "",
-    country: "IN",
-    state: "MH",
-    city: "",
-    zip: "",
-  },
-  products: [] as SelectedDesignsType[],
-};
 
 const orderFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -80,9 +66,25 @@ export default function OrderPage() {
   const [states, setStates] = useState<IState[]>([]);
   const [pendingPaymentOrder, setPendingPaymentOrder] = useState<Order | null>(null);
 
+  const searchParams = useSearchParams();
+  const paramDesignId = searchParams.get("design");
+
   const form = useForm({
     resolver: zodResolver(orderFormSchema),
-    defaultValues: DEFAULT_FORM_VALUES,
+    defaultValues: {
+      email: "",
+      name: "",
+      phone: "",
+      address: {
+        line1: "",
+        line2: "",
+        country: "IN",
+        state: "MH",
+        city: "",
+        zip: "",
+      },
+      products: [{ designId: paramDesignId, quantity: 1 }] as SelectedDesignsType[],
+    },
     mode: "onTouched",
   });
 
@@ -131,6 +133,7 @@ export default function OrderPage() {
   const onPaymentComplete = async () => {
     await updateOrder(pendingPaymentOrder!.id, { payment: { status: "approval-pending", updatedAt: getTimestamp() } });
     setPendingPaymentOrder(null);
+    form.reset();
   };
 
   const onPaymentCancel = async () => {
