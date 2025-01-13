@@ -1,22 +1,26 @@
+export type OrderStatus = "initiated" | "approval-pending" | "paid" | "cancelled" | "admin-cancelled";
+
 export type Order = {
   id: string;
   createdAt: number;
   name: string;
   email: string;
   phone: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-  products: {
-    id: string;
-    name: string;
-    quantity: number;
-    price: number;
-  }[];
   amount: number;
-
-  paymentId: string;
-  paymentStatus: "pending" | "paid" | "failed";
-  paymentMethod: "cash" | "card" | "bank_transfer";
+  address: {
+    line1: string;
+    line2: string;
+    country: string;
+    state: string;
+    city: string;
+    zip: string;
+  };
+  products: {
+    designId: string;
+    quantity: number;
+  }[];
+  payment: {
+    status: OrderStatus;
+    updatedAt: number;
+  };
 };

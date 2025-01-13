@@ -16,6 +16,10 @@ import { designsObject, designs } from "@/data/products";
 import { DropdownMenuCheckboxes } from "@/components/orders/multiSelectDropdown";
 import { Badge } from "@/components/orders/badge";
 import Image from "next/image";
+import PaymentDrawer from "@/components/orders/paymentDrawer";
+import { createOrder, updateOrder } from "@/actions/firestore";
+import { Order } from "@/types/order";
+import { getTimestamp } from "@/utils/misc";
 
 const countries = Country.getAllCountries();
 
@@ -42,7 +46,7 @@ const orderFormSchema = z.object({
   }),
   address: z.object({
     line1: z.string().min(2, "Enter valid address"),
-    line2: z.string().optional(),
+    line2: z.string(),
     country: z.string(),
     state: z.string(),
     city: z.string().min(2, "Enter valid city"),
@@ -74,6 +78,7 @@ const calculateTotal = (products: SelectedDesignsType[]) => {
 
 export default function OrderPage() {
   const [states, setStates] = useState<IState[]>([]);
+  const [pendingPaymentOrder, setPendingPaymentOrder] = useState<Order | null>(null);
 
   const form = useForm({
     resolver: zodResolver(orderFormSchema),
@@ -111,9 +116,26 @@ export default function OrderPage() {
     onChange(designsFormContent);
   };
 
-  const onSubmit = (values: z.infer<typeof orderFormSchema>) => {
-    console.log(values);
-    // TODO: Implement order submission
+  const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
+    const order: Partial<Order> = {
+      ...values,
+      amount: orderTotal,
+      createdAt: getTimestamp(),
+      payment: { status: "initiated", updatedAt: getTimestamp() },
+    };
+
+    const orderObj = await createOrder(order);
+    setPendingPaymentOrder(orderObj);
+  };
+
+  const onPaymentComplete = async () => {
+    await updateOrder(pendingPaymentOrder!.id, { payment: { status: "approval-pending", updatedAt: getTimestamp() } });
+    setPendingPaymentOrder(null);
+  };
+
+  const onPaymentCancel = async () => {
+    await updateOrder(pendingPaymentOrder!.id, { payment: { status: "cancelled", updatedAt: getTimestamp() } });
+    setPendingPaymentOrder(null);
   };
 
   const selectedDesignsIds = watchProducts.map(product => product.designId);
@@ -342,8 +364,7 @@ export default function OrderPage() {
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => handleDesignChange(id, false, field.onChange)}
-                                  className="absolute top-0 right-0"
-                                >
+                                  className="absolute top-0 right-0">
                                   <X className="h-4 w-4" />
                                 </Button>
                               </div>
@@ -383,6 +404,16 @@ export default function OrderPage() {
           </Form>
         </CardContent>
       </Card>
+
+      {pendingPaymentOrder && (
+        <PaymentDrawer
+          open={!!pendingPaymentOrder}
+          onComplete={onPaymentComplete}
+          onCancel={onPaymentCancel}
+          amount={orderTotal}
+          orderDetails={pendingPaymentOrder}
+        />
+      )}
     </div>
   );
 }

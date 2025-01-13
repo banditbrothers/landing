@@ -3,27 +3,16 @@
 import { useState, useEffect, useLayoutEffect } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "@/components/admin/dateRange";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Order } from "@/types/order";
-import { getOrders } from "./actions";
+import { Order, OrderStatus } from "@/types/order";
+import { getOrders, updateOrder } from "@/actions/firestore";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { hash } from "@/utils/misc";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { getDate, getTimestamp, hash } from "@/utils/misc";
 import { LoaderPinwheelIcon } from "lucide-react";
+import { CheckIcon, XMarkIcon, EyeIcon } from "@/components/icons";
 
 type FilterOrder =
   | {
@@ -44,7 +33,7 @@ function AdminPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
-    getOrders().then((orders) => {
+    getOrders().then(orders => {
       setOrders(orders);
       setFilteredOrders(orders);
       setIsLoading(false);
@@ -72,16 +61,12 @@ function AdminPage() {
     const _date = by === "date" ? value : dateRange;
 
     if (_email) {
-      filtered = filtered.filter((order) =>
-        order.email.toLowerCase().includes(_email.toLowerCase())
-      );
+      filtered = filtered.filter(order => order.email.toLowerCase().includes(_email.toLowerCase()));
     }
 
     if (_date && _date.from && _date.to) {
       filtered = filtered.filter(
-        (order) =>
-          order.createdAt >= _date.from!.getTime() &&
-          order.createdAt <= _date.to!.getTime()
+        order => order.createdAt >= _date.from!.getTime() && order.createdAt <= _date.to!.getTime()
       );
     }
 
@@ -92,6 +77,17 @@ function AdminPage() {
     setEmailFilter("");
     setDateRange(undefined);
     setFilteredOrders(orders);
+  };
+
+  const handlePaymentStatusChange = async (orderId: string, status: OrderStatus) => {
+    const change = { payment: { status, updatedAt: getTimestamp() } };
+    await updateOrder(orderId, change);
+    const newOrder = orders.find(order => order.id === orderId);
+
+    if (newOrder) {
+      newOrder.payment = change.payment;
+      setFilteredOrders(prev => [...prev.filter(order => order.id !== orderId), newOrder]);
+    }
   };
 
   if (isLoading)
@@ -129,23 +125,43 @@ function AdminPage() {
                   <TableHead>Date</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Total</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Payment Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredOrders.map((order) => (
-                  <TableRow
-                    key={order.id}
-                    onClick={() => showDialog(order)}
-                    className="hover:bg-primary/10 cursor-pointer"
-                  >
+                {filteredOrders.map(order => (
+                  <TableRow key={order.id} className="hover:bg-primary/10">
                     <TableCell className="font-medium">{order.id}</TableCell>
-                    <TableCell>
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </TableCell>
+                    <TableCell>{getDate(order.createdAt).toLocaleString()}</TableCell>
                     <TableCell>{order.email}</TableCell>
-                    <TableCell>${order.amount.toFixed(2)}</TableCell>
-                    <TableCell>{order.paymentStatus}</TableCell>
+                    <TableCell>₹{order.amount.toFixed(2)}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-row gap-2 items-center">
+                        {order.payment.status}
+                        {["approval-pending", "initiated"].includes(order.payment.status) && (
+                          <div className="flex flex-row gap-2">
+                            <Button
+                              variant="default"
+                              size="icon"
+                              onClick={() => handlePaymentStatusChange(order.id, "paid")}>
+                              <CheckIcon />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => handlePaymentStatusChange(order.id, "admin-cancelled")}>
+                              <XMarkIcon />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="outline" size="icon" onClick={() => showDialog(order)}>
+                        <EyeIcon />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -154,14 +170,8 @@ function AdminPage() {
         </CardContent>
       </Card>
 
-      <Dialog
-        open={selectedOrder !== null}
-        onOpenChange={() => setSelectedOrder(null)}
-      >
-        <DialogContent
-          aria-describedby="order-details"
-          className="max-w-3xl max-h-[80vh]"
-        >
+      <Dialog open={selectedOrder !== null} onOpenChange={() => setSelectedOrder(null)}>
+        <DialogContent aria-describedby="order-details" className="max-w-3xl max-h-[80vh]">
           {selectedOrder && (
             <>
               <DialogHeader>
@@ -229,7 +239,7 @@ export default function ProtectedAdminPage() {
             placeholder="Password"
             value={password}
             className={`${error ? "border-red-500" : ""}`}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
           />
           <Button type="submit">Submit</Button>
         </div>
