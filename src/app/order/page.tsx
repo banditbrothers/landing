@@ -25,6 +25,7 @@ import LoadingScreen from "@/components/loadingScreen";
 import { validateCoupon } from "@/actions/validation";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";
 import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator";
 
 const countries = Country.getAllCountries();
 
@@ -53,13 +54,24 @@ const orderFormSchema = z.object({
 
 const SHIPPING_COST = 100; // ₹100 for shipping
 
-const calculateTotal = (products: SelectedDesignsType[]) => {
-  const subtotal = products.reduce((total, product) => {
+const getSubtotal = (products: SelectedDesignsType[]) => {
+  return products.reduce((total, product) => {
     const design = designsObject[product.designId];
     return total + design.price * product.quantity;
   }, 0);
+};
 
-  return subtotal + SHIPPING_COST;
+const getDiscountAmount = (subtotal: number, coupon: Coupon | null) => {
+  if (!coupon) return 0;
+  if (coupon.isFixed) return coupon.discount;
+  return (subtotal * coupon.discount) / 100;
+};
+
+const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) => {
+  const subtotal = getSubtotal(products);
+  const discount = getDiscountAmount(subtotal, coupon);
+
+  return subtotal - discount + SHIPPING_COST;
 };
 
 const showErrorToast = (message: string) => {
@@ -104,9 +116,9 @@ function OrderPageContent() {
   }, [watchCountry]);
 
   useEffect(() => {
-    const total = calculateTotal(watchProducts);
+    const total = calculateTotal(watchProducts, coupon);
     setOrderTotal(total);
-  }, [watchProducts]);
+  }, [watchProducts, coupon]);
 
   const handleDesignChange = (id: string, checked: boolean, onChange: (designs: SelectedDesignsType[]) => void) => {
     let newDesignIds = [...selectedDesignsIds];
@@ -139,10 +151,9 @@ function OrderPageContent() {
     if (code.length > 0) {
       const { isValid, coupon } = await validateCoupon(code);
       if (isValid) setCoupon(coupon);
-      else {
-        showErrorToast("Invalid Coupon");
-        form.resetField("couponCode");
-      }
+      else showErrorToast("Invalid Coupon");
+
+      form.resetField("couponCode");
     }
   };
 
@@ -160,6 +171,7 @@ function OrderPageContent() {
 
   const selectedDesignsIds = watchProducts.map(product => product.designId);
   const formIsReady = form.formState.isValid && selectedDesignsIds.length > 0;
+  const subtotal = getSubtotal(watchProducts);
 
   return (
     <div className="mx-auto py-10 px-2 max-w-lg">
@@ -422,38 +434,66 @@ function OrderPageContent() {
                 />
 
                 {selectedDesignsIds.length > 0 && (
-                  <div className="flex flex-col gap-2 py-4 mt-4 border-t">
-                    <div className="flex gap-2 mb-4">
-                      <FormField
-                        control={form.control}
-                        name="couponCode"
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input
-                                {...field}
-                                value={field.value ?? ""}
-                                placeholder="Enter coupon code"
-                                onKeyDown={e => {
-                                  if (e.key === "Enter") {
-                                    e.preventDefault();
-                                    handleValidateCoupon();
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <Button type="button" onClick={handleValidateCoupon} variant="secondary">
-                        Apply
-                      </Button>
+                  <div className="flex flex-col gap-2">
+                    <Separator className="mb-4" />
+
+                    <div className="flex flex-col gap-2">
+                      <div className="flex gap-2">
+                        <FormField
+                          control={form.control}
+                          name="couponCode"
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  value={field.value ?? ""}
+                                  placeholder="Enter coupon code"
+                                  onKeyDown={e => {
+                                    if (e.key === "Enter") {
+                                      e.preventDefault();
+                                      handleValidateCoupon();
+                                    }
+                                  }}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <Button type="button" onClick={handleValidateCoupon} variant="secondary">
+                          Apply
+                        </Button>
+                      </div>
+
+                      {coupon && (
+                        <div className="flex items-center gap-2 pl-3 pr-2 py-1 bg-secondary rounded-full text-xs w-fit">
+                          <span>{coupon.code}</span>
+                          <a
+                            href=""
+                            onClick={e => {
+                              e.preventDefault();
+                              setCoupon(null);
+                            }}>
+                            <X className="h-3 w-3" />
+                          </a>
+                        </div>
+                      )}
                     </div>
+
+                    <Separator className="my-4" />
 
                     <div className="flex justify-between items-center text-sm">
                       <span>Subtotal</span>
-                      <span>₹{orderTotal - SHIPPING_COST}</span>
+                      <span>₹{subtotal}</span>
                     </div>
+
+                    {coupon && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span>Discount</span>
+                        <span>- ₹{getDiscountAmount(subtotal, coupon)}</span>
+                      </div>
+                    )}
+
                     <div className="flex justify-between items-center text-sm">
                       <span>Shipping</span>
                       <span>₹{SHIPPING_COST}</span>

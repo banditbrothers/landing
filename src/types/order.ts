@@ -29,7 +29,9 @@ export type Order = {
 export type Coupon = {
   id: string;
   code: string;
-  type: "percentage" | "fixed";
+  name: string;
+  description: string;
+  isFixed: boolean;
   discount: number;
   createdAt: number;
   expiresAt: number;
