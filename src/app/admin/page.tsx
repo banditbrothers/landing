@@ -11,8 +11,9 @@ import { getOrders, updateOrder } from "@/actions/firestore";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getDate, getTimestamp, hash } from "@/utils/misc";
-import { CheckIcon, XMarkIcon, EyeIcon } from "@/components/icons";
+import { EyeIcon } from "@/components/icons";
 import LoadingScreen from "@/components/loadingScreen";
+import { CheckIcon, X } from "lucide-react";
 
 type FilterOrder =
   | {
@@ -105,7 +106,7 @@ function AdminPage() {
               placeholder="Filter by email..."
               value={emailFilter}
               onChange={onEmailFilterChange}
-              className="max-w-sm"
+              className="max-w-sm bg-background"
             />
             <Button onClick={clearFilters} className="rounded-md">
               Clear
@@ -146,7 +147,7 @@ function AdminPage() {
                               variant="outline"
                               size="icon"
                               onClick={() => handlePaymentStatusChange(order.id, "admin-cancelled")}>
-                              <XMarkIcon />
+                              <X />
                             </Button>
                           </div>
                         )}
