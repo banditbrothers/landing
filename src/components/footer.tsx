@@ -1,6 +1,7 @@
 import { whatsappKnowMoreLink } from "@/utils/whatsappMessageLinks";
 import { FullLogo } from "./fullLogo";
 import Link from "next/link";
+import { scrollTo } from "@/utils/misc";
 
 export default function Footer() {
   return (
@@ -8,23 +9,24 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0 flex items-center">
-            <FullLogo size={180} />
+            <Link
+              href="/"
+              onClick={e => {
+                e.preventDefault();
+                scrollTo("hero");
+              }}>
+              <FullLogo size={180} />
+            </Link>
           </div>
           <nav>
             <ul className="flex space-x-6">
               <li>
-                <Link
-                  href="/privacy"
-                  className="hover:text-primary-800 transition-colors duration-300"
-                >
+                <Link href="/privacy" className="hover:text-primary-800 transition-colors duration-300">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/terms"
-                  className="hover:text-primary-800 transition-colors duration-300"
-                >
+                <Link href="/terms" className="hover:text-primary-800 transition-colors duration-300">
                   Terms of Service
                 </Link>
               </li>
@@ -33,8 +35,7 @@ export default function Footer() {
                   href={whatsappKnowMoreLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-primary-800 transition-colors duration-300"
-                >
+                  className="hover:text-primary-800 transition-colors duration-300">
                   Contact Us
                 </Link>
               </li>
