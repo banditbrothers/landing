@@ -5,10 +5,9 @@ import { Button } from "@/components/ui/button";
 import NavBar from "@/components/navbar";
 import Footer from "@/components/footer";
 
-import { ProductLibrary } from "@/components/product-showcase/product-showcase";
-
-import { ProductSpecifications } from "@/components/product-specs/product-specs";
 import { Hero } from "@/components/hero/hero";
+import { DesignLibrary } from "@/components/design-showcase/design-showcase";
+import { ProductSpecifications } from "@/components/product-specs/product-specs";
 import { Features } from "@/components/features/features";
 import { Testimonials } from "@/components/testimonials/testimonials";
 import Link from "next/link";
@@ -34,7 +33,7 @@ export default function LandingPage() {
 
       <Hero />
 
-      <ProductLibrary />
+      <DesignLibrary />
 
       <Features />
 

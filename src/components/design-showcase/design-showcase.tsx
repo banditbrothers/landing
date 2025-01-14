@@ -12,16 +12,23 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { LoadingIcon } from "../loadingScreen";
 
-export const ProductLibraryContent = () => {
+export const DesignLibraryContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedDesignId = searchParams.get("design");
 
-  const handleProductClick = (design: Design) => {
+  /**
+   *
+   * this method of push and replace is causing the browser stack to grow which is not ideal.
+   * we need to `push` always because otherwise on mobile the back button would exit the browser onDialogClose.
+   * need to think of a better solution.
+   *
+   * */
+  const handleDesignClick = (design: Design) => {
     router.push(`?design=${design.id}`, { scroll: false });
   };
 
-  const handleProductOnClose = () => {
+  const handleDesignOnClose = () => {
     router.replace("/", { scroll: false });
   };
 
@@ -52,19 +59,19 @@ export const ProductLibraryContent = () => {
             ]}>
             <CarouselContent>
               {designs.map(product => (
-                <ProductCard key={product.id} product={product} onClick={() => handleProductClick(product)} />
+                <DesignCard key={product.id} product={product} onClick={() => handleDesignClick(product)} />
               ))}
             </CarouselContent>
           </Carousel>
         </div>
       </div>
 
-      <ProductDialog designId={selectedDesignId} onClose={handleProductOnClose} />
+      <ProductDialog designId={selectedDesignId} onClose={handleDesignOnClose} />
     </section>
   );
 };
 
-export const ProductCard = ({ product, onClick }: { product: Design; onClick: () => void }) => {
+export const DesignCard = ({ product, onClick }: { product: Design; onClick: () => void }) => {
   return (
     <CarouselItem className="basis-3/5 md:basis-1/2 lg:basis-1/4">
       <div className="w-full h-full scale-[0.9] transition-transform duration-300">
@@ -88,10 +95,10 @@ export const ProductCard = ({ product, onClick }: { product: Design; onClick: ()
   );
 };
 
-export const ProductLibrary = () => {
+export const DesignLibrary = () => {
   return (
     <Suspense fallback={<LoadingIcon />}>
-      <ProductLibraryContent />
+      <DesignLibraryContent />
     </Suspense>
   );
 };
