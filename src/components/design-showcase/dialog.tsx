@@ -1,6 +1,6 @@
 import { Design, designsObject } from "@/data/products";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { ShoppingCartIcon } from "../icons";
+import { ShoppingCartIcon } from "../misc/icons";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { standardDescription } from "@/data/products";

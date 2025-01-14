@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Design } from "@/data/products";
-import { PlusIcon } from "../icons";
+import { PlusIcon } from "../misc/icons";
 import Image from "next/image";
 
 export function DropdownMenuCheckboxes(props: {

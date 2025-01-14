@@ -21,7 +21,7 @@ import PaymentDrawer from "@/components/orders/paymentDrawer";
 import { Coupon, Order, SelectedDesignsType } from "@/types/order";
 import { getTimestamp } from "@/utils/misc";
 import { useSearchParams } from "next/navigation";
-import LoadingScreen, { LoadingIcon } from "@/components/loadingScreen";
+import LoadingScreen, { LoadingIcon } from "@/components/misc/loadingScreen";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";

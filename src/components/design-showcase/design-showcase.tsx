@@ -7,10 +7,10 @@ import ClassNamesPlugin from "embla-carousel-class-names";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import AutoplayPlugin from "embla-carousel-autoplay";
 import { ProductDialog } from "./dialog";
-import { ArrowRightCircleIcon } from "../icons";
+import { ArrowRightCircleIcon } from "../misc/icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { LoadingIcon } from "../loadingScreen";
+import { LoadingIcon } from "../misc/loadingScreen";
 
 export const DesignLibraryContent = () => {
   const router = useRouter();
