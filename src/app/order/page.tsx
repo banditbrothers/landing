@@ -218,8 +218,8 @@ function OrderPageContent() {
     <div className="mx-auto py-10 px-2 max-w-lg">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl flex justify-between items-center">
-            Begin the Brotherhood
+          <CardTitle className="text-2xl flex gap-10 justify-between items-center">
+            <span>Begin the Brotherhood</span>
             <Button
               variant="link"
               className="px-0"
