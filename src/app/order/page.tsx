@@ -386,6 +386,7 @@ function OrderPageContent() {
                                       {...field}
                                       onChange={e => {
                                         const intQty = parseInt(e.target.value);
+                                        if (intQty < 0 || intQty > 100) return;
                                         field.onChange(!isNaN(intQty) ? intQty : 0);
                                       }}
                                       type="number"
