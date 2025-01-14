@@ -17,16 +17,17 @@ import { DropdownMenuCheckboxes } from "@/components/orders/multiSelectDropdown"
 import { Badge } from "@/components/orders/badge";
 import Image from "next/image";
 import PaymentDrawer from "@/components/orders/paymentDrawer";
-import { createOrder, updateOrder } from "@/actions/firestore";
+
 import { Coupon, Order, SelectedDesignsType } from "@/types/order";
 import { getTimestamp } from "@/utils/misc";
 import { useSearchParams } from "next/navigation";
 import LoadingScreen, { LoadingIcon } from "@/components/loadingScreen";
-import { validateCoupon } from "@/actions/validation";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
+import { useOrderActions } from "@/hooks/useOrderActions";
+import { useCouponActions } from "@/hooks/useCouponActions";
 
 const countries = Country.getAllCountries();
 
@@ -87,11 +88,13 @@ const showSuccessToast = (message: string) => {
 };
 
 function OrderPageContent() {
-  const [states, setStates] = useState<IState[]>([]);
+  const [countryStates, setCountryStates] = useState<IState[]>([]);
   const [orderTotal, setOrderTotal] = useState(0);
   const [coupon, setCoupon] = useState<Coupon | null>(null);
-  const [fetchingCoupon, setFetchingCoupon] = useState(false);
   const [pendingPaymentOrder, setPendingPaymentOrder] = useState<Order | null>(null);
+
+  const { orderLoading, createOrder, updateOrder } = useOrderActions();
+  const { couponLoading, validateCoupon } = useCouponActions();
 
   const searchParams = useSearchParams();
   const paramDesignId = searchParams.get("design");
@@ -110,7 +113,7 @@ function OrderPageContent() {
   useEffect(() => {
     if (watchCountry) {
       const countryStates = State.getStatesOfCountry(watchCountry);
-      setStates(countryStates);
+      setCountryStates(countryStates);
     }
   }, [watchCountry]);
 
@@ -148,9 +151,8 @@ function OrderPageContent() {
   const handleValidateCoupon = async () => {
     const code = form.getValues("couponCode");
     if (code.length > 0) {
-      setFetchingCoupon(true);
       const { isValid, coupon } = await validateCoupon(code);
-      setFetchingCoupon(false);
+
       if (coupon && isValid) {
         if (orderTotal < coupon.minOrderAmount) {
           showErrorToast("Minimum Order Amount should be more than ₹" + coupon.minOrderAmount);
@@ -166,15 +168,15 @@ function OrderPageContent() {
   };
 
   const onPaymentComplete = async () => {
-    await updateOrder(pendingPaymentOrder!.id, { payment: { status: "approval-pending", updatedAt: getTimestamp() } });
     setPendingPaymentOrder(null);
+    await updateOrder(pendingPaymentOrder!.id, { payment: { status: "approval-pending", updatedAt: getTimestamp() } });
     showSuccessToast("Order Placed 🎉");
     form.reset();
   };
 
   const onPaymentCancel = async () => {
-    await updateOrder(pendingPaymentOrder!.id, { payment: { status: "cancelled", updatedAt: getTimestamp() } });
     setPendingPaymentOrder(null);
+    await updateOrder(pendingPaymentOrder!.id, { payment: { status: "cancelled", updatedAt: getTimestamp() } });
   };
 
   const selectedDesignsIds = watchProducts.map(product => product.designId);
@@ -307,7 +309,7 @@ function OrderPageContent() {
                               <SelectValue placeholder="Select State" />
                             </SelectTrigger>
                             <SelectContent>
-                              {states.map(state => (
+                              {countryStates.map(state => (
                                 <SelectItem key={state.isoCode} value={state.isoCode}>
                                   {state.name}
                                 </SelectItem>
@@ -450,12 +452,12 @@ function OrderPageContent() {
                           )}
                         />
                         <Button
-                          disabled={fetchingCoupon || watchCouponCode.length === 0}
+                          disabled={couponLoading.validating || watchCouponCode.length === 0}
                           type="button"
                           className="min-w-20"
                           onClick={handleValidateCoupon}
                           variant="secondary">
-                          {fetchingCoupon ? <LoadingIcon /> : "Apply"}
+                          {couponLoading.validating ? <LoadingIcon /> : "Apply"}
                         </Button>
                       </div>
 
@@ -502,8 +504,12 @@ function OrderPageContent() {
                   </div>
                 )}
 
-                <Button type="submit" className="w-full" disabled={!formIsReady}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={!formIsReady || orderLoading.create || orderLoading.update}>
                   {formIsReady ? `Pay ₹${orderTotal}` : "Pay Now"}
+                  {(orderLoading.create || orderLoading.update) && <LoadingIcon />}
                 </Button>
               </div>
             </form>

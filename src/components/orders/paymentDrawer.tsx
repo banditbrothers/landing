@@ -39,7 +39,7 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
     <>
       <Drawer open={open} dismissible={false} handleOnly>
         <DrawerContent hideBar aria-describedby="upi-qr-code" className="max-w-lg max-h-[85vh] justify-self-center">
-          <DrawerTitle className="text-xl font-semibold flex justify-between items-center pl-6 pt-6 pb-3">
+          <DrawerTitle className="text-xl font-semibold flex justify-between items-center px-6 pt-6 pb-3">
             <span className="text-center">Scan QR Code to Pay</span>
             <Button
               variant="link"
