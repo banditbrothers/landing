@@ -21,7 +21,7 @@ import { createOrder, updateOrder } from "@/actions/firestore";
 import { Coupon, Order, SelectedDesignsType } from "@/types/order";
 import { getTimestamp } from "@/utils/misc";
 import { useSearchParams } from "next/navigation";
-import LoadingScreen from "@/components/loadingScreen";
+import LoadingScreen, { LoadingIcon } from "@/components/loadingScreen";
 import { validateCoupon } from "@/actions/validation";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";
 import { toast } from "sonner";
@@ -63,8 +63,11 @@ const getSubtotal = (products: SelectedDesignsType[]) => {
 
 const getDiscountAmount = (subtotal: number, coupon: Coupon | null) => {
   if (!coupon) return 0;
-  if (coupon.isFixed) return coupon.discount;
-  return (subtotal * coupon.discount) / 100;
+
+  if (coupon.discountType === "fixed") return coupon.discount;
+  else if (coupon.discountType === "percentage") return (subtotal * coupon.discount) / 100;
+
+  return 0;
 };
 
 const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) => {
@@ -86,6 +89,7 @@ function OrderPageContent() {
   const [states, setStates] = useState<IState[]>([]);
   const [orderTotal, setOrderTotal] = useState(0);
   const [coupon, setCoupon] = useState<Coupon | null>(null);
+  const [fetchingCoupon, setFetchingCoupon] = useState(false);
   const [pendingPaymentOrder, setPendingPaymentOrder] = useState<Order | null>(null);
 
   const searchParams = useSearchParams();
@@ -98,15 +102,9 @@ function OrderPageContent() {
     mode: "onTouched",
   });
 
-  const watchCountry = useWatch({
-    control: form.control,
-    name: "address.country",
-  });
-
-  const watchProducts = useWatch({
-    control: form.control,
-    name: "products",
-  });
+  const watchCountry = useWatch({ control: form.control, name: "address.country" });
+  const watchProducts = useWatch({ control: form.control, name: "products" });
+  const watchCouponCode = useWatch({ control: form.control, name: "couponCode" });
 
   useEffect(() => {
     if (watchCountry) {
@@ -149,9 +147,18 @@ function OrderPageContent() {
   const handleValidateCoupon = async () => {
     const code = form.getValues("couponCode");
     if (code.length > 0) {
+      setFetchingCoupon(true);
       const { isValid, coupon } = await validateCoupon(code);
-      if (isValid) setCoupon(coupon);
-      else showErrorToast("Invalid Coupon");
+      setFetchingCoupon(false);
+      if (coupon && isValid) {
+        if (orderTotal < coupon.minOrderAmount) {
+          showErrorToast("Minimum Order Amount should be more than ₹" + coupon.minOrderAmount);
+          return;
+        }
+
+        setCoupon(coupon);
+        toast.success("Coupon Applied 🎉");
+      } else showErrorToast("Invalid Coupon");
 
       form.resetField("couponCode");
     }
@@ -190,11 +197,7 @@ function OrderPageContent() {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input
-                          onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
-                          placeholder="email@example.com"
-                          {...field}
-                        />
+                        <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -208,11 +211,7 @@ function OrderPageContent() {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input
-                          onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
-                          placeholder="John Doe"
-                          {...field}
-                        />
+                        <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -226,11 +225,7 @@ function OrderPageContent() {
                     <FormItem>
                       <FormLabel>Phone</FormLabel>
                       <FormControl>
-                        <Input
-                          onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
-                          placeholder="+919876543210"
-                          {...field}
-                        />
+                        <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -244,11 +239,7 @@ function OrderPageContent() {
                     <FormItem>
                       <FormLabel>Address Line 1</FormLabel>
                       <FormControl>
-                        <Input
-                          onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
-                          placeholder="Apartment, suite, etc."
-                          {...field}
-                        />
+                        <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -262,11 +253,7 @@ function OrderPageContent() {
                     <FormItem>
                       <FormLabel>Address Line 2 (Optional)</FormLabel>
                       <FormControl>
-                        <Input
-                          onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
-                          placeholder=""
-                          {...field}
-                        />
+                        <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -331,11 +318,7 @@ function OrderPageContent() {
                       <FormItem>
                         <FormLabel>City</FormLabel>
                         <FormControl>
-                          <Input
-                            onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
-                            placeholder="Mumbai"
-                            {...field}
-                          />
+                          <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -349,11 +332,7 @@ function OrderPageContent() {
                       <FormItem>
                         <FormLabel>Zip Code</FormLabel>
                         <FormControl>
-                          <Input
-                            onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
-                            placeholder="400001"
-                            {...field}
-                          />
+                          <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -460,8 +439,13 @@ function OrderPageContent() {
                             </FormItem>
                           )}
                         />
-                        <Button type="button" onClick={handleValidateCoupon} variant="secondary">
-                          Apply
+                        <Button
+                          disabled={fetchingCoupon || watchCouponCode.length === 0}
+                          type="button"
+                          className="min-w-20"
+                          onClick={handleValidateCoupon}
+                          variant="secondary">
+                          {fetchingCoupon ? <LoadingIcon /> : "Apply"}
                         </Button>
                       </div>
 

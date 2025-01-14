@@ -31,7 +31,8 @@ export type Coupon = {
   code: string;
   name: string;
   description: string;
-  isFixed: boolean;
+  discountType: "fixed" | "percentage";
+  minOrderAmount: number;
   discount: number;
   createdAt: number;
   expiresAt: number;
