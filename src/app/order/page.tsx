@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Country, State, IState } from "country-state-city";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { designsObject, designs } from "@/data/products";
 import { DropdownMenuCheckboxes } from "@/components/orders/multiSelectDropdown";
 import { Badge } from "@/components/orders/badge";
@@ -109,6 +109,37 @@ function OrderPageContent() {
   const watchCountry = useWatch({ control: form.control, name: "address.country" });
   const watchProducts = useWatch({ control: form.control, name: "products" });
   const watchCouponCode = useWatch({ control: form.control, name: "couponCode" });
+
+  const oldFieldsValues = useRef(form.getValues());
+  const watchAllFields = form.watch();
+
+  // Trigger form validation on auto-filled fields
+  // https://github.com/orgs/react-hook-form/discussions/1882#discussioncomment-9447454
+  useEffect(() => {
+    for (const target of Object.keys(watchAllFields)) {
+      const targetKey = target as keyof typeof watchAllFields;
+
+      if (targetKey === "address") {
+        const oldAddress = oldFieldsValues?.current?.[targetKey];
+        const newAddress = watchAllFields[targetKey];
+
+        if (oldAddress && newAddress) {
+          for (const addressField of Object.keys(newAddress)) {
+            const addressFieldKey = addressField as keyof typeof newAddress;
+            if (newAddress[addressFieldKey] !== oldAddress[addressFieldKey]) {
+              form.trigger(`${targetKey}.${addressFieldKey}`);
+            }
+          }
+        }
+      } else {
+        if (watchAllFields[targetKey] !== oldFieldsValues?.current?.[targetKey]) {
+          form.trigger(targetKey);
+        }
+      }
+    }
+
+    oldFieldsValues.current = watchAllFields;
+  }, [watchAllFields, form]);
 
   useEffect(() => {
     if (watchCountry) {
