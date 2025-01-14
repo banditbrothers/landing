@@ -35,61 +35,62 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
   return (
     <>
       <Drawer open={open} dismissible={false} handleOnly>
-        <DrawerContent
-          hideBar
-          aria-describedby="upi-qr-code"
-          className="p-6 flex flex-col self-center justify-self-center items-center gap-6 max-w-lg">
-          <DrawerTitle className="text-xl font-semibold">Scan QR Code to Pay</DrawerTitle>
+        <DrawerContent hideBar aria-describedby="upi-qr-code" className="max-w-lg max-h-[85vh] ">
+          <div className="overflow-y-auto p-6">
+            <div className="flex flex-col self-center justify-self-center items-center gap-6">
+              <DrawerTitle className="text-xl font-semibold ">Scan QR Code to Pay</DrawerTitle>
 
-          <div className="flex flex-col gap-6">
-            <Step title="Payment Instructions" step={1}>
-              <div className="max-w-md">
-                <ul className="list-disc list-inside text-sm ml-8">
-                  <li>Make the payment using the button or QR code</li>
-                  <li className="font-semibold">Make sure you take a screenshot of the payment</li>
-                </ul>
-              </div>
-            </Step>
+              <div className="flex flex-col gap-6">
+                <Step title="Payment Instructions" step={1}>
+                  <div className="max-w-md">
+                    <ul className="list-disc list-inside text-sm ml-8">
+                      <li>Make the payment using the button or QR code</li>
+                      <li className="font-semibold">Make sure you take a screenshot of the payment</li>
+                    </ul>
+                  </div>
+                </Step>
 
-            <Step title="Make Payment" step={2}>
-              <div className="flex flex-col gap-3 items-center justify-self-center max-w-md">
-                <QRCodeSVG value={upiUrl} className="bg-primary rounded-lg" size={256} marginSize={2} />
-                <span className="flex flex-row gap-2 items-center justify-center w-full">
-                  <Button className="max-w-xs" onClick={() => handleUpiAppClick(upiUrl)}>
-                    Pay with UPI App
+                <Step title="Make Payment" step={2}>
+                  <div className="flex flex-col gap-3 items-center justify-self-center max-w-md">
+                    <QRCodeSVG value={upiUrl} className="bg-primary rounded-lg" size={256} marginSize={2} />
+                    <span className="flex flex-row gap-2 items-center justify-center w-full">
+                      <Button className="max-w-xs" onClick={() => handleUpiAppClick(upiUrl)}>
+                        Pay with UPI App
+                      </Button>
+                    </span>
+                  </div>
+                </Step>
+
+                <Step title="Share Payment Proof" step={3}>
+                  <Link
+                    href={getWhatsappSharePaymentScreenshotLink(orderDetails)}
+                    onClick={handleSharePaymentScreenshot}
+                    rel="noopener noreferrer"
+                    className="ml-8"
+                    target="_blank">
+                    <Button variant="default" className="max-w-xs">
+                      Share Payment Screenshot on WhatsApp
+                    </Button>
+                  </Link>
+                </Step>
+
+                <Step
+                  step={4}
+                  title="Order Confirmation"
+                  description="if you did you job honestly, we will confirm your order"
+                />
+
+                <div className="flex flex-row justify-between w-full gap-2">
+                  <Button variant="destructive" className="max-w-xs" onClick={() => setShowCancelDialog(true)}>
+                    Cancel
                   </Button>
-                </span>
+                  <TextTooltip disabled={isPaymentShared} content="Share the payment proof before closing">
+                    <Button disabled={!isPaymentShared} variant="outline" onClick={onComplete} className="max-w-xs">
+                      Close
+                    </Button>
+                  </TextTooltip>
+                </div>
               </div>
-            </Step>
-
-            <Step title="Share Payment Proof" step={3}>
-              <Link
-                href={getWhatsappSharePaymentScreenshotLink(orderDetails)}
-                onClick={handleSharePaymentScreenshot}
-                rel="noopener noreferrer"
-                className="ml-8"
-                target="_blank">
-                <Button variant="default" className="max-w-xs">
-                  Share Payment Screenshot on WhatsApp
-                </Button>
-              </Link>
-            </Step>
-
-            <Step
-              step={4}
-              title="Order Confirmation"
-              description="if you did you job honestly, we will confirm your order"
-            />
-
-            <div className="flex flex-row justify-between w-full gap-2">
-              <Button variant="destructive" className="max-w-xs" onClick={() => setShowCancelDialog(true)}>
-                Cancel
-              </Button>
-              <TextTooltip disabled={isPaymentShared} content="Share the payment proof before closing">
-                <Button disabled={!isPaymentShared} variant="outline" onClick={onComplete} className="max-w-xs">
-                  Close
-                </Button>
-              </TextTooltip>
             </div>
           </div>
         </DrawerContent>
@@ -104,17 +105,19 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
-              No, Keep Order
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => {
-                setShowCancelDialog(false);
-                onCancel();
-              }}>
-              Yes, Cancel Order
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
+                No, Keep Order
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  setShowCancelDialog(false);
+                  onCancel();
+                }}>
+                Yes, Cancel Order
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
