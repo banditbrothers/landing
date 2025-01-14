@@ -1,12 +1,13 @@
 import { Drawer, DrawerContent, DrawerTitle } from "../ui/drawer";
-import { Button } from "../ui/button";
+import { Button, ButtonWithTooltip } from "../ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { getWhatsappNeedHelpLink, getWhatsappSharePaymentScreenshotLink } from "@/utils/whatsappMessageLinks";
 import Link from "next/link";
 import { Order } from "@/types/order";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useState } from "react";
-import { TextTooltip } from "../tooltip";
+import { Copy, CopyCheck } from "lucide-react";
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 
 const upiId = "abbas.i.merchant@okaxis";
 const storeName = "Bandit Brothers";
@@ -22,6 +23,8 @@ type PaymentDrawerProps = {
 export default function PaymentDrawer({ open, onComplete, onCancel, amount, orderDetails }: PaymentDrawerProps) {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [isPaymentShared, setIsPaymentShared] = useState(false);
+
+  const { isCopied, copy } = useCopyToClipboard(2000);
 
   const handleUpiAppClick = (_upiUrl: string) => {
     window.location.href = _upiUrl;
@@ -40,6 +43,7 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
             <span className="text-center">Scan QR Code to Pay</span>
             <Button
               variant="link"
+              className="px-0"
               onClick={() => window.open(getWhatsappNeedHelpLink(orderDetails), "_blank", "noreferrer noopener")}>
               Need Help?
             </Button>
@@ -51,7 +55,12 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
                   <div className="max-w-md">
                     <ul className="list-disc list-inside text-sm ml-8">
                       <li>Make the payment using the button or QR code</li>
-                      <li className="font-semibold">Make sure you take a screenshot of the payment</li>
+                      <li>
+                        If you&apos;re on iOS, you might need to copy the UPI ID and paste it in your preferred UPI app
+                      </li>
+                      <li className="font-semibold">
+                        Make sure you take a screenshot of the payment and share it on WhatsApp using the button below
+                      </li>
                     </ul>
                   </div>
                 </Step>
@@ -59,6 +68,12 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
                 <Step title="Make Payment" step={2}>
                   <div className="flex flex-col gap-3 items-center justify-self-center max-w-md">
                     <QRCodeSVG value={upiUrl} className="bg-primary rounded-lg" size={256} marginSize={2} />
+                    <div className="text-muted-foreground flex flex-row gap-2 items-center justify-center">
+                      <span className="text-sm">{upiId}</span>
+                      <button onClick={() => copy(upiId)}>
+                        {isCopied ? <CopyCheck className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                      </button>
+                    </div>
                     <span className="flex flex-row gap-2 items-center justify-center w-full">
                       <Button className="max-w-xs" onClick={() => handleUpiAppClick(upiUrl)}>
                         Pay with UPI App
@@ -90,11 +105,16 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
                   <Button variant="destructive" className="max-w-xs" onClick={() => setShowCancelDialog(true)}>
                     Cancel
                   </Button>
-                  <TextTooltip disabled={isPaymentShared} content="Share the payment proof before closing">
-                    <Button disabled={!isPaymentShared} variant="outline" onClick={onComplete} className="max-w-xs">
-                      Close
-                    </Button>
-                  </TextTooltip>
+
+                  <ButtonWithTooltip
+                    disabled={!isPaymentShared}
+                    variant="outline"
+                    onClick={onComplete}
+                    className="max-w-xs select-none"
+                    tooltipDisabled={isPaymentShared}
+                    tooltipContent="Share the payment proof before closing">
+                    Close
+                  </ButtonWithTooltip>
                 </div>
               </div>
             </div>

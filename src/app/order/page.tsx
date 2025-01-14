@@ -168,7 +168,7 @@ function OrderPageContent() {
   const onPaymentComplete = async () => {
     await updateOrder(pendingPaymentOrder!.id, { payment: { status: "approval-pending", updatedAt: getTimestamp() } });
     setPendingPaymentOrder(null);
-    showSuccessToast("Order Placed");
+    showSuccessToast("Order Placed 🎉");
     form.reset();
   };
 
@@ -189,6 +189,7 @@ function OrderPageContent() {
             Begin the Brotherhood
             <Button
               variant="link"
+              className="px-0"
               onClick={() => window.open(getWhatsappNeedHelpLink(form.getValues()), "_blank", "noreferrer noopener")}>
               Need Help?
             </Button>
