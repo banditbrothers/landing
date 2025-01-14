@@ -19,14 +19,15 @@ export const ProductDialog = ({ product, onClose }: ProductDialogProps) => {
       onOpenChange={open => {
         if (!open) onClose();
       }}>
-      <DialogContent aria-describedby="product-dialog" className="sm:max-w-[800px]">
+      <DialogContent aria-describedby="product-dialog" className="sm:max-w-4xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{product ? product.name : "Product"}</DialogTitle>
+          <DialogTitle>{product.name}</DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
           <div className="relative aspect-square">
             {product && <Image fill src={product.image} alt={product.name} className="object-cover rounded-md" />}
           </div>
+
           <div className="flex flex-col justify-between">
             <div className="flex flex-col gap-6">
               <div className="flex items-baseline flex-col">
