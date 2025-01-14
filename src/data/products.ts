@@ -13,7 +13,7 @@ export const standardDescription = {
 
 export const designs: Design[] = [
   {
-    id: "alien",
+    id: "space-alien",
     name: "Gimme Some Space",
     description:
       "Beam me up, but make it stylish! This print features a cheeky UFOs cruising through a galaxy of twinkling stars, ready to abduct your sense of humor. A quirky cosmic vibe that's truly out of this world!",
@@ -21,7 +21,7 @@ export const designs: Design[] = [
     price: 250,
   },
   {
-    id: "bolt",
+    id: "awestruck",
     name: "Awestruck",
     description:
       "Feel the power of Awestruck! This thundering print brings bold red lightning bolts crackling, igniting energy with every glance. Perfect for those who live life on full charge!",
@@ -29,7 +29,7 @@ export const designs: Design[] = [
     price: 250,
   },
   {
-    id: "cat-trippy",
+    id: "meow-meow",
     name: "Meow Meow!!",
     description:
       "Get whiskered away with this trippy feline vibe! A funky cat design with hypnotic colors, perfect for those who love a dose of quirky cool. Meow-some style guaranteed!",
@@ -53,7 +53,7 @@ export const designs: Design[] = [
     price: 250,
   },
   {
-    id: "tea",
+    id: "chai-pila-do",
     name: "Chai Pilaaa Doo",
     description:
       "As refreshing as your first sip, this print brews the timeless joy of tea with a splash of style. Perfect for tea lovers who wear their chai pride!",
