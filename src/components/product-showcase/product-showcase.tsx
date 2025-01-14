@@ -9,8 +9,10 @@ import AutoplayPlugin from "embla-carousel-autoplay";
 import { ProductDialog } from "./dialog";
 import { ArrowRightCircleIcon } from "../icons";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import { LoadingIcon } from "../loadingScreen";
 
-export const ProductLibrary = () => {
+export const ProductLibraryContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedDesignId = searchParams.get("design");
@@ -79,5 +81,13 @@ export const ProductCard = ({ product, onClick }: { product: Design; onClick: ()
         </div>
       </div>
     </CarouselItem>
+  );
+};
+
+export const ProductLibrary = () => {
+  return (
+    <Suspense fallback={<LoadingIcon />}>
+      <ProductLibraryContent />
+    </Suspense>
   );
 };
