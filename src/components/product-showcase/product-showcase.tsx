@@ -55,7 +55,7 @@ export const ProductLibraryContent = () => {
         </div>
       </div>
 
-      <ProductDialog designId={selectedDesignId} onClose={() => router.back()} />
+      <ProductDialog designId={selectedDesignId} onClose={() => router.replace("/", { scroll: false })} />
     </section>
   );
 };
