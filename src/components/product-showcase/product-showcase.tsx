@@ -18,7 +18,11 @@ export const ProductLibraryContent = () => {
   const selectedDesignId = searchParams.get("design");
 
   const handleProductClick = (design: Design) => {
-    router.replace(`?design=${design.id}`, { scroll: false });
+    router.push(`?design=${design.id}`, { scroll: false });
+  };
+
+  const handleProductOnClose = () => {
+    router.replace("/", { scroll: false });
   };
 
   return (
@@ -55,7 +59,7 @@ export const ProductLibraryContent = () => {
         </div>
       </div>
 
-      <ProductDialog designId={selectedDesignId} onClose={() => router.replace("/", { scroll: false })} />
+      <ProductDialog designId={selectedDesignId} onClose={handleProductOnClose} />
     </section>
   );
 };
