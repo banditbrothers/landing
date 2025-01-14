@@ -1,4 +1,4 @@
-import { validateCoupon } from "@/actions/validation";
+import { validateCoupon } from "@/actions/coupons";
 import { useState } from "react";
 
 export const useCouponActions = () => {

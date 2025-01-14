@@ -1,4 +1,4 @@
-import { createOrder, updateOrder } from "@/actions/firestore";
+import { createOrder, updateOrder } from "@/actions/orders";
 import { useState } from "react";
 
 export const useOrderActions = () => {

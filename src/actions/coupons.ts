@@ -1,27 +1,19 @@
 "use server";
 
+import { getTimestamp } from "@/utils/misc";
+import { Coupon } from "@/types/order";
+import { addMonths } from "date-fns";
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase";
-import { Coupon, Order } from "@/types/order";
-import { getTimestamp } from "@/utils/misc";
-import { addMonths } from "date-fns";
 
-export const getOrders = async (): Promise<Order[]> => {
-  const orders = await firestore().collection(Collections.orders).orderBy("createdAt", "desc").get();
-  return orders.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Order[];
-};
+export const validateCoupon = async (code: string) => {
+  const coupon = await getCoupon(code);
 
-export const createOrder = async (order: Partial<Order>) => {
-  const orderRef = await firestore().collection(Collections.orders).add(order);
-  return { ...order, id: orderRef.id } as Order;
-};
+  if (!coupon) return { error: "Coupon not found", isValid: false, coupon: null };
+  if (!coupon.isActive) return { error: "Coupon is not active", isValid: false, coupon: null };
+  if (coupon.expiresAt < getTimestamp()) return { error: "Coupon has expired", isValid: false, coupon: null };
 
-export const updateOrder = async (orderId: string, order: Partial<Order>) => {
-  await firestore().collection(Collections.orders).doc(orderId).update(order);
-  return true;
+  return { error: null, isValid: true, coupon };
 };
 
 export const getCoupon = async (code: string) => {

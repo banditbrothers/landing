@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Order, OrderStatus } from "@/types/order";
-import { getOrders, updateOrder } from "@/actions/firestore";
+import { getOrders, updateOrder } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getDate, getTimestamp, hash } from "@/utils/misc";
