@@ -2,16 +2,22 @@ import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 
 import Image from "next/image";
 import { Design, designs } from "@/data/products";
-import { useState } from "react";
 
 import ClassNamesPlugin from "embla-carousel-class-names";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import AutoplayPlugin from "embla-carousel-autoplay";
 import { ProductDialog } from "./dialog";
 import { ArrowRightCircleIcon } from "../icons";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const ProductLibrary = () => {
-  const [selectedProduct, setSelectedProduct] = useState<Design | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedDesignId = searchParams.get("design");
+
+  const handleProductClick = (design: Design) => {
+    router.push(`?design=${design.id}`, { scroll: false });
+  };
 
   return (
     <section id="product-library" className="py-20 scroll-mt-16">
@@ -31,42 +37,28 @@ export const ProductLibrary = () => {
                 inView: "",
               }),
               AutoplayPlugin({
-                active: !selectedProduct,
+                active: !selectedDesignId,
                 delay: 3000,
                 playOnInit: true,
                 stopOnInteraction: false,
                 stopOnMouseEnter: true,
               }),
-            ]}
-          >
+            ]}>
             <CarouselContent>
-              {designs.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onClick={() => setSelectedProduct(product)}
-                />
+              {designs.map(product => (
+                <ProductCard key={product.id} product={product} onClick={() => handleProductClick(product)} />
               ))}
             </CarouselContent>
           </Carousel>
         </div>
       </div>
 
-      <ProductDialog
-        product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-      />
+      {selectedDesignId && <ProductDialog designId={selectedDesignId} onClose={() => router.back()} />}
     </section>
   );
 };
 
-export const ProductCard = ({
-  product,
-  onClick,
-}: {
-  product: Design;
-  onClick: () => void;
-}) => {
+export const ProductCard = ({ product, onClick }: { product: Design; onClick: () => void }) => {
   return (
     <CarouselItem className="basis-3/5 md:basis-1/2 lg:basis-1/4">
       <div className="w-full h-full scale-[0.9] transition-transform duration-300">
@@ -75,17 +67,10 @@ export const ProductCard = ({
             <div>
               <div className="flex flex-col items-center">
                 <div className="relative w-full aspect-square">
-                  <Image
-                    fill
-                    src={product.image}
-                    alt={product.name}
-                    className="object-cover rounded-xl"
-                  />
+                  <Image fill src={product.image} alt={product.name} className="object-cover rounded-xl" />
                 </div>
                 <div className="flex flex-row w-full mt-4 mb-2 px-1 justify-between">
-                  <h3 className="text-xl font-semibold self-center">
-                    {product.name}
-                  </h3>
+                  <h3 className="text-xl font-semibold self-center">{product.name}</h3>
                   <ArrowRightCircleIcon className="w-8 h-8 text-bandit-orange" />
                 </div>
               </div>
