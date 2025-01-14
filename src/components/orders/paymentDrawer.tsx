@@ -35,11 +35,10 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
   return (
     <>
       <Drawer open={open} dismissible={false} handleOnly>
-        <DrawerContent hideBar aria-describedby="upi-qr-code" className="max-w-lg max-h-[85vh] ">
+        <DrawerContent hideBar aria-describedby="upi-qr-code" className="max-w-lg max-h-[85vh] justify-self-center">
+          <DrawerTitle className="text-xl font-semibold text-center pt-6 pb-3">Scan QR Code to Pay</DrawerTitle>
           <div className="overflow-y-auto p-6">
-            <div className="flex flex-col self-center justify-self-center items-center gap-6">
-              <DrawerTitle className="text-xl font-semibold ">Scan QR Code to Pay</DrawerTitle>
-
+            <div className="flex flex-col items-center gap-6">
               <div className="flex flex-col gap-6">
                 <Step title="Payment Instructions" step={1}>
                   <div className="max-w-md">
