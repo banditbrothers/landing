@@ -13,14 +13,6 @@ export const standardDescription = {
 
 export const designs: Design[] = [
   {
-    id: "abstract",
-    name: "Be Color - Fool",
-    description:
-      "An explosion of quirky fun! This print features a mash-up of vibrant animated characters that bring out your playful side. Perfect for standing out in any crowd!",
-    image: "/products/abstract.webp",
-    price: 250,
-  },
-  {
     id: "alien",
     name: "Gimme Some Space",
     description:
@@ -74,6 +66,14 @@ export const designs: Design[] = [
     description:
       "A swirling vortex of vivid colors and abstract patterns, this design screams energy and boldness. Perfect for making a vibrant and unique statement!",
     image: "/products/color-wave.webp",
+    price: 250,
+  },
+  {
+    id: "out-of-words",
+    name: "Out of Words",
+    description:
+      "A bold, chaotic blend of grunge textures and rebellious scribbles. Cryptic phrases collide in layered graffiti-style mayhem. Perfect for those who embrace edgy, unapologetic individuality.",
+    image: "/products/out-of-words.webp",
     price: 250,
   },
 ];
