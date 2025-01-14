@@ -18,7 +18,7 @@ export const ProductLibraryContent = () => {
   const selectedDesignId = searchParams.get("design");
 
   const handleProductClick = (design: Design) => {
-    router.push(`?design=${design.id}`, { scroll: false });
+    router.replace(`?design=${design.id}`, { scroll: false });
   };
 
   return (
