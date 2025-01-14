@@ -1,7 +1,7 @@
 import { Drawer, DrawerContent, DrawerTitle } from "../ui/drawer";
 import { Button } from "../ui/button";
 import { QRCodeSVG } from "qrcode.react";
-import { getWhatsappSharePaymentScreenshotLink } from "@/utils/whatsappMessageLinks";
+import { getWhatsappNeedHelpLink, getWhatsappSharePaymentScreenshotLink } from "@/utils/whatsappMessageLinks";
 import Link from "next/link";
 import { Order } from "@/types/order";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
@@ -36,7 +36,14 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
     <>
       <Drawer open={open} dismissible={false} handleOnly>
         <DrawerContent hideBar aria-describedby="upi-qr-code" className="max-w-lg max-h-[85vh] justify-self-center">
-          <DrawerTitle className="text-xl font-semibold text-center pt-6 pb-3">Scan QR Code to Pay</DrawerTitle>
+          <DrawerTitle className="text-xl font-semibold flex justify-between items-center pl-6 pt-6 pb-3">
+            <span className="text-center">Scan QR Code to Pay</span>
+            <Button
+              variant="link"
+              onClick={() => window.open(getWhatsappNeedHelpLink(orderDetails), "_blank", "noreferrer noopener")}>
+              Need Help?
+            </Button>
+          </DrawerTitle>
           <div className="overflow-y-auto p-6">
             <div className="flex flex-col items-center gap-6">
               <div className="flex flex-col gap-6">

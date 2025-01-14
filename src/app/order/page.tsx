@@ -26,6 +26,7 @@ import { validateCoupon } from "@/actions/validation";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
+import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
 
 const countries = Country.getAllCountries();
 
@@ -184,7 +185,14 @@ function OrderPageContent() {
     <div className="mx-auto py-10 px-2 max-w-lg">
       <Card>
         <CardHeader>
-          <CardTitle>Begin the Brotherhood</CardTitle>
+          <CardTitle className="text-2xl flex justify-between items-center">
+            Begin the Brotherhood
+            <Button
+              variant="link"
+              onClick={() => window.open(getWhatsappNeedHelpLink(form.getValues()), "_blank", "noreferrer noopener")}>
+              Need Help?
+            </Button>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>

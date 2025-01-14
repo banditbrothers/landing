@@ -14,6 +14,7 @@ import { getDate, getTimestamp, hash } from "@/utils/misc";
 import { EyeIcon } from "@/components/icons";
 import LoadingScreen from "@/components/loadingScreen";
 import { CheckIcon, X } from "lucide-react";
+import { getAddressString } from "@/utils/address";
 
 type FilterOrder =
   | {
@@ -120,6 +121,7 @@ function AdminPage() {
                   <TableHead>Order ID</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Address</TableHead>
                   <TableHead>Total</TableHead>
                   <TableHead>Payment Status</TableHead>
                   <TableHead>Actions</TableHead>
@@ -131,6 +133,7 @@ function AdminPage() {
                     <TableCell className="font-medium">{order.id}</TableCell>
                     <TableCell>{getDate(order.createdAt).toLocaleString()}</TableCell>
                     <TableCell>{order.email}</TableCell>
+                    <TableCell className="max-w-xs">{getAddressString(order.address)}</TableCell>
                     <TableCell>₹{order.amount.toFixed(2)}</TableCell>
                     <TableCell>
                       <div className="flex flex-row gap-2 items-center">

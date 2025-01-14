@@ -1,17 +1,19 @@
 import { designsObject } from "@/data/products";
 import { Order } from "@/types/order";
 
-export const whatsappKnowMoreLink = `https://api.whatsapp.com/send?phone=917977884773&text=${encodeURIComponent(
+const whatsappPhoneNumber = "917977884773";
+
+export const whatsappKnowMoreLink = `https://api.whatsapp.com/send?phone=${whatsappPhoneNumber}&text=${encodeURIComponent(
   "Hey, I would like to know more about your products"
 )}`;
 
-export const getWhatsappShopNowLink = (name?: string) => {
+export const getWhatsappShopNowLink = (design?: string) => {
   let message = "";
-  if (name) message = `Hey, I'm interested in ordering the "${name}" bandana. Can you help me place an order?`;
+  if (design) message = `Hey, I'm interested in ordering the "${design}" bandana. Can you help me place an order?`;
   else message = `Hey, I'm interested in ordering a bandana. Can you help me place an order?`;
 
   const encodedMessage = encodeURIComponent(message);
-  return `https://api.whatsapp.com/send?phone=917977884773&text=${encodedMessage}`;
+  return `https://api.whatsapp.com/send?phone=${whatsappPhoneNumber}&text=${encodedMessage}`;
 };
 
 export const getWhatsappSharePaymentScreenshotLink = (orderDetails: Order) => {
@@ -23,5 +25,18 @@ export const getWhatsappSharePaymentScreenshotLink = (orderDetails: Order) => {
 
   message += `\n\nHere is the screenshot of the payment `;
   const encodedMessage = encodeURIComponent(message);
-  return `https://api.whatsapp.com/send?phone=917977884773&text=${encodedMessage}`;
+  return `https://api.whatsapp.com/send?phone=${whatsappPhoneNumber}&text=${encodedMessage}`;
+};
+
+export const getWhatsappNeedHelpLink = (orderDetails: Partial<Order>) => {
+  let message = `Hey, I need help with my order ${orderDetails.id ? `\n\`ID: ${orderDetails.id}\`` : ""}`;
+
+  if (orderDetails.products) {
+    message += `\n\n*Products* \n${orderDetails
+      .products!.map(product => `- ${designsObject[product.designId]!.name}: ${product.quantity}`)
+      .join("\n")}`;
+  }
+
+  const encodedMessage = encodeURIComponent(message);
+  return `https://api.whatsapp.com/send?phone=${whatsappPhoneNumber}&text=${encodedMessage}`;
 };

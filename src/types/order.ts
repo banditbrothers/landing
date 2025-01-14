@@ -1,5 +1,14 @@
 export type OrderStatus = "initiated" | "approval-pending" | "paid" | "cancelled" | "admin-cancelled";
 
+export type Address = {
+  line1: string;
+  line2?: string;
+  country: string;
+  state: string;
+  city: string;
+  zip: string;
+};
+
 export type Order = {
   id: string;
   createdAt: number;
@@ -8,22 +17,9 @@ export type Order = {
   phone: string;
   amount: number;
   couponCode: string | null;
-  address: {
-    line1: string;
-    line2: string;
-    country: string;
-    state: string;
-    city: string;
-    zip: string;
-  };
-  products: {
-    designId: string;
-    quantity: number;
-  }[];
-  payment: {
-    status: OrderStatus;
-    updatedAt: number;
-  };
+  address: Address;
+  products: SelectedDesignsType[];
+  payment: { status: OrderStatus; updatedAt: number };
 };
 
 export type Coupon = {
