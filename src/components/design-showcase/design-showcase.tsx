@@ -1,18 +1,18 @@
-import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
+import { Design } from "@/data/designs";
 
-import Image from "next/image";
-import { Design, designs } from "@/data/designs";
-
-import ClassNamesPlugin from "embla-carousel-class-names";
-import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import AutoplayPlugin from "embla-carousel-autoplay";
 import { ProductDialog } from "./dialog";
-import { ArrowRightCircleIcon } from "../misc/icons";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { LoadingIcon } from "../misc/loadingScreen";
+import { DesignCarousel } from "./carousel";
+import { DesignGrid } from "./grid";
+import { GalleryHorizontal } from "lucide-react";
+import { Grid2X2Icon } from "lucide-react";
+import { Button } from "../ui/button";
 
 export const DesignLibraryContent = () => {
+  const [selectedShowcaseType, setSelectedShowcaseType] = useState<"carousel" | "grid">("carousel");
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedDesignId = searchParams.get("design");
@@ -35,63 +35,30 @@ export const DesignLibraryContent = () => {
   return (
     <section id="product-library" className="py-20 scroll-mt-16">
       <div className=" mx-auto">
-        <h2 className="text-4xl font-bold text-center mb-16">Our Products</h2>
+        <h2 className="text-4xl font-bold text-center mb-16 flex flex-row justify-center items-center gap-4">
+          <span>Our Products</span>
+          {selectedShowcaseType === "carousel" ? (
+            <Button variant="outline" onClick={() => setSelectedShowcaseType("grid")}>
+              <Grid2X2Icon />
+            </Button>
+          ) : (
+            <Button variant="outline" onClick={() => setSelectedShowcaseType("carousel")}>
+              <GalleryHorizontal />
+            </Button>
+          )}
+        </h2>
 
         <div className="mx-auto">
-          <Carousel
-            opts={{ align: "center", loop: true }}
-            className="w-full"
-            plugins={[
-              WheelGesturesPlugin({ wheelDraggingClass: "" }),
-              ClassNamesPlugin({
-                loop: "",
-                draggable: "",
-                dragging: "",
-                inView: "",
-              }),
-              AutoplayPlugin({
-                active: !selectedDesignId,
-                delay: 3000,
-                playOnInit: true,
-                stopOnInteraction: false,
-                stopOnMouseEnter: true,
-              }),
-            ]}>
-            <CarouselContent>
-              {designs.map(product => (
-                <DesignCard key={product.id} product={product} onClick={() => handleDesignClick(product)} />
-              ))}
-            </CarouselContent>
-          </Carousel>
+          {selectedShowcaseType === "carousel" ? (
+            <DesignCarousel selectedDesignId={selectedDesignId} handleDesignClick={handleDesignClick} />
+          ) : (
+            <DesignGrid selectedDesignId={selectedDesignId} handleDesignClick={handleDesignClick} />
+          )}
         </div>
       </div>
 
       <ProductDialog designId={selectedDesignId} onClose={handleDesignOnClose} />
     </section>
-  );
-};
-
-export const DesignCard = ({ product, onClick }: { product: Design; onClick: () => void }) => {
-  return (
-    <CarouselItem className="basis-3/5 md:basis-1/2 lg:basis-1/4">
-      <div className="w-full h-full scale-[0.9] transition-transform duration-300">
-        <div className="p-4 bg-card rounded-xl">
-          <button onClick={onClick} className="w-full h-full">
-            <div>
-              <div className="flex flex-col items-center">
-                <div className="relative w-full aspect-square">
-                  <Image fill src={product.image} alt={product.name} className="object-cover rounded-xl" />
-                </div>
-                <div className="flex flex-row w-full mt-4 mb-2 px-1 justify-between">
-                  <h3 className="text-xl font-semibold self-center">{product.name}</h3>
-                  <ArrowRightCircleIcon className="w-8 h-8 text-bandit-orange" />
-                </div>
-              </div>
-            </div>
-          </button>
-        </div>
-      </div>
-    </CarouselItem>
   );
 };
 
