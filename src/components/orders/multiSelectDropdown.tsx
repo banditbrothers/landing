@@ -25,7 +25,7 @@ export function DropdownMenuCheckboxes(props: {
           <PlusIcon className="w-4 h-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64">
+      <DropdownMenuContent align="end" className="w-64 max-h-[50vh] overflow-y-auto">
         {props.designs.map(design => (
           <DropdownMenuCheckboxItem
             key={design.name}

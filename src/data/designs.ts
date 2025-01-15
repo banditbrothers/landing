@@ -37,14 +37,6 @@ export const designs: Design[] = [
     price: 250,
   },
   {
-    id: "un-boo-lievable",
-    name: "Un - Boo - lievable",
-    description:
-      "Say hello to Un-boo-lievable! Adorably spooked ghosts bring a playful, haunting charm. A ghostly design that' frightfully fun!",
-    image: "/designs/un-boo-lievable.webp",
-    price: 250,
-  },
-  {
     id: "mooshi-mooshi",
     name: "Mooshi Mooshi",
     description:
@@ -69,11 +61,83 @@ export const designs: Design[] = [
     price: 250,
   },
   {
+    id: "holy-funk",
+    name: "Holy Funk",
+    description:
+      "Dive into a vibrant maze of liquid neon trails, oozing with quirky charm. Each swirl feels like a dance of funky energy on black. Perfect for anyone who loves bold, standout vibes!",
+    image: "/designs/holy-funk.webp",
+    price: 250,
+  },
+  {
+    id: "soda-lightful",
+    name: "Soda-lightful",
+    description:
+      "Quench your style thirst with this fizzy explosion of soda bottles! A bubbly, fun design perfect for those who bring the pop to every party. Stay cool, stay comfy, stay carbonated!",
+    image: "/designs/soda-lightful.webp",
+    price: 250,
+  },
+  {
+    id: "un-boo-lievable",
+    name: "Un-Boo-lievable",
+    description:
+      "Say hello to Un-boo-lievable! Adorably spooked ghosts bring a playful, haunting charm. A ghostly design that' frightfully fun!",
+    image: "/designs/un-boo-lievable.webp",
+    price: 250,
+  },
+  {
+    id: "tick-tick-boom",
+    name: "Tick Tick Boom",
+    description:
+      "A quirky mix of speed and chaos, this neck gaiter revs up your style with explosive flair. Fun, bold, and utterly unique—it's the perfect gear for thrill junkies!",
+    image: "/designs/tick-tick-boom.webp",
+    price: 250,
+  },
+  {
+    id: "fin-tastic",
+    name: "Fin-tastic",
+    description:
+      "Make waves with this shark fin inspired bandana! Featuring sleek fins slicing through the waters, it's perfect for bold adventurers. Dive into style with Bandit Brothers' ultimate neckwear!",
+    image: "/designs/fin-tastic.webp",
+    price: 250,
+  },
+  {
     id: "out-of-words",
     name: "Out of Words",
     description:
       "A bold, chaotic blend of grunge textures and rebellious scribbles. Cryptic phrases collide in layered graffiti-style mayhem. Perfect for those who embrace edgy, unapologetic individuality.",
     image: "/designs/out-of-words.webp",
+    price: 250,
+  },
+  {
+    id: "dolphin-ately-cool",
+    name: "Dolphin-ately Cool",
+    description:
+      "Make a splash with this dolphin-inspired bandana! Featuring playful oceanic swirls and sleek dolphins riding the waves, it's like carrying the spirit of the sea wherever you go. Dive into adventure with Bandit Brothers' unique style!",
+    image: "/designs/dolphin-ately-cool.webp",
+    price: 250,
+  },
+  {
+    id: "only-confusion",
+    name: "Only Confusion",
+    description:
+      "Unleash your inner detective with this fiery red bandana, riddled with question marks and a mysterious bat-eared silhouette. It's a puzzle for your face, perfect for those who thrive on intrigue and style. Rock it like a superhero solving fashion crimes!",
+    image: "/designs/only-confusion.webp",
+    price: 250,
+  },
+  {
+    id: "another-one",
+    name: "Another One",
+    description:
+      "Cheers to style! Party-ready and playful! This quirky bandana screams fun. Perfect for the bold and unique!",
+    image: "/designs/another-one.webp",
+    price: 250,
+  },
+  {
+    id: "do-the-doodle-do",
+    name: "Do The Doodle Do",
+    description:
+      "Wrap yourself in chaos with this doodle-packed bandana, bursting with wacky characters and funky colors! It's a wearable masterpiece that screams personality and charm. Perfect for turning heads and sparking conversations wherever you go!",
+    image: "/designs/do-the-doodle-do.webp",
     price: 250,
   },
 ];
