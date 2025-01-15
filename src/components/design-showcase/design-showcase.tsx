@@ -1,7 +1,7 @@
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 
 import Image from "next/image";
-import { Design, designs } from "@/data/products";
+import { Design, designs } from "@/data/designs";
 
 import ClassNamesPlugin from "embla-carousel-class-names";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";

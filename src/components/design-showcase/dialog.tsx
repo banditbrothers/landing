@@ -1,9 +1,9 @@
-import { Design, designsObject } from "@/data/products";
+import { Design, designsObject } from "@/data/designs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { ShoppingCartIcon } from "../misc/icons";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import { standardDescription } from "@/data/products";
+import { standardDescription } from "@/data/designs";
 import Link from "next/link";
 
 type ProductDialogProps = {

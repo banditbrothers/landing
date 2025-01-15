@@ -9,7 +9,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Design } from "@/data/products";
+import { Design } from "@/data/designs";
 import { PlusIcon } from "../misc/icons";
 import Image from "next/image";
 

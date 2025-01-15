@@ -13,11 +13,11 @@ export const standardDescription = {
 
 export const designs: Design[] = [
   {
-    id: "space-alien",
+    id: "gimme-some-space",
     name: "Gimme Some Space",
     description:
       "Beam me up, but make it stylish! This print features a cheeky UFOs cruising through a galaxy of twinkling stars, ready to abduct your sense of humor. A quirky cosmic vibe that's truly out of this world!",
-    image: "/products/alien.webp",
+    image: "/designs/gimme-some-space.webp",
     price: 250,
   },
   {
@@ -25,7 +25,7 @@ export const designs: Design[] = [
     name: "Awestruck",
     description:
       "Feel the power of Awestruck! This thundering print brings bold red lightning bolts crackling, igniting energy with every glance. Perfect for those who live life on full charge!",
-    image: "/products/fire-bolt.webp",
+    image: "/designs/awestruck.webp",
     price: 250,
   },
   {
@@ -33,23 +33,23 @@ export const designs: Design[] = [
     name: "Meow Meow!!",
     description:
       "Get whiskered away with this trippy feline vibe! A funky cat design with hypnotic colors, perfect for those who love a dose of quirky cool. Meow-some style guaranteed!",
-    image: "/products/cat-trippy.webp",
+    image: "/designs/meow-meow.webp",
     price: 250,
   },
   {
-    id: "ghost",
+    id: "un-boo-lievable",
     name: "Un - Boo - lievable",
     description:
       "Say hello to Un-boo-lievable! Adorably spooked ghosts bring a playful, haunting charm. A ghostly design that' frightfully fun!",
-    image: "/products/ghost.webp",
+    image: "/designs/un-boo-lievable.webp",
     price: 250,
   },
   {
-    id: "japanese",
+    id: "mooshi-mooshi",
     name: "Mooshi Mooshi",
     description:
       "Unleash your inner ninja with this fiery red head-wrap that screams stealth and style! Perfect for your next mission—whether it's braving the wild or dodging your neighbor's questions about your weekend. This isn't just a piece of fabric; it's your passport to awesomeness. Wear it like a ninja, own it like a bandit!",
-    image: "/products/japanese.webp",
+    image: "/designs/mooshi-mooshi.webp",
     price: 250,
   },
   {
@@ -57,15 +57,15 @@ export const designs: Design[] = [
     name: "Chai Pilaaa Doo",
     description:
       "As refreshing as your first sip, this print brews the timeless joy of tea with a splash of style. Perfect for tea lovers who wear their chai pride!",
-    image: "/products/tea.webp",
+    image: "/designs/chai-pila-do.webp",
     price: 250,
   },
   {
-    id: "color-wave",
+    id: "psychedelic-chaos",
     name: "Psychedelic Chaos",
     description:
       "A swirling vortex of vivid colors and abstract patterns, this design screams energy and boldness. Perfect for making a vibrant and unique statement!",
-    image: "/products/color-wave.webp",
+    image: "/designs/psychedelic-chaos.webp",
     price: 250,
   },
   {
@@ -73,7 +73,7 @@ export const designs: Design[] = [
     name: "Out of Words",
     description:
       "A bold, chaotic blend of grunge textures and rebellious scribbles. Cryptic phrases collide in layered graffiti-style mayhem. Perfect for those who embrace edgy, unapologetic individuality.",
-    image: "/products/out-of-words.webp",
+    image: "/designs/out-of-words.webp",
     price: 250,
   },
 ];

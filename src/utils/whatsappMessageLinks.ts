@@ -1,4 +1,4 @@
-import { designsObject } from "@/data/products";
+import { designsObject } from "@/data/designs";
 import { Order } from "@/types/order";
 
 const whatsappPhoneNumber = "917977884773";

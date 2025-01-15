@@ -12,7 +12,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Country, State, IState } from "country-state-city";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { designsObject, designs } from "@/data/products";
+import { designsObject, designs } from "@/data/designs";
 import { DropdownMenuCheckboxes } from "@/components/orders/multiSelectDropdown";
 import { Badge } from "@/components/orders/badge";
 import Image from "next/image";
