@@ -9,7 +9,7 @@ import { useState } from "react";
 import { Copy, CopyCheck } from "lucide-react";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 
-const upiId = "abbas.i.merchant@okaxis";
+const upiId = "8779361474@axisb";
 const storeName = "Bandit Brothers";
 
 type PaymentDrawerProps = {
