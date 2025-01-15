@@ -237,7 +237,10 @@ function OrderPageContent() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>
+                        Email
+                        <RequiredStar />
+                      </FormLabel>
                       <FormControl>
                         <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                       </FormControl>
@@ -251,7 +254,10 @@ function OrderPageContent() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>
+                        Name
+                        <RequiredStar />
+                      </FormLabel>
                       <FormControl>
                         <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                       </FormControl>
@@ -265,7 +271,10 @@ function OrderPageContent() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone</FormLabel>
+                      <FormLabel>
+                        Phone
+                        <RequiredStar />
+                      </FormLabel>
                       <FormControl>
                         <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                       </FormControl>
@@ -279,7 +288,10 @@ function OrderPageContent() {
                   name="address.line1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Address Line 1</FormLabel>
+                      <FormLabel>
+                        Address Line 1
+                        <RequiredStar />
+                      </FormLabel>
                       <FormControl>
                         <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                       </FormControl>
@@ -358,7 +370,10 @@ function OrderPageContent() {
                     name="address.city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>City</FormLabel>
+                        <FormLabel>
+                          City
+                          <RequiredStar />
+                        </FormLabel>
                         <FormControl>
                           <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                         </FormControl>
@@ -372,7 +387,10 @@ function OrderPageContent() {
                     name="address.zip"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Zip Code</FormLabel>
+                        <FormLabel>
+                          Zip Code
+                          <RequiredStar />
+                        </FormLabel>
                         <FormControl>
                           <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
                         </FormControl>
@@ -387,7 +405,10 @@ function OrderPageContent() {
                   name="products"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Choose your Mischief</FormLabel>
+                      <FormLabel>
+                        Choose your Mischief
+                        <RequiredStar />
+                      </FormLabel>
                       <FormControl>
                         <div>
                           <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
@@ -560,6 +581,10 @@ function OrderPageContent() {
     </div>
   );
 }
+
+const RequiredStar = () => {
+  return <span className="text-destructive ml-1">*</span>;
+};
 
 export default function OrderPage() {
   return (
