@@ -26,10 +26,6 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
 
   const { isCopied, copy } = useCopyToClipboard(2000);
 
-  const handleUpiAppClick = (_upiUrl: string) => {
-    window.location.href = _upiUrl;
-  };
-
   const handleSharePaymentScreenshot = () => {
     setTimeout(() => setIsPaymentShared(true), 2000);
   };
@@ -74,11 +70,6 @@ export default function PaymentDrawer({ open, onComplete, onCancel, amount, orde
                         {isCopied ? <CopyCheck className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                       </button>
                     </div>
-                    <span className="flex flex-row gap-2 items-center justify-center w-full">
-                      <Button className="max-w-xs" onClick={() => handleUpiAppClick(upiUrl)}>
-                        Pay with UPI App
-                      </Button>
-                    </span>
                   </div>
                 </Step>
 
