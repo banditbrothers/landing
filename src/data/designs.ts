@@ -18,7 +18,7 @@ export const designs: Design[] = [
     description:
       "Beam me up, but make it stylish! This print features a cheeky UFOs cruising through a galaxy of twinkling stars, ready to abduct your sense of humor. A quirky cosmic vibe that's truly out of this world!",
     image: "/designs/gimme-some-space.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "awestruck",
@@ -26,7 +26,7 @@ export const designs: Design[] = [
     description:
       "Feel the power of Awestruck! This thundering print brings bold red lightning bolts crackling, igniting energy with every glance. Perfect for those who live life on full charge!",
     image: "/designs/awestruck.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "meow-meow",
@@ -34,7 +34,7 @@ export const designs: Design[] = [
     description:
       "Get whiskered away with this trippy feline vibe! A funky cat design with hypnotic colors, perfect for those who love a dose of quirky cool. Meow-some style guaranteed!",
     image: "/designs/meow-meow.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "mooshi-mooshi",
@@ -42,7 +42,7 @@ export const designs: Design[] = [
     description:
       "Unleash your inner ninja with this fiery red head-wrap that screams stealth and style! Perfect for your next mission—whether it's braving the wild or dodging your neighbor's questions about your weekend. This isn't just a piece of fabric; it's your passport to awesomeness. Wear it like a ninja, own it like a bandit!",
     image: "/designs/mooshi-mooshi.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "chai-pila-do",
@@ -50,7 +50,7 @@ export const designs: Design[] = [
     description:
       "As refreshing as your first sip, this print brews the timeless joy of tea with a splash of style. Perfect for tea lovers who wear their chai pride!",
     image: "/designs/chai-pila-do.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "psychedelic-chaos",
@@ -58,7 +58,7 @@ export const designs: Design[] = [
     description:
       "A swirling vortex of vivid colors and abstract patterns, this design screams energy and boldness. Perfect for making a vibrant and unique statement!",
     image: "/designs/psychedelic-chaos.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "holy-funk",
@@ -66,7 +66,7 @@ export const designs: Design[] = [
     description:
       "Dive into a vibrant maze of liquid neon trails, oozing with quirky charm. Each swirl feels like a dance of funky energy on black. Perfect for anyone who loves bold, standout vibes!",
     image: "/designs/holy-funk.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "soda-lightful",
@@ -74,7 +74,7 @@ export const designs: Design[] = [
     description:
       "Quench your style thirst with this fizzy explosion of soda bottles! A bubbly, fun design perfect for those who bring the pop to every party. Stay cool, stay comfy, stay carbonated!",
     image: "/designs/soda-lightful.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "un-boo-lievable",
@@ -82,7 +82,7 @@ export const designs: Design[] = [
     description:
       "Say hello to Un-boo-lievable! Adorably spooked ghosts bring a playful, haunting charm. A ghostly design that' frightfully fun!",
     image: "/designs/un-boo-lievable.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "tick-tick-boom",
@@ -90,7 +90,7 @@ export const designs: Design[] = [
     description:
       "A quirky mix of speed and chaos, this bandana revs up your style with explosive flair. Fun, bold, and utterly unique—it's the perfect gear for thrill junkies!",
     image: "/designs/tick-tick-boom.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "fin-tastic",
@@ -98,7 +98,7 @@ export const designs: Design[] = [
     description:
       "Make waves with this shark fin inspired bandana! Featuring sleek fins slicing through the waters, it's perfect for bold adventurers. Dive into style with Bandit Brothers' ultimate bandana!",
     image: "/designs/fin-tastic.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "out-of-words",
@@ -106,7 +106,7 @@ export const designs: Design[] = [
     description:
       "A bold, chaotic blend of grunge textures and rebellious scribbles. Cryptic phrases collide in layered graffiti-style mayhem. Perfect for those who embrace edgy, unapologetic individuality.",
     image: "/designs/out-of-words.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "dolphin-ately-cool",
@@ -114,7 +114,7 @@ export const designs: Design[] = [
     description:
       "Make a splash with this dolphin-inspired bandana! Featuring playful oceanic swirls and sleek dolphins riding the waves, it's like carrying the spirit of the sea wherever you go. Dive into adventure with Bandit Brothers' unique style!",
     image: "/designs/dolphin-ately-cool.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "only-confusion",
@@ -122,7 +122,7 @@ export const designs: Design[] = [
     description:
       "Unleash your inner detective with this fiery red bandana, riddled with question marks and a mysterious bat-eared silhouette. It's a puzzle for your face, perfect for those who thrive on intrigue and style. Rock it like a superhero solving fashion crimes!",
     image: "/designs/only-confusion.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "another-one-iykyk",
@@ -130,7 +130,7 @@ export const designs: Design[] = [
     description:
       "Cheers to style! Party-ready and playful! This quirky bandana screams fun. Perfect for the bold and unique!",
     image: "/designs/another-one-iykyk.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "do-the-doodle-do",
@@ -138,7 +138,7 @@ export const designs: Design[] = [
     description:
       "Wrap yourself in chaos with this doodle-packed bandana, bursting with wacky characters and funky colors! It's a wearable masterpiece that screams personality and charm. Perfect for turning heads and sparking conversations wherever you go!",
     image: "/designs/do-the-doodle-do.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "sketchy-business",
@@ -146,7 +146,7 @@ export const designs: Design[] = [
     description:
       "Wrap your face in a fiesta of fun with this zany, maze-crazy bandana! Perfect for when you want to stay incognito but still loud and proud. It's not just a Bandana—it's wearable art with attitude. Stay bold, stay bandit!",
     image: "/designs/sketchy-business.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "dont-egg-nore-this",
@@ -154,7 +154,7 @@ export const designs: Design[] = [
     description:
       "Start your day sunny-side up with this egg-cellent design! Perfect for cracking jokes or frying up some style—because you're too cool to scramble under pressure.",
     image: "/designs/dont-egg-nore-this.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "ichiban-penguins",
@@ -162,7 +162,7 @@ export const designs: Design[] = [
     description:
       "Dive into the chill with this penguin party bandana! A flock of funky, beaked buddies will keep you cool while looking ice-cold fabulous. Waddle you wear if not this?",
     image: "/designs/ichiban-penguins.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "tropicamo",
@@ -170,7 +170,7 @@ export const designs: Design[] = [
     description:
       "Blend in and stand out with this mango-camo design! A juicy twist on camouflage that screams tropical vibes. Who said you can't look ripe and ready?",
     image: "/designs/tropicamo.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "akatsuki-allure",
@@ -178,7 +178,7 @@ export const designs: Design[] = [
     description:
       "Channel your inner rogue ninja with this sleek, dark bandana featuring a pattern of iconic red clouds. Perfect for stealth missions, fandom pride, or just keeping the chill at bay in ultimate ninja style.",
     image: "/designs/akatsuki-allure.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "comic-craze",
@@ -186,7 +186,7 @@ export const designs: Design[] = [
     description:
       "Unleash your inner superhero with this action-packed, comic-inspired bandana! With bold characters and chaotic energy, it's your ultimate style power-up for every mission—heroic or mundane.",
     image: "/designs/comic-craze.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "looks-fishy",
@@ -194,7 +194,7 @@ export const designs: Design[] = [
     description:
       "Dive into style with this jaw-some bandana! Featuring a frenzy of red shark silhouettes swimming across a crisp white sea, it's the perfect catch for any outfit. Shark your look up and stay fin-tastic all day long!",
     image: "/designs/looks-fishy.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "zero-g-style",
@@ -202,7 +202,7 @@ export const designs: Design[] = [
     description:
       "Blast off in style with this stellar bandana! Featuring astronauts floating in a galaxy of fun, it's your ticket to space-age swagger. Perfect for keeping your vibe cosmic and your look out-of-this-world. 🚀✨",
     image: "/designs/zero-g-style.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "similie-metaphorically",
@@ -210,7 +210,7 @@ export const designs: Design[] = [
     description:
       "Brighten your day with this smile-packed bandana! Overflowing with yellow grins and a splash of playful personality, it's your ticket to happiness on the go. Keep your vibe cheery and stay grin-stoppable!",
     image: "/designs/similie-metaphorically.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "frog-it-about-it",
@@ -218,7 +218,7 @@ export const designs: Design[] = [
     description:
       "Let the design do all your thinking. Let your knees rest. Get ready to frog-et all your worries with this hilarious thinking frog bandana! It's a toad-ally fun way to show off your pondering side. 🐸",
     image: "/designs/frog-it-about-it.webp",
-    price: 250,
+    price: 300,
   },
   {
     id: "tou-can-do-it",
@@ -226,7 +226,7 @@ export const designs: Design[] = [
     description:
       "Turn heads with this tou-can't-miss design! Perfect for adding a little tropical flair to your everyday adventures. Two can always play this stylish game!",
     image: "/designs/tou-can-do-it.webp",
-    price: 250,
+    price: 300,
   },
 ];
 
