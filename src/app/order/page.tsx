@@ -20,7 +20,7 @@ import PaymentDrawer from "@/components/orders/paymentDrawer";
 
 import { Coupon, Order, SelectedDesignsType } from "@/types/order";
 import { getTimestamp } from "@/utils/misc";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import LoadingScreen, { LoadingIcon } from "@/components/misc/loadingScreen";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";
 import { toast } from "sonner";
@@ -95,6 +95,7 @@ function OrderPageContent() {
 
   const { orderLoading, createOrder, updateOrder } = useOrderActions();
   const { couponLoading, validateCoupon } = useCouponActions();
+  const router = useRouter();
 
   const searchParams = useSearchParams();
   const paramDesignId = searchParams.get("design");
@@ -199,10 +200,10 @@ function OrderPageContent() {
   };
 
   const onPaymentComplete = async () => {
-    setPendingPaymentOrder(null);
     await updateOrder(pendingPaymentOrder!.id, { payment: { status: "approval-pending", updatedAt: getTimestamp() } });
+    setPendingPaymentOrder(null);
     showSuccessToast("Order Placed 🎉");
-    form.reset();
+    router.replace("/");
   };
 
   const onPaymentCancel = async () => {
