@@ -125,11 +125,11 @@ export const designs: Design[] = [
     price: 250,
   },
   {
-    id: "another-one",
-    name: "Another One",
+    id: "another-one-iykyk",
+    name: "Another One!!! (IYKYK)",
     description:
       "Cheers to style! Party-ready and playful! This quirky bandana screams fun. Perfect for the bold and unique!",
-    image: "/designs/another-one.webp",
+    image: "/designs/another-one-iykyk.webp",
     price: 250,
   },
   {
