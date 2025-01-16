@@ -5,6 +5,8 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import { standardDescription } from "@/data/designs";
 import Link from "next/link";
+import posthog from "posthog-js";
+import { useEffect } from "react";
 
 type ProductDialogProps = {
   designId: Design["id"] | null;
@@ -13,6 +15,10 @@ type ProductDialogProps = {
 
 export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
   const design = designId ? designsObject[designId] : null;
+
+  useEffect(() => {
+    if (designId) posthog.capture("design_viewed", { designId });
+  }, [designId]);
 
   if (!design) return null;
   return (
@@ -53,7 +59,11 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
                 ))}
               </div>
             </div>
-            <Link target="_blank" className="w-full" href={`/order?design=${designId}`}>
+            <Link
+              target="_blank"
+              className="w-full"
+              href={`/order?design=${designId}`}
+              onClick={() => posthog.capture("design_shopnow", { designId })}>
               <Button className="mt-4 w-full">
                 Shop Now <ShoppingCartIcon />
               </Button>
