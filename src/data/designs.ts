@@ -88,7 +88,7 @@ export const designs: Design[] = [
     id: "tick-tick-boom",
     name: "Tick Tick Boom",
     description:
-      "A quirky mix of speed and chaos, this neck gaiter revs up your style with explosive flair. Fun, bold, and utterly unique—it's the perfect gear for thrill junkies!",
+      "A quirky mix of speed and chaos, this bandana revs up your style with explosive flair. Fun, bold, and utterly unique—it's the perfect gear for thrill junkies!",
     image: "/designs/tick-tick-boom.webp",
     price: 250,
   },
@@ -96,7 +96,7 @@ export const designs: Design[] = [
     id: "fin-tastic",
     name: "Fin-tastic",
     description:
-      "Make waves with this shark fin inspired bandana! Featuring sleek fins slicing through the waters, it's perfect for bold adventurers. Dive into style with Bandit Brothers' ultimate neckwear!",
+      "Make waves with this shark fin inspired bandana! Featuring sleek fins slicing through the waters, it's perfect for bold adventurers. Dive into style with Bandit Brothers' ultimate bandana!",
     image: "/designs/fin-tastic.webp",
     price: 250,
   },
@@ -144,7 +144,7 @@ export const designs: Design[] = [
     id: "sketchy-business",
     name: "Sketchy Business",
     description:
-      "Wrap your face in a fiesta of fun with this zany, maze-crazy bandana gaiter! Perfect for when you want to stay incognito but still loud and proud. It's not just a Bandana—it's wearable art with attitude. Stay bold, stay bandit!",
+      "Wrap your face in a fiesta of fun with this zany, maze-crazy bandana! Perfect for when you want to stay incognito but still loud and proud. It's not just a Bandana—it's wearable art with attitude. Stay bold, stay bandit!",
     image: "/designs/sketchy-business.webp",
     price: 250,
   },
@@ -176,7 +176,7 @@ export const designs: Design[] = [
     id: "akatsuki-allure",
     name: "Akatsuki Allure",
     description:
-      "Channel your inner rogue ninja with this sleek, dark neck gaiter featuring a pattern of iconic red clouds. Perfect for stealth missions, fandom pride, or just keeping the chill at bay in ultimate ninja style.",
+      "Channel your inner rogue ninja with this sleek, dark bandana featuring a pattern of iconic red clouds. Perfect for stealth missions, fandom pride, or just keeping the chill at bay in ultimate ninja style.",
     image: "/designs/akatsuki-allure.webp",
     price: 250,
   },
@@ -192,7 +192,7 @@ export const designs: Design[] = [
     id: "looks-fishy",
     name: "Looks Fishy",
     description:
-      "Dive into style with this jaw-some neck gaiter! Featuring a frenzy of red shark silhouettes swimming across a crisp white sea, it's the perfect catch for any outfit. Shark your look up and stay fin-tastic all day long!",
+      "Dive into style with this jaw-some bandana! Featuring a frenzy of red shark silhouettes swimming across a crisp white sea, it's the perfect catch for any outfit. Shark your look up and stay fin-tastic all day long!",
     image: "/designs/looks-fishy.webp",
     price: 250,
   },
@@ -208,7 +208,7 @@ export const designs: Design[] = [
     id: "similie-metaphorically",
     name: "Similie Metaphorically",
     description:
-      "Brighten your day with this smile-packed neck gaiter! Overflowing with yellow grins and a splash of playful personality, it's your ticket to happiness on the go. Keep your vibe cheery and stay grin-stoppable!",
+      "Brighten your day with this smile-packed bandana! Overflowing with yellow grins and a splash of playful personality, it's your ticket to happiness on the go. Keep your vibe cheery and stay grin-stoppable!",
     image: "/designs/similie-metaphorically.webp",
     price: 250,
   },
