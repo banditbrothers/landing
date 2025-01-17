@@ -7,14 +7,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Order, OrderStatus } from "@/types/order";
-import { getOrders, updateOrder } from "@/actions/orders";
+import { getOrders } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getDate, getTimestamp, hash } from "@/utils/misc";
 import { EyeIcon } from "@/components/misc/icons";
 import LoadingScreen from "@/components/misc/loadingScreen";
-import { CheckIcon, X } from "lucide-react";
+import { CheckIcon, TrashIcon, X } from "lucide-react";
 import { getAddressString } from "@/utils/address";
+import { toast } from "sonner";
+import { useOrderActions } from "@/hooks/useOrderActions";
 
 type FilterOrder =
   | {
@@ -33,6 +35,8 @@ function AdminPage() {
   const [emailFilter, setEmailFilter] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  const { orderLoading, updateOrder, removeOrder } = useOrderActions();
 
   useEffect(() => {
     getOrders().then(orders => {
@@ -90,6 +94,12 @@ function AdminPage() {
       newOrder.payment = change.payment;
       setFilteredOrders(prev => [...prev.filter(order => order.id !== orderId), newOrder]);
     }
+  };
+
+  const handleRemoveOrder = async (orderId: string) => {
+    await removeOrder(orderId);
+    setFilteredOrders(prev => prev.filter(order => order.id !== orderId));
+    toast.info("Order Removed!");
   };
 
   if (isLoading) return <LoadingScreen />;
@@ -156,9 +166,16 @@ function AdminPage() {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="flex flex-row gap-2">
                       <Button variant="outline" size="icon" onClick={() => showDialog(order)}>
                         <EyeIcon />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="destructive"
+                        disabled={orderLoading.remove}
+                        onClick={() => handleRemoveOrder(order.id)}>
+                        <TrashIcon />
                       </Button>
                     </TableCell>
                   </TableRow>

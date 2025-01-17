@@ -1,9 +1,10 @@
-import { createOrder, updateOrder } from "@/actions/orders";
+import { createOrder, removeOrder, updateOrder } from "@/actions/orders";
 import { useState } from "react";
 
 export const useOrderActions = () => {
   const [loadingCreateOrder, setLoadingCreateOrder] = useState(false);
   const [loadingUpdateOrder, setLoadingUpdateOrder] = useState(false);
+  const [loadingRemoveOrder, setLoadingRemoveOrder] = useState(false);
 
   const createOrderAction = async (...rest: Parameters<typeof createOrder>) => {
     setLoadingCreateOrder(true);
@@ -19,9 +20,17 @@ export const useOrderActions = () => {
     return result;
   };
 
+  const removeOrderAction = async (...rest: Parameters<typeof removeOrder>) => {
+    setLoadingRemoveOrder(true);
+    const result = await removeOrder(...rest);
+    setLoadingRemoveOrder(false);
+    return result;
+  };
+
   return {
-    orderLoading: { create: loadingCreateOrder, update: loadingUpdateOrder },
+    orderLoading: { create: loadingCreateOrder, update: loadingUpdateOrder, remove: loadingRemoveOrder },
     createOrder: createOrderAction,
     updateOrder: updateOrderAction,
+    removeOrder: removeOrderAction,
   };
 };

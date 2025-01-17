@@ -21,3 +21,8 @@ export const updateOrder = async (orderId: string, order: Partial<Order>) => {
   await firestore().collection(Collections.orders).doc(orderId).update(order);
   return true;
 };
+
+export const removeOrder = async (orderId: string) => {
+  await firestore().collection(Collections.orders).doc(orderId).delete();
+  return true;
+};
