@@ -21,7 +21,7 @@ export const features = [
   },
   {
     title: "Superior Stitching",
-    description: "Quality, stretchable stitch leaving you stress free",
+    description: "High quality, stretchable stitch leaving you stress free",
     icon: "🧵",
   },
 ];

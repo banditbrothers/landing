@@ -9,6 +9,7 @@ import { DesignGrid } from "./grid";
 import { GalleryHorizontal } from "lucide-react";
 import { Grid2X2Icon } from "lucide-react";
 import { Button } from "../ui/button";
+import { shuffleArray } from "@/utils/misc";
 
 export const DesignLibraryContent = () => {
   const [selectedShowcaseType, setSelectedShowcaseType] = useState<"carousel" | "grid">("carousel");
@@ -19,7 +20,7 @@ export const DesignLibraryContent = () => {
   const selectedDesignId = searchParams.get("design");
 
   useEffect(() => {
-    const shuffledDesigns = [...designsData].sort(() => Math.random() - 0.5);
+    const shuffledDesigns = shuffleArray(designsData);
     setDesigns(shuffledDesigns);
   }, []);
 
