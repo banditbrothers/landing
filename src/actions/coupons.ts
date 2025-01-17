@@ -2,7 +2,7 @@
 
 import { getTimestamp } from "@/utils/misc";
 import { Coupon } from "@/types/order";
-import { addMonths } from "date-fns";
+import { addYears } from "date-fns";
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase";
 
@@ -25,37 +25,24 @@ export const getCoupon = async (code: string) => {
   return { id: coupon.id, ...coupon.data() } as Coupon;
 };
 
-export const createDemoCoupons = async () => {
+export const createCoupon = async () => {
   return false;
   const now = Date.now();
-  const oneMonthFromNow = Math.floor(addMonths(now, 1).getTime() / 1000);
+  const oneYearFromNow = Math.floor(addYears(now, 1).getTime() / 1000);
 
-  const fixedCoupon: Partial<Coupon> = {
-    code: "DEMO100",
-    name: "₹100 Off",
-    description: "Get ₹100 off on your order",
-    discountType: "fixed",
-    minOrderAmount: 500,
-    discount: 100,
-    createdAt: getTimestamp(),
-    expiresAt: oneMonthFromNow,
-    isActive: true,
-  };
-
-  const percentageCoupon: Partial<Coupon> = {
-    code: "DEMO20",
-    name: "20% Off",
-    description: "Get 20% off on your order",
+  const finalCoupon: Omit<Coupon, "id"> = {
+    code: "BROCODE",
+    name: "15% Off",
+    description: "Get 15% off on your order",
     discountType: "percentage",
-    minOrderAmount: 1000,
-    discount: 20,
+    minOrderAmount: 0,
+    discount: 15,
     createdAt: getTimestamp(),
-    expiresAt: oneMonthFromNow,
+    expiresAt: oneYearFromNow,
     isActive: true,
   };
 
-  await firestore().collection(Collections.coupons).add(fixedCoupon);
-  await firestore().collection(Collections.coupons).add(percentageCoupon);
+  await firestore().collection(Collections.coupons).add(finalCoupon);
 
   return true;
 };

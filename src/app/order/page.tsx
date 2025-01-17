@@ -54,13 +54,20 @@ const orderFormSchema = z.object({
   ),
 });
 
-const SHIPPING_COST = 100; // ₹100 for shipping
-
 const getSubtotal = (products: SelectedDesignsType[]) => {
   return products.reduce((total, product) => {
     const design = designsObject[product.designId];
     return total + design.price * product.quantity;
   }, 0);
+};
+
+const getShippingCost = (products: SelectedDesignsType[], coupon: Coupon | null) => {
+  const SHIPPING_COST = 100; // ₹100 for shipping
+
+  if (products.length === 0) return 0;
+  if (coupon && coupon.code === "BROCODE") return 0;
+
+  return SHIPPING_COST;
 };
 
 const getDiscountAmount = (subtotal: number, coupon: Coupon | null) => {
@@ -75,8 +82,9 @@ const getDiscountAmount = (subtotal: number, coupon: Coupon | null) => {
 const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) => {
   const subtotal = getSubtotal(products);
   const discount = getDiscountAmount(subtotal, coupon);
+  const shippingCost = getShippingCost(products, coupon);
 
-  return subtotal - discount + SHIPPING_COST;
+  return subtotal - discount + shippingCost;
 };
 
 const showErrorToast = (message: string) => {
@@ -198,7 +206,9 @@ function OrderPageContent() {
 
   const selectedDesignsIds = watchProducts.map(product => product.designId);
   const formIsReady = form.formState.isValid && selectedDesignsIds.length > 0;
+
   const subtotal = getSubtotal(watchProducts);
+  const shippingCost = getShippingCost(watchProducts, coupon);
 
   return (
     <div className="mx-auto py-10 px-2 max-w-lg">
@@ -234,7 +244,6 @@ function OrderPageContent() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="name"
@@ -251,7 +260,6 @@ function OrderPageContent() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="phone"
@@ -285,7 +293,6 @@ function OrderPageContent() {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="address.line2"
@@ -299,7 +306,6 @@ function OrderPageContent() {
                     </FormItem>
                   )}
                 />
-
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -385,7 +391,6 @@ function OrderPageContent() {
                     )}
                   />
                 </div>
-
                 <FormField
                   control={form.control}
                   name="products"
@@ -461,7 +466,6 @@ function OrderPageContent() {
                     </FormItem>
                   )}
                 />
-
                 {selectedDesignsIds.length > 0 && (
                   <div className="flex flex-col gap-2">
                     <Separator className="mb-4" />
@@ -529,8 +533,12 @@ function OrderPageContent() {
                     )}
 
                     <div className="flex justify-between items-center text-sm">
-                      <span>Shipping</span>
-                      <span>₹{SHIPPING_COST}</span>
+                      <span className={`${shippingCost > 0 ? "" : "text-muted-foreground line-through"}`}>
+                        Shipping
+                      </span>
+                      <span className={`${shippingCost > 0 ? "" : "text-muted-foreground line-through"}`}>
+                        ₹{shippingCost}
+                      </span>
                     </div>
                     <div className="flex justify-between items-center mt-2">
                       <span>
@@ -541,7 +549,6 @@ function OrderPageContent() {
                     </div>
                   </div>
                 )}
-
                 <Button
                   type="submit"
                   className="w-full"
