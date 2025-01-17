@@ -1,31 +1,31 @@
 "use client";
 
-import { z } from "zod";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
-
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { z } from "zod";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Country, State, IState } from "country-state-city";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import Image from "next/image";
+
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { designsObject, designs } from "@/data/designs";
 import { DropdownMenuCheckboxes } from "@/components/orders/multiSelectDropdown";
 import { Badge } from "@/components/orders/badge";
-import Image from "next/image";
-import PaymentDrawer from "@/components/orders/paymentDrawer";
 
 import { Coupon, Order, SelectedDesignsType } from "@/types/order";
 import { getTimestamp } from "@/utils/misc";
 import { useRouter, useSearchParams } from "next/navigation";
 import LoadingScreen, { LoadingIcon } from "@/components/misc/loadingScreen";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";
-import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
-import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
+
+import { getWhatsappNeedHelpLink, getWhatsappOrderDetails } from "@/utils/whatsappMessageLinks";
 import { useOrderActions } from "@/hooks/useOrderActions";
 import { useCouponActions } from "@/hooks/useCouponActions";
 
@@ -83,17 +83,12 @@ const showErrorToast = (message: string) => {
   toast.error(message, { position: "top-right" });
 };
 
-const showSuccessToast = (message: string) => {
-  toast.success(message);
-};
-
 function OrderPageContent() {
   const [countryStates, setCountryStates] = useState<IState[]>([]);
   const [orderTotal, setOrderTotal] = useState(0);
   const [coupon, setCoupon] = useState<Coupon | null>(null);
-  const [pendingPaymentOrder, setPendingPaymentOrder] = useState<Order | null>(null);
 
-  const { orderLoading, createOrder, updateOrder } = useOrderActions();
+  const { orderLoading, createOrder } = useOrderActions();
   const { couponLoading, validateCoupon } = useCouponActions();
   const router = useRouter();
 
@@ -177,7 +172,9 @@ function OrderPageContent() {
     };
 
     const orderObj = await createOrder(order);
-    setPendingPaymentOrder(orderObj);
+
+    window.open(getWhatsappOrderDetails(orderObj), "_blank", "noreferrer noopener");
+    router.replace("/");
   };
 
   const handleValidateCoupon = async () => {
@@ -197,18 +194,6 @@ function OrderPageContent() {
 
       form.resetField("couponCode");
     }
-  };
-
-  const onPaymentComplete = async () => {
-    await updateOrder(pendingPaymentOrder!.id, { payment: { status: "approval-pending", updatedAt: getTimestamp() } });
-    setPendingPaymentOrder(null);
-    showSuccessToast("Order Placed 🎉");
-    router.replace("/");
-  };
-
-  const onPaymentCancel = async () => {
-    setPendingPaymentOrder(null);
-    await updateOrder(pendingPaymentOrder!.id, { payment: { status: "cancelled", updatedAt: getTimestamp() } });
   };
 
   const selectedDesignsIds = watchProducts.map(product => product.designId);
@@ -561,7 +546,8 @@ function OrderPageContent() {
                   type="submit"
                   className="w-full"
                   disabled={!formIsReady || orderLoading.create || orderLoading.update}>
-                  {formIsReady ? `Pay ₹${orderTotal}` : "Pay Now"}
+                  Order Now
+                  {/* {formIsReady ? `Pay ₹${orderTotal}` : "Pay Now"} */}
                   {(orderLoading.create || orderLoading.update) && <LoadingIcon />}
                 </Button>
               </div>
@@ -569,16 +555,6 @@ function OrderPageContent() {
           </Form>
         </CardContent>
       </Card>
-
-      {pendingPaymentOrder && (
-        <PaymentDrawer
-          open={!!pendingPaymentOrder}
-          onComplete={onPaymentComplete}
-          onCancel={onPaymentCancel}
-          amount={orderTotal}
-          orderDetails={pendingPaymentOrder}
-        />
-      )}
     </div>
   );
 }

@@ -28,6 +28,20 @@ export const getWhatsappSharePaymentScreenshotLink = (orderDetails: Order) => {
   return `https://api.whatsapp.com/send?phone=${whatsappPhoneNumber}&text=${encodedMessage}`;
 };
 
+export const getWhatsappOrderDetails = (orderDetails: Order) => {
+  let message = `Hey, I'd like to place an order. \n\n*Order Details* \nID: ${orderDetails.id} \nName: ${orderDetails.name} \nEmail: ${orderDetails.email}`;
+
+  message += `\n\n*Products* \n${orderDetails
+    .products!.map(product => `- ${designsObject[product.designId]!.name}: ${product.quantity}`)
+    .join("\n")}`;
+
+  message += `\n\nThe total is ₹${orderDetails.amount}`;
+  if (orderDetails.couponCode) message += ` (used ${orderDetails.couponCode})`;
+
+  const encodedMessage = encodeURIComponent(message);
+  return `https://api.whatsapp.com/send?phone=${whatsappPhoneNumber}&text=${encodedMessage}`;
+};
+
 export const getWhatsappNeedHelpLink = (orderDetails: Partial<Order>) => {
   let message = `Hey, I need help with my order ${orderDetails.id ? `\n\`ID: ${orderDetails.id}\`` : ""}`;
 
