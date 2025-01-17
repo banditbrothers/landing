@@ -4,15 +4,16 @@ import AutoplayPlugin from "embla-carousel-autoplay";
 
 import { ArrowRightCircleIcon } from "../misc/icons";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
-import { Design, designs } from "@/data/designs";
+import { Design } from "@/data/designs";
 import { DesignCard } from "./card";
 
 interface DesignCarouselProps {
+  designs: Design[];
   selectedDesignId: string | null;
   handleDesignClick: (design: Design) => void;
 }
 
-export const DesignCarousel = ({ selectedDesignId, handleDesignClick }: DesignCarouselProps) => {
+export const DesignCarousel = ({ designs, selectedDesignId, handleDesignClick }: DesignCarouselProps) => {
   return (
     <Carousel
       opts={{ align: "center", loop: true }}

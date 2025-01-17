@@ -1,8 +1,8 @@
-import { Design } from "@/data/designs";
+import { Design, designs as designsData } from "@/data/designs";
 
 import { ProductDialog } from "./dialog";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { LoadingIcon } from "../misc/loadingScreen";
 import { DesignCarousel } from "./carousel";
 import { DesignGrid } from "./grid";
@@ -12,10 +12,16 @@ import { Button } from "../ui/button";
 
 export const DesignLibraryContent = () => {
   const [selectedShowcaseType, setSelectedShowcaseType] = useState<"carousel" | "grid">("carousel");
+  const [designs, setDesigns] = useState<Design[]>([]);
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedDesignId = searchParams.get("design");
+
+  useEffect(() => {
+    const shuffledDesigns = [...designsData].sort(() => Math.random() - 0.5);
+    setDesigns(shuffledDesigns);
+  }, []);
 
   /**
    *
@@ -50,9 +56,13 @@ export const DesignLibraryContent = () => {
 
         <div className="mx-auto">
           {selectedShowcaseType === "carousel" ? (
-            <DesignCarousel selectedDesignId={selectedDesignId} handleDesignClick={handleDesignClick} />
+            <DesignCarousel
+              designs={designs}
+              selectedDesignId={selectedDesignId}
+              handleDesignClick={handleDesignClick}
+            />
           ) : (
-            <DesignGrid selectedDesignId={selectedDesignId} handleDesignClick={handleDesignClick} />
+            <DesignGrid designs={designs} selectedDesignId={selectedDesignId} handleDesignClick={handleDesignClick} />
           )}
         </div>
       </div>

@@ -1,12 +1,13 @@
-import { Design, designs } from "@/data/designs";
+import { Design } from "@/data/designs";
 import { DesignCard } from "./card";
 
 interface DesignGridProps {
+  designs: Design[];
   selectedDesignId: string | null;
   handleDesignClick: (design: Design) => void;
 }
 
-export const DesignGrid = ({ selectedDesignId, handleDesignClick }: DesignGridProps) => {
+export const DesignGrid = ({ designs, selectedDesignId, handleDesignClick }: DesignGridProps) => {
   return (
     <div className="max-w-screen-2xl mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
