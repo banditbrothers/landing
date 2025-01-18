@@ -92,7 +92,13 @@ function AdminPage() {
 
     if (newOrder) {
       newOrder.payment = change.payment;
-      setFilteredOrders(prev => [...prev.filter(order => order.id !== orderId), newOrder]);
+      setFilteredOrders(prev => {
+        const index = prev.findIndex(order => order.id === orderId);
+        if (index === -1) return prev;
+        const updated = [...prev];
+        updated[index] = newOrder;
+        return updated;
+      });
     }
   };
 
