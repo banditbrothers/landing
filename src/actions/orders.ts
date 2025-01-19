@@ -34,10 +34,7 @@ export const createOrder = async (order: Partial<Order>) => {
   return { ...newOrder, id: orderRef.id } as Order;
 };
 
-export const updateOrder = async (
-  orderId: string,
-  order: Partial<Order> | Record<`${keyof Order}.${string}`, unknown>
-) => {
+export const updateOrder = async (orderId: string, order: object) => {
   await firestore().collection(Collections.orders).doc(orderId).update(order);
   return true;
 };

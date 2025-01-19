@@ -41,6 +41,11 @@ export const RazorpayPaymentGateway = ({ ref, onSuccess, onCancel, onFailed }: R
       return;
     }
 
+    if (order.paymentMode !== "rzp") {
+      console.error("Order is not in rzp mode");
+      return;
+    }
+
     const options = {
       key: process.env.NEXT_PUBLIC_RZP_KEY_ID!,
       amount: order.amount * 100,
