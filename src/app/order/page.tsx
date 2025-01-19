@@ -105,6 +105,7 @@ function OrderPageContent() {
   const router = useRouter();
 
   const searchParams = useSearchParams();
+  const paymentMode = (searchParams.get("paymentMode") ?? "rzp") as "rzp" | "cash";
   const paramDesignId = searchParams.get("design");
   if (paramDesignId) DEFAULT_ORDER_VALUES.products = [{ designId: paramDesignId, quantity: 1 }];
 
@@ -177,14 +178,19 @@ function OrderPageContent() {
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
     const order: Partial<Order> = {
       ...values,
+      paymentMode,
       amount: orderTotal,
-      status: "initiated",
       couponCode: coupon?.code ?? null,
       createdAt: getTimestamp(),
     };
 
     const orderObj = await createOrder(order);
-    rzpRef.current?.handlePayment(orderObj);
+
+    if (orderObj.paymentMode === "rzp") rzpRef.current?.handlePayment(orderObj);
+    else if (orderObj.paymentMode === "cash") {
+      toast.success("Order Placed in Cash 🎉");
+      router.replace("/");
+    }
   };
 
   const handlePaymentSuccess = async () => {
@@ -228,12 +234,14 @@ function OrderPageContent() {
 
   return (
     <>
-      <RazorpayPaymentGateway
-        ref={rzpRef}
-        onSuccess={handlePaymentSuccess}
-        onCancel={handlePaymentCancel}
-        onFailed={handlePaymentFailed}
-      />
+      {paymentMode === "rzp" && (
+        <RazorpayPaymentGateway
+          ref={rzpRef}
+          onSuccess={handlePaymentSuccess}
+          onCancel={handlePaymentCancel}
+          onFailed={handlePaymentFailed}
+        />
+      )}
 
       <div className="mx-auto py-10 px-2 max-w-lg">
         <Card>

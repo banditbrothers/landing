@@ -13,18 +13,22 @@ export const createOrder = async (order: Partial<Order>) => {
   const orderRef = firestore().collection(Collections.orders).doc();
   const dbId = orderRef.id;
 
-  const rzpOrder = await createRzpOrder(order.amount!, dbId);
+  const newOrder = { ...order };
+  if (newOrder.paymentMode === "rzp") {
+    const rzpOrder = await createRzpOrder(order.amount!, dbId);
 
-  const newOrder = {
-    ...order,
-    rzp: {
+    newOrder.status = "initiated";
+    newOrder.rzp = {
       orderId: rzpOrder.id,
-      amount: rzpOrder.amount,
+      amount: +rzpOrder.amount,
       currency: rzpOrder.currency,
       paymentId: null,
       paymentStatus: null,
-    },
-  } as Order;
+    };
+  } else if (newOrder.paymentMode === "cash") {
+    newOrder.status = "paid";
+    newOrder.cash = { amount: +order.amount! * 100, paymentStatus: "paid" };
+  }
 
   await orderRef.create(newOrder);
   return { ...newOrder, id: orderRef.id } as Order;

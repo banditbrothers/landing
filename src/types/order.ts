@@ -20,14 +20,25 @@ export type Order = {
   address: Address;
   products: SelectedDesignsType[];
   status: OrderStatus;
-  rzp: {
-    orderId: string;
-    amount: number;
-    currency: string;
-    paymentId: string | null;
-    paymentStatus: string | null;
-  };
-};
+} & (
+  | {
+      paymentMode: "rzp";
+      rzp: {
+        orderId: string;
+        amount: number;
+        currency: string;
+        paymentId: string | null;
+        paymentStatus: string | null;
+      };
+    }
+  | {
+      paymentMode: "cash";
+      cash: {
+        amount: number;
+        paymentStatus: "paid" | "cancelled";
+      };
+    }
+);
 
 export type Coupon = {
   id: string;

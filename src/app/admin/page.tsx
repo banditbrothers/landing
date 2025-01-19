@@ -6,14 +6,14 @@ import { DateRangePicker } from "@/components/misc/dateRange";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Order, OrderStatus } from "@/types/order";
+import { Order } from "@/types/order";
 import { getOrders } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { getDate, getTimestamp, hash } from "@/utils/misc";
+import { getDate, hash } from "@/utils/misc";
 import { EyeIcon } from "@/components/misc/icons";
 import LoadingScreen from "@/components/misc/loadingScreen";
-import { CheckIcon, TrashIcon, X } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import { getAddressString } from "@/utils/address";
 import { toast } from "sonner";
 import { useOrderActions } from "@/hooks/useOrderActions";
@@ -36,7 +36,7 @@ function AdminPage() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  const { orderLoading, updateOrder, removeOrder } = useOrderActions();
+  const { orderLoading, removeOrder } = useOrderActions();
 
   useEffect(() => {
     getOrders().then(orders => {
@@ -85,23 +85,6 @@ function AdminPage() {
     setFilteredOrders(orders);
   };
 
-  const handlePaymentStatusChange = async (orderId: string, status: OrderStatus) => {
-    const change = { payment: { status, updatedAt: getTimestamp() } };
-    await updateOrder(orderId, change);
-    const newOrder = orders.find(order => order.id === orderId);
-
-    if (newOrder) {
-      newOrder.payment = change.payment;
-      setFilteredOrders(prev => {
-        const index = prev.findIndex(order => order.id === orderId);
-        if (index === -1) return prev;
-        const updated = [...prev];
-        updated[index] = newOrder;
-        return updated;
-      });
-    }
-  };
-
   const handleRemoveOrder = async (orderId: string) => {
     await removeOrder(orderId);
     setFilteredOrders(prev => prev.filter(order => order.id !== orderId));
@@ -139,7 +122,7 @@ function AdminPage() {
                   <TableHead>Email</TableHead>
                   <TableHead>Address</TableHead>
                   <TableHead>Total</TableHead>
-                  <TableHead>Payment Status</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -153,23 +136,7 @@ function AdminPage() {
                     <TableCell>₹{order.amount.toFixed(2)}</TableCell>
                     <TableCell>
                       <div className="flex flex-row gap-2 items-center">
-                        {order.payment.status}
-                        {["approval-pending", "initiated"].includes(order.payment.status) && (
-                          <div className="flex flex-row gap-2">
-                            <Button
-                              variant="default"
-                              size="icon"
-                              onClick={() => handlePaymentStatusChange(order.id, "paid")}>
-                              <CheckIcon />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => handlePaymentStatusChange(order.id, "admin-cancelled")}>
-                              <X />
-                            </Button>
-                          </div>
-                        )}
+                        {order.paymentMode} / {order.status}
                       </div>
                     </TableCell>
                     <TableCell className="flex flex-row gap-2">
