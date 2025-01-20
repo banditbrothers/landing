@@ -11,6 +11,7 @@ import { ProductSpecifications } from "@/components/product-specs/product-specs"
 import { Features } from "@/components/features/features";
 import { Testimonials } from "@/components/testimonials/testimonials";
 import Link from "next/link";
+import KnowYourProduct from "@/components/know-your-product/knowYourProduct";
 
 export default function LandingPage() {
   useEffect(() => {
@@ -36,6 +37,8 @@ export default function LandingPage() {
       <DesignLibrary />
 
       <Features />
+
+      <KnowYourProduct />
 
       <ProductSpecifications />
 
