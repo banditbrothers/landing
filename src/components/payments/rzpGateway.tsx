@@ -50,22 +50,12 @@ export const RazorpayPaymentGateway = ({ ref, onSuccess, onCancel, onFailed }: R
       key: process.env.NEXT_PUBLIC_RZP_KEY_ID!,
       amount: order.amount * 100,
       currency: order.rzp.currency,
-      name: "Bandit Brothers",
-      image: "https://www.banditbrothers.in/icon.svg",
       order_id: order.rzp.orderId,
-      prefill: {
-        name: order.name,
-        email: order.email,
-        contact: order.phone,
-        method: "upi",
-      },
+      prefill: { name: order.name, email: order.email, contact: order.phone, method: "upi" },
       config: {
         display: {
           hide: [{ method: "netbanking" }, { method: "paylater" }],
         },
-      },
-      theme: {
-        color: "#fd6e00",
       },
       notes: { dbId: order.id },
       modal: {
