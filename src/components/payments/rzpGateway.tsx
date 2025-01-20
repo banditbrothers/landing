@@ -51,6 +51,8 @@ export const RazorpayPaymentGateway = ({ ref, onSuccess, onCancel, onFailed }: R
       amount: order.amount * 100,
       currency: order.rzp.currency,
       name: "Bandit Brothers",
+      description: "Start your mischief with Bandit Brothers",
+      image: "https://www.banditbrothers.in/icon.svg",
       order_id: order.rzp.orderId,
       prefill: {
         name: order.name,
