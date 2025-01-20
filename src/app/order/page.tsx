@@ -86,7 +86,10 @@ const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) 
   const discount = getDiscountAmount(subtotal, coupon);
   const shippingCost = getShippingCost(products, coupon);
 
-  return subtotal - discount + shippingCost;
+  const total = subtotal - discount + shippingCost;
+
+  if (total < 0) return 0;
+  return total;
 };
 
 const showErrorToast = (message: string) => {
@@ -105,7 +108,7 @@ function OrderPageContent() {
   const router = useRouter();
 
   const searchParams = useSearchParams();
-  const paymentMode = (searchParams.get("paymentMode") ?? "rzp") as "rzp" | "cash";
+  const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
   const paramDesignId = searchParams.get("design");
   if (paramDesignId) DEFAULT_ORDER_VALUES.products = [{ designId: paramDesignId, quantity: 1 }];
 

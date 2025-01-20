@@ -4,8 +4,13 @@ import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase";
 import { Order } from "@/types/order";
 import { createOrder as createRzpOrder } from "./payments/rzp";
+
 export const getOrders = async (): Promise<Order[]> => {
-  const orders = await firestore().collection(Collections.orders).orderBy("createdAt", "desc").get();
+  const orders = await firestore()
+    .collection(Collections.orders)
+    .where("status", "!=", "cancelled")
+    .orderBy("createdAt", "desc")
+    .get();
   return orders.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Order[];
 };
 

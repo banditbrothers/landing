@@ -31,12 +31,12 @@ export const createCoupon = async () => {
   const oneYearFromNow = Math.floor(addYears(now, 1).getTime() / 1000);
 
   const finalCoupon: Omit<Coupon, "id"> = {
-    code: "BROCODE",
-    name: "15% Off",
-    description: "Get 15% off on your order",
+    code: "RZPCHALA",
+    name: "99% Off",
+    description: "Get 99% off on your order",
     discountType: "percentage",
     minOrderAmount: 0,
-    discount: 15,
+    discount: 99,
     createdAt: getTimestamp(),
     expiresAt: oneYearFromNow,
     isActive: true,
