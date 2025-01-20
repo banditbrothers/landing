@@ -25,9 +25,13 @@ import LoadingScreen, { LoadingIcon } from "@/components/misc/loadingScreen";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";
 import { Separator } from "@/components/ui/separator";
 
-import { getWhatsappNeedHelpLink, getWhatsappOrderDetails } from "@/utils/whatsappMessageLinks";
+import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
 import { useOrderActions } from "@/hooks/useOrderActions";
 import { useCouponActions } from "@/hooks/useCouponActions";
+import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/payments/rzpGateway";
+import { updateOrder } from "@/actions/orders";
+
+const SHIPPING_COST = 100;
 
 const countries = Country.getAllCountries();
 
@@ -62,8 +66,6 @@ const getSubtotal = (products: SelectedDesignsType[]) => {
 };
 
 const getShippingCost = (products: SelectedDesignsType[], coupon: Coupon | null) => {
-  const SHIPPING_COST = 100; // ₹100 for shipping
-
   if (products.length === 0) return 0;
   if (coupon && coupon.code === "BROCODE") return 0;
 
@@ -84,7 +86,10 @@ const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) 
   const discount = getDiscountAmount(subtotal, coupon);
   const shippingCost = getShippingCost(products, coupon);
 
-  return subtotal - discount + shippingCost;
+  const total = subtotal - discount + shippingCost;
+
+  if (total < 0) return 0;
+  return total;
 };
 
 const showErrorToast = (message: string) => {
@@ -96,11 +101,14 @@ function OrderPageContent() {
   const [orderTotal, setOrderTotal] = useState(0);
   const [coupon, setCoupon] = useState<Coupon | null>(null);
 
+  const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
+
   const { orderLoading, createOrder } = useOrderActions();
   const { couponLoading, validateCoupon } = useCouponActions();
   const router = useRouter();
 
   const searchParams = useSearchParams();
+  const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
   const paramDesignId = searchParams.get("design");
   if (paramDesignId) DEFAULT_ORDER_VALUES.products = [{ designId: paramDesignId, quantity: 1 }];
 
@@ -173,16 +181,32 @@ function OrderPageContent() {
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
     const order: Partial<Order> = {
       ...values,
+      paymentMode,
       amount: orderTotal,
       couponCode: coupon?.code ?? null,
       createdAt: getTimestamp(),
-      payment: { status: "initiated", updatedAt: getTimestamp() },
     };
 
     const orderObj = await createOrder(order);
 
-    window.open(getWhatsappOrderDetails(orderObj), "_blank", "noreferrer noopener");
+    if (orderObj.paymentMode === "rzp") rzpRef.current?.handlePayment(orderObj);
+    else if (orderObj.paymentMode === "cash") {
+      toast.success("Order Placed in Cash 🎉");
+      router.replace("/");
+    }
+  };
+
+  const handlePaymentSuccess = async () => {
+    toast.success("Order Placed 🎉");
     router.replace("/");
+  };
+
+  const handlePaymentCancel = async (orderId: string) => {
+    await updateOrder(orderId, { status: "cancelled" });
+  };
+
+  const handlePaymentFailed = () => {
+    toast.error("Payment Failed");
   };
 
   const handleValidateCoupon = async () => {
@@ -209,161 +233,75 @@ function OrderPageContent() {
 
   const subtotal = getSubtotal(watchProducts);
   const shippingCost = getShippingCost(watchProducts, coupon);
+  const isShippingFree = shippingCost === 0;
 
   return (
-    <div className="mx-auto py-10 px-2 max-w-lg">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl flex gap-10 justify-between items-center">
-            <span>Begin the Brotherhood</span>
-            <Button
-              variant="link"
-              className="px-0"
-              onClick={() => window.open(getWhatsappNeedHelpLink(form.getValues()), "_blank", "noreferrer noopener")}>
-              Need Help?
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Email
-                        <RequiredStar />
-                      </FormLabel>
-                      <FormControl>
-                        <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Name
-                        <RequiredStar />
-                      </FormLabel>
-                      <FormControl>
-                        <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Phone
-                        <RequiredStar />
-                      </FormLabel>
-                      <FormControl>
-                        <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+    <>
+      {paymentMode === "rzp" && (
+        <RazorpayPaymentGateway
+          ref={rzpRef}
+          onSuccess={handlePaymentSuccess}
+          onCancel={handlePaymentCancel}
+          onFailed={handlePaymentFailed}
+        />
+      )}
 
-                <FormField
-                  control={form.control}
-                  name="address.line1"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Address Line 1
-                        <RequiredStar />
-                      </FormLabel>
-                      <FormControl>
-                        <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="address.line2"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Address Line 2 (Optional)</FormLabel>
-                      <FormControl>
-                        <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid grid-cols-2 gap-4">
+      <div className="mx-auto py-10 px-2 max-w-lg">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl flex gap-10 justify-between items-center">
+              <span>Begin the Brotherhood</span>
+              <Button
+                variant="link"
+                className="px-0"
+                onClick={() => window.open(getWhatsappNeedHelpLink(form.getValues()), "_blank", "noreferrer noopener")}>
+                Need Help?
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="space-y-6">
                   <FormField
                     control={form.control}
-                    name="address.country"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Country</FormLabel>
-                        <FormControl>
-                          <Select onValueChange={field.onChange} defaultValue={field.value} {...field}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Country" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {countries.map(country => (
-                                <SelectItem key={country.isoCode} value={country.isoCode}>
-                                  {country.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="address.state"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>State</FormLabel>
-                        <FormControl>
-                          <Select onValueChange={field.onChange} defaultValue={field.value} {...field}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select State" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {countryStates.map(state => (
-                                <SelectItem key={state.isoCode} value={state.isoCode}>
-                                  {state.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="address.city"
+                    name="email"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          City
+                          Email
+                          <RequiredStar />
+                        </FormLabel>
+                        <FormControl>
+                          <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Name
+                          <RequiredStar />
+                        </FormLabel>
+                        <FormControl>
+                          <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Phone
                           <RequiredStar />
                         </FormLabel>
                         <FormControl>
@@ -376,11 +314,11 @@ function OrderPageContent() {
 
                   <FormField
                     control={form.control}
-                    name="address.zip"
+                    name="address.line1"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Zip Code
+                          Address Line 1
                           <RequiredStar />
                         </FormLabel>
                         <FormControl>
@@ -390,179 +328,282 @@ function OrderPageContent() {
                       </FormItem>
                     )}
                   />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="products"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Choose your Mischief
-                        <RequiredStar />
-                      </FormLabel>
-                      <FormControl>
-                        <div>
-                          <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
-                            <span>
-                              {selectedDesignsIds.map(id => (
-                                <Badge key={id}>{designsObject[id].name}</Badge>
-                              ))}
-                            </span>
+                  <FormField
+                    control={form.control}
+                    name="address.line2"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Address Line 2 (Optional)</FormLabel>
+                        <FormControl>
+                          <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="address.country"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Country</FormLabel>
+                          <FormControl>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} {...field}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Country" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {countries.map(country => (
+                                  <SelectItem key={country.isoCode} value={country.isoCode}>
+                                    {country.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                            <DropdownMenuCheckboxes
-                              designs={designs}
-                              selectedIds={selectedDesignsIds}
-                              onChange={(id, checked) => handleDesignChange(id, checked, field.onChange)}
-                            />
-                          </div>
+                    <FormField
+                      control={form.control}
+                      name="address.state"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>State</FormLabel>
+                          <FormControl>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} {...field}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select State" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {countryStates.map(state => (
+                                  <SelectItem key={state.isoCode} value={state.isoCode}>
+                                    {state.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                          {selectedDesignsIds.map((id, index) => {
-                            return (
-                              <div key={id} className="flex items-center gap-4 mt-4 p-4 border rounded-lg relative">
-                                <Image
-                                  src={designsObject[id].image}
-                                  width={80}
-                                  height={80}
-                                  alt={designsObject[id].name}
-                                  className="w-20 h-20 object-cover rounded-md"
-                                />
+                    <FormField
+                      control={form.control}
+                      name="address.city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            City
+                            <RequiredStar />
+                          </FormLabel>
+                          <FormControl>
+                            <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                                <div className="flex-1">
-                                  <h3 className="font-medium">{designsObject[id].name}</h3>
-                                  <p className="text-sm text-muted-foreground">₹{designsObject[id].price}</p>
+                    <FormField
+                      control={form.control}
+                      name="address.zip"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Zip Code
+                            <RequiredStar />
+                          </FormLabel>
+                          <FormControl>
+                            <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="products"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Choose your Mischief
+                          <RequiredStar />
+                        </FormLabel>
+                        <FormControl>
+                          <div>
+                            <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
+                              <span>
+                                {selectedDesignsIds.map(id => (
+                                  <Badge key={id}>{designsObject[id].name}</Badge>
+                                ))}
+                              </span>
+
+                              <DropdownMenuCheckboxes
+                                designs={designs}
+                                selectedIds={selectedDesignsIds}
+                                onChange={(id, checked) => handleDesignChange(id, checked, field.onChange)}
+                              />
+                            </div>
+
+                            {selectedDesignsIds.map((id, index) => {
+                              return (
+                                <div key={id} className="flex items-center gap-4 mt-4 p-4 border rounded-lg relative">
+                                  <Image
+                                    src={designsObject[id].image}
+                                    width={80}
+                                    height={80}
+                                    alt={designsObject[id].name}
+                                    className="w-20 h-20 object-cover rounded-md"
+                                  />
+
+                                  <div className="flex-1">
+                                    <h3 className="font-medium">{designsObject[id].name}</h3>
+                                    <p className="text-sm text-muted-foreground">₹{designsObject[id].price}</p>
+                                  </div>
+
+                                  <FormField
+                                    control={form.control}
+                                    name={`products.${index}.quantity`}
+                                    render={({ field, formState }) => (
+                                      <Input
+                                        {...field}
+                                        onChange={e => {
+                                          const intQty = parseInt(e.target.value);
+                                          if (intQty < 0 || intQty > 100) return;
+                                          field.onChange(!isNaN(intQty) ? intQty : 0);
+                                        }}
+                                        type="number"
+                                        onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
+                                        className={`max-w-20 self-end ${
+                                          formState.errors.products?.[index]?.quantity ? "border-destructive" : ""
+                                        }`}
+                                      />
+                                    )}
+                                  />
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDesignChange(id, false, field.onChange)}
+                                    className="absolute top-0 right-0">
+                                    <X className="h-4 w-4" />
+                                  </Button>
                                 </div>
-
-                                <FormField
-                                  control={form.control}
-                                  name={`products.${index}.quantity`}
-                                  render={({ field, formState }) => (
-                                    <Input
-                                      {...field}
-                                      onChange={e => {
-                                        const intQty = parseInt(e.target.value);
-                                        if (intQty < 0 || intQty > 100) return;
-                                        field.onChange(!isNaN(intQty) ? intQty : 0);
-                                      }}
-                                      type="number"
-                                      onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
-                                      className={`max-w-20 self-end ${
-                                        formState.errors.products?.[index]?.quantity ? "border-destructive" : ""
-                                      }`}
-                                    />
-                                  )}
-                                />
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleDesignChange(id, false, field.onChange)}
-                                  className="absolute top-0 right-0">
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                {selectedDesignsIds.length > 0 && (
-                  <div className="flex flex-col gap-2">
-                    <Separator className="mb-4" />
-
+                              );
+                            })}
+                          </div>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  {selectedDesignsIds.length > 0 && (
                     <div className="flex flex-col gap-2">
-                      <div className="flex gap-2">
-                        <FormField
-                          control={form.control}
-                          name="couponCode"
-                          render={({ field }) => (
-                            <FormItem className="flex-1">
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  value={field.value ?? ""}
-                                  placeholder="Enter coupon code"
-                                  onKeyDown={e => {
-                                    if (e.key === "Enter") {
-                                      e.preventDefault();
-                                      handleValidateCoupon();
-                                    }
-                                  }}
-                                />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                        <Button
-                          disabled={couponLoading.validating || watchCouponCode.length === 0}
-                          type="button"
-                          className="min-w-20"
-                          onClick={handleValidateCoupon}
-                          variant="secondary">
-                          {couponLoading.validating ? <LoadingIcon /> : "Apply"}
-                        </Button>
+                      <Separator className="mb-4" />
+
+                      <div className="flex flex-col gap-2">
+                        <div className="flex gap-2">
+                          <FormField
+                            control={form.control}
+                            name="couponCode"
+                            render={({ field }) => (
+                              <FormItem className="flex-1">
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    value={field.value ?? ""}
+                                    placeholder="Enter coupon code"
+                                    onKeyDown={e => {
+                                      if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        handleValidateCoupon();
+                                      }
+                                    }}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                          <Button
+                            disabled={couponLoading.validating || watchCouponCode.length === 0}
+                            type="button"
+                            className="min-w-20"
+                            onClick={handleValidateCoupon}
+                            variant="secondary">
+                            {couponLoading.validating ? <LoadingIcon /> : "Apply"}
+                          </Button>
+                        </div>
+
+                        {coupon && (
+                          <div className="flex items-center gap-2 pl-3 pr-2 py-1 bg-secondary rounded-full text-xs w-fit">
+                            <span>{coupon.code}</span>
+                            <a
+                              href=""
+                              onClick={e => {
+                                e.preventDefault();
+                                setCoupon(null);
+                              }}>
+                              <X className="h-3 w-3" />
+                            </a>
+                          </div>
+                        )}
+                      </div>
+
+                      <Separator className="my-4" />
+
+                      <div className="flex justify-between items-center text-sm">
+                        <span>Subtotal</span>
+                        <span>₹{subtotal}</span>
                       </div>
 
                       {coupon && (
-                        <div className="flex items-center gap-2 pl-3 pr-2 py-1 bg-secondary rounded-full text-xs w-fit">
-                          <span>{coupon.code}</span>
-                          <a
-                            href=""
-                            onClick={e => {
-                              e.preventDefault();
-                              setCoupon(null);
-                            }}>
-                            <X className="h-3 w-3" />
-                          </a>
+                        <div className="flex justify-between items-center text-sm">
+                          <span>Discount ({coupon.name})</span>
+                          <span>- ₹{getDiscountAmount(subtotal, coupon)}</span>
                         </div>
                       )}
-                    </div>
 
-                    <Separator className="my-4" />
-
-                    <div className="flex justify-between items-center text-sm">
-                      <span>Subtotal</span>
-                      <span>₹{subtotal}</span>
-                    </div>
-
-                    {coupon && (
                       <div className="flex justify-between items-center text-sm">
-                        <span>Discount ({coupon.name})</span>
-                        <span>- ₹{getDiscountAmount(subtotal, coupon)}</span>
-                      </div>
-                    )}
+                        <span>Shipping</span>
 
-                    <div className="flex justify-between items-center text-sm">
-                      <span className={`${shippingCost > 0 ? "" : "text-muted-foreground line-through"}`}>
-                        Shipping
-                      </span>
-                      <span className={`${shippingCost > 0 ? "" : "text-muted-foreground line-through"}`}>
-                        ₹{shippingCost}
-                      </span>
+                        <span className="flex items-center gap-1 capitalize">
+                          {isShippingFree ? (
+                            <>
+                              <span className="text-muted-foreground line-through">₹{SHIPPING_COST}</span>
+                              FREE
+                            </>
+                          ) : (
+                            <span>₹{shippingCost}</span>
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center mt-2">
+                        <span>
+                          <span className="text-lg font-medium">Total Amount</span>
+                          <p className="text-sm text-muted-foreground">Inclusive of all taxes</p>
+                        </span>
+                        <span className="text-2xl font-bold self-start">₹{orderTotal}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center mt-2">
-                      <span>
-                        <span className="text-lg font-medium">Total Amount</span>
-                        <p className="text-sm text-muted-foreground">Inclusive of all taxes</p>
-                      </span>
-                      <span className="text-2xl font-bold self-start">₹{orderTotal}</span>
-                    </div>
-                  </div>
-                )}
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={!formIsReady || orderLoading.create || orderLoading.update}>
-                  Order Now
-                  {/* {formIsReady ? `Pay ₹${orderTotal}` : "Pay Now"} */}
-                  {(orderLoading.create || orderLoading.update) && <LoadingIcon />}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+                  )}
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={!formIsReady || orderLoading.create || orderLoading.update}>
+                    {formIsReady ? `Pay ₹${orderTotal}` : "Pay Now"}
+                    {(orderLoading.create || orderLoading.update) && <LoadingIcon />}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }
 

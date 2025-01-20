@@ -6,17 +6,14 @@ import { DateRangePicker } from "@/components/misc/dateRange";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Order, OrderStatus } from "@/types/order";
+import { Order } from "@/types/order";
 import { getOrders } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { getDate, getTimestamp, hash } from "@/utils/misc";
+import { getDate, hash } from "@/utils/misc";
 import { EyeIcon } from "@/components/misc/icons";
 import LoadingScreen from "@/components/misc/loadingScreen";
-import { CheckIcon, TrashIcon, X } from "lucide-react";
 import { getAddressString } from "@/utils/address";
-import { toast } from "sonner";
-import { useOrderActions } from "@/hooks/useOrderActions";
 
 type FilterOrder =
   | {
@@ -35,8 +32,6 @@ function AdminPage() {
   const [emailFilter, setEmailFilter] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-
-  const { orderLoading, updateOrder, removeOrder } = useOrderActions();
 
   useEffect(() => {
     getOrders().then(orders => {
@@ -85,29 +80,6 @@ function AdminPage() {
     setFilteredOrders(orders);
   };
 
-  const handlePaymentStatusChange = async (orderId: string, status: OrderStatus) => {
-    const change = { payment: { status, updatedAt: getTimestamp() } };
-    await updateOrder(orderId, change);
-    const newOrder = orders.find(order => order.id === orderId);
-
-    if (newOrder) {
-      newOrder.payment = change.payment;
-      setFilteredOrders(prev => {
-        const index = prev.findIndex(order => order.id === orderId);
-        if (index === -1) return prev;
-        const updated = [...prev];
-        updated[index] = newOrder;
-        return updated;
-      });
-    }
-  };
-
-  const handleRemoveOrder = async (orderId: string) => {
-    await removeOrder(orderId);
-    setFilteredOrders(prev => prev.filter(order => order.id !== orderId));
-    toast.info("Order Removed!");
-  };
-
   if (isLoading) return <LoadingScreen />;
 
   return (
@@ -134,54 +106,44 @@ function AdminPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Order ID</TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead>Email</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead>Address</TableHead>
                   <TableHead>Total</TableHead>
-                  <TableHead>Payment Status</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredOrders.map(order => (
                   <TableRow key={order.id} className="hover:bg-primary/10">
-                    <TableCell className="font-medium">{order.id}</TableCell>
-                    <TableCell>{getDate(order.createdAt).toLocaleString()}</TableCell>
-                    <TableCell>{order.email}</TableCell>
+                    <TableCell>
+                      {getDate(order.createdAt).toLocaleDateString("en-IN", {
+                        weekday: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        day: "2-digit",
+                        hour12: true,
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </TableCell>
+
+                    <TableCell>{order.name}</TableCell>
+
                     <TableCell className="max-w-xs">{getAddressString(order.address)}</TableCell>
+
                     <TableCell>₹{order.amount.toFixed(2)}</TableCell>
+
                     <TableCell>
                       <div className="flex flex-row gap-2 items-center">
-                        {order.payment.status}
-                        {["approval-pending", "initiated"].includes(order.payment.status) && (
-                          <div className="flex flex-row gap-2">
-                            <Button
-                              variant="default"
-                              size="icon"
-                              onClick={() => handlePaymentStatusChange(order.id, "paid")}>
-                              <CheckIcon />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => handlePaymentStatusChange(order.id, "admin-cancelled")}>
-                              <X />
-                            </Button>
-                          </div>
-                        )}
+                        {order.paymentMode} / {order.status}
                       </div>
                     </TableCell>
+
                     <TableCell className="flex flex-row gap-2">
                       <Button variant="outline" size="icon" onClick={() => showDialog(order)}>
                         <EyeIcon />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="destructive"
-                        disabled={orderLoading.remove}
-                        onClick={() => handleRemoveOrder(order.id)}>
-                        <TrashIcon />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -193,11 +155,11 @@ function AdminPage() {
       </Card>
 
       <Dialog open={selectedOrder !== null} onOpenChange={() => setSelectedOrder(null)}>
-        <DialogContent aria-describedby="order-details" className="max-w-3xl max-h-[80vh]">
-          {selectedOrder && (
-            <>
+        {selectedOrder && (
+          <>
+            <DialogContent aria-describedby="order-details" className="max-w-3xl max-h-[80vh] overflow-auto">
               <DialogHeader>
-                <DialogTitle>Order Details - {selectedOrder.id}</DialogTitle>
+                <DialogTitle>Order Details {selectedOrder.id}</DialogTitle>
               </DialogHeader>
 
               <div className="max-h-[80vh] overflow-auto">
@@ -205,9 +167,9 @@ function AdminPage() {
                   <code>{JSON.stringify(selectedOrder, null, 2)}</code>
                 </pre>
               </div>
-            </>
-          )}
-        </DialogContent>
+            </DialogContent>
+          </>
+        )}
       </Dialog>
     </div>
   );

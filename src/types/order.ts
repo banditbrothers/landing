@@ -1,4 +1,4 @@
-export type OrderStatus = "initiated" | "approval-pending" | "paid" | "cancelled" | "admin-cancelled";
+export type OrderStatus = "initiated" | "paid" | "cancelled" | "admin-cancelled" | "payment-failed";
 
 export type Address = {
   line1: string;
@@ -19,8 +19,26 @@ export type Order = {
   couponCode: string | null;
   address: Address;
   products: SelectedDesignsType[];
-  payment: { status: OrderStatus; updatedAt: number };
-};
+  status: OrderStatus;
+} & (
+  | {
+      paymentMode: "rzp";
+      rzp: {
+        orderId: string;
+        amount: number;
+        currency: string;
+        paymentId: string | null;
+        paymentStatus: string | null;
+      };
+    }
+  | {
+      paymentMode: "cash";
+      cash: {
+        amount: number;
+        paymentStatus: "paid" | "cancelled";
+      };
+    }
+);
 
 export type Coupon = {
   id: string;
