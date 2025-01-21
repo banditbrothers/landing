@@ -7,6 +7,7 @@ import { standardDescription } from "@/data/designs";
 import Link from "next/link";
 import posthog from "posthog-js";
 import { useEffect } from "react";
+import { ShareIcon } from "lucide-react";
 
 type ProductDialogProps = {
   designId: Design["id"] | null;
@@ -19,6 +20,18 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
   useEffect(() => {
     if (designId) posthog.capture("design_viewed", { designId });
   }, [designId]);
+
+  const handleShare = async () => {
+    if (design) {
+      posthog.capture("design_share", { designId });
+
+      await navigator.share({
+        title: `${design.name} bandana by Bandit Brothers`,
+        text: `${design.name} bandana by Bandit Brothers\n`,
+        url: `${window.location.origin}/?design=${designId}`,
+      });
+    }
+  };
 
   if (!design) return null;
   return (
@@ -59,15 +72,20 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
                 ))}
               </div>
             </div>
-            <Link
-              target="_blank"
-              className="w-full"
-              href={`/order?design=${designId}`}
-              onClick={() => posthog.capture("design_shopnow", { designId })}>
-              <Button className="mt-4 w-full">
-                Shop Now <ShoppingCartIcon />
+            <div className="flex flex-row gap-2 mt-4 w-full">
+              <Link
+                target="_blank"
+                className="w-full flex-1"
+                href={`/order?design=${designId}`}
+                onClick={() => posthog.capture("design_shopnow", { designId })}>
+                <Button className="w-full">
+                  Shop Now <ShoppingCartIcon />
+                </Button>
+              </Link>
+              <Button variant="outline" onClick={handleShare}>
+                <ShareIcon />
               </Button>
-            </Link>
+            </div>
           </div>
         </div>
       </DialogContent>
