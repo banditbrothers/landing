@@ -1,4 +1,6 @@
-import { updateOrder } from "@/actions/orders";
+import { getOrder, updateOrder } from "@/actions/orders";
+import { sendDiscordOrderMessage } from "@/lib/discord";
+import { getDiscordOrderMessage } from "@/utils/discordMessages";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 
 export async function POST(request: Request) {
@@ -19,11 +21,19 @@ export async function POST(request: Request) {
         const paymentId = data.payload.payment.entity.id;
         const paymentStatus = data.payload.payment.entity.status;
 
-        await updateOrder(dbId, {
+        const updateOrderPromise = updateOrder(dbId, {
           "rzp.paymentId": paymentId,
           "rzp.paymentStatus": paymentStatus,
           status: orderStatus,
         });
+
+        const sendDiscordMessagePromise = new Promise(async resolve => {
+          const order = await getOrder(dbId);
+          await sendDiscordOrderMessage(getDiscordOrderMessage(order));
+          resolve(true);
+        });
+
+        await Promise.allSettled([updateOrderPromise, sendDiscordMessagePromise]);
         break;
       }
 

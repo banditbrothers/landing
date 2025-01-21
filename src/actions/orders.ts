@@ -4,6 +4,8 @@ import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase";
 import { Order } from "@/types/order";
 import { createOrder as createRzpOrder } from "./payments/rzp";
+import { sendDiscordOrderMessage } from "@/lib/discord";
+import { getDiscordOrderMessage } from "@/utils/discordMessages";
 
 export const getOrders = async (): Promise<Order[]> => {
   const orders = await firestore()
@@ -12,6 +14,11 @@ export const getOrders = async (): Promise<Order[]> => {
     .orderBy("createdAt", "desc")
     .get();
   return orders.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Order[];
+};
+
+export const getOrder = async (id: string) => {
+  const order = await firestore().collection(Collections.orders).doc(id).get();
+  return { id: order.id, ...order.data() } as Order;
 };
 
 export const createOrder = async (order: Partial<Order>) => {
@@ -36,7 +43,12 @@ export const createOrder = async (order: Partial<Order>) => {
   }
 
   await orderRef.create(newOrder);
-  return { ...newOrder, id: orderRef.id } as Order;
+  const orderWithId = { ...newOrder, id: orderRef.id } as Order;
+
+  if (newOrder.paymentMode === "cash") {
+    await sendDiscordOrderMessage(getDiscordOrderMessage(orderWithId));
+  }
+  return orderWithId;
 };
 
 export const updateOrder = async (orderId: string, order: object) => {
