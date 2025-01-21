@@ -26,9 +26,8 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
       posthog.capture("design_share", { designId });
 
       await navigator.share({
-        title: `${design.name} bandana by Bandit Brothers`,
-        text: `${design.name} bandana by Bandit Brothers\n`,
-        url: `${window.location.origin}/?design=${designId}`,
+        title: `Share ${design.name}`,
+        text: `Hey! Check out this ${design.name} bandana by Bandit Brothers\n${window.location.origin}/?design=${designId}`,
       });
     }
   };
