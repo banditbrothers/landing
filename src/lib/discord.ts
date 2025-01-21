@@ -1,13 +1,16 @@
 "use server";
 
-// import { isProduction } from "@/utils/misc";
+import { isProduction } from "@/utils/misc";
 import { MessageCreateOptions } from "discord.js";
 
 // order channel
 const channelId = "1331164962059587614";
 
 export async function sendDiscordOrderMessage(data: MessageCreateOptions) {
-  // if (!isProduction) return;
+  if (!isProduction) {
+    console.info("Skipping Discord message in non-production environment");
+    return;
+  }
 
   try {
     const response = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
