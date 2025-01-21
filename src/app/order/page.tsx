@@ -59,6 +59,7 @@ const orderFormSchema = z.object({
 });
 
 const getSubtotal = (products: SelectedDesignsType[]) => {
+  if (products.length === 0) return 0;
   return products.reduce((total, product) => {
     const design = designsObject[product.designId];
     return total + design.price * product.quantity;
