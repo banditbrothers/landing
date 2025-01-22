@@ -12,10 +12,6 @@ export const contentType = "image/png";
 export default async function Image({ params }: { params: { designId: string } }) {
   const design = designs.find(design => design.id === params.designId);
 
-  if (!design) {
-    return new Response("Design not found", { status: 404 });
-  }
-
   //   const src = await fetch(new URL(design.image, import.meta.url)).then(res => res.arrayBuffer());
 
   return new ImageResponse(
@@ -30,7 +26,7 @@ export default async function Image({ params }: { params: { designId: string } }
           alignItems: "center",
           justifyContent: "center",
         }}>
-        {design.name}
+        {design?.name || "Design not found"}
       </div>
     )
   );
