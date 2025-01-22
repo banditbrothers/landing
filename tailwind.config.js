@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 export const darkMode = ["class"];
+
 export const content = [
   "./app/**/*.{js,ts,jsx,tsx,mdx}",
   "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,6 +10,7 @@ export const content = [
   // Or if using `src` directory:
   "./src/**/*.{js,ts,jsx,tsx,mdx}",
 ];
+
 export const theme = {
   extend: {
     fontFamily: {
@@ -87,4 +89,5 @@ export const theme = {
     },
   },
 };
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 export const plugins = [require("tailwindcss-animate")];

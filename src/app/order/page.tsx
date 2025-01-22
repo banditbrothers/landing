@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { designsObject, designs } from "@/data/designs";
-import { DropdownMenuCheckboxes } from "@/components/orders/multiSelectDropdown";
+import { MultiSelectDropdown } from "@/components/orders/multiSelectDropdown";
 import { Badge } from "@/components/orders/badge";
 
 import { Coupon, Order, SelectedDesignsType } from "@/types/order";
@@ -30,6 +30,7 @@ import { useOrderActions } from "@/hooks/useOrderActions";
 import { useCouponActions } from "@/hooks/useCouponActions";
 import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/payments/rzpGateway";
 import { updateOrder } from "@/actions/orders";
+import { getFavorites } from "@/utils/favorites";
 
 const SHIPPING_COST = 100;
 
@@ -92,6 +93,14 @@ const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) 
   if (total < 0) return 0;
   return total;
 };
+
+let favFirstDesigns = designs;
+if (typeof window !== "undefined") {
+  const favoriteDesignIds = getFavorites();
+  const favDesigns = designs.filter(design => favoriteDesignIds.includes(design.id));
+  const otherDesigns = designs.filter(design => !favoriteDesignIds.includes(design.id));
+  favFirstDesigns = [...favDesigns, ...otherDesigns];
+}
 
 const showErrorToast = (message: string) => {
   toast.error(message, { position: "top-right" });
@@ -247,7 +256,7 @@ function OrderPageContent() {
         />
       )}
 
-      <div className="mx-auto py-10 px-2 max-w-lg">
+      <div className="mx-auto py-10 px-2 max-w-lg mt-16">
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl flex gap-10 justify-between items-center">
@@ -445,8 +454,8 @@ function OrderPageContent() {
                                 ))}
                               </span>
 
-                              <DropdownMenuCheckboxes
-                                designs={designs}
+                              <MultiSelectDropdown
+                                designs={favFirstDesigns}
                                 selectedIds={selectedDesignsIds}
                                 onChange={(id, checked) => handleDesignChange(id, checked, field.onChange)}
                               />

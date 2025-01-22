@@ -10,14 +10,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Design } from "@/data/designs";
-import { PlusIcon } from "../misc/icons";
+import { HeartIconSolid, PlusIcon } from "../misc/icons";
 import Image from "next/image";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
-export function DropdownMenuCheckboxes(props: {
+export function MultiSelectDropdown(props: {
   designs: Design[];
   selectedIds: string[];
   onChange: (id: string, checked: boolean) => void;
 }) {
+  const { isFavorite } = useFavorites();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -33,7 +36,10 @@ export function DropdownMenuCheckboxes(props: {
             onCheckedChange={checked => props.onChange(design.id, checked)}>
             <div className="flex items-center gap-2">
               <Image src={design.image} width={40} height={40} alt={design.name} className="object-cover rounded-md" />
-              <span>{design.name}</span>
+              <span className="flex flex-row gap-2 items-center">
+                {isFavorite(design.id) && <HeartIconSolid className="w-4 h-4 text-bandit-orange" />}
+                {design.name}
+              </span>
             </div>
           </DropdownMenuCheckboxItem>
         ))}

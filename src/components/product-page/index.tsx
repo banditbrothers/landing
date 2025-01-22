@@ -1,3 +1,5 @@
+"use client";
+
 import { Design } from "@/data/designs";
 import Image from "next/image";
 import { standardDescription } from "@/data/designs";
@@ -11,8 +13,17 @@ import {
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
 import { RecommendedProducts } from "./recommended-products";
+import { FavoriteButton } from "../favoriteButton";
+import { ColorBadge, PatternBadge } from "../product/badges";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import Link from "next/link";
+import { Button } from "../ui/button";
+import { ShoppingCartIcon } from "../misc/icons";
+import posthog from "posthog-js";
 
 export const ProductPageContents = ({ design }: { design: Design }) => {
+  const { isFavorite, toggleFav } = useFavorites();
+
   return (
     <div className="container mx-auto mt-16 px-4 py-8">
       <div className="mb-4">
@@ -23,6 +34,9 @@ export const ProductPageContents = ({ design }: { design: Design }) => {
         {/* Left Column - Image */}
         <div className="relative aspect-square">
           <Image src={design.image} alt={design.name} fill className="object-cover rounded-lg" priority />
+          <div className="absolute top-2 right-2 z-10">
+            <FavoriteButton selected={isFavorite(design.id)} toggle={() => toggleFav(design.id)} />
+          </div>
         </div>
 
         {/* Right Column - Product Details */}
@@ -30,20 +44,36 @@ export const ProductPageContents = ({ design }: { design: Design }) => {
           {/* Product Title & Price */}
           <div>
             <h1 className="text-3xl font-bold text-foreground mb-2">{design.name}</h1>
-            <span className="flex flex-row gap-2 items-end">
-              <p className="text-2xl font-semibold text-foreground">₹{design.price.toLocaleString()}</p>
-              <p className="text-muted-foreground text-xs">(excl. shipping)</p>
+            <span className="flex flex-row gap-2 items-center">
+              <span className="text-sm">
+                <PatternBadge pattern={design.pattern} />
+              </span>
+              <div className="border-l border-foreground h-5" />
+              {design.colors.map(color => (
+                <ColorBadge key={color} color={color} />
+              ))}
             </span>
           </div>
+
+          <span className="flex flex-row gap-2 items-end">
+            <p className="text-2xl font-semibold text-foreground">₹{design.price.toLocaleString()}</p>
+            <p className="text-muted-foreground text-xs">(excl. shipping)</p>
+          </span>
 
           {/* Product Description */}
           <div className="prose max-w-none">
             <p className="text-muted-foreground">{design.description}</p>
           </div>
 
-          <button className="bg-primary text-primary-foreground py-3 px-6 rounded-lg font-semibold hover:bg-primary/90 transition-colors">
-            Buy Now
-          </button>
+          <Link
+            target="_blank"
+            className="w-full"
+            href={`/order?design=${design.id}`}
+            onClick={() => posthog.capture("design_shopnow", { designId: design.id })}>
+            <Button className="w-full">
+              <ShoppingCartIcon /> Shop Now
+            </Button>
+          </Link>
 
           {/* Standard Product Details */}
           <div className=" pt-4 border-t border-muted">

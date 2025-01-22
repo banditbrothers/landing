@@ -1,7 +1,5 @@
 "use client";
 
-import NavBar from "@/components/navbar";
-
 const termsOfService = `
 <style>
   [data-custom-class='body'], [data-custom-class='body'] * {
@@ -138,11 +136,7 @@ Calibri;mso-themecolor:text1;mso-themetint:166;"><strong><bdt class="question"><
 export default function Privacy() {
   return (
     <div>
-      <NavBar />
-      <div
-        className="px-5 py-4 max-w-7xl mx-auto"
-        dangerouslySetInnerHTML={{ __html: termsOfService }}
-      ></div>
+      <div className="px-5 py-4 max-w-7xl mx-auto" dangerouslySetInnerHTML={{ __html: termsOfService }}></div>
     </div>
   );
 }

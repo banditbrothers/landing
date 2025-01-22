@@ -5,6 +5,9 @@ import { Space_Grotesk } from "next/font/google";
 
 import { CSPostHogProvider } from "@/provider/posthog";
 import { Toaster } from "@/components/ui/sonner";
+import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
+import { FavoritesProvider } from "@/contexts/FavoritesContext";
 
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
@@ -39,8 +42,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${theme}`}>
       <body className={`${spaceGrotesk.className} ${Calera.className}`}>
-        <CSPostHogProvider>{children}</CSPostHogProvider>
-        <Toaster theme={theme} richColors position="top-right" />
+        <CSPostHogProvider>
+          <FavoritesProvider>
+            <Navbar />
+            {children}
+            <Footer />
+            <Toaster theme={theme} richColors position="top-right" />
+          </FavoritesProvider>
+        </CSPostHogProvider>
       </body>
     </html>
   );

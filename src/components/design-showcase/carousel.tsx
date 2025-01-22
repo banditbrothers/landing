@@ -2,10 +2,9 @@ import ClassNamesPlugin from "embla-carousel-class-names";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import AutoplayPlugin from "embla-carousel-autoplay";
 
-import { ArrowRightCircleIcon } from "../misc/icons";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { Design } from "@/data/designs";
-import { DesignCard } from "./card";
+import { DesignCard, DesignNameAndArrowBanner } from "./card";
 
 interface DesignCarouselProps {
   designs: Design[];
@@ -37,10 +36,7 @@ export const DesignCarousel = ({ designs, selectedDesignId, handleDesignClick }:
                 design={design}
                 onClick={() => handleDesignClick(design)}
                 selected={selectedDesignId === design.id}>
-                <div className="flex flex-row w-full mt-4 px-1 justify-between">
-                  <h3 className="text-xl font-semibold self-center">{design.name}</h3>
-                  <ArrowRightCircleIcon className="w-8 h-8 text-bandit-orange" />
-                </div>
+                <DesignNameAndArrowBanner design={design} />
               </DesignCard>
             </div>
           </CarouselItem>

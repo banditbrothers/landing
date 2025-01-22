@@ -1,5 +1,3 @@
-import Footer from "@/components/footer";
-import NavBar from "@/components/navbar";
 import { ProductPageContents } from "@/components/product-page";
 import { designs } from "@/data/designs";
 import { notFound } from "next/navigation";
@@ -13,9 +11,7 @@ export default function DesignPage({ params }: { params: Promise<{ designId: str
 
   return (
     <>
-      <NavBar />
       <ProductPageContents design={design} />
-      <Footer />
     </>
   );
 }

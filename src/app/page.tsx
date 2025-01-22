@@ -2,8 +2,6 @@
 
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import NavBar from "@/components/navbar";
-import Footer from "@/components/footer";
 
 import { Hero } from "@/components/hero/hero";
 import { DesignLibrary } from "@/components/design-showcase/design-showcase";
@@ -30,8 +28,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <NavBar />
-
       <Hero />
 
       <DesignLibrary />
@@ -57,8 +53,6 @@ export default function LandingPage() {
           </Link>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

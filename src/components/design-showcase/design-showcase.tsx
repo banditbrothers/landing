@@ -1,6 +1,6 @@
 import { Design, designs as designsData } from "@/data/designs";
 
-import { ProductDialog } from "./dialog";
+import { ProductDialog } from "./designDialog";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { LoadingIcon } from "../misc/loadingScreen";
@@ -10,14 +10,18 @@ import { GalleryHorizontal } from "lucide-react";
 import { Grid2X2Icon } from "lucide-react";
 import { Button } from "../ui/button";
 import { shuffleArray } from "@/utils/misc";
+import useDeviceType from "@/hooks/useDeviceType";
+import { ArrowTopRightOnSquareIcon } from "../misc/icons";
 
 export const DesignLibraryContent = () => {
-  const [selectedShowcaseType, setSelectedShowcaseType] = useState<"carousel" | "grid">("carousel");
-  const [designs, setDesigns] = useState<Design[]>([]);
-
   const router = useRouter();
   const searchParams = useSearchParams();
-  const selectedDesignId = searchParams.get("design");
+  const selectedDesignId = searchParams.get("modalDesign");
+
+  const isMobile = useDeviceType();
+
+  const [selectedShowcaseType, setSelectedShowcaseType] = useState<"carousel" | "grid">("carousel");
+  const [designs, setDesigns] = useState<Design[]>([]);
 
   useEffect(() => {
     const shuffledDesigns = shuffleArray(designsData);
@@ -32,29 +36,48 @@ export const DesignLibraryContent = () => {
    *
    * */
   const handleDesignClick = (design: Design) => {
-    router.push(`?design=${design.id}`, { scroll: false });
+    router.push(`?modalDesign=${design.id}`, { scroll: false });
   };
 
   const handleDesignOnClose = () => {
-    router.replace("/", { scroll: false });
+    router.replace(window.location.pathname, { scroll: false });
   };
 
   return (
     <section id="product-library" className="py-20 scroll-mt-16">
       <div className=" mx-auto">
-        <h2 className="text-4xl font-bold text-center mb-16 flex flex-row justify-center items-center gap-4">
-          <span>Our Products</span>
-          {selectedShowcaseType === "carousel" ? (
-            <Button variant="outline" onClick={() => setSelectedShowcaseType("grid")}>
-              <Grid2X2Icon />
+        <div className=" mb-16 flex flex-row justify-between items-center gap-4 max-w-screen-2xl mx-auto">
+          <div />
+          <h2 className={`text-4xl font-bold text-center flex flex-row justify-center items-center gap-4`}>
+            <span>Our Products</span>
+            {!isMobile && (
+              <>
+                {selectedShowcaseType === "carousel" ? (
+                  <Button
+                    variant="outline"
+                    onClick={() => setSelectedShowcaseType("grid")}
+                    className="flex flex-row gap-2 items-center min-w-32">
+                    <Grid2X2Icon />
+                    <span>Grid</span>
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={() => setSelectedShowcaseType("carousel")}
+                    className="flex flex-row gap-2 items-center min-w-32">
+                    <GalleryHorizontal />
+                    <span>Carousel</span>
+                  </Button>
+                )}
+              </>
+            )}
+          </h2>
+          <div>
+            <Button variant="link" onClick={() => router.push("/designs")}>
+              {isMobile ? <ArrowTopRightOnSquareIcon className="w-4 h-4" /> : <span>View All</span>}
             </Button>
-          ) : (
-            <Button variant="outline" onClick={() => setSelectedShowcaseType("carousel")}>
-              <GalleryHorizontal />
-            </Button>
-          )}
-        </h2>
-
+          </div>
+        </div>
         <div className="mx-auto">
           {selectedShowcaseType === "carousel" ? (
             <DesignCarousel
