@@ -47,11 +47,11 @@ export const DesignLibraryContent = () => {
     <section id="product-library" className="py-20 scroll-mt-16">
       <div className=" mx-auto">
         <div className=" mb-16 flex flex-row justify-between items-center gap-4 max-w-screen-2xl mx-auto">
-          <div />
-          <h2 className={`text-4xl font-bold text-center flex flex-row justify-center items-center gap-4`}>
+          <div className="w-20" />
+          <h2 className={`text-4xl font-bold text-center flex flex-row justify-center items-center gap-4 relative`}>
             <span>Our Products</span>
             {!isMobile && (
-              <>
+              <span className="absolute top-1 -right-[65%]">
                 {selectedShowcaseType === "carousel" ? (
                   <Button
                     variant="outline"
@@ -69,7 +69,7 @@ export const DesignLibraryContent = () => {
                     <span>Carousel</span>
                   </Button>
                 )}
-              </>
+              </span>
             )}
           </h2>
           <div>

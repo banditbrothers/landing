@@ -65,7 +65,7 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
           <div className="flex flex-col justify-between">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
-                <div className="flex flex-row justify-start gap-1 items-start">
+                <div className="flex flex-row justify-start gap-2 items-start">
                   <span className="text-2xl font-semibold text-foreground">{design.name}</span>
                   <Link
                     href={`/designs/${designId}`}
