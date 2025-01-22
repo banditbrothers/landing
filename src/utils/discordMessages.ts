@@ -2,13 +2,18 @@ import { Order } from "@/types/order";
 import { MessageCreateOptions } from "discord.js";
 import { getAddressString } from "./address";
 import { getDate } from "./misc";
+import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
+
+// todo: add WA link on discord message to send customer order info + shipping details
 
 export const getDiscordOrderMessage = (order: Order) => {
   return {
-    content: "",
+    content: `🎉 We have a new order! \nClick [here](${getWhatsappOrderConfirmationLink(
+      order
+    )}) to send customer order info + shipping details`,
     embeds: [
       {
-        title: "🎉 We have a new order!",
+        title: "Order Details",
         color: 0xfd6e00,
         fields: [
           { name: "ID", value: order.id },

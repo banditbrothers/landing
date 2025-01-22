@@ -1,32 +1,29 @@
-import { LoadingIcon } from "@/components/misc/loadingScreen";
-
+import { ProductPageContents } from "@/components/product-page";
+import { designs, designsObject } from "@/data/designs";
 import { Metadata } from "next";
-import { Suspense } from "react";
-import { designsObject } from "@/data/designs";
+import { notFound } from "next/navigation";
+import React from "react";
 
 export async function generateMetadata({ params }: { params: Promise<{ designId: string }> }): Promise<Metadata> {
-  // read route params
   const designId = (await params).designId;
-
   const design = designsObject[designId];
 
-  // fetch data
-  // const product = await fetch(`https://.../${id}`).then(res => res.json());
-
-  // optionally access and extend (rather than replace) parent metadata
-  // const previousImages = (await parent).openGraph?.images || [];
-
   return {
-    title: design.name,
+    title: design.name + " | " + "by Bandit Brothers",
     openGraph: { images: [design.image] },
     twitter: { images: [design.image] },
   };
 }
 
-export default function DesignPage() {
+export default function DesignPage({ params }: { params: Promise<{ designId: string }> }) {
+  const resolvedParams = React.use(params);
+  const design = designs.find(d => d.id === resolvedParams.designId);
+
+  if (!design) notFound();
+
   return (
-    <Suspense fallback={<LoadingIcon />}>
-      <div>Design Page</div>
-    </Suspense>
+    <>
+      <ProductPageContents design={design} />
+    </>
   );
 }

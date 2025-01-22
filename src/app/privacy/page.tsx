@@ -1,7 +1,5 @@
 "use client";
 
-import NavBar from "@/components/navbar";
-
 const privacyPolicy = `
 <style>
   [data-custom-class='body'], [data-custom-class='body'] * {
@@ -62,11 +60,7 @@ word-break: break-word !important;
 export default function Privacy() {
   return (
     <div>
-      <NavBar />
-      <div
-        className="px-5 py-4 max-w-7xl mx-auto"
-        dangerouslySetInnerHTML={{ __html: privacyPolicy }}
-      ></div>
+      <div className="px-5 py-4 max-w-7xl mx-auto" dangerouslySetInnerHTML={{ __html: privacyPolicy }}></div>
     </div>
   );
 }
