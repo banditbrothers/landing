@@ -4,14 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import {
-  DesignColors,
-  designColors,
-  designColorsObject,
-  DesignPattern,
-  designPatterns,
-  designPatternsObject,
-} from "@/data/designs";
+import { DesignColors, designColors, DesignPattern, designPatterns, designPatternsObject } from "@/data/designs";
+import { ColorBadge } from "../product/badges";
 
 export interface FilterState {
   colors: DesignColors[];
@@ -62,6 +56,26 @@ export const FilterDialog = ({ open, onOpenChange, onApplyFilters, defaultFilter
           <DialogTitle>Filter Designs</DialogTitle>
         </DialogHeader>
 
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-medium">Patterns</h4>
+            {selectedPatterns.length > 0 && <Badge variant="secondary">{selectedPatterns.length} selected</Badge>}
+          </div>
+          <ScrollArea className="max-h-32">
+            <div className="flex flex-wrap gap-2">
+              {PATTERNS.map(pattern => (
+                <button key={pattern} onClick={() => handleTogglePattern(pattern)}>
+                  <Badge variant={selectedPatterns.includes(pattern) ? "default" : "outline"}>
+                    {designPatternsObject[pattern].name}
+                  </Badge>
+                </button>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+
+        <Separator />
+
         <div className="space-y-6 py-4">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -72,29 +86,7 @@ export const FilterDialog = ({ open, onOpenChange, onApplyFilters, defaultFilter
               <div className="flex flex-wrap gap-2">
                 {COLORS.map(color => (
                   <button key={color} onClick={() => handleToggleColor(color)}>
-                    <Badge variant={selectedColors.includes(color) ? "default" : "outline"}>
-                      {designColorsObject[color].name}
-                    </Badge>
-                  </button>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-
-          <Separator />
-
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-medium">Patterns</h4>
-              {selectedPatterns.length > 0 && <Badge variant="secondary">{selectedPatterns.length} selected</Badge>}
-            </div>
-            <ScrollArea className="max-h-32">
-              <div className="flex flex-wrap gap-2">
-                {PATTERNS.map(pattern => (
-                  <button key={pattern} onClick={() => handleTogglePattern(pattern)}>
-                    <Badge variant={selectedPatterns.includes(pattern) ? "default" : "outline"}>
-                      {designPatternsObject[pattern].name}
-                    </Badge>
+                    <ColorBadge color={color} variant={selectedColors.includes(color) ? "default" : "outline"} />
                   </button>
                 ))}
               </div>
@@ -102,7 +94,7 @@ export const FilterDialog = ({ open, onOpenChange, onApplyFilters, defaultFilter
           </div>
         </div>
 
-        <DialogFooter className="flex justify-between">
+        <DialogFooter className="flex justify-between gap-2">
           <Button variant="outline" onClick={handleReset} disabled={!selectedColors.length && !selectedPatterns.length}>
             Reset
           </Button>

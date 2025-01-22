@@ -1,6 +1,6 @@
 import { Design, designColorsObject } from "@/data/designs";
 
-import { Badge } from "../ui/badge";
+import { Badge, BadgeProps } from "../ui/badge";
 import { designPatternsObject } from "@/data/designs";
 import { invertColor } from "@/utils/misc";
 
@@ -8,13 +8,20 @@ export const PatternBadge = ({ pattern }: { pattern: Design["pattern"] }) => {
   return <Badge variant="secondary">{designPatternsObject[pattern].name}</Badge>;
 };
 
-export const ColorBadge = ({ color }: { color: Design["colors"][number] }) => {
+export const ColorBadge = ({ color, ...rest }: { color: Design["colors"][number] } & BadgeProps) => {
+  let styles: React.CSSProperties = {
+    backgroundColor: designColorsObject[color].hex,
+    color: invertColor(designColorsObject[color].hex),
+  };
+
+  if (rest.variant === "outline") {
+    styles = {
+      border: `1px solid ${designColorsObject[color].hex}`,
+    };
+  }
+
   return (
-    <Badge
-      style={{
-        backgroundColor: designColorsObject[color].hex,
-        color: invertColor(designColorsObject[color].hex),
-      }}>
+    <Badge {...rest} style={styles}>
       {designColorsObject[color].name}
     </Badge>
   );

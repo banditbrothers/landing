@@ -6,6 +6,8 @@ import { useState } from "react";
 import { FilterIcon, XIcon } from "lucide-react";
 import { CheckBadgeIcon, HeartIconOutline } from "../misc/icons";
 import { isFavorite } from "@/utils/favorites";
+import useDeviceType from "@/hooks/useDeviceType";
+import { invertColor } from "@/utils/misc";
 
 interface DesignGridProps {
   designs: Design[];
@@ -14,6 +16,8 @@ interface DesignGridProps {
 }
 
 export const DesignGrid = ({ designs, selectedDesignId, handleDesignClick }: DesignGridProps) => {
+  const isMobile = useDeviceType();
+
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [isFavFilterSelected, setIsFavFilterSelected] = useState(false);
   const [isBestSellerFilterSelected, setIsBestSellerFilterSelected] = useState(false);
@@ -50,35 +54,34 @@ export const DesignGrid = ({ designs, selectedDesignId, handleDesignClick }: Des
   return (
     <>
       <div className="max-w-screen-2xl mx-auto">
-        <div className="flex flex-row gap-2 items-center p-4">
-          <Button
-            variant={isBestSellerFilterSelected ? "default" : "outline"}
-            onClick={() => setIsBestSellerFilterSelected(f => !f)}
-            className="flex flex-row gap-2 items-center">
-            <CheckBadgeIcon className="w-4 h-4" />
-            Best Sellers
-          </Button>
-          <Button
-            variant={isFavFilterSelected ? "default" : "outline"}
-            onClick={() => setIsFavFilterSelected(f => !f)}
-            className="flex flex-row gap-2 items-center">
-            <HeartIconOutline className="w-4 h-4" />
-            Favorites
-          </Button>
-          <Button
-            variant={isColorPatternFilterSelected ? "default" : "outline"}
-            onClick={() => setIsFilterDialogOpen(true)}
-            className="flex flex-row gap-2 items-center">
-            <FilterIcon className="w-4 h-4" />
-            Filter
-          </Button>
+        <div className={`flex ${isMobile ? "flex-col" : "flex-col"} gap-2 items-start p-4`}>
+          <div className="flex flex-row gap-2 items-center">
+            <Button
+              variant={isBestSellerFilterSelected ? "default" : "outline"}
+              onClick={() => setIsBestSellerFilterSelected(f => !f)}
+              className="flex flex-row gap-2 items-center">
+              <CheckBadgeIcon className="w-4 h-4" />
+              Best Sellers
+            </Button>
+            <Button
+              variant={isFavFilterSelected ? "default" : "outline"}
+              onClick={() => setIsFavFilterSelected(f => !f)}
+              className="flex flex-row gap-2 items-center">
+              <HeartIconOutline className="w-4 h-4" />
+              Favorites
+            </Button>
+            <Button
+              variant={isColorPatternFilterSelected ? "default" : "outline"}
+              onClick={() => setIsFilterDialogOpen(true)}
+              className="flex flex-row gap-2 items-center">
+              <FilterIcon className="w-4 h-4" />
+              Filter
+            </Button>
+          </div>
 
-          <div className="flex flex-wrap gap-2 items-center overflow-x-auto">
+          <div className="flex flex-wrap gap-2 items-start overflow-x-auto max-w-full">
             {filters.patterns.length > 0 && (
-              <div
-                className={`flex items-center gap-2 ${
-                  filters.colors.length > 0 ? "border-r pr-2 border-muted-foreground" : ""
-                }`}>
+              <div className={`flex flex-wrap items-center gap-2`}>
                 {filters.patterns.map(patternId => (
                   <PatternFilterChip key={patternId} patternId={patternId} removeFilter={removeFilter} />
                 ))}
@@ -86,7 +89,7 @@ export const DesignGrid = ({ designs, selectedDesignId, handleDesignClick }: Des
             )}
 
             {filters.colors.length > 0 && (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {filters.colors.map(colorId => (
                   <ColorFilterChip key={colorId} colorId={colorId} removeFilter={removeFilter} />
                 ))}
@@ -137,8 +140,8 @@ const ColorFilterChip = ({ colorId, removeFilter }: ColorFilterChipProps) => {
     <div
       key={`${colorId}`}
       className="flex items-center bg-muted gap-1 pl-3 pr-1 py-1 rounded-full"
-      style={{ border: `1px solid ${hex}` }}>
-      <span className="text-sm capitalize">{name}</span>
+      style={{ backgroundColor: hex, color: invertColor(hex) }}>
+      <span className="text-sm font-medium capitalize">{name}</span>
       <button onClick={() => removeFilter("colors", colorId)} className="hover:text-destructive rounded-full p-1">
         <XIcon className="w-3 h-3" />
       </button>
@@ -156,7 +159,7 @@ const PatternFilterChip = ({ patternId, removeFilter }: PatternFilterChipProps) 
 
   return (
     <div key={`${patternId}`} className="flex items-center bg-muted gap-1 pl-3 pr-1 py-1 rounded-full">
-      <span className="text-sm capitalize">{name}</span>
+      <span className="text-sm font-medium capitalize">{name}</span>
       <button onClick={() => removeFilter("patterns", patternId)} className="hover:text-destructive rounded-full p-1">
         <XIcon className="w-3 h-3" />
       </button>

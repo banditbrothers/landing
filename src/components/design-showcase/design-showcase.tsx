@@ -48,7 +48,7 @@ export const DesignLibraryContent = () => {
     <section id="product-library" className="py-20 scroll-mt-16">
       <div className=" mx-auto">
         <div className=" mb-16 flex flex-row justify-between items-center gap-4 max-w-screen-2xl mx-auto">
-          <div className="w-20" />
+          <div className={`${isMobile ? "w-10" : "w-20"}`} />
           <h2 className={`text-4xl font-bold text-center flex flex-row justify-center items-center gap-4 relative`}>
             <span>Our Products</span>
             {!isMobile && (
