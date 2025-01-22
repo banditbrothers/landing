@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: Promise<{ designId:
   const design = designsObject[designId];
 
   return {
-    title: design.name,
+    title: design.name + " | " + "by Bandit Brothers",
     openGraph: { images: [design.image] },
     twitter: { images: [design.image] },
   };
