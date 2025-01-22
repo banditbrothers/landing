@@ -70,6 +70,9 @@ export const ProductAccordion = () => {
             <AccordionTitle>Shipping and Return Policy</AccordionTitle>
           </AccordionTrigger>
           <AccordionContent>
+            We will ship your order within 8-10 business days.
+            <br />
+            <br />
             We offer a 30-day return policy for unused items in original packaging. If the product is damaged or there
             are printing errors, contact us through WhatsApp for return assistance. For any returns / replacement claim,
             we will require a video showcasing the product being unboxed and defect shown in the video. Since its
