@@ -14,7 +14,7 @@ import {
 } from "../ui/breadcrumb";
 import { RecommendedProducts } from "./recommended-products";
 import { FavoriteButton } from "../favoriteButton";
-import { ColorBadge, PatternBadge } from "../product/badges";
+import { PatternBadge } from "../product/badges";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -45,13 +45,7 @@ export const ProductPageContents = ({ design }: { design: Design }) => {
           <div>
             <h1 className="text-3xl font-bold text-foreground mb-2">{design.name}</h1>
             <span className="flex flex-row gap-2 items-center">
-              <span className="text-sm">
-                <PatternBadge pattern={design.pattern} />
-              </span>
-              <div className="border-l border-foreground h-5" />
-              {design.colors.map(color => (
-                <ColorBadge key={color} color={color} />
-              ))}
+              <PatternBadge pattern={design.pattern} />
             </span>
           </div>
 

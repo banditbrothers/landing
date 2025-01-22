@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { ShareIcon } from "lucide-react";
 import { FavoriteButton } from "../favoriteButton";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import { BadgeContainer, BadgeSpacer, ColorBadge, PatternBadge } from "../product/badges";
+import { BadgeContainer, PatternBadge } from "../product/badges";
 import VisuallyHidden from "../ui/visually-hidden";
 
 type ProductDialogProps = {
@@ -76,10 +76,6 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
                 </div>
                 <BadgeContainer>
                   <PatternBadge pattern={design.pattern} />
-                  <BadgeSpacer />
-                  {design.colors.map(color => (
-                    <ColorBadge key={color} color={color} />
-                  ))}
                 </BadgeContainer>
               </div>
               <div className="flex items-baseline flex-col">

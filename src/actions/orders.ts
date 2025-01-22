@@ -46,7 +46,11 @@ export const createOrder = async (order: Partial<Order>) => {
   const orderWithId = { ...newOrder, id: orderRef.id } as Order;
 
   if (newOrder.paymentMode === "cash") {
-    await sendDiscordOrderMessage(getDiscordOrderMessage(orderWithId));
+    try {
+      await sendDiscordOrderMessage(getDiscordOrderMessage(orderWithId));
+    } catch (error) {
+      console.error("Error sending Discord message:", error);
+    }
   }
   return orderWithId;
 };

@@ -1,5 +1,6 @@
 import { designsObject } from "@/data/designs";
 import { Order } from "@/types/order";
+import { getAddressString } from "./address";
 
 const whatsappPhoneNumber = "917977884773";
 
@@ -18,4 +19,23 @@ export const getWhatsappNeedHelpLink = (orderDetails: Partial<Order>) => {
 
   const encodedMessage = encodeURIComponent(message);
   return `https://api.whatsapp.com/send?phone=${whatsappPhoneNumber}&text=${encodedMessage}`;
+};
+
+export const getWhatsappOrderConfirmationLink = (order: Order) => {
+  const message = [
+    "Hey, we have received your order!",
+    "",
+    `*Order ID:* ${order.id}`,
+    "",
+    `*Order Total:* ₹${order.amount}`,
+    "",
+    `*Shipping Address:* ${getAddressString(order.address)}`,
+    "",
+    `*Payment Method:* ${order.paymentMode === "rzp" ? "Razorpay" : "Cash"}`,
+    "",
+    "You should receive your order in 7-10 days.",
+    "May the Bandits be with you!",
+  ].join("\n");
+  const encodedMessage = encodeURIComponent(message);
+  return `https://api.whatsapp.com/send?phone=${order.phone}&text=${encodedMessage}`;
 };

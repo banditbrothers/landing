@@ -8,6 +8,7 @@ import {
   SparklesIcon,
   ShoppingCartIcon,
   ArrowTopRightOnSquareIcon,
+  CheckBadgeIcon,
 } from "@heroicons/react/24/outline";
 import {
   ArrowRightCircleIcon,
@@ -17,6 +18,7 @@ import {
 
 export {
   ArrowTopRightOnSquareIcon,
+  CheckBadgeIcon,
   ShoppingCartIcon,
   ShoppingCartIconSolid,
   PlusIcon,

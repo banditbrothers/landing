@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { FilterDialog, FilterState } from "./filterDialog";
 import { useState } from "react";
 import { FilterIcon, XIcon } from "lucide-react";
-import { HeartIconOutline, SparklesIcon } from "../misc/icons";
+import { CheckBadgeIcon, HeartIconOutline } from "../misc/icons";
 import { isFavorite } from "@/utils/favorites";
 
 interface DesignGridProps {
@@ -16,7 +16,7 @@ interface DesignGridProps {
 export const DesignGrid = ({ designs, selectedDesignId, handleDesignClick }: DesignGridProps) => {
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [isFavFilterSelected, setIsFavFilterSelected] = useState(false);
-  const [isNewlyAddedFilterSelected, setIsNewlyAddedFilterSelected] = useState(false);
+  const [isBestSellerFilterSelected, setIsBestSellerFilterSelected] = useState(false);
 
   const [filters, setFilters] = useState<FilterState>({ colors: [], patterns: [] });
 
@@ -33,7 +33,7 @@ export const DesignGrid = ({ designs, selectedDesignId, handleDesignClick }: Des
 
   const filteredDesigns = designs
     .filter(design => {
-      return isNewlyAddedFilterSelected ? design.isNewlyAdded : true;
+      return isBestSellerFilterSelected ? design.isBestSeller : true;
     })
     .filter(design => {
       return isFavFilterSelected ? isFavorite(design.id) : true;
@@ -52,11 +52,11 @@ export const DesignGrid = ({ designs, selectedDesignId, handleDesignClick }: Des
       <div className="max-w-screen-2xl mx-auto">
         <div className="flex flex-row gap-2 items-center p-4">
           <Button
-            variant={isNewlyAddedFilterSelected ? "default" : "outline"}
-            onClick={() => setIsNewlyAddedFilterSelected(f => !f)}
+            variant={isBestSellerFilterSelected ? "default" : "outline"}
+            onClick={() => setIsBestSellerFilterSelected(f => !f)}
             className="flex flex-row gap-2 items-center">
-            <SparklesIcon className="w-4 h-4" />
-            Newly Added
+            <CheckBadgeIcon className="w-4 h-4" />
+            Best Sellers
           </Button>
           <Button
             variant={isFavFilterSelected ? "default" : "outline"}
