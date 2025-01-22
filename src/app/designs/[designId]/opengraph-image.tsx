@@ -14,20 +14,15 @@ export default async function Image({ params }: { params: { designId: string } }
 
   //   const src = await fetch(new URL(design.image, import.meta.url)).then(res => res.arrayBuffer());
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          fontSize: 48,
-          background: "white",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}>
-        {design?.name || "Design not found"}
-      </div>
-    )
-  );
+  if (!design) {
+    return new ImageResponse(
+      (
+        <div>
+          <h1>Design not found</h1>
+        </div>
+      )
+    );
+  }
+
+  return new ImageResponse(<img src={design.image} alt={design.name} />);
 }
