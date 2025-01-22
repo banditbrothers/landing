@@ -10,6 +10,7 @@ interface DesignCardProps {
   onClick: () => void;
   selected: boolean;
   showRingAroundSelectedCard?: boolean;
+  showFavoriteButton?: boolean;
   children: React.ReactNode;
 }
 
@@ -19,6 +20,7 @@ export const DesignCard = ({
   selected,
   children,
   showRingAroundSelectedCard = false,
+  showFavoriteButton = true,
 }: DesignCardProps) => {
   const { isFavorite, toggleFav } = useFavorites();
 
@@ -28,9 +30,11 @@ export const DesignCard = ({
         className={`p-4 bg-card rounded-xl relative ${
           showRingAroundSelectedCard && selected ? "ring-2 ring-primary" : ""
         }`}>
-        <div className="absolute top-5 right-5 z-10">
-          <FavoriteButton selected={isFavorite(design.id)} toggle={() => toggleFav(design.id)} />
-        </div>
+        {showFavoriteButton && (
+          <div className="absolute top-5 right-5 z-10">
+            <FavoriteButton selected={isFavorite(design.id)} toggle={() => toggleFav(design.id)} />
+          </div>
+        )}
         <button onClick={onClick} className="w-full h-full">
           <div>
             <div className="flex flex-col items-center">

@@ -34,6 +34,7 @@ export const DesignCarousel = ({ designs, selectedDesignId, handleDesignClick }:
             <div className="scale-[0.9] w-full h-full transition-transform duration-300">
               <DesignCard
                 design={design}
+                showFavoriteButton={false}
                 onClick={() => handleDesignClick(design)}
                 selected={selectedDesignId === design.id}>
                 <DesignNameAndArrowBanner design={design} />
