@@ -33,10 +33,12 @@ function DesignsPageContent() {
       <div className="container mx-auto mt-16 min-h-screen">
         <div className="pt-16 mx-auto">
           <div className="flex flex-col gap-4">
-            <div className="text-4xl max-w-screen-2xl mx-auto font-bold w-fit">
-              <span>Our Mischief</span>
+            <div className="text-4xl max-w-screen-2xl mx-auto font-bold">
+              <span className="w-fit">Our Mischief</span>
             </div>
-            <DesignGrid designs={designs} selectedDesignId={selectedDesignId} handleDesignClick={handleDesignClick} />
+            <div>
+              <DesignGrid designs={designs} selectedDesignId={selectedDesignId} handleDesignClick={handleDesignClick} />
+            </div>
           </div>
         </div>
       </div>
