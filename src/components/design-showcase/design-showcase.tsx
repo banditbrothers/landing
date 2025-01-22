@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import { shuffleArray } from "@/utils/misc";
 import useDeviceType from "@/hooks/useDeviceType";
 import { ArrowTopRightOnSquareIcon } from "../misc/icons";
+import Link from "next/link";
 
 export const DesignLibraryContent = () => {
   const router = useRouter();
@@ -73,9 +74,11 @@ export const DesignLibraryContent = () => {
             )}
           </h2>
           <div>
-            <Button variant="link" onClick={() => router.push("/designs")}>
-              {isMobile ? <ArrowTopRightOnSquareIcon className="w-4 h-4" /> : <span>View All</span>}
-            </Button>
+            <Link href="/designs">
+              <Button variant="link">
+                {isMobile ? <ArrowTopRightOnSquareIcon className="w-4 h-4" /> : <span>View All</span>}
+              </Button>
+            </Link>
           </div>
         </div>
         <div className="mx-auto">
