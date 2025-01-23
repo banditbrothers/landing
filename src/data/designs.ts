@@ -10,11 +10,11 @@ export type Design = {
   image: string;
   price: number;
   isBestSeller: boolean;
-  colors: DesignColors[];
+  colors: DesignColor[];
   pattern: DesignPattern;
 };
 
-export const designColors = [
+export const DESIGN_COLORS = [
   {
     id: "red",
     name: "Red",
@@ -71,13 +71,13 @@ export const designColors = [
     hex: "#9E9E9E",
   },
 ] as const;
-export type DesignColors = (typeof designColors)[number]["id"];
-export const designColorsObject = designColors.reduce((acc, color) => {
+export type DesignColor = (typeof DESIGN_COLORS)[number]["id"];
+export const DESIGN_COLOR_OBJ = DESIGN_COLORS.reduce((acc, color) => {
   const { id, ...rest } = color;
   return { ...acc, [id]: rest };
-}, {} as Record<DesignColors, Omit<(typeof designColors)[number], "id">>);
+}, {} as Record<DesignColor, Omit<(typeof DESIGN_COLORS)[number], "id">>);
 
-export const designPatterns = [
+export const DESIGN_PATTERNS = [
   {
     id: "texture",
     name: "Texture",
@@ -107,13 +107,13 @@ export const designPatterns = [
     name: "Graphic",
   },
 ] as const;
-export type DesignPattern = (typeof designPatterns)[number]["id"];
-export const designPatternsObject = designPatterns.reduce((acc, pattern) => {
+export type DesignPattern = (typeof DESIGN_PATTERNS)[number]["id"];
+export const DESIGN_PATTERN_OBJ = DESIGN_PATTERNS.reduce((acc, pattern) => {
   const { id, ...rest } = pattern;
   return { ...acc, [id]: rest };
-}, {} as Record<DesignPattern, Omit<(typeof designPatterns)[number], "id">>);
+}, {} as Record<DesignPattern, Omit<(typeof DESIGN_PATTERNS)[number], "id">>);
 
-export const designs: Design[] = [
+export const DESIGNS: Design[] = [
   {
     id: "gimme-some-space",
     name: "Gimme Some Space",
@@ -413,7 +413,7 @@ export const designs: Design[] = [
   },
 ];
 
-export const designsObject = designs.reduce((acc, product) => {
+export const DESIGNS_OBJ = DESIGNS.reduce((acc, product) => {
   const { id, ...rest } = product;
   return { ...acc, [id]: rest };
-}, {} as Record<string, Omit<(typeof designs)[number], "id">>);
+}, {} as Record<string, Omit<(typeof DESIGNS)[number], "id">>);

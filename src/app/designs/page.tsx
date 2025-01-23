@@ -1,7 +1,7 @@
 "use client";
 
 import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
-import { Design, designs } from "@/data/designs";
+import { Design, DESIGNS } from "@/data/designs";
 import { ProductDialog } from "@/components/dialogs/ProductDialog";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -44,7 +44,7 @@ function DesignsPageContent() {
             </div>
             <div>
               <ProductGridLayout
-                designs={designs}
+                designs={DESIGNS}
                 selectedDesignId={selectedDesignId}
                 handleDesignClick={handleDesignClick}
               />

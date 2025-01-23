@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
-import { Design, designs } from "@/data/designs";
+import { Design, DESIGNS } from "@/data/designs";
 
 type CartContextType = {
   cart: { id: Design["id"]; quantity: number }[];
@@ -43,7 +43,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getCartTotalAmount = () =>
     cart.reduce((acc, item) => {
-      const design = designs.find(design => design.id === item.id);
+      const design = DESIGNS.find(design => design.id === item.id);
 
       if (!design) return acc;
       return acc + item.quantity * design.price;

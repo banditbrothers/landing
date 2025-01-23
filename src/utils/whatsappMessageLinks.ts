@@ -1,4 +1,4 @@
-import { designsObject } from "@/data/designs";
+import { DESIGNS_OBJ } from "@/data/designs";
 import { Order } from "@/types/order";
 import { getAddressString } from "./address";
 
@@ -13,7 +13,7 @@ export const getWhatsappNeedHelpLink = (orderDetails: Partial<Order>) => {
 
   if (orderDetails.products) {
     message += `\n\n*Products* \n${orderDetails
-      .products!.map(product => `- ${designsObject[product.designId]!.name}: ${product.quantity}`)
+      .products!.map(product => `- ${DESIGNS_OBJ[product.designId]!.name}: ${product.quantity}`)
       .join("\n")}`;
   }
 

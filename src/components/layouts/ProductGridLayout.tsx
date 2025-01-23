@@ -1,4 +1,4 @@
-import { Design, DesignColors, designColorsObject, DesignPattern, designPatternsObject } from "@/data/designs";
+import { Design, DesignColor, DESIGN_COLOR_OBJ, DesignPattern, DESIGN_PATTERN_OBJ } from "@/data/designs";
 import { DesignCard, DesignNameAndPriceBanner } from "../cards/DesignCard";
 import { Button } from "../ui/button";
 import { FilterDialog, FilterState } from "../dialogs/FilterDialog";
@@ -129,12 +129,12 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
 };
 
 interface ColorFilterChipProps {
-  colorId: DesignColors;
-  removeFilter: (type: keyof FilterState, value: DesignColors) => void;
+  colorId: DesignColor;
+  removeFilter: (type: keyof FilterState, value: DesignColor) => void;
 }
 
 const ColorFilterChip = ({ colorId, removeFilter }: ColorFilterChipProps) => {
-  const { hex, name } = designColorsObject[colorId];
+  const { hex, name } = DESIGN_COLOR_OBJ[colorId];
 
   return (
     <div
@@ -155,7 +155,7 @@ interface PatternFilterChipProps {
 }
 
 const PatternFilterChip = ({ patternId, removeFilter }: PatternFilterChipProps) => {
-  const { name } = designPatternsObject[patternId];
+  const { name } = DESIGN_PATTERN_OBJ[patternId];
 
   return (
     <div key={`${patternId}`} className="flex items-center bg-muted gap-1 pl-3 pr-1 py-1 rounded-full">

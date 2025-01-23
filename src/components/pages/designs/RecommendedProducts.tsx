@@ -1,6 +1,6 @@
 "use client";
 
-import { Design, designs } from "@/data/designs";
+import { Design, DESIGNS } from "@/data/designs";
 import { shuffleArray } from "@/utils/misc";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -17,7 +17,7 @@ export const RecommendedProducts = ({ currentDesignId, count = 4 }: { currentDes
   const [recommendedDesigns, setRecommendedDesigns] = useState<Design[]>([]);
 
   useEffect(() => {
-    setRecommendedDesigns(shuffleArray(designs.filter(d => d.id !== currentDesignId)));
+    setRecommendedDesigns(shuffleArray(DESIGNS.filter(d => d.id !== currentDesignId)));
   }, [currentDesignId]);
 
   /**

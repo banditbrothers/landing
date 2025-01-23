@@ -1,4 +1,4 @@
-import { Design, designsObject } from "@/data/designs";
+import { Design, DESIGNS_OBJ } from "@/data/designs";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import Image from "next/image";
@@ -20,7 +20,7 @@ type ProductDialogProps = {
 };
 
 export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
-  const design = designId ? designsObject[designId] : null;
+  const design = designId ? DESIGNS_OBJ[designId] : null;
   const { isFavorite, toggleFav } = useFavorites();
 
   useEffect(() => {

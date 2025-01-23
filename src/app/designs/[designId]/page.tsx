@@ -1,12 +1,12 @@
 import { ProductPageContents } from "@/components/pages/designs";
-import { designs, designsObject } from "@/data/designs";
+import { DESIGNS, DESIGNS_OBJ } from "@/data/designs";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import React from "react";
 
 export async function generateMetadata({ params }: { params: Promise<{ designId: string }> }): Promise<Metadata> {
   const designId = (await params).designId;
-  const design = designsObject[designId];
+  const design = DESIGNS_OBJ[designId];
 
   return {
     title: design.name + " | " + "by Bandit Brothers",
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ designId:
 
 export default function DesignPage({ params }: { params: Promise<{ designId: string }> }) {
   const resolvedParams = React.use(params);
-  const design = designs.find(d => d.id === resolvedParams.designId);
+  const design = DESIGNS.find(d => d.id === resolvedParams.designId);
 
   if (!design) notFound();
 

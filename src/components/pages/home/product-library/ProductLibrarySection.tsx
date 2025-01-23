@@ -1,4 +1,4 @@
-import { Design, designs as designsData } from "@/data/designs";
+import { Design, DESIGNS as designsData } from "@/data/designs";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";

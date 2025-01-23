@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { DesignColors, designColors, DesignPattern, designPatterns, designPatternsObject } from "@/data/designs";
+import { DesignColor, DESIGN_COLORS, DesignPattern, DESIGN_PATTERNS, DESIGN_PATTERN_OBJ } from "@/data/designs";
 import { ColorBadge } from "../badges/DesignBadges";
 
 export interface FilterState {
-  colors: DesignColors[];
+  colors: DesignColor[];
   patterns: DesignPattern[];
 }
 
@@ -19,11 +19,11 @@ interface FilterDialogProps {
   defaultFilters: FilterState;
 }
 
-const COLORS = designColors.map(color => color.id);
-const PATTERNS = designPatterns.map(pattern => pattern.id);
+const COLORS = DESIGN_COLORS.map(color => color.id);
+const PATTERNS = DESIGN_PATTERNS.map(pattern => pattern.id);
 
 export const FilterDialog = ({ open, onOpenChange, onApplyFilters, defaultFilters }: FilterDialogProps) => {
-  const [selectedColors, setSelectedColors] = useState<DesignColors[]>(defaultFilters.colors);
+  const [selectedColors, setSelectedColors] = useState<DesignColor[]>(defaultFilters.colors);
   const [selectedPatterns, setSelectedPatterns] = useState<DesignPattern[]>(defaultFilters.patterns);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export const FilterDialog = ({ open, onOpenChange, onApplyFilters, defaultFilter
     setSelectedPatterns(defaultFilters.patterns);
   }, [defaultFilters]);
 
-  const handleToggleColor = (colorId: DesignColors) => {
+  const handleToggleColor = (colorId: DesignColor) => {
     setSelectedColors(prev => (prev.includes(colorId) ? prev.filter(c => c !== colorId) : [...prev, colorId]));
   };
 
@@ -66,7 +66,7 @@ export const FilterDialog = ({ open, onOpenChange, onApplyFilters, defaultFilter
               {PATTERNS.map(pattern => (
                 <button key={pattern} onClick={() => handleTogglePattern(pattern)}>
                   <Badge variant={selectedPatterns.includes(pattern) ? "default" : "outline"}>
-                    {designPatternsObject[pattern].name}
+                    {DESIGN_PATTERN_OBJ[pattern].name}
                   </Badge>
                 </button>
               ))}

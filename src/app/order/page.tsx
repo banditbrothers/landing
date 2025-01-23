@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { designsObject, designs } from "@/data/designs";
+import { DESIGNS_OBJ, DESIGNS } from "@/data/designs";
 import { MultiSelectDropdown } from "@/components/dropdowns/MultiSelectDropdown";
 
 import { Coupon, Order, SelectedDesignsType } from "@/types/order";
@@ -61,7 +61,7 @@ const orderFormSchema = z.object({
 const getSubtotal = (products: SelectedDesignsType[]) => {
   if (products.length === 0) return 0;
   return products.reduce((total, product) => {
-    const design = designsObject[product.designId];
+    const design = DESIGNS_OBJ[product.designId];
     return total + design.price * product.quantity;
   }, 0);
 };
@@ -93,11 +93,11 @@ const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) 
   return total;
 };
 
-let favFirstDesigns = designs;
+let favFirstDesigns = DESIGNS;
 if (typeof window !== "undefined") {
   const favoriteDesignIds = getFavorites();
-  const favDesigns = designs.filter(design => favoriteDesignIds.includes(design.id));
-  const otherDesigns = designs.filter(design => !favoriteDesignIds.includes(design.id));
+  const favDesigns = DESIGNS.filter(design => favoriteDesignIds.includes(design.id));
+  const otherDesigns = DESIGNS.filter(design => !favoriteDesignIds.includes(design.id));
   favFirstDesigns = [...favDesigns, ...otherDesigns];
 }
 
@@ -449,7 +449,7 @@ function OrderPageContent() {
                             <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
                               <span>
                                 {selectedDesignsIds.map(id => (
-                                  <Badge key={id}>{designsObject[id].name}</Badge>
+                                  <Badge key={id}>{DESIGNS_OBJ[id].name}</Badge>
                                 ))}
                               </span>
 
@@ -464,16 +464,16 @@ function OrderPageContent() {
                               return (
                                 <div key={id} className="flex items-center gap-4 mt-4 p-4 border rounded-lg relative">
                                   <Image
-                                    src={designsObject[id].image}
+                                    src={DESIGNS_OBJ[id].image}
                                     width={80}
                                     height={80}
-                                    alt={designsObject[id].name}
+                                    alt={DESIGNS_OBJ[id].name}
                                     className="w-20 h-20 object-cover rounded-md"
                                   />
 
                                   <div className="flex-1">
-                                    <h3 className="font-medium">{designsObject[id].name}</h3>
-                                    <p className="text-sm text-muted-foreground">₹{designsObject[id].price}</p>
+                                    <h3 className="font-medium">{DESIGNS_OBJ[id].name}</h3>
+                                    <p className="text-sm text-muted-foreground">₹{DESIGNS_OBJ[id].price}</p>
                                   </div>
 
                                   <FormField
