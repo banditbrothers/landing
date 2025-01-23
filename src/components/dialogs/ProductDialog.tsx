@@ -1,18 +1,18 @@
 import { Design, designsObject } from "@/data/designs";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
-import { ArrowTopRightOnSquareIcon, ShoppingCartIcon } from "../misc/icons";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { standardDescription } from "@/data/designs";
 import Link from "next/link";
 import posthog from "posthog-js";
 import { ShareIcon } from "lucide-react";
-import { FavoriteButton } from "../favoriteButton";
+import { FavoriteButton } from "../misc/FavoriteButton";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import { BadgeContainer, PatternBadge } from "../product/badges";
+import { BadgeContainer, PatternBadge } from "../badges/DesignBadges";
 import VisuallyHidden from "../ui/visually-hidden";
 import { shareDesign } from "@/utils/share";
 import { useEffect } from "react";
+import { ArrowTopRightOnSquareIcon, ShoppingCartIcon } from "../misc/Icons";
 
 type ProductDialogProps = {
   designId: Design["id"] | null;

@@ -2,7 +2,7 @@ import { knowYourProduct } from "@/data/know-your-product";
 import Image from "next/image";
 import { useState } from "react";
 
-export default function KnowYourProduct() {
+export const KnowYourProductSection = () => {
   const [expandedItem, setExpandedItem] = useState<string[]>([]);
 
   return (
@@ -46,4 +46,4 @@ export default function KnowYourProduct() {
       </div>
     </section>
   );
-}
+};

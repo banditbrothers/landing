@@ -53,7 +53,7 @@ export const designColors = [
   {
     id: "black",
     name: "Black",
-    hex: "#9E9E9E",
+    hex: "#444444",
   },
   {
     id: "white",

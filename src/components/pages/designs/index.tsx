@@ -2,7 +2,7 @@
 
 import { Design } from "@/data/designs";
 import { standardDescription } from "@/data/designs";
-import { ProductAccordion } from "../product-specs/product-accordion";
+import { ProductDetailsAccordion } from "../../accordions/ProductDetailsAccordion";
 import {
   Breadcrumb as BreadcrumbUI,
   BreadcrumbItem,
@@ -10,18 +10,18 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "../ui/breadcrumb";
-import { RecommendedProducts } from "./recommended-products";
-import { FavoriteButton } from "../favoriteButton";
-import { PatternBadge } from "../product/badges";
+} from "../../ui/breadcrumb";
+import { RecommendedProducts } from "./RecommendedProducts";
+import { FavoriteButton } from "../../misc/FavoriteButton";
+import { PatternBadge } from "../../badges/DesignBadges";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import Link from "next/link";
-import { Button } from "../ui/button";
-import { ShoppingCartIcon } from "../misc/icons";
+import { Button } from "../../ui/button";
+import { ShoppingCartIcon } from "../../misc/Icons";
 import posthog from "posthog-js";
 import { ShareIcon } from "lucide-react";
 import { shareDesign } from "@/utils/share";
-import { ImageCarousel } from "./image-carousel";
+import { ImageCarousel } from "../../carousels/ImageCarousel";
 
 export const ProductPageContents = ({ design }: { design: Design }) => {
   const { isFavorite, toggleFav } = useFavorites();
@@ -96,7 +96,7 @@ export const ProductPageContents = ({ design }: { design: Design }) => {
           {/* Standard Product Details */}
           <div className=" pt-4 border-t border-muted">
             <h2 className="text-lg font-semibold text-foreground mb-3">Product Specifications</h2>
-            <ProductAccordion />
+            <ProductDetailsAccordion />
           </div>
         </div>
       </div>

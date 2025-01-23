@@ -1,10 +1,10 @@
 import { Design, DesignColors, designColorsObject, DesignPattern, designPatternsObject } from "@/data/designs";
-import { DesignCard, DesignNameAndPriceBanner } from "./card";
+import { DesignCard, DesignNameAndPriceBanner } from "../cards/DesignCard";
 import { Button } from "../ui/button";
-import { FilterDialog, FilterState } from "./filterDialog";
+import { FilterDialog, FilterState } from "../dialogs/FilterDialog";
 import { useState } from "react";
 import { FilterIcon, XIcon } from "lucide-react";
-import { CheckBadgeIcon, HeartIconOutline } from "../misc/icons";
+import { CheckBadgeIcon, HeartIconOutline } from "../misc/Icons";
 import { isFavorite } from "@/utils/favorites";
 import useDeviceType from "@/hooks/useDeviceType";
 import { invertColor } from "@/utils/misc";
@@ -15,7 +15,7 @@ interface DesignGridProps {
   handleDesignClick: (design: Design) => void;
 }
 
-export const DesignGrid = ({ designs, selectedDesignId, handleDesignClick }: DesignGridProps) => {
+export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick }: DesignGridProps) => {
   const isMobile = useDeviceType();
 
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);

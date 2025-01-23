@@ -2,14 +2,14 @@
 
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-
-import { Hero } from "@/components/hero/hero";
-import { DesignLibrary } from "@/components/design-showcase/design-showcase";
-import { ProductSpecifications } from "@/components/product-specs/product-specs";
-import { Features } from "@/components/features/features";
-import { Testimonials } from "@/components/testimonials/testimonials";
 import Link from "next/link";
-import KnowYourProduct from "@/components/know-your-product/knowYourProduct";
+
+import { HeroSection } from "@/components/pages/home/hero/HeroSection";
+import { ProductLibrary } from "@/components/pages/home/product-library/ProductLibrarySection";
+import { FeaturesSection } from "@/components/pages/home/features/FeaturesSection";
+import { KnowYourProductSection } from "@/components/pages/home/know-your-product/KnowYourProductSection";
+import { ProductSpecificationsSection } from "@/components/pages/home/product-specs/ProductSpecs";
+import { TestimonialsSection } from "@/components/pages/home/testimonials/TestimonialsSection";
 
 export default function LandingPage() {
   useEffect(() => {
@@ -28,17 +28,17 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Hero />
+      <HeroSection />
 
-      <DesignLibrary />
+      <ProductLibrary />
 
-      <Features />
+      <FeaturesSection />
 
-      <KnowYourProduct />
+      <KnowYourProductSection />
 
-      <ProductSpecifications />
+      <ProductSpecificationsSection />
 
-      <Testimonials />
+      <TestimonialsSection />
 
       <section id="cta" className="bg-background text-foreground py-20 scroll-mt-16">
         <div className="container mx-auto px-4 text-center">

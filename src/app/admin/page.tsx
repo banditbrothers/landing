@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useLayoutEffect } from "react";
 import { DateRange } from "react-day-picker";
-import { DateRangePicker } from "@/components/misc/dateRange";
+import { DateRangePicker } from "@/components/misc/DateRangePicker";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,8 +11,8 @@ import { getOrders } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getDate, hash } from "@/utils/misc";
-import { EyeIcon } from "@/components/misc/icons";
-import LoadingScreen from "@/components/misc/loadingScreen";
+import { EyeIcon } from "@/components/misc/Icons";
+import { LoadingScreen } from "@/components/misc/Loading";
 import { getAddressString } from "@/utils/address";
 
 type FilterOrder =

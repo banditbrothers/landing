@@ -1,19 +1,20 @@
 import { Design, designs as designsData } from "@/data/designs";
 
-import { ProductDialog } from "./designDialog";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { LoadingIcon } from "../misc/loadingScreen";
-import { DesignCarousel } from "./showcase-carousel";
-import { DesignGrid } from "./grid";
 import { GalleryHorizontal } from "lucide-react";
 import { Grid2X2Icon } from "lucide-react";
-import { Button } from "../ui/button";
+
 import { shuffleArray } from "@/utils/misc";
 import useDeviceType from "@/hooks/useDeviceType";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
+import { ProductCarousel } from "@/components/carousels/ProductCarousel";
+import { ProductDialog } from "@/components/dialogs/ProductDialog";
+import { LoadingIcon } from "@/components/misc/Loading";
 
-export const DesignLibraryContent = () => {
+export const ProductLibraryContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedDesignId = searchParams.get("modalDesign");
@@ -84,13 +85,17 @@ export const DesignLibraryContent = () => {
         </div>
         <div className="mx-auto">
           {selectedShowcaseType === "carousel" ? (
-            <DesignCarousel
+            <ProductCarousel
               designs={designs}
               selectedDesignId={selectedDesignId}
               handleDesignClick={handleDesignClick}
             />
           ) : (
-            <DesignGrid designs={designs} selectedDesignId={selectedDesignId} handleDesignClick={handleDesignClick} />
+            <ProductGridLayout
+              designs={designs}
+              selectedDesignId={selectedDesignId}
+              handleDesignClick={handleDesignClick}
+            />
           )}
         </div>
       </div>
@@ -100,10 +105,10 @@ export const DesignLibraryContent = () => {
   );
 };
 
-export const DesignLibrary = () => {
+export const ProductLibrary = () => {
   return (
     <Suspense fallback={<LoadingIcon />}>
-      <DesignLibraryContent />
+      <ProductLibraryContent />
     </Suspense>
   );
 };

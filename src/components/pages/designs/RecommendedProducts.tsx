@@ -4,8 +4,8 @@ import { Design, designs } from "@/data/designs";
 import { shuffleArray } from "@/utils/misc";
 import { useState } from "react";
 import { useEffect } from "react";
-import { DesignCard, DesignNameAndPriceBanner } from "../design-showcase/card";
-import { ProductDialog } from "../design-showcase/designDialog";
+import { DesignCard, DesignNameAndPriceBanner } from "../../cards/DesignCard";
+import { ProductDialog } from "../../dialogs/ProductDialog";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 

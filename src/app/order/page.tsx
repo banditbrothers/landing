@@ -15,13 +15,12 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { designsObject, designs } from "@/data/designs";
-import { MultiSelectDropdown } from "@/components/orders/multiSelectDropdown";
-import { Badge } from "@/components/orders/badge";
+import { MultiSelectDropdown } from "@/components/dropdowns/MultiSelectDropdown";
 
 import { Coupon, Order, SelectedDesignsType } from "@/types/order";
 import { getTimestamp } from "@/utils/misc";
 import { useRouter, useSearchParams } from "next/navigation";
-import LoadingScreen, { LoadingIcon } from "@/components/misc/loadingScreen";
+import { LoadingIcon, LoadingScreen } from "@/components/misc/Loading";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";
 import { Separator } from "@/components/ui/separator";
 
@@ -620,6 +619,14 @@ function OrderPageContent() {
 const RequiredStar = () => {
   return <span className="text-destructive ml-1">*</span>;
 };
+
+function Badge(props: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20 mr-1 mb-1">
+      {props.children}
+    </span>
+  );
+}
 
 export default function OrderPage() {
   return (

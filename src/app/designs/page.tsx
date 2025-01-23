@@ -1,11 +1,11 @@
 "use client";
 
-import { DesignGrid } from "@/components/design-showcase/grid";
+import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
 import { Design, designs } from "@/data/designs";
-import { ProductDialog } from "@/components/design-showcase/designDialog";
+import { ProductDialog } from "@/components/dialogs/ProductDialog";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { LoadingIcon } from "@/components/misc/loadingScreen";
+import { LoadingIcon } from "@/components/misc/Loading";
 import { Button } from "@/components/ui/button";
 
 function DesignsPageContent() {
@@ -43,7 +43,11 @@ function DesignsPageContent() {
               </div>
             </div>
             <div>
-              <DesignGrid designs={designs} selectedDesignId={selectedDesignId} handleDesignClick={handleDesignClick} />
+              <ProductGridLayout
+                designs={designs}
+                selectedDesignId={selectedDesignId}
+                handleDesignClick={handleDesignClick}
+              />
             </div>
           </div>
         </div>

@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { Design } from "@/data/designs";
-import { FavoriteButton } from "../favoriteButton";
-import { PatternBadge } from "../product/badges";
-import { ArrowRightCircleIcon } from "../misc/icons";
+import { FavoriteButton } from "../misc/FavoriteButton";
+import { PatternBadge } from "../badges/DesignBadges";
+import { ArrowRightCircleIcon } from "../misc/Icons";
 import { useFavorites } from "@/contexts/FavoritesContext";
 
 interface DesignCardProps {

@@ -1,4 +1,4 @@
-import { ProductPageContents } from "@/components/product-page";
+import { ProductPageContents } from "@/components/pages/designs";
 import { designs, designsObject } from "@/data/designs";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";

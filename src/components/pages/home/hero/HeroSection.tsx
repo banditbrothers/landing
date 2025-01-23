@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { scrollTo } from "@/utils/misc";
 import { Button } from "@/components/ui/button";
 
-export const Hero = () => {
+export const HeroSection = () => {
   return (
     <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
       <video autoPlay muted loop playsInline className="absolute z-0 w-full h-full object-cover">

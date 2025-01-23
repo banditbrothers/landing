@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-export const ProductAccordion = () => {
+export const ProductDetailsAccordion = () => {
   return (
     <div className="max-w-3xl mx-auto">
       <Accordion type="single" collapsible className="w-full">
