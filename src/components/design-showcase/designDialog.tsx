@@ -1,17 +1,18 @@
 import { Design, designsObject } from "@/data/designs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { ArrowTopRightOnSquareIcon, ShoppingCartIcon } from "../misc/icons";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { standardDescription } from "@/data/designs";
 import Link from "next/link";
 import posthog from "posthog-js";
-import { useEffect } from "react";
 import { ShareIcon } from "lucide-react";
 import { FavoriteButton } from "../favoriteButton";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { BadgeContainer, PatternBadge } from "../product/badges";
 import VisuallyHidden from "../ui/visually-hidden";
+import { shareDesign } from "@/utils/share";
+import { useEffect } from "react";
 
 type ProductDialogProps = {
   designId: Design["id"] | null;
@@ -29,19 +30,12 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
   const handleShare = async () => {
     if (design) {
       posthog.capture("design_share", { designId });
-
-      try {
-        await navigator.share({
-          title: `Share ${design.name}`,
-          text: `Hey! Check out this ${design.name} bandana by Bandit Brothers\n${window.location.origin}/designs/${designId}`,
-        });
-      } catch (e) {
-        console.error(e);
-      }
+      shareDesign({ ...design, id: designId! });
     }
   };
 
   if (!design) return null;
+
   return (
     <Dialog
       open={!!designId}
@@ -54,7 +48,7 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
             <DialogTitle>{design.name}</DialogTitle>
           </VisuallyHidden>
         </DialogHeader>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[80vh] overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[80vh] overflow-y-auto no-scrollbar">
           <div className="relative aspect-square">
             <Image fill src={design.image} alt={design.name} className="object-cover rounded-md" />
             <div className="absolute top-1 right-1">
@@ -99,21 +93,23 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
                 ))}
               </div>
             </div>
-            <div className="flex flex-row gap-2 mt-4 w-full">
-              <Link
-                target="_blank"
-                className="w-full flex-1"
-                href={`/order?design=${designId}`}
-                onClick={() => posthog.capture("design_shopnow", { designId })}>
-                <Button className="w-full">
-                  <ShoppingCartIcon /> Shop Now
+            <DialogFooter className="sticky bottom-0 bg-background">
+              <div className="flex flex-row gap-2 mt-4 w-full">
+                <Link
+                  target="_blank"
+                  className="w-full flex-1"
+                  href={`/order?design=${designId}`}
+                  onClick={() => posthog.capture("design_shopnow", { designId })}>
+                  <Button className="w-full">
+                    <ShoppingCartIcon /> Shop Now
+                  </Button>
+                </Link>
+                <Button variant="outline" onClick={handleShare}>
+                  <ShareIcon className="w-4 h-4" />
+                  Share
                 </Button>
-              </Link>
-              <Button variant="outline" onClick={handleShare}>
-                <ShareIcon className="w-4 h-4" />
-                Share
-              </Button>
-            </div>
+              </div>
+            </DialogFooter>
           </div>
         </div>
       </DialogContent>

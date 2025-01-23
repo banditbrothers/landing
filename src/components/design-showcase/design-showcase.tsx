@@ -11,7 +11,6 @@ import { Grid2X2Icon } from "lucide-react";
 import { Button } from "../ui/button";
 import { shuffleArray } from "@/utils/misc";
 import useDeviceType from "@/hooks/useDeviceType";
-import { ArrowTopRightOnSquareIcon } from "../misc/icons";
 import Link from "next/link";
 
 export const DesignLibraryContent = () => {
@@ -47,9 +46,8 @@ export const DesignLibraryContent = () => {
   return (
     <section id="product-library" className="py-20 scroll-mt-16">
       <div className=" mx-auto">
-        <div className=" mb-16 flex flex-row justify-between items-center gap-4 max-w-screen-2xl mx-auto">
-          <div className={`${isMobile ? "w-10" : "w-20"}`} />
-          <h2 className={`text-4xl font-bold text-center flex flex-row justify-center items-center gap-4 relative`}>
+        <div className={`mb-16 flex justify-between items-center gap-4 max-w-screen-2xl mx-auto px-6 flex-col`}>
+          <h2 className="text-4xl font-bold text-center flex flex-row justify-center items-center gap-4 relative">
             <span>Our Products</span>
             {!isMobile && (
               <span className="absolute top-1 -right-[65%]">
@@ -73,10 +71,13 @@ export const DesignLibraryContent = () => {
               </span>
             )}
           </h2>
-          <div>
+          <div className="flex flex-row gap-4">
+            <Button variant="link">
+              <span>How to Wear</span>
+            </Button>
             <Link href="/designs">
               <Button variant="link">
-                {isMobile ? <ArrowTopRightOnSquareIcon className="w-4 h-4" /> : <span>View All</span>}
+                <span>View All</span>
               </Button>
             </Link>
           </div>

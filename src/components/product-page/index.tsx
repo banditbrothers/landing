@@ -20,9 +20,16 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { ShoppingCartIcon } from "../misc/icons";
 import posthog from "posthog-js";
+import { ShareIcon } from "lucide-react";
+import { shareDesign } from "@/utils/share";
 
 export const ProductPageContents = ({ design }: { design: Design }) => {
   const { isFavorite, toggleFav } = useFavorites();
+
+  const handleShare = () => {
+    posthog.capture("design_share", { designId: design.id });
+    shareDesign(design);
+  };
 
   return (
     <div className="container mx-auto mt-16 px-4 py-8">
@@ -59,15 +66,21 @@ export const ProductPageContents = ({ design }: { design: Design }) => {
             <p className="text-muted-foreground">{design.description}</p>
           </div>
 
-          <Link
-            target="_blank"
-            className="w-full"
-            href={`/order?design=${design.id}`}
-            onClick={() => posthog.capture("design_shopnow", { designId: design.id })}>
-            <Button className="w-full">
-              <ShoppingCartIcon /> Shop Now
+          <div className="flex flex-row gap-2">
+            <Link
+              target="_blank"
+              className="w-full"
+              href={`/order?design=${design.id}`}
+              onClick={() => posthog.capture("design_shopnow", { designId: design.id })}>
+              <Button className="w-full">
+                <ShoppingCartIcon /> Shop Now
+              </Button>
+            </Link>
+            <Button variant="outline" onClick={handleShare}>
+              <ShareIcon className="w-4 h-4" />
+              Share
             </Button>
-          </Link>
+          </div>
 
           {/* Standard Product Details */}
           <div className=" pt-4 border-t border-muted">

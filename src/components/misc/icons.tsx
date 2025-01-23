@@ -9,6 +9,7 @@ import {
   ShoppingCartIcon,
   ArrowTopRightOnSquareIcon,
   CheckBadgeIcon,
+  ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import {
   ArrowRightCircleIcon,
@@ -18,6 +19,7 @@ import {
 
 export {
   ArrowTopRightOnSquareIcon,
+  ChevronDownIcon,
   CheckBadgeIcon,
   ShoppingCartIcon,
   ShoppingCartIconSolid,
