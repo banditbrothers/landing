@@ -1,7 +1,6 @@
 "use client";
 
 import { Design } from "@/data/designs";
-import Image from "next/image";
 import { standardDescription } from "@/data/designs";
 import { ProductAccordion } from "../product-specs/product-accordion";
 import {
@@ -22,6 +21,7 @@ import { ShoppingCartIcon } from "../misc/icons";
 import posthog from "posthog-js";
 import { ShareIcon } from "lucide-react";
 import { shareDesign } from "@/utils/share";
+import { ImageCarousel } from "./image-carousel";
 
 export const ProductPageContents = ({ design }: { design: Design }) => {
   const { isFavorite, toggleFav } = useFavorites();
@@ -40,7 +40,7 @@ export const ProductPageContents = ({ design }: { design: Design }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column - Image */}
         <div className="relative aspect-square">
-          <Image src={design.image} alt={design.name} fill className="object-cover rounded-lg" priority />
+          <ImageCarousel images={[design.image]} alt={design.name} />
           <div className="absolute top-2 right-2 z-10">
             <FavoriteButton selected={isFavorite(design.id)} toggle={() => toggleFav(design.id)} />
           </div>

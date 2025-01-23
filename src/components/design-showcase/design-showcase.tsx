@@ -4,7 +4,7 @@ import { ProductDialog } from "./designDialog";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { LoadingIcon } from "../misc/loadingScreen";
-import { DesignCarousel } from "./carousel";
+import { DesignCarousel } from "./showcase-carousel";
 import { DesignGrid } from "./grid";
 import { GalleryHorizontal } from "lucide-react";
 import { Grid2X2Icon } from "lucide-react";
