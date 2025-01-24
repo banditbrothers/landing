@@ -5,6 +5,7 @@ import {
   AccordionTitle,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { DocumentMagnifyingGlassIcon, HandHeartIcon, TruckIcon } from "../misc/icons";
 
 export const ProductDetailsAccordion = () => {
   return (
@@ -12,7 +13,12 @@ export const ProductDetailsAccordion = () => {
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="description">
           <AccordionTrigger>
-            <AccordionTitle>Technical Details</AccordionTitle>
+            <AccordionTitle>
+              <div className="flex flex-row items-center gap-2">
+                <DocumentMagnifyingGlassIcon className="w-5 h-5" />
+                <span>Technical Details</span>
+              </div>
+            </AccordionTitle>
           </AccordionTrigger>
           <AccordionContent>
             <div className="flex flex-col gap-2">
@@ -47,7 +53,12 @@ export const ProductDetailsAccordion = () => {
 
         <AccordionItem value="wash-and-care">
           <AccordionTrigger>
-            <AccordionTitle>Wash and Care</AccordionTitle>
+            <AccordionTitle>
+              <div className="flex flex-row items-center gap-2">
+                <HandHeartIcon className="w-5 h-5" />
+                <span>Wash and Care</span>
+              </div>
+            </AccordionTitle>
           </AccordionTrigger>
           <AccordionContent>
             <ul className="list-disc pl-5 space-y-2">
@@ -67,7 +78,12 @@ export const ProductDetailsAccordion = () => {
 
         <AccordionItem value="shipping-and-return-policy">
           <AccordionTrigger>
-            <AccordionTitle>Shipping and Return Policy</AccordionTitle>
+            <AccordionTitle>
+              <div className="flex flex-row items-center gap-2">
+                <TruckIcon className="w-5 h-5" />
+                <span>Shipping and Return Policy</span>
+              </div>
+            </AccordionTitle>
           </AccordionTrigger>
           <AccordionContent>
             We will ship your order within 8-10 business days.

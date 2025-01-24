@@ -10,12 +10,16 @@ import {
   ArrowTopRightOnSquareIcon,
   CheckBadgeIcon,
   ChevronDownIcon,
+  TruckIcon,
+  DocumentMagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import {
   ArrowRightCircleIcon,
   HeartIcon as HeartIconSolid,
   ShoppingCartIcon as ShoppingCartIconSolid,
 } from "@heroicons/react/24/solid";
+
+import { HandHeartIcon } from "lucide-react";
 
 export {
   ArrowTopRightOnSquareIcon,
@@ -32,4 +36,7 @@ export {
   HeartIconOutline,
   HeartIconSolid,
   SparklesIcon,
+  HandHeartIcon,
+  TruckIcon,
+  DocumentMagnifyingGlassIcon,
 };
