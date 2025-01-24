@@ -3,38 +3,37 @@
 import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
 import { Design, DESIGNS } from "@/data/designs";
 import { ProductDialog } from "@/components/dialogs/ProductDialog";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { LoadingIcon } from "@/components/misc/Loading";
 import { Button } from "@/components/ui/button";
 import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
+import { useParamBasedDialog } from "@/hooks/useParamBasedDialog";
 
 function DesignsPageContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedDesignId = searchParams.get("modalDesign");
+  const {
+    value: selectedDesignId,
+    closeDialog: closeDesignDialog,
+    openDialog: openDesignDialog,
+  } = useParamBasedDialog("design");
 
-  const [isHowtoWearDialogOpen, setHowToWearDialogOpen] = useState(false);
-
-  /**
-   *
-   * this method of push and replace is causing the browser stack to grow which is not ideal.
-   * we need to `push` always because otherwise on mobile the back button would exit the browser onDialogClose.
-   * need to think of a better solution.
-   *
-   * */
-  const handleDesignClick = (design: Design) => {
-    router.push(`?modalDesign=${design.id}`, { scroll: false });
-  };
+  const {
+    value: isHowToWearDialogOpen,
+    closeDialog: closeHowToWearDialog,
+    openDialog: openHowToWearDialog,
+  } = useParamBasedDialog("how-to-wear");
 
   const handleDesignOnClose = () => {
-    router.replace(window.location.pathname, { scroll: false });
+    closeDesignDialog();
+  };
+
+  const handleDesignClick = (design: Design) => {
+    openDesignDialog(design.id);
   };
 
   return (
     <>
       <ProductDialog designId={selectedDesignId} onClose={handleDesignOnClose} />
-      <HowToWearDialog open={isHowtoWearDialogOpen} onClose={() => setHowToWearDialogOpen(false)} />
+      <HowToWearDialog open={!!isHowToWearDialogOpen} onClose={closeHowToWearDialog} />
 
       <div className="container mx-auto mt-16 min-h-screen">
         <div className="pt-16 mx-auto">
@@ -42,7 +41,7 @@ function DesignsPageContent() {
             <div className="text-4xl max-w-screen-2xl mx-auto">
               <div className="flex flex-col gap-4">
                 <span className="w-fit font-bold">Our Mischief</span>
-                <Button variant="link" onClick={() => setHowToWearDialogOpen(true)}>
+                <Button variant="link" onClick={() => openHowToWearDialog("true")}>
                   <span>How to Wear</span>
                 </Button>
               </div>

@@ -1,6 +1,5 @@
 import { Design, DESIGNS as designsData } from "@/data/designs";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { GalleryHorizontal } from "lucide-react";
 import { Grid2X2Icon } from "lucide-react";
@@ -14,15 +13,23 @@ import { ProductCarousel } from "@/components/carousels/ProductCarousel";
 import { ProductDialog } from "@/components/dialogs/ProductDialog";
 import { LoadingIcon } from "@/components/misc/Loading";
 import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
+import { useParamBasedDialog } from "@/hooks/useParamBasedDialog";
 
 export const ProductLibraryContent = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedDesignId = searchParams.get("modalDesign");
+  const {
+    value: selectedDesignId,
+    closeDialog: closeDesignDialog,
+    openDialog: openDesignDialog,
+  } = useParamBasedDialog("design");
+
+  const {
+    value: isHowToWearDialogOpen,
+    closeDialog: closeHowToWearDialog,
+    openDialog: openHowToWearDialog,
+  } = useParamBasedDialog("how-to-wear");
 
   const isMobile = useIsMobile();
 
-  const [isHowtoWearDialogOpen, setHowToWearDialogOpen] = useState(false);
   const [selectedShowcaseType, setSelectedShowcaseType] = useState<"carousel" | "grid">("carousel");
   const [designs, setDesigns] = useState<Design[]>([]);
 
@@ -31,19 +38,8 @@ export const ProductLibraryContent = () => {
     setDesigns(shuffledDesigns);
   }, []);
 
-  /**
-   *
-   * this method of push and replace is causing the browser stack to grow which is not ideal.
-   * we need to `push` always because otherwise on mobile the back button would exit the browser onDialogClose.
-   * need to think of a better solution.
-   *
-   * */
   const handleDesignClick = (design: Design) => {
-    router.push(`?modalDesign=${design.id}`, { scroll: false });
-  };
-
-  const handleDesignOnClose = () => {
-    router.replace(window.location.pathname, { scroll: false });
+    openDesignDialog(design.id);
   };
 
   return (
@@ -75,7 +71,7 @@ export const ProductLibraryContent = () => {
             )}
           </h2>
           <div className="flex flex-row gap-4">
-            <Button variant="link" onClick={() => setHowToWearDialogOpen(true)}>
+            <Button variant="link" onClick={() => openHowToWearDialog("true")}>
               <span>How to Wear</span>
             </Button>
             <Link href="/designs">
@@ -102,8 +98,8 @@ export const ProductLibraryContent = () => {
         </div>
       </div>
 
-      <ProductDialog designId={selectedDesignId} onClose={handleDesignOnClose} />
-      <HowToWearDialog open={isHowtoWearDialogOpen} onClose={() => setHowToWearDialogOpen(false)} />
+      <ProductDialog designId={selectedDesignId} onClose={closeDesignDialog} />
+      <HowToWearDialog open={!!isHowToWearDialogOpen} onClose={closeHowToWearDialog} />
     </section>
   );
 };
