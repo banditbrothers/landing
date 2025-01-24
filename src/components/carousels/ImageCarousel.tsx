@@ -67,7 +67,7 @@ export function ImageCarousel({ images, alt, showIndicators = true }: ImageCarou
             {images.map((_, index) => (
               <button
                 key={index}
-                className={`h-2 rounded-full transition-all duration-300 ${
+                className={`h-2 rounded-full transition-all duration-500 ${
                   index === currentIndex ? "bg-bandit-orange w-8" : "bg-muted w-2"
                 }`}
                 onClick={() => handleIndicatorClick(index)}
