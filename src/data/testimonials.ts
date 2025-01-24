@@ -17,13 +17,17 @@ export const testimonials = [
   },
   {
     name: "Miqdad S.",
-    quote:
-      "The best bandana out there for riders. Fit is great and is very comfortable",
+    quote: "The best bandana out there for riders. Fit is great and is very comfortable",
     image: "",
   },
   {
     name: "Taariq M.",
     quote: "Material is soft and Breathable. Tried over several long rides",
     image: "/users/taariq-profile.webp",
+  },
+  {
+    name: "Tanishka J.",
+    quote: "Ordering experience was smoooth. Quick and easy.",
+    image: "",
   },
 ];

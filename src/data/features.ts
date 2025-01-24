@@ -24,4 +24,9 @@ export const features = [
     description: "High quality, stretchable stitch leaving you stress free",
     icon: "🧵",
   },
+  {
+    title: "Custom Designs",
+    description: "Customize your bandana with your own style",
+    icon: "🧡",
+  },
 ];
