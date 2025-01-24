@@ -1,7 +1,7 @@
 "use client";
 
 import { whatsappKnowMoreLink } from "@/utils/whatsappMessageLinks";
-import { FullLogo } from "./misc/FullLogo";
+import { FullLogo } from "./misc/fullLogo";
 import Link from "next/link";
 import { scrollTo } from "@/utils/misc";
 
