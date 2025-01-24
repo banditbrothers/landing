@@ -13,6 +13,7 @@ import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
 import { ProductCarousel } from "@/components/carousels/ProductCarousel";
 import { ProductDialog } from "@/components/dialogs/ProductDialog";
 import { LoadingIcon } from "@/components/misc/Loading";
+import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
 
 export const ProductLibraryContent = () => {
   const router = useRouter();
@@ -21,6 +22,7 @@ export const ProductLibraryContent = () => {
 
   const isMobile = useDeviceType();
 
+  const [isHowtoWearDialogOpen, setHowToWearDialogOpen] = useState(false);
   const [selectedShowcaseType, setSelectedShowcaseType] = useState<"carousel" | "grid">("carousel");
   const [designs, setDesigns] = useState<Design[]>([]);
 
@@ -73,7 +75,7 @@ export const ProductLibraryContent = () => {
             )}
           </h2>
           <div className="flex flex-row gap-4">
-            <Button variant="link">
+            <Button variant="link" onClick={() => setHowToWearDialogOpen(true)}>
               <span>How to Wear</span>
             </Button>
             <Link href="/designs">
@@ -101,6 +103,7 @@ export const ProductLibraryContent = () => {
       </div>
 
       <ProductDialog designId={selectedDesignId} onClose={handleDesignOnClose} />
+      <HowToWearDialog open={isHowtoWearDialogOpen} onClose={() => setHowToWearDialogOpen(false)} />
     </section>
   );
 };
