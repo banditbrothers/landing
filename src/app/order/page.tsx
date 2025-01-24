@@ -18,7 +18,7 @@ import { DESIGNS_OBJ, DESIGNS } from "@/data/designs";
 import { MultiSelectDropdown } from "@/components/dropdowns/MultiSelectDropdown";
 
 import { Coupon, Order, SelectedDesignsType } from "@/types/order";
-import { getTimestamp } from "@/utils/misc";
+import { getTimestamp } from "@/utils/timestamp";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LoadingIcon, LoadingScreen } from "@/components/misc/Loading";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";

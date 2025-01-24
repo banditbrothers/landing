@@ -1,7 +1,7 @@
 import { Order } from "@/types/order";
 import { MessageCreateOptions } from "discord.js";
 import { getAddressString } from "./address";
-import { getDate } from "./misc";
+import { getDate } from "./timestamp";
 import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
 
 // todo: add WA link on discord message to send customer order info + shipping details

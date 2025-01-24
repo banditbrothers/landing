@@ -10,10 +10,11 @@ import { Order } from "@/types/order";
 import { getOrders } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { getDate, hash } from "@/utils/misc";
+import { hash } from "@/utils/misc";
 import { EyeIcon } from "@/components/misc/icons";
 import { LoadingScreen } from "@/components/misc/Loading";
 import { getAddressString } from "@/utils/address";
+import { formattedDateTime } from "@/utils/timestamp";
 
 type FilterOrder =
   | {
@@ -117,17 +118,7 @@ function AdminPage() {
               <TableBody>
                 {filteredOrders.map(order => (
                   <TableRow key={order.id} className="hover:bg-primary/10">
-                    <TableCell>
-                      {getDate(order.createdAt).toLocaleDateString("en-IN", {
-                        weekday: "short",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        day: "2-digit",
-                        hour12: true,
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </TableCell>
+                    <TableCell>{formattedDateTime(order.createdAt)}</TableCell>
 
                     <TableCell>{order.name}</TableCell>
 

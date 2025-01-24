@@ -1,6 +1,6 @@
 "use server";
 
-import { getTimestamp } from "@/utils/misc";
+import { getTimestamp } from "@/utils/timestamp";
 import { Coupon } from "@/types/order";
 import { addYears } from "date-fns";
 import { Collections } from "@/constants/collections";
