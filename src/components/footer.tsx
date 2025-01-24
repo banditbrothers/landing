@@ -4,6 +4,7 @@ import { whatsappKnowMoreLink } from "@/utils/whatsappMessageLinks";
 import { FullLogo } from "./misc/fullLogo";
 import Link from "next/link";
 import { scrollTo } from "@/utils/misc";
+import { PaymentBadges } from "./payments/PaymentBadges";
 
 export default function Footer() {
   return (
@@ -44,6 +45,10 @@ export default function Footer() {
             </ul>
           </nav>
         </div>
+        <div className="flex justify-end">
+          <PaymentBadges />
+        </div>
+
         <div className="mt-8 text-center text-sm">
           © {new Date().getFullYear()} Bandit Brothers. All rights reserved.
         </div>

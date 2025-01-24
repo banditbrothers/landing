@@ -27,7 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
 import { useOrderActions } from "@/hooks/useOrderActions";
 import { useCouponActions } from "@/hooks/useCouponActions";
-import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/payments/rzpGateway";
+import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/payments/RazorpayGateway";
 import { updateOrder } from "@/actions/orders";
 import { getFavorites } from "@/utils/favorites";
 
@@ -599,6 +599,7 @@ function OrderPageContent() {
                       </div>
                     </div>
                   )}
+
                   <Button
                     type="submit"
                     className="w-full"
