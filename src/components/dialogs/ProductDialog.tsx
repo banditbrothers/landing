@@ -13,6 +13,7 @@ import VisuallyHidden from "../ui/visually-hidden";
 import { shareDesign } from "@/utils/share";
 import { useEffect } from "react";
 import { ArrowTopRightOnSquareIcon, ShoppingCartIcon } from "../misc/icons";
+import useIsMobile from "@/hooks/useIsMobile";
 
 type ProductDialogProps = {
   designId: Design["id"] | null;
@@ -21,11 +22,17 @@ type ProductDialogProps = {
 
 export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
   const design = designId ? DESIGNS_OBJ[designId] : null;
+
+  const isMobile = useIsMobile();
   const { isFavorite, toggleFav } = useFavorites();
 
   useEffect(() => {
     if (designId) posthog.capture("design_viewed", { designId });
   }, [designId]);
+
+  const handleShopNow = async () => {
+    posthog.capture("design_shopnow", { designId });
+  };
 
   const handleShare = async () => {
     if (design) {
@@ -93,26 +100,35 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
                 ))}
               </div>
             </div>
-            <DialogFooter className="sticky bottom-0 bg-background">
-              <div className="flex flex-row gap-2 mt-4 w-full">
-                <Link
-                  target="_blank"
-                  className="w-full flex-1"
-                  href={`/order?design=${designId}`}
-                  onClick={() => posthog.capture("design_shopnow", { designId })}>
-                  <Button className="w-full">
-                    <ShoppingCartIcon /> Shop Now
-                  </Button>
-                </Link>
-                <Button variant="outline" onClick={handleShare}>
-                  <ShareIcon className="w-4 h-4" />
-                  Share
-                </Button>
-              </div>
-            </DialogFooter>
+            {!isMobile && <ProductDialogFooter designId={designId!} onShopNow={handleShopNow} onShare={handleShare} />}
           </div>
         </div>
+        {isMobile && <ProductDialogFooter designId={designId!} onShopNow={handleShopNow} onShare={handleShare} />}
       </DialogContent>
     </Dialog>
+  );
+};
+
+type ProductDialogFooterProps = {
+  designId: Design["id"];
+  onShopNow: () => void;
+  onShare: () => void;
+};
+
+const ProductDialogFooter = ({ designId, onShopNow, onShare }: ProductDialogFooterProps) => {
+  return (
+    <DialogFooter>
+      <div className="flex flex-row gap-2 w-full">
+        <Link target="_blank" className="w-full flex-1" href={`/order?design=${designId}`} onClick={onShopNow}>
+          <Button className="w-full">
+            <ShoppingCartIcon /> Shop Now
+          </Button>
+        </Link>
+        <Button variant="outline" onClick={onShare}>
+          <ShareIcon className="w-4 h-4" />
+          Share
+        </Button>
+      </div>
+    </DialogFooter>
   );
 };
