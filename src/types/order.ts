@@ -49,7 +49,7 @@ export type Coupon = {
   minOrderAmount: number;
   discount: number;
   createdAt: number;
-  expiresAt: number;
+  expiresAt: number | null;
   isActive: boolean;
 };
 

@@ -2,7 +2,6 @@
 
 import { getTimestamp } from "@/utils/timestamp";
 import { Coupon } from "@/types/order";
-import { addYears } from "date-fns";
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase";
 
@@ -11,7 +10,8 @@ export const validateCoupon = async (code: string) => {
 
   if (!coupon) return { error: "Coupon not found", isValid: false, coupon: null };
   if (!coupon.isActive) return { error: "Coupon is not active", isValid: false, coupon: null };
-  if (coupon.expiresAt < getTimestamp()) return { error: "Coupon has expired", isValid: false, coupon: null };
+  if (coupon.expiresAt && coupon.expiresAt < getTimestamp())
+    return { error: "Coupon has expired", isValid: false, coupon: null };
 
   return { error: null, isValid: true, coupon };
 };
@@ -25,24 +25,22 @@ export const getCoupon = async (code: string) => {
   return { id: coupon.id, ...coupon.data() } as Coupon;
 };
 
-export const createCoupon = async () => {
-  return false;
-  const now = Date.now();
-  const oneYearFromNow = Math.floor(addYears(now, 1).getTime() / 1000);
+export const addCoupon = async (coupon: Omit<Coupon, "id">): Promise<Coupon> => {
+  const ref = await firestore().collection(Collections.coupons).add(coupon);
+  return { id: ref.id, ...coupon };
+};
 
-  const finalCoupon: Omit<Coupon, "id"> = {
-    code: "RZPCHALA",
-    name: "99% Off",
-    description: "Get 99% off on your order",
-    discountType: "percentage",
-    minOrderAmount: 0,
-    discount: 99,
-    createdAt: getTimestamp(),
-    expiresAt: oneYearFromNow,
-    isActive: true,
-  };
-
-  await firestore().collection(Collections.coupons).add(finalCoupon);
-
+export const deleteCoupon = async (couponId: string) => {
+  await firestore().collection(Collections.coupons).doc(couponId).delete();
   return true;
+};
+
+export const updateCoupon = async (couponId: string, coupon: Partial<Coupon>) => {
+  await firestore().collection(Collections.coupons).doc(couponId).update(coupon);
+  return true;
+};
+
+export const getCoupons = async (): Promise<Coupon[]> => {
+  const coupons = await firestore().collection(Collections.coupons).orderBy("createdAt", "desc").get();
+  return coupons.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Coupon[];
 };
