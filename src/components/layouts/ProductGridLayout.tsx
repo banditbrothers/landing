@@ -143,7 +143,7 @@ const ColorFilterChip = ({ colorId, removeFilter }: ColorFilterChipProps) => {
       className="flex items-center bg-muted gap-1 pl-3 pr-1 py-1 rounded-full"
       style={{ backgroundColor: hex, color: invertColor(hex) }}>
       <span className="text-sm font-medium capitalize">{name}</span>
-      <button onClick={() => removeFilter("colors", colorId)} className="hover:text-destructive rounded-full p-1">
+      <button onClick={() => removeFilter("colors", colorId)} className="rounded-full p-1">
         <XIcon className="w-3 h-3" />
       </button>
     </div>
@@ -161,7 +161,7 @@ const PatternFilterChip = ({ patternId, removeFilter }: PatternFilterChipProps) 
   return (
     <div key={`${patternId}`} className="flex items-center bg-muted gap-1 pl-3 pr-1 py-1 rounded-full">
       <span className="text-sm font-medium capitalize">{name}</span>
-      <button onClick={() => removeFilter("patterns", patternId)} className="hover:text-destructive rounded-full p-1">
+      <button onClick={() => removeFilter("patterns", patternId)} className="rounded-full p-1">
         <XIcon className="w-3 h-3" />
       </button>
     </div>
