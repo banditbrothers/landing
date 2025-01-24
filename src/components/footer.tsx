@@ -5,8 +5,11 @@ import { FullLogo } from "./misc/fullLogo";
 import Link from "next/link";
 import { scrollTo } from "@/utils/misc";
 import { PaymentBadges } from "./payments/PaymentBadges";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function Footer() {
+  const isMobile = useIsMobile();
+
   return (
     <footer className="bg-primary-50 text-primary-600 py-8">
       <div className="container mx-auto px-4">
@@ -45,7 +48,7 @@ export default function Footer() {
             </ul>
           </nav>
         </div>
-        <div className="flex justify-end">
+        <div className={`flex ${isMobile ? "justify-center mt-4" : "justify-end"} `}>
           <PaymentBadges />
         </div>
 
