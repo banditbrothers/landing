@@ -5,8 +5,8 @@ import { Space_Grotesk } from "next/font/google";
 
 import { CSPostHogProvider } from "@/provider/posthog";
 import { Toaster } from "@/components/ui/sonner";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 
 const Calera = localFont({
