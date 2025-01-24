@@ -4,14 +4,17 @@ import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
 import { Design, DESIGNS } from "@/data/designs";
 import { ProductDialog } from "@/components/dialogs/ProductDialog";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { LoadingIcon } from "@/components/misc/Loading";
 import { Button } from "@/components/ui/button";
+import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
 
 function DesignsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedDesignId = searchParams.get("modalDesign");
+
+  const [isHowtoWearDialogOpen, setHowToWearDialogOpen] = useState(false);
 
   /**
    *
@@ -31,13 +34,15 @@ function DesignsPageContent() {
   return (
     <>
       <ProductDialog designId={selectedDesignId} onClose={handleDesignOnClose} />
+      <HowToWearDialog open={isHowtoWearDialogOpen} onClose={() => setHowToWearDialogOpen(false)} />
+
       <div className="container mx-auto mt-16 min-h-screen">
         <div className="pt-16 mx-auto">
           <div className="flex flex-col gap-4">
             <div className="text-4xl max-w-screen-2xl mx-auto">
               <div className="flex flex-col gap-4">
                 <span className="w-fit font-bold">Our Mischief</span>
-                <Button variant="link">
+                <Button variant="link" onClick={() => setHowToWearDialogOpen(true)}>
                   <span>How to Wear</span>
                 </Button>
               </div>

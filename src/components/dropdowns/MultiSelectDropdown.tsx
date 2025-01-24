@@ -35,7 +35,14 @@ export function MultiSelectDropdown(props: {
             checked={props.selectedIds.includes(design.id)}
             onCheckedChange={checked => props.onChange(design.id, checked)}>
             <div className="flex items-center gap-2">
-              <Image src={design.image} width={40} height={40} alt={design.name} className="object-cover rounded-md" />
+              <Image
+                src={design.image}
+                width={40}
+                height={40}
+                quality={40}
+                alt={design.name}
+                className="object-cover rounded-md"
+              />
               <span className="flex flex-row gap-2 items-center">
                 {isFavorite(design.id) && <HeartIconSolid className="w-4 h-4 text-bandit-orange" />}
                 {design.name}

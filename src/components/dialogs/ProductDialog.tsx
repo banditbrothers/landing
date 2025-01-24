@@ -50,7 +50,7 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[80vh] overflow-y-auto no-scrollbar">
           <div className="relative aspect-square">
-            <Image fill src={design.image} alt={design.name} className="object-cover rounded-md" />
+            <Image fill priority src={design.image} alt={design.name} className="object-cover rounded-md" />
             <div className="absolute top-1 right-1">
               <FavoriteButton selected={isFavorite(designId!)} toggle={() => toggleFav(designId!)} />
             </div>

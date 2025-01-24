@@ -45,6 +45,7 @@ export function ImageCarousel({ images, alt, showIndicators = true }: ImageCarou
               <Image
                 fill
                 src={image}
+                quality={index === 0 ? 100 : 75}
                 alt={`${alt} - Image ${index + 1}`}
                 className="object-cover rounded-lg"
                 priority={index === 0}

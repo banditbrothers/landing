@@ -4,6 +4,7 @@ import { FavoriteButton } from "../misc/FavoriteButton";
 import { PatternBadge } from "../badges/DesignBadges";
 import { ArrowRightCircleIcon } from "../misc/icons";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import useDeviceType from "@/hooks/useDeviceType";
 
 interface DesignCardProps {
   design: Design;
@@ -12,6 +13,7 @@ interface DesignCardProps {
   showRingAroundSelectedCard?: boolean;
   showFavoriteButton?: boolean;
   children: React.ReactNode;
+  optimizeImageQualityOnMobile?: boolean;
 }
 
 export const DesignCard = ({
@@ -20,9 +22,11 @@ export const DesignCard = ({
   selected,
   children,
   showRingAroundSelectedCard = false,
+  optimizeImageQualityOnMobile = true,
   showFavoriteButton = true,
 }: DesignCardProps) => {
   const { isFavorite, toggleFav } = useFavorites();
+  const isMobile = useDeviceType();
 
   return (
     <div className="w-full h-full">
@@ -39,7 +43,13 @@ export const DesignCard = ({
           <div>
             <div className="flex flex-col items-center">
               <div className="relative w-full aspect-square">
-                <Image fill src={design.image} alt={design.name} className="object-cover rounded-xl" />
+                <Image
+                  fill
+                  src={design.image}
+                  alt={design.name}
+                  className="object-cover rounded-xl"
+                  quality={optimizeImageQualityOnMobile && isMobile ? 40 : 75}
+                />
               </div>
               {children}
             </div>

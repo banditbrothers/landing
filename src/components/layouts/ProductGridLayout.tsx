@@ -109,6 +109,7 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
               <DesignCard
                 design={design}
                 showRingAroundSelectedCard
+                optimizeImageQualityOnMobile={false}
                 onClick={() => handleDesignClick(design)}
                 selected={selectedDesignId === design.id}>
                 <DesignNameAndPriceBanner design={design} />

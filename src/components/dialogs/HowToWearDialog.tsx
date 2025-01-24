@@ -18,7 +18,13 @@ export function HowToWearDialog({ open, onClose }: HowToWearDialogProps) {
         </VisuallyHidden>
 
         <div className="relative aspect-square max-h-[80vh] h-fit w-full">
-          <Image fill src="/how-to-wear.webp" alt="How To Wear Instructions" className="rounded-lg object-cover" />
+          <Image
+            fill
+            priority
+            src="/how-to-wear.webp"
+            alt="How To Wear Instructions"
+            className="rounded-lg object-cover"
+          />
         </div>
       </DialogContent>
     </Dialog>

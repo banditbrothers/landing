@@ -464,10 +464,10 @@ function OrderPageContent() {
                               return (
                                 <div key={id} className="flex items-center gap-4 mt-4 p-4 border rounded-lg relative">
                                   <Image
-                                    src={DESIGNS_OBJ[id].image}
                                     width={80}
                                     height={80}
                                     alt={DESIGNS_OBJ[id].name}
+                                    src={DESIGNS_OBJ[id].image}
                                     className="w-20 h-20 object-cover rounded-md"
                                   />
 
