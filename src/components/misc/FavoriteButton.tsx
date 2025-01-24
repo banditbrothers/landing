@@ -1,6 +1,4 @@
-import { HeartIconOutline } from "./Icons";
-
-import { HeartIconSolid } from "./Icons";
+import { HeartIconOutline, HeartIconSolid } from "./icons";
 
 export const FavoriteButton = ({ selected, toggle }: { selected: boolean; toggle: () => void }) => {
   return (

@@ -17,7 +17,7 @@ import { PatternBadge } from "../../badges/DesignBadges";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import Link from "next/link";
 import { Button } from "../../ui/button";
-import { ShoppingCartIcon } from "../../misc/Icons";
+import { ShoppingCartIcon } from "../../misc/icons";
 import posthog from "posthog-js";
 import { ShareIcon } from "lucide-react";
 import { shareDesign } from "@/utils/share";

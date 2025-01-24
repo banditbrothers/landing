@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { FilterDialog, FilterState } from "../dialogs/FilterDialog";
 import { useState } from "react";
 import { FilterIcon, XIcon } from "lucide-react";
-import { CheckBadgeIcon, HeartIconOutline } from "../misc/Icons";
+import { CheckBadgeIcon, HeartIconOutline } from "../misc/icons";
 import { isFavorite } from "@/utils/favorites";
 import useDeviceType from "@/hooks/useDeviceType";
 import { invertColor } from "@/utils/misc";

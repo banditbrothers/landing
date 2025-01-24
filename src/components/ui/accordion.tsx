@@ -4,7 +4,7 @@ import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 
 import { cn } from "@/lib/utils";
-import { PlusIcon } from "@/components/misc/Icons";
+import { PlusIcon } from "@/components/misc/icons";
 
 const Accordion = AccordionPrimitive.Root;
 

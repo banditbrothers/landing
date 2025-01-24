@@ -12,7 +12,7 @@ import { BadgeContainer, PatternBadge } from "../badges/DesignBadges";
 import VisuallyHidden from "../ui/visually-hidden";
 import { shareDesign } from "@/utils/share";
 import { useEffect } from "react";
-import { ArrowTopRightOnSquareIcon, ShoppingCartIcon } from "../misc/Icons";
+import { ArrowTopRightOnSquareIcon, ShoppingCartIcon } from "../misc/icons";
 
 type ProductDialogProps = {
   designId: Design["id"] | null;

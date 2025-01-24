@@ -11,7 +11,7 @@ import { getOrders } from "@/actions/orders";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getDate, hash } from "@/utils/misc";
-import { EyeIcon } from "@/components/misc/Icons";
+import { EyeIcon } from "@/components/misc/icons";
 import { LoadingScreen } from "@/components/misc/Loading";
 import { getAddressString } from "@/utils/address";
 
