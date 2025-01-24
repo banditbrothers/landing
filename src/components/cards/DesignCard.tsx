@@ -4,7 +4,7 @@ import { FavoriteButton } from "../misc/FavoriteButton";
 import { PatternBadge } from "../badges/DesignBadges";
 import { ArrowRightCircleIcon } from "../misc/icons";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import useDeviceType from "@/hooks/useDeviceType";
+import useIsMobile from "@/hooks/useIsMobile";
 
 interface DesignCardProps {
   design: Design;
@@ -26,7 +26,7 @@ export const DesignCard = ({
   showFavoriteButton = true,
 }: DesignCardProps) => {
   const { isFavorite, toggleFav } = useFavorites();
-  const isMobile = useDeviceType();
+  const isMobile = useIsMobile();
 
   return (
     <div className="w-full h-full">

@@ -6,7 +6,7 @@ import { GalleryHorizontal } from "lucide-react";
 import { Grid2X2Icon } from "lucide-react";
 
 import { shuffleArray } from "@/utils/misc";
-import useDeviceType from "@/hooks/useDeviceType";
+import useIsMobile from "@/hooks/useIsMobile";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
@@ -20,7 +20,7 @@ export const ProductLibraryContent = () => {
   const searchParams = useSearchParams();
   const selectedDesignId = searchParams.get("modalDesign");
 
-  const isMobile = useDeviceType();
+  const isMobile = useIsMobile();
 
   const [isHowtoWearDialogOpen, setHowToWearDialogOpen] = useState(false);
   const [selectedShowcaseType, setSelectedShowcaseType] = useState<"carousel" | "grid">("carousel");

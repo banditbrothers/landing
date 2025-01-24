@@ -6,7 +6,7 @@ import { useState } from "react";
 import { FilterIcon, XIcon } from "lucide-react";
 import { CheckBadgeIcon, HeartIconOutline } from "../misc/icons";
 import { isFavorite } from "@/utils/favorites";
-import useDeviceType from "@/hooks/useDeviceType";
+import useIsMobile from "@/hooks/useIsMobile";
 import { invertColor } from "@/utils/misc";
 
 interface DesignGridProps {
@@ -16,7 +16,7 @@ interface DesignGridProps {
 }
 
 export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick }: DesignGridProps) => {
-  const isMobile = useDeviceType();
+  const isMobile = useIsMobile();
 
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [isFavFilterSelected, setIsFavFilterSelected] = useState(false);
