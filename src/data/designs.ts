@@ -324,17 +324,6 @@ export const DESIGNS: Design[] = [
     isBestSeller: false,
   },
   {
-    id: "tropicamo",
-    name: "Tropicamo",
-    description:
-      "Blend in and stand out with this mango-camo design! A juicy twist on camouflage that screams tropical vibes. Who said you can't look ripe and ready?",
-    image: "/designs/tropicamo.webp",
-    price: 300,
-    colors: ["white", "orange"],
-    category: "abstract",
-    isBestSeller: false,
-  },
-  {
     id: "akatsuki-allure",
     name: "Akatsuki Allure",
     description:
