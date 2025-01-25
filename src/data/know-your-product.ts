@@ -4,9 +4,9 @@ export const knowYourProduct = [
     title: "Fabric",
     image: "/know-your-product/fabric.webp",
     description:
-      "Unlike the usual blended cotton or low-quality polyester options out there, we've armed our brothers with something better. Meet Quick-Dri DryFit fabric—engineered to keep you cool, fresh, and unstoppable.",
+      "Unlike the usual blended cotton or low-quality polyester options out there, we've armed our brothers with something better. Meet Quick-Dri DryFit fabric—engineered to keep you",
     extendedDescription:
-      "Say goodbye to excessive sweat and hello to ultimate comfort. This fabric keeps odor-causing bacteria at bay, ensuring you stay protected, feel amazing, and ride in complete peace. Designed specifically to wick away moisture in seconds, leaving you feeling comfortable without excessive sweating no matter how intense the heat or humidity gets. Plus, with its anti-pilling properties, the fabric retains its smooth finish and durability even after repeated washes, ensuring it stays looking and feeling brand new for longer.",
+      "cool, fresh, and unstoppable. Say goodbye to excessive sweat and hello to ultimate comfort. This fabric keeps odor-causing bacteria at bay, ensuring you stay protected, feel amazing, and ride in complete peace. Designed specifically to wick away moisture in seconds, leaving you feeling comfortable without excessive sweating no matter how intense the heat or humidity gets. Plus, with its anti-pilling properties, the fabric retains its smooth finish and durability even after repeated washes, ensuring it stays looking and feeling brand new for longer.",
   },
   {
     id: "stitching",
@@ -23,9 +23,9 @@ export const knowYourProduct = [
     title: "Printing",
     image: "/know-your-product/printing.webp",
     description:
-      "Our printing is the gold standard for bold, vibrant, and ultra-durable designs. Here's the magic: the ink transforms into gas and bonds directly with the fabric's fibers, creating prints that won't crack, fade, or peel — even after countless washes. ",
+      "Our printing is the gold standard for bold, vibrant, and ultra-durable designs. Here's the magic: the ink transforms into gas and bonds directly with the fabric's fibers, creating prints that",
 
     extendedDescription:
-      "This technique ensures seamless, edge-to-edge designs with photo-quality clarity, making it perfect for complex patterns, gradients, and intricate details. Plus, since the ink integrates into the fabric, it keeps garments breathable, lightweight, and comfortable. It's not just printing—it's a masterpiece that feels as good as it looks!",
+      " won't crack, fade, or peel — even after countless washes. This technique ensures seamless, edge-to-edge designs with photo-quality clarity, making it perfect for complex patterns, gradients, and intricate details. Plus, since the ink integrates into the fabric, it keeps garments breathable, lightweight, and comfortable. It's not just printing—it's a masterpiece that feels as good as it looks!",
   },
 ];

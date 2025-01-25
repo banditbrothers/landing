@@ -29,11 +29,12 @@ export const KnowYourProductSection = () => {
                   <h3 className="text-xl font-semibold mb-3 text-card-foreground">{item.title}</h3>
 
                   <p className="text-muted-foreground">
-                    {item.description + " "}
-                    {isExpanded && item.extendedDescription + " "}
+                    {item.description}
+                    {!isExpanded && "..."}
+                    {isExpanded && " " + item.extendedDescription}
 
                     {item.extendedDescription && (
-                      <button className="text-primary hover:underline" onClick={toggleExpanded}>
+                      <button className="text-primary hover:underline ml-1" onClick={toggleExpanded}>
                         {isExpanded ? "read less" : "read more"}
                       </button>
                     )}
