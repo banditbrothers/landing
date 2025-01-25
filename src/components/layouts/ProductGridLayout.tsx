@@ -1,4 +1,4 @@
-import { Design, DesignColor, DESIGN_COLOR_OBJ, DesignPattern, DESIGN_PATTERN_OBJ } from "@/data/designs";
+import { Design, DesignColor, DESIGN_COLOR_OBJ, DesignCategory, DESIGN_CATEGORIES_OBJ } from "@/data/designs";
 import { DesignCard, DesignNameAndPriceBanner } from "../cards/DesignCard";
 import { Button } from "../ui/button";
 import { FilterDialog, FilterState } from "../dialogs/FilterDialog";
@@ -22,7 +22,7 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
   const [isFavFilterSelected, setIsFavFilterSelected] = useState(false);
   const [isBestSellerFilterSelected, setIsBestSellerFilterSelected] = useState(false);
 
-  const [filters, setFilters] = useState<FilterState>({ colors: [], patterns: [] });
+  const [filters, setFilters] = useState<FilterState>({ colors: [], categories: [] });
 
   const handleApplyFilters = (filters: FilterState) => {
     setFilters(filters);
@@ -43,13 +43,13 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
       return isFavFilterSelected ? isFavorite(design.id) : true;
     })
     .filter(design => {
-      return filters.patterns.length === 0 || filters.patterns.includes(design.pattern);
+      return filters.categories.length === 0 || filters.categories.includes(design.category);
     })
     .filter(design => {
       return filters.colors.length === 0 || filters.colors.some(color => design.colors.includes(color));
     });
 
-  const isColorPatternFilterSelected = filters.colors.length > 0 || filters.patterns.length > 0;
+  const isColorOrCategoryFilterSelected = filters.colors.length > 0 || filters.categories.length > 0;
 
   return (
     <>
@@ -71,7 +71,7 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
               Favorites
             </Button>
             <Button
-              variant={isColorPatternFilterSelected ? "default" : "outline"}
+              variant={isColorOrCategoryFilterSelected ? "default" : "outline"}
               onClick={() => setIsFilterDialogOpen(true)}
               className="flex flex-row gap-2 items-center">
               <FilterIcon className="w-4 h-4" />
@@ -80,10 +80,10 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
           </div>
 
           <div className="flex flex-wrap gap-2 items-start overflow-x-auto max-w-full">
-            {filters.patterns.length > 0 && (
+            {filters.categories.length > 0 && (
               <div className={`flex flex-wrap items-center gap-2`}>
-                {filters.patterns.map(patternId => (
-                  <PatternFilterChip key={patternId} patternId={patternId} removeFilter={removeFilter} />
+                {filters.categories.map(categoryId => (
+                  <CategoryFilterChip key={categoryId} categoryId={categoryId} removeFilter={removeFilter} />
                 ))}
               </div>
             )}
@@ -150,18 +150,18 @@ const ColorFilterChip = ({ colorId, removeFilter }: ColorFilterChipProps) => {
   );
 };
 
-interface PatternFilterChipProps {
-  patternId: DesignPattern;
-  removeFilter: (type: keyof FilterState, value: DesignPattern) => void;
+interface CategoryFilterChipProps {
+  categoryId: DesignCategory;
+  removeFilter: (type: keyof FilterState, value: DesignCategory) => void;
 }
 
-const PatternFilterChip = ({ patternId, removeFilter }: PatternFilterChipProps) => {
-  const { name } = DESIGN_PATTERN_OBJ[patternId];
+const CategoryFilterChip = ({ categoryId, removeFilter }: CategoryFilterChipProps) => {
+  const { name } = DESIGN_CATEGORIES_OBJ[categoryId];
 
   return (
-    <div key={`${patternId}`} className="flex items-center bg-muted gap-1 pl-3 pr-1 py-1 rounded-full">
+    <div key={`${categoryId}`} className="flex items-center bg-muted gap-1 pl-3 pr-1 py-1 rounded-full">
       <span className="text-sm font-medium capitalize">{name}</span>
-      <button onClick={() => removeFilter("patterns", patternId)} className="rounded-full p-1">
+      <button onClick={() => removeFilter("categories", categoryId)} className="rounded-full p-1">
         <XIcon className="w-3 h-3" />
       </button>
     </div>

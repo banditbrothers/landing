@@ -11,7 +11,7 @@ export type Design = {
   price: number;
   isBestSeller: boolean;
   colors: DesignColor[];
-  pattern: DesignPattern;
+  category: DesignCategory;
 };
 
 export const DESIGN_COLORS = [
@@ -77,7 +77,7 @@ export const DESIGN_COLOR_OBJ = DESIGN_COLORS.reduce((acc, color) => {
   return { ...acc, [id]: rest };
 }, {} as Record<DesignColor, Omit<(typeof DESIGN_COLORS)[number], "id">>);
 
-export const DESIGN_PATTERNS = [
+export const DESIGN_CATEGORIES = [
   {
     id: "texture",
     name: "Texture",
@@ -107,11 +107,11 @@ export const DESIGN_PATTERNS = [
     name: "Graphic",
   },
 ] as const;
-export type DesignPattern = (typeof DESIGN_PATTERNS)[number]["id"];
-export const DESIGN_PATTERN_OBJ = DESIGN_PATTERNS.reduce((acc, pattern) => {
-  const { id, ...rest } = pattern;
+export type DesignCategory = (typeof DESIGN_CATEGORIES)[number]["id"];
+export const DESIGN_CATEGORIES_OBJ = DESIGN_CATEGORIES.reduce((acc, category) => {
+  const { id, ...rest } = category;
   return { ...acc, [id]: rest };
-}, {} as Record<DesignPattern, Omit<(typeof DESIGN_PATTERNS)[number], "id">>);
+}, {} as Record<DesignCategory, Omit<(typeof DESIGN_CATEGORIES)[number], "id">>);
 
 export const DESIGNS: Design[] = [
   {
@@ -122,7 +122,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/gimme-some-space.webp",
     price: 300,
     colors: ["green", "purple", "black"],
-    pattern: "character",
+    category: "character",
     isBestSeller: true,
   },
   {
@@ -133,7 +133,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/awestruck.webp",
     price: 300,
     colors: ["red", "black"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: true,
   },
   {
@@ -144,7 +144,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/meow-meow.webp",
     price: 300,
     colors: ["white", "green", "red", "orange"],
-    pattern: "character",
+    category: "character",
     isBestSeller: false,
   },
   {
@@ -155,7 +155,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/mooshi-mooshi.webp",
     price: 300,
     colors: ["red", "black", "white"],
-    pattern: "texture",
+    category: "texture",
     isBestSeller: true,
   },
   {
@@ -166,7 +166,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/chai-pila-do.webp",
     price: 300,
     colors: ["yellow", "brown"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: true,
   },
   {
@@ -177,7 +177,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/psychedelic-chaos.webp",
     price: 300,
     colors: ["green", "black", "blue", "red", "yellow"],
-    pattern: "graffiti",
+    category: "graffiti",
     isBestSeller: false,
   },
   {
@@ -188,7 +188,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/holy-funk.webp",
     price: 300,
     colors: ["blue", "orange", "pink", "black", "purple", "white"],
-    pattern: "abstract",
+    category: "abstract",
     isBestSeller: false,
   },
   {
@@ -199,7 +199,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/soda-lightful.webp",
     price: 300,
     colors: ["red", "white"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
   {
@@ -210,7 +210,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/un-boo-lievable.webp",
     price: 300,
     colors: ["white", "black", "purple"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
   {
@@ -221,7 +221,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/tick-tick-boom.webp",
     price: 300,
     colors: ["red", "yellow", "blue", "black", "orange"],
-    pattern: "graphic",
+    category: "graphic",
     isBestSeller: true,
   },
   {
@@ -232,7 +232,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/fin-tastic.webp",
     price: 300,
     colors: ["blue", "white", "gray"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
   {
@@ -243,7 +243,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/out-of-words.webp",
     price: 300,
     colors: ["black", "white", "gray"],
-    pattern: "abstract",
+    category: "abstract",
     isBestSeller: true,
   },
   {
@@ -254,7 +254,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/dolphin-ately-cool.webp",
     price: 300,
     colors: ["blue", "white", "black"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
   {
@@ -265,7 +265,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/only-confusion.webp",
     price: 300,
     colors: ["red", "black", "white"],
-    pattern: "character",
+    category: "character",
     isBestSeller: false,
   },
   {
@@ -276,7 +276,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/another-one-iykyk.webp",
     price: 300,
     colors: ["blue", "yellow", "white"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
   {
@@ -287,7 +287,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/do-the-doodle-do.webp",
     price: 300,
     colors: ["blue", "green", "yellow", "red", "white", "pink", "black"],
-    pattern: "graffiti",
+    category: "graffiti",
     isBestSeller: false,
   },
   {
@@ -298,7 +298,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/sketchy-business.webp",
     price: 300,
     colors: ["white", "black", "yellow", "red", "blue", "orange", "pink"],
-    pattern: "graffiti",
+    category: "graffiti",
     isBestSeller: true,
   },
   {
@@ -309,7 +309,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/dont-egg-nore-this.webp",
     price: 300,
     colors: ["yellow", "white", "black"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
   {
@@ -320,7 +320,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/ichiban-penguins.webp",
     price: 300,
     colors: ["black", "pink", "blue", "yellow"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
   {
@@ -331,7 +331,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/tropicamo.webp",
     price: 300,
     colors: ["white", "orange"],
-    pattern: "abstract",
+    category: "abstract",
     isBestSeller: false,
   },
   {
@@ -342,7 +342,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/akatsuki-allure.webp",
     price: 300,
     colors: ["red", "black"],
-    pattern: "anime",
+    category: "anime",
     isBestSeller: true,
   },
   {
@@ -353,7 +353,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/comic-craze.webp",
     price: 300,
     colors: ["red", "yellow", "blue", "black", "green", "brown"],
-    pattern: "character",
+    category: "character",
     isBestSeller: false,
   },
   {
@@ -364,7 +364,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/looks-fishy.webp",
     price: 300,
     colors: ["red", "white"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
   {
@@ -375,7 +375,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/zero-g-style.webp",
     price: 300,
     colors: ["red", "yellow", "blue", "white", "black"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
   {
@@ -386,7 +386,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/similie-metaphorically.webp",
     price: 300,
     colors: ["yellow", "black", "blue"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
   {
@@ -397,7 +397,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/frog-it-about-it.webp",
     price: 300,
     colors: ["green", "blue", "yellow", "black"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
   {
@@ -408,7 +408,7 @@ export const DESIGNS: Design[] = [
     image: "/designs/tou-can-do-it.webp",
     price: 300,
     colors: ["black", "pink", "yellow", "white"],
-    pattern: "pattern",
+    category: "pattern",
     isBestSeller: false,
   },
 ];

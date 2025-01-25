@@ -8,7 +8,7 @@ import posthog from "posthog-js";
 import { ShareIcon } from "lucide-react";
 import { FavoriteButton } from "../misc/FavoriteButton";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import { BadgeContainer, PatternBadge } from "../badges/DesignBadges";
+import { BadgeContainer, CategoryBadge } from "../badges/DesignBadges";
 import VisuallyHidden from "../ui/visually-hidden";
 import { shareDesign } from "@/utils/share";
 import { useEffect } from "react";
@@ -76,7 +76,7 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
                   </Link>
                 </div>
                 <BadgeContainer>
-                  <PatternBadge pattern={design.pattern} />
+                  <CategoryBadge category={design.category} />
                 </BadgeContainer>
               </div>
               <div className="flex items-baseline flex-col">

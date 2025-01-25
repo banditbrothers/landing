@@ -1,11 +1,11 @@
 import { Design, DESIGN_COLOR_OBJ } from "@/data/designs";
 
 import { Badge, BadgeProps } from "../ui/badge";
-import { DESIGN_PATTERN_OBJ } from "@/data/designs";
+import { DESIGN_CATEGORIES_OBJ } from "@/data/designs";
 import { invertColor } from "@/utils/misc";
 
-export const PatternBadge = ({ pattern }: { pattern: Design["pattern"] }) => {
-  return <Badge variant="secondary">{DESIGN_PATTERN_OBJ[pattern].name}</Badge>;
+export const CategoryBadge = ({ category }: { category: Design["category"] }) => {
+  return <Badge variant="secondary">{DESIGN_CATEGORIES_OBJ[category].name}</Badge>;
 };
 
 export const ColorBadge = ({ color, ...rest }: { color: Design["colors"][number] } & BadgeProps) => {

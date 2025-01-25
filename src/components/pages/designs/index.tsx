@@ -13,7 +13,7 @@ import {
 } from "../../ui/breadcrumb";
 import { RecommendedProducts } from "./RecommendedProducts";
 import { FavoriteButton } from "../../misc/FavoriteButton";
-import { PatternBadge } from "../../badges/DesignBadges";
+import { CategoryBadge } from "../../badges/DesignBadges";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import Link from "next/link";
 import { Button } from "../../ui/button";
@@ -48,20 +48,18 @@ export const ProductPageContents = ({ design }: { design: Design }) => {
 
         {/* Right Column - Product Details */}
         <div className="flex flex-col gap-6 max-w-xl mx-auto">
-          {/* Product Title & Price */}
           <div>
             <h1 className="text-3xl font-bold text-foreground mb-2">{design.name}</h1>
             <span className="flex flex-row gap-2 items-center">
-              <PatternBadge pattern={design.pattern} />
+              <CategoryBadge category={design.category} />
             </span>
           </div>
 
           <span className="flex flex-row gap-2 items-end">
-            <p className="text-2xl font-semibold text-foreground">₹{design.price.toLocaleString()}</p>
+            <p className="text-2xl/6  font-semibold text-foreground">₹{design.price.toLocaleString()}</p>
             <p className="text-muted-foreground text-xs">(excl. shipping)</p>
           </span>
 
-          {/* Product Description */}
           <div className="prose max-w-none">
             <p className="text-muted-foreground">{design.description}</p>
           </div>

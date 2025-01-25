@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Design } from "@/data/designs";
 import { FavoriteButton } from "../misc/FavoriteButton";
-import { PatternBadge } from "../badges/DesignBadges";
+import { CategoryBadge } from "../badges/DesignBadges";
 import { ArrowRightCircleIcon } from "../misc/icons";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import useIsMobile from "@/hooks/useIsMobile";
@@ -66,7 +66,7 @@ export const DesignNameAndPriceBanner = ({ design }: { design: Design }) => {
       <div className="flex flex-col justify-start items-start">
         <h3 className="text-xl font-semibold">{design.name}</h3>
         <span className="flex flex-row gap-2 items-center mt-2">
-          <PatternBadge pattern={design.pattern} />
+          <CategoryBadge category={design.category} />
         </span>
       </div>
       <p className="text-sm text-muted-foreground">₹{design.price}</p>
