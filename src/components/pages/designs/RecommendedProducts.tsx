@@ -5,14 +5,14 @@ import { shuffleArray } from "@/utils/misc";
 import { useState, useEffect } from "react";
 import { DesignCard, DesignNameAndPriceBanner } from "../../cards/DesignCard";
 import { ProductDialog } from "../../dialogs/ProductDialog";
-import { useParamBasedDialog } from "@/hooks/useParamBasedDialog";
+import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 
 export const RecommendedProducts = ({ currentDesignId, count = 4 }: { currentDesignId: string; count?: number }) => {
   const {
     value: selectedDesignId,
-    closeDialog: closeDesignDialog,
-    openDialog: openDesignDialog,
-  } = useParamBasedDialog("design");
+    removeParam: closeDesignDialog,
+    setParam: openDesignDialog,
+  } = useParamBasedFeatures<string>("design");
 
   const [recommendedDesigns, setRecommendedDesigns] = useState<Design[]>([]);
 

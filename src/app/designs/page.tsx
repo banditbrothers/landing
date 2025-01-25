@@ -7,20 +7,20 @@ import { Suspense } from "react";
 import { LoadingIcon } from "@/components/misc/Loading";
 import { Button } from "@/components/ui/button";
 import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
-import { useParamBasedDialog } from "@/hooks/useParamBasedDialog";
+import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 
 function DesignsPageContent() {
   const {
     value: selectedDesignId,
-    closeDialog: closeDesignDialog,
-    openDialog: openDesignDialog,
-  } = useParamBasedDialog("design");
+    removeParam: closeDesignDialog,
+    setParam: openDesignDialog,
+  } = useParamBasedFeatures<string>("design");
 
   const {
     value: isHowToWearDialogOpen,
-    closeDialog: closeHowToWearDialog,
-    openDialog: openHowToWearDialog,
-  } = useParamBasedDialog("how-to-wear");
+    removeParam: closeHowToWearDialog,
+    setParam: openHowToWearDialog,
+  } = useParamBasedFeatures<string>("how-to-wear");
 
   const handleDesignOnClose = () => {
     closeDesignDialog();

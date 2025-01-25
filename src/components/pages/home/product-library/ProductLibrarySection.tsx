@@ -13,22 +13,22 @@ import { ProductCarousel } from "@/components/carousels/ProductCarousel";
 import { ProductDialog } from "@/components/dialogs/ProductDialog";
 import { LoadingIcon } from "@/components/misc/Loading";
 import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
-import { useParamBasedDialog } from "@/hooks/useParamBasedDialog";
+import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 
 export const ProductLibraryContent = () => {
+  const isMobile = useIsMobile();
+
   const {
     value: selectedDesignId,
-    closeDialog: closeDesignDialog,
-    openDialog: openDesignDialog,
-  } = useParamBasedDialog("design");
+    removeParam: closeDesignDialog,
+    setParam: openDesignDialog,
+  } = useParamBasedFeatures<string>("design");
 
   const {
     value: isHowToWearDialogOpen,
-    closeDialog: closeHowToWearDialog,
-    openDialog: openHowToWearDialog,
-  } = useParamBasedDialog("how-to-wear");
-
-  const isMobile = useIsMobile();
+    removeParam: closeHowToWearDialog,
+    setParam: openHowToWearDialog,
+  } = useParamBasedFeatures<string>("how-to-wear");
 
   const [selectedShowcaseType, setSelectedShowcaseType] = useState<"carousel" | "grid">("carousel");
   const [designs, setDesigns] = useState<Design[]>([]);

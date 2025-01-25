@@ -8,6 +8,7 @@ import { CheckBadgeIcon, HeartIconOutline } from "../misc/icons";
 import { isFavorite } from "@/utils/favorites";
 import useIsMobile from "@/hooks/useIsMobile";
 import { invertColor } from "@/utils/misc";
+import { handleMultipleParams, useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 
 interface DesignGridProps {
   designs: Design[];
@@ -18,21 +19,65 @@ interface DesignGridProps {
 export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick }: DesignGridProps) => {
   const isMobile = useIsMobile();
 
+  const {
+    value: selectedColorsParam,
+    removeParam: removeColorParam,
+    setParam: setColors,
+  } = useParamBasedFeatures("colors", { replaceRoute: true });
+
+  const {
+    value: selectedCategoriesParam,
+    removeParam: removeCategoryParam,
+    setParam: setCategories,
+  } = useParamBasedFeatures("categories", { replaceRoute: true });
+
+  const {
+    value: isBestSellerFilterSelectedParam,
+    removeParam: removeBestSeller,
+    setParam: setBestSellers,
+  } = useParamBasedFeatures("best-sellers", { replaceRoute: true });
+
+  const isBestSellerFilterSelected = !!isBestSellerFilterSelectedParam;
+
+  let selectedColors = [] as DesignColor[];
+  if (selectedColorsParam !== null) {
+    if (Array.isArray(selectedColorsParam)) selectedColors = selectedColorsParam as DesignColor[];
+    else selectedColors = [selectedColorsParam as DesignColor];
+  }
+
+  let selectedCategories = [] as DesignCategory[];
+  if (selectedCategoriesParam !== null) {
+    if (Array.isArray(selectedCategoriesParam)) selectedCategories = selectedCategoriesParam as DesignCategory[];
+    else selectedCategories = [selectedCategoriesParam as DesignCategory];
+  }
+
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [isFavFilterSelected, setIsFavFilterSelected] = useState(false);
-  const [isBestSellerFilterSelected, setIsBestSellerFilterSelected] = useState(false);
-
-  const [filters, setFilters] = useState<FilterState>({ colors: [], categories: [] });
 
   const handleApplyFilters = (filters: FilterState) => {
-    setFilters(filters);
+    handleMultipleParams({
+      params: { colors: filters.colors, categories: filters.categories },
+      config: { replaceRoute: true },
+    });
+  };
+
+  const handleToggleBestSellerFilter = () => {
+    if (isBestSellerFilterSelected) removeBestSeller();
+    else setBestSellers("true");
   };
 
   const removeFilter = (type: keyof FilterState, value: string) => {
-    setFilters(prev => ({
-      ...prev,
-      [type]: prev[type].filter(item => item !== value),
-    }));
+    if (type === "categories") {
+      const newCategories = selectedCategories.filter(c => c !== value);
+      if (newCategories.length === 0) removeCategoryParam();
+      else setCategories(newCategories);
+    }
+
+    if (type === "colors") {
+      const newColors = selectedColors.filter(c => c !== value);
+      if (newColors.length === 0) removeColorParam();
+      else setColors(newColors);
+    }
   };
 
   const filteredDesigns = designs
@@ -43,13 +88,13 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
       return isFavFilterSelected ? isFavorite(design.id) : true;
     })
     .filter(design => {
-      return filters.categories.length === 0 || filters.categories.includes(design.category);
+      return selectedCategories.length === 0 || selectedCategories.includes(design.category);
     })
     .filter(design => {
-      return filters.colors.length === 0 || filters.colors.some(color => design.colors.includes(color));
+      return selectedColors.length === 0 || selectedColors.some(color => design.colors.includes(color));
     });
 
-  const isColorOrCategoryFilterSelected = filters.colors.length > 0 || filters.categories.length > 0;
+  const isColorOrCategoryFilterSelected = selectedColors.length > 0 || selectedCategories.length > 0;
 
   return (
     <>
@@ -58,7 +103,7 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
           <div className="flex flex-row gap-2 items-center">
             <Button
               variant={isBestSellerFilterSelected ? "default" : "outline"}
-              onClick={() => setIsBestSellerFilterSelected(f => !f)}
+              onClick={handleToggleBestSellerFilter}
               className="flex flex-row gap-2 items-center">
               <CheckBadgeIcon className="w-4 h-4" />
               Best Sellers
@@ -80,17 +125,17 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
           </div>
 
           <div className="flex flex-wrap gap-2 items-start overflow-x-auto max-w-full">
-            {filters.categories.length > 0 && (
+            {selectedCategories.length > 0 && (
               <div className={`flex flex-wrap items-center gap-2`}>
-                {filters.categories.map(categoryId => (
+                {selectedCategories.map(categoryId => (
                   <CategoryFilterChip key={categoryId} categoryId={categoryId} removeFilter={removeFilter} />
                 ))}
               </div>
             )}
 
-            {filters.colors.length > 0 && (
+            {selectedColors.length > 0 && (
               <div className="flex flex-wrap items-center gap-2">
-                {filters.colors.map(colorId => (
+                {selectedColors.map(colorId => (
                   <ColorFilterChip key={colorId} colorId={colorId} removeFilter={removeFilter} />
                 ))}
               </div>
@@ -120,7 +165,7 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
       </div>
 
       <FilterDialog
-        defaultFilters={filters}
+        defaultFilters={{ colors: selectedColors, categories: selectedCategories }}
         open={isFilterDialogOpen}
         onOpenChange={setIsFilterDialogOpen}
         onApplyFilters={handleApplyFilters}
