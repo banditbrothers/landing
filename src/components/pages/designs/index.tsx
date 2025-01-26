@@ -15,7 +15,7 @@ import { RecommendedProducts } from "./RecommendedProducts";
 import { FavoriteButton } from "../../misc/FavoriteButton";
 import { CategoryBadge } from "../../badges/DesignBadges";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import Link from "next/link";
+
 import { Button } from "../../ui/button";
 import { ShoppingCartIcon } from "../../misc/icons";
 import { ShareIcon } from "lucide-react";
@@ -26,10 +26,19 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { LoadingScreen } from "@/components/misc/Loading";
 import { trackDesignShopNow, trackDesignView } from "@/utils/analytics";
+import { useCart } from "@/lib/zustand";
+import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 
 export const ProductPageContents = ({ designId: paramDesignId }: { designId: string }) => {
   const { isFavorite, toggleFav } = useFavorites();
+  const addOrUpdateCartItem = useCart(state => state.updateCartItem);
+
+  const { setParam: openCartParam } = useParamBasedFeatures("cart");
   const router = useRouter();
+
+  function openCart() {
+    openCartParam("true");
+  }
 
   const design = DESIGNS.find(d => d.id === paramDesignId);
 
@@ -47,6 +56,13 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
   const handleShare = () => {
     if (!design) return;
     shareDesign(design);
+  };
+
+  const handleShopNowClicked = () => {
+    if (!design) return;
+    trackDesignShopNow(design.id);
+    addOrUpdateCartItem(design.id);
+    openCart();
   };
 
   if (!design) {
@@ -91,15 +107,9 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
           </div>
 
           <div className="flex flex-row gap-2">
-            <Link
-              target="_blank"
-              className="w-full"
-              href={`/order?design=${design.id}`}
-              onClick={() => trackDesignShopNow(design.id)}>
-              <Button className="w-full">
-                <ShoppingCartIcon /> Shop Now
-              </Button>
-            </Link>
+            <Button className="w-full" onClick={handleShopNowClicked}>
+              <ShoppingCartIcon /> Add to Cart
+            </Button>
             <Button variant="outline" onClick={handleShare}>
               <ShareIcon className="w-4 h-4" />
               Share

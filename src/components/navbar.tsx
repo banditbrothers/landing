@@ -9,10 +9,14 @@ import { scrollTo } from "@/utils/misc";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { Button } from "./ui/button";
 import { ShoppingBagIcon } from "./misc/icons";
+import { useCart } from "@/lib/zustand";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function NavBar() {
   const { setParam } = useParamBasedFeatures("cart");
+  const cartItems = useCart(state => state.items);
   const pathname = usePathname();
+  const isMobile = useIsMobile();
 
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -28,6 +32,7 @@ export default function NavBar() {
   const isHomePath = pathname === "/";
   const showNavLinks = !["/order", "/admin", "/terms", "/privacy"].includes(pathname);
 
+  const totalCartItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   return (
     <motion.header
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
@@ -40,7 +45,7 @@ export default function NavBar() {
         className={`container mx-auto p-4 gap-4 flex items-center ${
           showNavLinks ? "justify-between" : "justify-center"
         }`}>
-        {showNavLinks && <div className="min-w-10" />}
+        {showNavLinks && !isMobile && <div className="min-w-20" />}
         <div className="flex items-center">
           <Link
             href="/"
@@ -54,9 +59,10 @@ export default function NavBar() {
           </Link>
         </div>
         {showNavLinks && (
-          <div className="min-w-10">
+          <div className="min-w-20">
             <Button variant="outline" onClick={() => setParam("true")}>
               <ShoppingBagIcon className="w-4 h-4" />
+              {totalCartItems > 0 && <span className="text-sm">{totalCartItems}</span>}
             </Button>
           </div>
         )}

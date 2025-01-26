@@ -1,20 +1,45 @@
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type CartState = {
   items: {
-    id: string;
+    designId: string;
     quantity: number;
   }[];
-  addItem: (id: string, quantity?: number) => void;
-  updateItem: (id: string, quantity: number) => void;
-  removeItem: (id: string) => void;
-  clear: () => void;
+  updateCartItem: (id: string, quantity?: number) => void;
+  removeCartItem: (id: string) => void;
+  clearCart: () => void;
 };
 
-export const useCart = create<CartState>()(set => ({
-  items: [],
-  addItem: (id, quantity = 1) => set(state => ({ items: [...state.items, { id, quantity }] })),
-  updateItem: (id, quantity) => set(state => ({ items: state.items.map(i => (i.id === id ? { ...i, quantity } : i)) })),
-  removeItem: id => set(state => ({ items: state.items.filter(i => i.id !== id) })),
-  clear: () => set({ items: [] }),
-}));
+export const useCart = create<CartState>()(
+  persist(
+    set => ({
+      items: [],
+
+      updateCartItem: (id, quantity = 1) => {
+        set(state => {
+          const itemExists = state.items.some(item => item.designId === id);
+          if (itemExists) {
+            return {
+              items: state.items.map(item =>
+                item.designId === id ? { ...item, quantity: item.quantity + quantity } : item
+              ),
+            };
+          } else {
+            return {
+              items: [...state.items, { designId: id, quantity }],
+            };
+          }
+        });
+      },
+
+      removeCartItem: id => set(state => ({ items: state.items.filter(i => i.designId !== id) })),
+
+      clearCart: () => set({ items: [] }),
+    }),
+    {
+      name: "cart",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
