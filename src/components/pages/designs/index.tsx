@@ -18,7 +18,6 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import Link from "next/link";
 import { Button } from "../../ui/button";
 import { ShoppingCartIcon } from "../../misc/icons";
-import posthog from "posthog-js";
 import { ShareIcon } from "lucide-react";
 import { shareDesign } from "@/utils/share";
 import { ImageCarousel } from "../../carousels/ImageCarousel";
@@ -26,6 +25,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { LoadingScreen } from "@/components/misc/Loading";
+import { trackDesignShopNow, trackDesignView } from "@/utils/analytics";
 
 export const ProductPageContents = ({ designId: paramDesignId }: { designId: string }) => {
   const { isFavorite, toggleFav } = useFavorites();
@@ -34,16 +34,18 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
   const design = DESIGNS.find(d => d.id === paramDesignId);
 
   useEffect(() => {
-    console.log("in useLayoutEffect");
     if (!design) {
       toast.error("Oops! Looks like the design you're looking for doesn't exist");
       router.replace("/designs");
     }
   }, [design, router]);
 
+  useEffect(() => {
+    if (design) trackDesignView(design.id);
+  }, [design]);
+
   const handleShare = () => {
     if (!design) return;
-    posthog.capture("design_share", { designId: design.id });
     shareDesign(design);
   };
 
@@ -93,7 +95,7 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
               target="_blank"
               className="w-full"
               href={`/order?design=${design.id}`}
-              onClick={() => posthog.capture("design_shopnow", { designId: design.id })}>
+              onClick={() => trackDesignShopNow(design.id)}>
               <Button className="w-full">
                 <ShoppingCartIcon /> Shop Now
               </Button>

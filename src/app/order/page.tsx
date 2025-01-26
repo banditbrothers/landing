@@ -30,6 +30,7 @@ import { useCouponActions } from "@/hooks/useCouponActions";
 import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/payments/RazorpayGateway";
 import { updateOrder } from "@/actions/orders";
 import { getFavorites } from "@/utils/favorites";
+import { identifyUser } from "@/utils/analytics";
 
 const SHIPPING_COST = 100;
 
@@ -195,6 +196,8 @@ function OrderPageContent() {
       couponCode: coupon?.code ?? null,
       createdAt: getTimestamp(),
     };
+
+    identifyUser(order.email, { name: order.name, phone: order.phone, email: order.email });
 
     const orderObj = await createOrder(order);
 

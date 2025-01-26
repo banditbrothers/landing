@@ -4,7 +4,6 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import { standardDescription } from "@/data/designs";
 import Link from "next/link";
-import posthog from "posthog-js";
 import { ShareIcon } from "lucide-react";
 import { FavoriteButton } from "../misc/FavoriteButton";
 import { useFavorites } from "@/contexts/FavoritesContext";
@@ -14,6 +13,7 @@ import { shareDesign } from "@/utils/share";
 import { useEffect } from "react";
 import { ArrowTopRightOnSquareIcon, ShoppingCartIcon } from "../misc/icons";
 import useIsMobile from "@/hooks/useIsMobile";
+import { trackDesignShopNow, trackDesignView } from "@/utils/analytics";
 
 type ProductDialogProps = {
   designId: Design["id"] | null;
@@ -27,16 +27,15 @@ export const ProductDialog = ({ designId, onClose }: ProductDialogProps) => {
   const { isFavorite, toggleFav } = useFavorites();
 
   useEffect(() => {
-    if (designId) posthog.capture("design_viewed", { designId });
+    if (designId) trackDesignView(designId);
   }, [designId]);
 
   const handleShopNow = async () => {
-    posthog.capture("design_shopnow", { designId });
+    if (designId) trackDesignShopNow(designId);
   };
 
   const handleShare = async () => {
     if (design) {
-      posthog.capture("design_share", { designId });
       shareDesign({ ...design, id: designId! });
     }
   };
