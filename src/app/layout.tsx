@@ -44,10 +44,10 @@ export default function RootLayout({
       <body className={`${spaceGrotesk.className} ${Calera.className}`}>
         <CSPostHogProvider>
           <FavoritesProvider>
+            <Toaster theme={theme} richColors position="top-right" />
             <Navbar />
             {children}
             <Footer />
-            <Toaster theme={theme} richColors position="top-right" />
           </FavoritesProvider>
         </CSPostHogProvider>
       </body>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Design } from "@/data/designs";
+import { Design, DESIGNS } from "@/data/designs";
 import { standardDescription } from "@/data/designs";
 import { ProductDetailsAccordion } from "../../accordions/ProductDetailsAccordion";
 import {
@@ -22,14 +22,38 @@ import posthog from "posthog-js";
 import { ShareIcon } from "lucide-react";
 import { shareDesign } from "@/utils/share";
 import { ImageCarousel } from "../../carousels/ImageCarousel";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { LoadingScreen } from "@/components/misc/Loading";
 
-export const ProductPageContents = ({ design }: { design: Design }) => {
+export const ProductPageContents = ({ designId: paramDesignId }: { designId: string }) => {
   const { isFavorite, toggleFav } = useFavorites();
+  const router = useRouter();
+
+  const design = DESIGNS.find(d => d.id === paramDesignId);
+
+  useEffect(() => {
+    console.log("in useLayoutEffect");
+    if (!design) {
+      toast.error("Oops! Looks like the design you're looking for doesn't exist");
+      router.replace("/designs");
+    }
+  }, [design, router]);
 
   const handleShare = () => {
+    if (!design) return;
     posthog.capture("design_share", { designId: design.id });
     shareDesign(design);
   };
+
+  if (!design) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <LoadingScreen />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto mt-16 px-4 py-8">
