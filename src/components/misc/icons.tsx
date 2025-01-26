@@ -12,6 +12,7 @@ import {
   ChevronDownIcon,
   TruckIcon,
   DocumentMagnifyingGlassIcon,
+  ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 import {
   ArrowRightCircleIcon,
@@ -23,6 +24,7 @@ import { HandHeartIcon } from "lucide-react";
 
 export {
   ArrowTopRightOnSquareIcon,
+  ShoppingBagIcon,
   ChevronDownIcon,
   CheckBadgeIcon,
   ShoppingCartIcon,
