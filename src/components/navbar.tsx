@@ -26,6 +26,7 @@ export default function NavBar() {
   }, []);
 
   const isHomePath = pathname === "/";
+  const showNavLinks = !["/", "/order", "/admin", "/terms", "/privacy"].includes(pathname);
 
   return (
     <motion.header
@@ -35,8 +36,11 @@ export default function NavBar() {
       initial={{ y: isHomePath ? -100 : 0 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}>
-      <div className="container mx-auto p-4 gap-4 flex items-center justify-between">
-        <div className="min-w-10" />
+      <div
+        className={`container mx-auto p-4 gap-4 flex items-center ${
+          showNavLinks ? "justify-between" : "justify-center"
+        }`}>
+        {showNavLinks && <div className="min-w-10" />}
         <div className="flex items-center">
           <Link
             href="/"
@@ -49,11 +53,13 @@ export default function NavBar() {
             <h1 className="text-2xl md:text-3xl text-bandit-orange font-calera ">BANDIT BROTHERS</h1>
           </Link>
         </div>
-        <div className="min-w-10">
-          <Button variant="outline" onClick={() => setParam("true")}>
-            <ShoppingBagIcon className="w-4 h-4" />
-          </Button>
-        </div>
+        {showNavLinks && (
+          <div className="min-w-10">
+            <Button variant="outline" onClick={() => setParam("true")}>
+              <ShoppingBagIcon className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
       </div>
     </motion.header>
   );
