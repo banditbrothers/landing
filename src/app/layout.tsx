@@ -45,8 +45,9 @@ export default function RootLayout({
         <CSPostHogProvider>
           <FavoritesProvider>
             <Toaster theme={theme} richColors position="top-right" />
+
             <Navbar />
-            {children}
+            <main>{children}</main>
             <Footer />
           </FavoritesProvider>
         </CSPostHogProvider>

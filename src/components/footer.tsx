@@ -3,11 +3,13 @@
 import { whatsappKnowMoreLink } from "@/utils/whatsappMessageLinks";
 import { FullLogo } from "./misc/fullLogo";
 import Link from "next/link";
-import { scrollTo } from "@/utils/misc";
 import { PaymentBadges } from "./payments/PaymentBadges";
 import useIsMobile from "@/hooks/useIsMobile";
+import { useRouter } from "next/navigation";
+import { scrollTo } from "@/utils/misc";
 
 export default function Footer() {
+  const router = useRouter();
   const isMobile = useIsMobile();
 
   return (
@@ -19,7 +21,8 @@ export default function Footer() {
               href="/"
               onClick={e => {
                 e.preventDefault();
-                scrollTo("hero");
+                if (window.location.pathname === "/") scrollTo("hero");
+                else router.push("/");
               }}>
               <FullLogo size={180} />
             </Link>
