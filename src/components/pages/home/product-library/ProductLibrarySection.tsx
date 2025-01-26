@@ -10,19 +10,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
 import { ProductCarousel } from "@/components/carousels/ProductCarousel";
-import { ProductDialog } from "@/components/dialogs/ProductDialog";
+
 import { LoadingIcon } from "@/components/misc/Loading";
 import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 
 export const ProductLibraryContent = () => {
   const isMobile = useIsMobile();
-
-  const {
-    value: selectedDesignId,
-    removeParam: closeDesignDialog,
-    setParam: openDesignDialog,
-  } = useParamBasedFeatures<string>("design");
 
   const {
     value: isHowToWearDialogOpen,
@@ -37,10 +31,6 @@ export const ProductLibraryContent = () => {
     const shuffledDesigns = shuffleArray(designsData);
     setDesigns(shuffledDesigns);
   }, []);
-
-  const handleDesignClick = (design: Design) => {
-    openDesignDialog(design.id);
-  };
 
   return (
     <section id="product-library" className="py-20 scroll-mt-16">
@@ -83,22 +73,13 @@ export const ProductLibraryContent = () => {
         </div>
         <div className="mx-auto">
           {selectedShowcaseType === "carousel" ? (
-            <ProductCarousel
-              designs={designs}
-              selectedDesignId={selectedDesignId}
-              handleDesignClick={handleDesignClick}
-            />
+            <ProductCarousel designs={designs} />
           ) : (
-            <ProductGridLayout
-              designs={designs}
-              selectedDesignId={selectedDesignId}
-              handleDesignClick={handleDesignClick}
-            />
+            <ProductGridLayout designs={designs} />
           )}
         </div>
       </div>
 
-      <ProductDialog designId={selectedDesignId} onClose={closeDesignDialog} />
       <HowToWearDialog open={!!isHowToWearDialogOpen} onClose={closeHowToWearDialog} />
     </section>
   );

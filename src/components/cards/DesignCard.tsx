@@ -5,12 +5,11 @@ import { CategoryBadge } from "../badges/DesignBadges";
 import { ArrowRightCircleIcon } from "../misc/icons";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import useIsMobile from "@/hooks/useIsMobile";
+import Link from "next/link";
 
 interface DesignCardProps {
   design: Design;
-  onClick: () => void;
-  selected: boolean;
-  showRingAroundSelectedCard?: boolean;
+  openInNewTab?: boolean;
   showFavoriteButton?: boolean;
   children: React.ReactNode;
   optimizeImageQualityOnMobile?: boolean;
@@ -18,28 +17,23 @@ interface DesignCardProps {
 
 export const DesignCard = ({
   design,
-  onClick,
-  selected,
   children,
-  showRingAroundSelectedCard = false,
   optimizeImageQualityOnMobile = true,
   showFavoriteButton = true,
+  openInNewTab = false,
 }: DesignCardProps) => {
   const { isFavorite, toggleFav } = useFavorites();
   const isMobile = useIsMobile();
 
   return (
     <div className="w-full h-full">
-      <div
-        className={`p-4 bg-card rounded-xl relative ${
-          showRingAroundSelectedCard && selected ? "ring-2 ring-primary" : ""
-        }`}>
+      <div className={`p-4 bg-card rounded-xl relative`}>
         {showFavoriteButton && (
           <div className="absolute top-5 right-5 z-10">
             <FavoriteButton selected={isFavorite(design.id)} toggle={() => toggleFav(design.id)} />
           </div>
         )}
-        <button onClick={onClick} className="w-full h-full">
+        <Link href={`/designs/${design.id}`} target={openInNewTab ? "_blank" : undefined} className="w-full h-full">
           <div>
             <div className="flex flex-col items-center">
               <div className="relative w-full aspect-square">
@@ -54,7 +48,7 @@ export const DesignCard = ({
               {children}
             </div>
           </div>
-        </button>
+        </Link>
       </div>
     </div>
   );

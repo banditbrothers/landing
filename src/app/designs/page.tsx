@@ -1,8 +1,7 @@
 "use client";
 
 import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
-import { Design, DESIGNS } from "@/data/designs";
-import { ProductDialog } from "@/components/dialogs/ProductDialog";
+import { DESIGNS } from "@/data/designs";
 import { Suspense } from "react";
 import { LoadingIcon } from "@/components/misc/Loading";
 import { Button } from "@/components/ui/button";
@@ -11,28 +10,13 @@ import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 
 function DesignsPageContent() {
   const {
-    value: selectedDesignId,
-    removeParam: closeDesignDialog,
-    setParam: openDesignDialog,
-  } = useParamBasedFeatures<string>("design");
-
-  const {
     value: isHowToWearDialogOpen,
     removeParam: closeHowToWearDialog,
     setParam: openHowToWearDialog,
   } = useParamBasedFeatures<string>("how-to-wear");
 
-  const handleDesignOnClose = () => {
-    closeDesignDialog();
-  };
-
-  const handleDesignClick = (design: Design) => {
-    openDesignDialog(design.id);
-  };
-
   return (
     <>
-      <ProductDialog designId={selectedDesignId} onClose={handleDesignOnClose} />
       <HowToWearDialog open={!!isHowToWearDialogOpen} onClose={closeHowToWearDialog} />
 
       <div className="container mx-auto mt-16 min-h-screen">
@@ -47,11 +31,7 @@ function DesignsPageContent() {
               </div>
             </div>
             <div>
-              <ProductGridLayout
-                designs={DESIGNS}
-                selectedDesignId={selectedDesignId}
-                handleDesignClick={handleDesignClick}
-              />
+              <ProductGridLayout designs={DESIGNS} />
             </div>
           </div>
         </div>

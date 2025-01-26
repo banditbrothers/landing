@@ -12,14 +12,12 @@ import { handleMultipleParams, useParamBasedFeatures } from "@/hooks/useParamBas
 
 interface DesignGridProps {
   designs: Design[];
-  selectedDesignId: string | null;
-  handleDesignClick: (design: Design) => void;
 }
 
 const isValidColor = (value: string) => DESIGN_COLOR_OBJ[value as DesignColor] !== undefined;
 const isValidCategory = (value: string) => DESIGN_CATEGORIES_OBJ[value as DesignCategory] !== undefined;
 
-export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick }: DesignGridProps) => {
+export const ProductGridLayout = ({ designs }: DesignGridProps) => {
   const isMobile = useIsMobile();
 
   const {
@@ -154,12 +152,7 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
           )}
           {filteredDesigns.map(design => (
             <div key={design.id} className="w-full h-full hover:scale-105 transition-transform duration-300">
-              <DesignCard
-                design={design}
-                showRingAroundSelectedCard
-                optimizeImageQualityOnMobile={false}
-                onClick={() => handleDesignClick(design)}
-                selected={selectedDesignId === design.id}>
+              <DesignCard openInNewTab design={design} optimizeImageQualityOnMobile={false}>
                 <DesignNameAndPriceBanner design={design} />
               </DesignCard>
             </div>
