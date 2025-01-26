@@ -16,17 +16,20 @@ interface DesignGridProps {
   handleDesignClick: (design: Design) => void;
 }
 
+const isValidColor = (value: string) => DESIGN_COLOR_OBJ[value as DesignColor] !== undefined;
+const isValidCategory = (value: string) => DESIGN_CATEGORIES_OBJ[value as DesignCategory] !== undefined;
+
 export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick }: DesignGridProps) => {
   const isMobile = useIsMobile();
 
   const {
-    value: selectedColorsParam,
+    value: colorsParam,
     removeParam: removeColorParam,
     setParam: setColors,
   } = useParamBasedFeatures("colors", { replaceRoute: true });
 
   const {
-    value: selectedCategoriesParam,
+    value: categoryParams,
     removeParam: removeCategoryParam,
     setParam: setCategories,
   } = useParamBasedFeatures("categories", { replaceRoute: true });
@@ -37,22 +40,22 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
     setParam: setBestSellers,
   } = useParamBasedFeatures("best-sellers", { replaceRoute: true });
 
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+  const [isFavFilterSelected, setIsFavFilterSelected] = useState(false);
+
   const isBestSellerFilterSelected = !!isBestSellerFilterSelectedParam;
 
   let selectedColors = [] as DesignColor[];
-  if (selectedColorsParam !== null) {
-    if (Array.isArray(selectedColorsParam)) selectedColors = selectedColorsParam as DesignColor[];
-    else selectedColors = [selectedColorsParam as DesignColor];
+  if (colorsParam !== null) {
+    if (Array.isArray(colorsParam)) selectedColors = colorsParam.filter(isValidColor) as DesignColor[];
+    else selectedColors = [colorsParam as DesignColor].filter(isValidColor);
   }
 
   let selectedCategories = [] as DesignCategory[];
-  if (selectedCategoriesParam !== null) {
-    if (Array.isArray(selectedCategoriesParam)) selectedCategories = selectedCategoriesParam as DesignCategory[];
-    else selectedCategories = [selectedCategoriesParam as DesignCategory];
+  if (categoryParams !== null) {
+    if (Array.isArray(categoryParams)) selectedCategories = categoryParams.filter(isValidCategory) as DesignCategory[];
+    else selectedCategories = [categoryParams as DesignCategory].filter(isValidCategory);
   }
-
-  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
-  const [isFavFilterSelected, setIsFavFilterSelected] = useState(false);
 
   const handleApplyFilters = (filters: FilterState) => {
     handleMultipleParams({
