@@ -26,7 +26,7 @@ export default function NavBar() {
   }, []);
 
   const isHomePath = pathname === "/";
-  const showNavLinks = !["/", "/order", "/admin", "/terms", "/privacy"].includes(pathname);
+  const showNavLinks = !["/order", "/admin", "/terms", "/privacy"].includes(pathname);
 
   return (
     <motion.header
