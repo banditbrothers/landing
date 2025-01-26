@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
-import { CartSidebar } from "@/components/sidebar/CartSidebar";
+import { CartSheet } from "@/components/sheets/CartSheet";
 
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
@@ -51,7 +51,7 @@ export default function RootLayout({
               {children}
               <Footer />
             </main>
-            <CartSidebar />
+            <CartSheet />
           </FavoritesProvider>
         </CSPostHogProvider>
       </body>
