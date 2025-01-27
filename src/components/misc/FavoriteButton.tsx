@@ -1,6 +1,7 @@
+import dynamic from "next/dynamic";
 import { HeartIconOutline, HeartIconSolid } from "./icons";
 
-export const FavoriteButton = ({ selected, toggle }: { selected: boolean; toggle: () => void }) => {
+const FavoriteButtonSSR = ({ selected, toggle }: { selected: boolean; toggle: () => void }) => {
   return (
     <button className="z-10 p-2 bg-background/80 rounded-full" onClick={toggle}>
       {selected ? (
@@ -11,3 +12,5 @@ export const FavoriteButton = ({ selected, toggle }: { selected: boolean; toggle
     </button>
   );
 };
+
+export const FavoriteButton = dynamic(() => Promise.resolve(FavoriteButtonSSR), { ssr: false });
