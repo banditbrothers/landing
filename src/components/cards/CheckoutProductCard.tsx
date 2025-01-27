@@ -28,13 +28,13 @@ export const CheckoutProductCard = ({
         onClick={() => removeCartItem(design.id)}>
         <XMarkIcon className="w-4 h-4" />
       </Button>
-      <div className="w-24 h-24 relative">
+      <div className="w-20 h-20 sm:w-24 sm:h-24 relative">
         <Link href={`/designs/${design.id}`}>
           <Image src={design.image} alt={design.name} fill className="object-cover rounded-md w-full h-full" />
         </Link>
       </div>
       <div className="flex-1">
-        <h3 className="font-semibold">{design.name}</h3>
+        <h3 className="font-semibold text-sm sm:text-base pr-3">{design.name}</h3>
         <p className="text-muted-foreground text-sm">₹{design.price}</p>
         <div className="flex items-center gap-2 mt-2 justify-end">
           <QuantityStepper

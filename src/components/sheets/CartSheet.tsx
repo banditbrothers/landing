@@ -35,9 +35,11 @@ export const CartSheet = () => {
         })}
         {cartItems.length === 0 && <p className="text-center text-muted-foreground">Cart is empty 🙁</p>}
         {cartItems.length > 0 && (
-          <span className="flex items-center gap-2">
-            <p className="text-muted-foreground text-xs italic">Psst... use code BROCODE for 15% off!</p>
-            <p className="text-xs text-muted-foreground">🧡🤫</p>
+          <span className="">
+            <p className="text-muted-foreground text-xs">
+              <span className="italic">Psst... use BROCODE for 15% off!</span>
+              <span className="ml-1">🧡🤫</span>
+            </p>
           </span>
         )}
       </div>
