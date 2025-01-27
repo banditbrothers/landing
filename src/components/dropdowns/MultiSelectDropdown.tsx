@@ -12,7 +12,7 @@ import {
 import { Design } from "@/data/designs";
 import { HeartIconSolid, PlusIcon } from "../misc/icons";
 import Image from "next/image";
-import { useFavorites } from "@/contexts/FavoritesContext";
+import { useFavorites } from "@/components/stores/favorites";
 
 export function MultiSelectDropdown(props: {
   designs: Design[];

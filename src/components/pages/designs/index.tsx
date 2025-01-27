@@ -14,7 +14,7 @@ import {
 import { RecommendedProducts } from "./RecommendedProducts";
 import { FavoriteButton } from "../../misc/FavoriteButton";
 import { CategoryBadge } from "../../badges/DesignBadges";
-import { useFavorites } from "@/contexts/FavoritesContext";
+import { useFavorites } from "@/components/stores/favorites";
 
 import { Button } from "../../ui/button";
 import { ShoppingCartIcon } from "../../misc/icons";

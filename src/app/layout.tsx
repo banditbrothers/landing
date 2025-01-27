@@ -7,7 +7,6 @@ import { CSPostHogProvider } from "@/provider/posthog";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CartSheet } from "@/components/sheets/CartSheet";
 import { Suspense } from "react";
 import { LoadingScreen } from "@/components/misc/Loading";
@@ -46,17 +45,15 @@ export default function RootLayout({
     <html lang="en" className={`${theme}`}>
       <body className={`${spaceGrotesk.className} ${Calera.className}`}>
         <CSPostHogProvider>
-          <FavoritesProvider>
-            <Toaster theme={theme} richColors position="top-right" />
-            <Suspense fallback={<LoadingScreen />}>
-              <main>
-                <Navbar />
-                {children}
-                <Footer />
-              </main>
-              <CartSheet />
-            </Suspense>
-          </FavoritesProvider>
+          <Toaster theme={theme} richColors position="top-right" />
+          <Suspense fallback={<LoadingScreen />}>
+            <main>
+              <Navbar />
+              {children}
+              <Footer />
+            </main>
+            <CartSheet />
+          </Suspense>
         </CSPostHogProvider>
       </body>
     </html>
