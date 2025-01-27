@@ -5,10 +5,10 @@ import { FilterDialog, FilterState } from "../dialogs/FilterDialog";
 import { useState } from "react";
 import { FilterIcon, XIcon } from "lucide-react";
 import { CheckBadgeIcon, HeartIconOutline } from "../misc/icons";
-import { isFavorite } from "@/utils/favorites";
 import useIsMobile from "@/hooks/useIsMobile";
 import { invertColor } from "@/utils/misc";
 import { handleMultipleParams, useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
+import { useFavorites } from "../stores/favorites";
 
 interface DesignGridProps {
   designs: Design[];
@@ -19,6 +19,7 @@ const isValidCategory = (value: string) => DESIGN_CATEGORIES_OBJ[value as Design
 
 export const ProductGridLayout = ({ designs }: DesignGridProps) => {
   const isMobile = useIsMobile();
+  const { isFavorite } = useFavorites();
 
   const {
     value: colorsParam,

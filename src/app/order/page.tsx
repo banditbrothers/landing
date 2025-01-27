@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DESIGNS_OBJ, DESIGNS } from "@/data/designs";
+import { DESIGNS_OBJ, DESIGNS, Design } from "@/data/designs";
 import { MultiSelectDropdown } from "@/components/dropdowns/MultiSelectDropdown";
 
 import { Coupon, Order, SelectedDesignsType } from "@/types/order";
@@ -28,11 +28,11 @@ import { useOrderActions } from "@/hooks/useOrderActions";
 import { useCouponActions } from "@/hooks/useCouponActions";
 import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/payments/RazorpayGateway";
 import { updateOrder } from "@/actions/orders";
-import { getFavorites } from "@/utils/favorites";
 import { identifyUser } from "@/utils/analytics";
 import { Label } from "@/components/ui/label";
 import { CheckoutProductCard } from "@/components/cards/CheckoutProductCard";
 import { useCart } from "@/components/stores/cart";
+import { useFavorites } from "@/components/stores/favorites";
 
 const SHIPPING_COST = 100;
 
@@ -90,14 +90,6 @@ const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) 
   return total;
 };
 
-let favFirstDesigns = DESIGNS;
-if (typeof window !== "undefined") {
-  const favoriteDesignIds = getFavorites();
-  const favDesigns = DESIGNS.filter(design => favoriteDesignIds.includes(design.id));
-  const otherDesigns = DESIGNS.filter(design => !favoriteDesignIds.includes(design.id));
-  favFirstDesigns = [...favDesigns, ...otherDesigns];
-}
-
 const showErrorToast = (message: string) => {
   toast.error(message, { position: "top-right" });
 };
@@ -107,6 +99,7 @@ function OrderPageContent() {
 
   const router = useRouter();
   const { cart, updateCartItem, removeCartItem, setCart } = useCart();
+  const { favorites } = useFavorites();
   const { orderLoading, createOrder } = useOrderActions();
   const { couponLoading, validateCoupon } = useCouponActions();
 
@@ -114,6 +107,7 @@ function OrderPageContent() {
   const [countryStates, setCountryStates] = useState<IState[]>([]);
   const [orderTotal, setOrderTotal] = useState(0);
   const [coupon, setCoupon] = useState<Coupon | null>(null);
+  const [favFirstDesigns, setFavFirstDesigns] = useState<Design[]>([]);
 
   const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
 
@@ -168,6 +162,12 @@ function OrderPageContent() {
     const total = calculateTotal(cart, coupon);
     setOrderTotal(total);
   }, [cart, coupon]);
+
+  useEffect(() => {
+    const favDesigns = DESIGNS.filter(design => favorites.includes(design.id));
+    const otherDesigns = DESIGNS.filter(design => !favorites.includes(design.id));
+    setFavFirstDesigns([...favDesigns, ...otherDesigns]);
+  }, [favorites]);
 
   const handleDesignChange = (id: string, checked: boolean) => {
     let newDesignIds = [...selectedDesignsIds];

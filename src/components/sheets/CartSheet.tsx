@@ -55,7 +55,7 @@ export const CartSheet = () => {
     }, 0);
 
     return (
-      <div className="flex flex-col gap-2 w-full items-center">
+      <div className="flex flex-col gap-2 w-full items-center pt-4">
         <div className="w-full text-sm">
           <div className="flex justify-between mb-1">
             <span>Subtotal</span>
