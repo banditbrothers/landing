@@ -6,9 +6,9 @@ import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
 
 export const getDiscordOrderMessage = (order: Order) => {
   return {
-    content: `🎉 We have a new order! \nClick [here](${getWhatsappOrderConfirmationLink(
-      order
-    )}) to send customer order info + shipping details`,
+    content: `🎉 We have a new order! \nClick [here](${getWhatsappOrderConfirmationLink(order)}) to send ${
+      order.name
+    } their order info + shipping details`,
     embeds: [
       {
         title: "Order Details",
