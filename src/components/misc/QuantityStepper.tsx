@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useEffect } from "react";
 import { Button } from "../ui/button";
 import { MinusIcon, PlusIcon } from "./icons";
 
@@ -8,6 +10,12 @@ type QuantityStepperProps = {
 };
 
 export const QuantityStepper = ({ quantity, increment, decrement }: QuantityStepperProps) => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <div className="flex items-center border rounded-full w-fit">
       <Button
@@ -15,7 +23,7 @@ export const QuantityStepper = ({ quantity, increment, decrement }: QuantityStep
         type="button"
         size="icon"
         className="h-8 w-8 rounded-l-full hover:bg-transparent"
-        disabled={quantity <= 1}
+        disabled={isMounted && quantity <= 1}
         onClick={() => quantity > 1 && decrement()}>
         <MinusIcon className="w-4 h-4" />
       </Button>
