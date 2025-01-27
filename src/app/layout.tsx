@@ -9,6 +9,8 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { CartSheet } from "@/components/sheets/CartSheet";
+import { Suspense } from "react";
+import { LoadingScreen } from "@/components/misc/Loading";
 
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
@@ -46,12 +48,14 @@ export default function RootLayout({
         <CSPostHogProvider>
           <FavoritesProvider>
             <Toaster theme={theme} richColors position="top-right" />
-            <main>
-              <Navbar />
-              {children}
-              <Footer />
-            </main>
-            <CartSheet />
+            <Suspense fallback={<LoadingScreen />}>
+              <main>
+                <Navbar />
+                {children}
+                <Footer />
+              </main>
+              <CartSheet />
+            </Suspense>
           </FavoritesProvider>
         </CSPostHogProvider>
       </body>
