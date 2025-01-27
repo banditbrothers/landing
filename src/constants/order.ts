@@ -1,4 +1,3 @@
-import { SelectedDesignsType } from "@/types/order";
 import { isProduction } from "@/utils/misc";
 
 export const DEFAULT_ORDER_VALUES = isProduction
@@ -15,7 +14,6 @@ export const DEFAULT_ORDER_VALUES = isProduction
         city: "",
         zip: "",
       },
-      products: [] as SelectedDesignsType[],
     }
   : {
       email: "test@gmail.com",
@@ -30,5 +28,4 @@ export const DEFAULT_ORDER_VALUES = isProduction
         city: "test",
         zip: "400001",
       },
-      products: [] as SelectedDesignsType[],
     };

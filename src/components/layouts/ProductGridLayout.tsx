@@ -152,7 +152,7 @@ export const ProductGridLayout = ({ designs }: DesignGridProps) => {
           )}
           {filteredDesigns.map(design => (
             <div key={design.id} className="w-full h-full hover:scale-105 transition-transform duration-300">
-              <DesignCard openInNewTab design={design} optimizeImageQualityOnMobile={false}>
+              <DesignCard design={design} optimizeImageQualityOnMobile={false}>
                 <DesignNameAndPriceBanner design={design} />
               </DesignCard>
             </div>

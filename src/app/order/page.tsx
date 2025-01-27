@@ -7,7 +7,6 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Country, State, IState } from "country-state-city";
 import { toast } from "sonner";
-import Image from "next/image";
 
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,11 +30,15 @@ import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/
 import { updateOrder } from "@/actions/orders";
 import { getFavorites } from "@/utils/favorites";
 import { identifyUser } from "@/utils/analytics";
+import { useCart } from "@/lib/zustand";
+import { Label } from "@/components/ui/label";
+import { CheckoutProductCard } from "@/components/cards/CheckoutProductCard";
 
 const SHIPPING_COST = 100;
 
 const countries = Country.getAllCountries();
 
+// todo: remove cart from form data and let zustand handle it
 const orderFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   name: z.string().min(2, "Enter valid name"),
@@ -51,12 +54,6 @@ const orderFormSchema = z.object({
     city: z.string().min(2, "Enter valid city"),
     zip: z.string().length(6, "Enter valid zip code"),
   }),
-  products: z.array(
-    z.object({
-      designId: z.string(),
-      quantity: z.number().gte(1, "Enter valid quantity"),
-    })
-  ),
 });
 
 const getSubtotal = (products: SelectedDesignsType[]) => {
@@ -107,20 +104,19 @@ const showErrorToast = (message: string) => {
 };
 
 function OrderPageContent() {
+  const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
+
+  const router = useRouter();
+  const { items: cart, updateCartItem, removeCartItem, setCart } = useCart();
+  const { orderLoading, createOrder } = useOrderActions();
+  const { couponLoading, validateCoupon } = useCouponActions();
+
+  const searchParams = useSearchParams();
   const [countryStates, setCountryStates] = useState<IState[]>([]);
   const [orderTotal, setOrderTotal] = useState(0);
   const [coupon, setCoupon] = useState<Coupon | null>(null);
 
-  const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
-
-  const { orderLoading, createOrder } = useOrderActions();
-  const { couponLoading, validateCoupon } = useCouponActions();
-  const router = useRouter();
-
-  const searchParams = useSearchParams();
   const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
-  const paramDesignId = searchParams.get("design");
-  if (paramDesignId) DEFAULT_ORDER_VALUES.products = [{ designId: paramDesignId, quantity: 1 }];
 
   const form = useForm({
     resolver: zodResolver(orderFormSchema),
@@ -129,7 +125,6 @@ function OrderPageContent() {
   });
 
   const watchCountry = useWatch({ control: form.control, name: "address.country" });
-  const watchProducts = useWatch({ control: form.control, name: "products" });
   const watchCouponCode = useWatch({ control: form.control, name: "couponCode" });
 
   const oldFieldsValues = useRef(form.getValues());
@@ -171,21 +166,22 @@ function OrderPageContent() {
   }, [watchCountry]);
 
   useEffect(() => {
-    const total = calculateTotal(watchProducts, coupon);
+    const total = calculateTotal(cart, coupon);
     setOrderTotal(total);
-  }, [watchProducts, coupon]);
+  }, [cart, coupon]);
 
-  const handleDesignChange = (id: string, checked: boolean, onChange: (designs: SelectedDesignsType[]) => void) => {
+  const handleDesignChange = (id: string, checked: boolean) => {
     let newDesignIds = [...selectedDesignsIds];
 
     if (checked) newDesignIds.push(id);
     else newDesignIds = newDesignIds.filter(_id => _id !== id);
 
     const designsFormContent = newDesignIds.map(id => {
-      const qty = form.getValues("products").find(design => design.designId === id)?.quantity ?? 1;
+      const qty = cart.find(design => design.designId === id)?.quantity ?? 1;
       return { designId: id, quantity: qty };
     });
-    onChange(designsFormContent);
+
+    setCart(designsFormContent);
   };
 
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
@@ -240,11 +236,11 @@ function OrderPageContent() {
     }
   };
 
-  const selectedDesignsIds = watchProducts.map(product => product.designId);
+  const selectedDesignsIds = cart.map(product => product.designId);
   const formIsReady = form.formState.isValid && selectedDesignsIds.length > 0;
 
-  const subtotal = getSubtotal(watchProducts);
-  const shippingCost = getShippingCost(watchProducts, coupon);
+  const subtotal = getSubtotal(cart);
+  const shippingCost = getShippingCost(cart, coupon);
   const isShippingFree = shippingCost === 0;
 
   return (
@@ -438,81 +434,41 @@ function OrderPageContent() {
                       )}
                     />
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="products"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Choose your Mischief
-                          <RequiredStar />
-                        </FormLabel>
-                        <FormControl>
-                          <div>
-                            <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
-                              <span>
-                                {selectedDesignsIds.map(id => (
-                                  <Badge key={id}>{DESIGNS_OBJ[id].name}</Badge>
-                                ))}
-                              </span>
+                  <div>
+                    <Label>
+                      Choose your Mischief
+                      <RequiredStar />
+                    </Label>
 
-                              <MultiSelectDropdown
-                                designs={favFirstDesigns}
-                                selectedIds={selectedDesignsIds}
-                                onChange={(id, checked) => handleDesignChange(id, checked, field.onChange)}
-                              />
-                            </div>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
+                        <span>
+                          {selectedDesignsIds.map(id => (
+                            <Badge key={id}>{DESIGNS_OBJ[id].name}</Badge>
+                          ))}
+                        </span>
 
-                            {selectedDesignsIds.map((id, index) => {
-                              return (
-                                <div key={id} className="flex items-center gap-4 mt-4 p-4 border rounded-lg relative">
-                                  <Image
-                                    width={80}
-                                    height={80}
-                                    alt={DESIGNS_OBJ[id].name}
-                                    src={DESIGNS_OBJ[id].image}
-                                    className="w-20 h-20 object-cover rounded-md"
-                                  />
+                        <MultiSelectDropdown
+                          designs={favFirstDesigns}
+                          selectedIds={selectedDesignsIds}
+                          onChange={(id, checked) => handleDesignChange(id, checked)}
+                        />
+                      </div>
 
-                                  <div className="flex-1">
-                                    <h3 className="font-medium">{DESIGNS_OBJ[id].name}</h3>
-                                    <p className="text-sm text-muted-foreground">₹{DESIGNS_OBJ[id].price}</p>
-                                  </div>
+                      {selectedDesignsIds.map(id => {
+                        return (
+                          <CheckoutProductCard
+                            key={id}
+                            design={{ ...DESIGNS_OBJ[id], id }}
+                            updateCartItem={updateCartItem}
+                            removeCartItem={removeCartItem}
+                            quantity={cart.find(design => design.designId === id)?.quantity ?? 1}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
 
-                                  <FormField
-                                    control={form.control}
-                                    name={`products.${index}.quantity`}
-                                    render={({ field, formState }) => (
-                                      <Input
-                                        {...field}
-                                        onChange={e => {
-                                          const intQty = parseInt(e.target.value);
-                                          if (intQty < 0 || intQty > 100) return;
-                                          field.onChange(!isNaN(intQty) ? intQty : 0);
-                                        }}
-                                        type="number"
-                                        onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
-                                        className={`max-w-20 self-end ${
-                                          formState.errors.products?.[index]?.quantity ? "border-destructive" : ""
-                                        }`}
-                                      />
-                                    )}
-                                  />
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => handleDesignChange(id, false, field.onChange)}
-                                    className="absolute top-0 right-0">
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
                   {selectedDesignsIds.length > 0 && (
                     <div className="flex flex-col gap-2">
                       <Separator className="mb-4" />

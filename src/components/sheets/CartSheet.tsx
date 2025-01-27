@@ -4,12 +4,16 @@ import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { Button } from "../ui/button";
 
 import { useCart } from "@/lib/zustand";
-import Image from "next/image";
-import { Design, DESIGNS_OBJ } from "@/data/designs";
+
+import { DESIGNS_OBJ } from "@/data/designs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
+import { CheckoutProductCard } from "../cards/CheckoutProductCard";
+import { useRouter } from "next/navigation";
 
 export const CartSheet = () => {
   const { value, removeParam: closeCart } = useParamBasedFeatures("cart");
+  const { updateCartItem, removeCartItem } = useCart();
+
   const isOpen = !!value;
 
   const CartContent = () => {
@@ -19,15 +23,27 @@ export const CartSheet = () => {
       <div className="flex flex-col gap-4 py-4">
         {cartItems.map(item => {
           const design = { ...DESIGNS_OBJ[item.designId], id: item.designId };
-          return <CartItem key={design.id} design={design} quantity={item.quantity} />;
+          return (
+            <CheckoutProductCard
+              key={design.id}
+              design={design}
+              quantity={item.quantity}
+              updateCartItem={updateCartItem}
+              removeCartItem={removeCartItem}
+            />
+          );
         })}
-        <p className="text-muted-foreground text-xs italic">Psst... use code BROCODE for 15% off! 🤫</p>
+        <span className="flex items-center gap-2">
+          <p className="text-muted-foreground text-xs italic">Psst... use code BROCODE for 15% off!</p>
+          <p className="text-xs text-muted-foreground">🧡🤫</p>
+        </span>
         {cartItems.length === 0 && <p className="text-center text-muted-foreground">Your cart is empty</p>}
       </div>
     );
   };
 
   const CartFooter = () => {
+    const router = useRouter();
     const cartItems = useCart(state => state.items);
     const subtotal = cartItems.reduce((acc, item) => {
       const design = DESIGNS_OBJ[item.designId];
@@ -38,12 +54,14 @@ export const CartSheet = () => {
       <div className="flex flex-col gap-2 w-full items-center">
         <div className="w-full text-sm">
           <div className="flex justify-between mb-1">
-            <span>Subtotal:</span>
+            <span>Subtotal</span>
             <span>₹{subtotal.toFixed(2)}</span>
           </div>
           <p className="text-muted-foreground text-xs mb-2">Coupons can be applied on the next page</p>
         </div>
-        <Button className="w-full">Checkout</Button>
+        <Button className="w-full" onClick={() => router.push("/order")}>
+          Checkout
+        </Button>
         <Button variant="ghost" className="w-full" onClick={closeCart}>
           Continue Shopping
         </Button>
@@ -65,29 +83,5 @@ export const CartSheet = () => {
         </div>
       </SheetContent>
     </Sheet>
-  );
-};
-
-const CartItem = ({ design, quantity }: { design: Design; quantity: number }) => {
-  const { updateCartItem, removeCartItem } = useCart();
-  return (
-    <div key={design.id} className="flex gap-4 p-4 bg-card rounded-lg">
-      <div className="w-20 h-20 relative">
-        <Image src={design.image} alt={design.name} fill className="object-cover rounded-md w-full h-full" />
-      </div>
-      <div className="flex-1">
-        <h3 className="font-semibold">{design.name}</h3>
-        <p className="text-muted-foreground">${design.price}</p>
-        <div className="flex items-center gap-2 mt-2">
-          <Button variant="outline" size="icon" onClick={() => removeCartItem(design.id)}>
-            -
-          </Button>
-          <span>{quantity}</span>
-          <Button variant="outline" size="icon" onClick={() => updateCartItem(design.id, 1)}>
-            +
-          </Button>
-        </div>
-      </div>
-    </div>
   );
 };

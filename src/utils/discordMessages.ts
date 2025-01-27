@@ -4,8 +4,6 @@ import { getAddressString } from "./address";
 import { getDate } from "./timestamp";
 import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
 
-// todo: add WA link on discord message to send customer order info + shipping details
-
 export const getDiscordOrderMessage = (order: Order) => {
   return {
     content: `🎉 We have a new order! \nClick [here](${getWhatsappOrderConfirmationLink(
