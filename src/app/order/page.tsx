@@ -459,7 +459,7 @@ function OrderPageContent() {
                           <CheckoutProductCard
                             key={id}
                             design={{ ...DESIGNS_OBJ[id], id }}
-                            updateCartItem={updateCartItem}
+                            updateCartItemBy={updateCartItem}
                             removeCartItem={removeCartItem}
                             quantity={cart.find(design => design.designId === id)?.quantity ?? 1}
                           />

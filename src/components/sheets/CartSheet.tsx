@@ -28,16 +28,18 @@ export const CartSheet = () => {
               key={design.id}
               design={design}
               quantity={item.quantity}
-              updateCartItem={updateCartItem}
+              updateCartItemBy={updateCartItem}
               removeCartItem={removeCartItem}
             />
           );
         })}
-        <span className="flex items-center gap-2">
-          <p className="text-muted-foreground text-xs italic">Psst... use code BROCODE for 15% off!</p>
-          <p className="text-xs text-muted-foreground">🧡🤫</p>
-        </span>
-        {cartItems.length === 0 && <p className="text-center text-muted-foreground">Your cart is empty</p>}
+        {cartItems.length === 0 && <p className="text-center text-muted-foreground">Cart is empty 🙁</p>}
+        {cartItems.length > 0 && (
+          <span className="flex items-center gap-2">
+            <p className="text-muted-foreground text-xs italic">Psst... use code BROCODE for 15% off!</p>
+            <p className="text-xs text-muted-foreground">🧡🤫</p>
+          </span>
+        )}
       </div>
     );
   };
@@ -59,7 +61,7 @@ export const CartSheet = () => {
           </div>
           <p className="text-muted-foreground text-xs mb-2">Coupons can be applied on the next page</p>
         </div>
-        <Button className="w-full" onClick={() => router.push("/order")}>
+        <Button disabled={cartItems.length === 0} className="w-full" onClick={() => router.push("/order")}>
           Checkout
         </Button>
         <Button variant="ghost" className="w-full" onClick={closeCart}>

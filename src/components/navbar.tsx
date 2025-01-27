@@ -56,7 +56,7 @@ export default function NavBar() {
           </Link>
         </div>
         {showNavLinks && (
-          <div className="min-w-20">
+          <div className="min-w-20 flex justify-end">
             <CartButton />
           </div>
         )}

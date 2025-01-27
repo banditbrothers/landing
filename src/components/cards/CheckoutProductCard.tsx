@@ -8,11 +8,16 @@ import { QuantityStepper } from "../misc/QuantityStepper";
 interface CheckoutProductCardProps {
   design: Design;
   quantity: number;
-  updateCartItem: (designId: string, quantity: number) => void;
+  updateCartItemBy: (designId: string, quantity: number) => void;
   removeCartItem: (designId: string) => void;
 }
 
-export const CheckoutProductCard = ({ design, quantity, updateCartItem, removeCartItem }: CheckoutProductCardProps) => {
+export const CheckoutProductCard = ({
+  design,
+  quantity,
+  updateCartItemBy,
+  removeCartItem,
+}: CheckoutProductCardProps) => {
   return (
     <div key={design.id} className="flex gap-4 p-4 bg-card rounded-lg relative border border-border">
       <Button
@@ -32,7 +37,11 @@ export const CheckoutProductCard = ({ design, quantity, updateCartItem, removeCa
         <h3 className="font-semibold">{design.name}</h3>
         <p className="text-muted-foreground text-sm">₹{design.price}</p>
         <div className="flex items-center gap-2 mt-2 justify-end">
-          <QuantityStepper quantity={quantity} onChange={quantity => updateCartItem(design.id, quantity)} />
+          <QuantityStepper
+            quantity={quantity}
+            increment={() => updateCartItemBy(design.id, 1)}
+            decrement={() => updateCartItemBy(design.id, -1)}
+          />
         </div>
       </div>
     </div>

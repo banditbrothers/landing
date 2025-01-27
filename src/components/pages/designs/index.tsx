@@ -23,15 +23,18 @@ import { shareDesign } from "@/utils/share";
 import { ImageCarousel } from "../../carousels/ImageCarousel";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LoadingScreen } from "@/components/misc/Loading";
 import { trackDesignShopNow, trackDesignView } from "@/utils/analytics";
 import { useCart } from "@/components/stores/cart";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
+import { QuantityStepper } from "@/components/misc/QuantityStepper";
 
 export const ProductPageContents = ({ designId: paramDesignId }: { designId: string }) => {
   const { isFavorite, toggleFav } = useFavorites();
   const addOrUpdateCartItem = useCart(state => state.updateCartItem);
+
+  const [quantity, setQuantity] = useState(1);
 
   const { setParam: openCartParam } = useParamBasedFeatures("cart");
   const router = useRouter();
@@ -61,7 +64,7 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
   const handleShopNowClicked = () => {
     if (!design) return;
     trackDesignShopNow(design.id);
-    addOrUpdateCartItem(design.id);
+    addOrUpdateCartItem(design.id, quantity);
     openCart();
   };
 
@@ -106,14 +109,21 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
             <p className="text-muted-foreground">{design.description}</p>
           </div>
 
-          <div className="flex flex-row gap-2">
-            <Button className="w-full" onClick={handleShopNowClicked}>
-              <ShoppingCartIcon /> Add to Cart
-            </Button>
-            <Button variant="outline" onClick={handleShare}>
-              <ShareIcon className="w-4 h-4" />
-              Share
-            </Button>
+          <div className="flex flex-col gap-2">
+            <QuantityStepper
+              quantity={quantity}
+              increment={() => setQuantity(q => q + 1)}
+              decrement={() => setQuantity(q => q - 1)}
+            />
+            <div className="flex flex-row gap-2">
+              <Button className="w-full" onClick={handleShopNowClicked}>
+                <ShoppingCartIcon /> Add to Cart
+              </Button>
+              <Button variant="outline" onClick={handleShare}>
+                <ShareIcon className="w-4 h-4" />
+                Share
+              </Button>
+            </div>
           </div>
 
           {/* Standard Product Details */}
