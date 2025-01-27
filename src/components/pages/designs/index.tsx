@@ -36,7 +36,7 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
 
   const [quantity, setQuantity] = useState(1);
 
-  const { setParam: openCartParam } = useParamBasedFeatures("cart");
+  const { setParam: openCartParam } = useParamBasedFeatures("cart", { replaceRoute: true });
   const router = useRouter();
 
   function openCart() {

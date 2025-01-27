@@ -11,7 +11,7 @@ import { CheckoutProductCard } from "../cards/CheckoutProductCard";
 import { useRouter } from "next/navigation";
 
 export const CartSheet = () => {
-  const { value, removeParam: closeCart } = useParamBasedFeatures("cart");
+  const { value, removeParam: closeCart } = useParamBasedFeatures("cart", { replaceRoute: true });
   const { updateCartItem, removeCartItem } = useCart();
 
   const isOpen = !!value;

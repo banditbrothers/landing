@@ -2,10 +2,12 @@ import Image from "next/image";
 import { Design } from "@/data/designs";
 import { FavoriteButton } from "../misc/FavoriteButton";
 import { CategoryBadge } from "../badges/DesignBadges";
-import { ArrowRightCircleIcon } from "../misc/icons";
+import { ArrowRightCircleIcon, ShoppingCartIcon } from "../misc/icons";
 import { useFavorites } from "@/components/stores/favorites";
 import useIsMobile from "@/hooks/useIsMobile";
 import Link from "next/link";
+import { Button } from "../ui/button";
+import { useCart } from "../stores/cart";
 
 interface DesignCardProps {
   design: Design;
@@ -55,15 +57,33 @@ export const DesignCard = ({
 };
 
 export const DesignNameAndPriceBanner = ({ design }: { design: Design }) => {
+  const { updateCartItem, cart } = useCart();
+
+  function handleAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    updateCartItem(design.id, 1);
+  }
+
+  const cartItem = cart.find(item => item.designId === design.id);
   return (
-    <div className="flex flex-row w-full mt-4 px-1 justify-between items-start gap-6">
-      <div className="flex flex-col justify-start items-start">
-        <h3 className="text-xl font-semibold">{design.name}</h3>
-        <span className="flex flex-row gap-2 items-center mt-2">
-          <CategoryBadge category={design.category} />
-        </span>
+    <div className="flex flex-col w-full mt-4 px-1 justify-between items-start gap-6">
+      <div className="flex flex-col justify-between items-center w-full">
+        <div className="flex flex-row justify-between items-start w-full ">
+          <h3 className="text-xl font-semibold">{design.name}</h3>
+          <p className="text-sm text-muted-foreground">₹{design.price}</p>
+        </div>
+        <div className="flex flex-row justify-between items-center w-full">
+          <span>
+            <CategoryBadge category={design.category} />
+          </span>
+          <Button type="button" variant="outline" className="w-fit" onClick={handleAddToCart}>
+            <ShoppingCartIcon className="w-4 h-4" />
+            {cartItem && cartItem.quantity}
+          </Button>
+        </div>
       </div>
-      <p className="text-sm text-muted-foreground">₹{design.price}</p>
     </div>
   );
 };
