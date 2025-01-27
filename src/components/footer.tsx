@@ -3,14 +3,11 @@
 import { whatsappKnowMoreLink } from "@/utils/whatsappMessageLinks";
 import { FullLogo } from "./misc/fullLogo";
 import Link from "next/link";
-import { PaymentBadges } from "./payments/PaymentBadges";
-import useIsMobile from "@/hooks/useIsMobile";
 import { useRouter } from "next/navigation";
 import { scrollTo } from "@/utils/misc";
 
 export default function Footer() {
   const router = useRouter();
-  const isMobile = useIsMobile();
 
   return (
     <footer className="bg-primary-50 text-primary-600 py-8">
@@ -50,9 +47,6 @@ export default function Footer() {
               </li>
             </ul>
           </nav>
-        </div>
-        <div className={`flex ${isMobile ? "justify-center mt-4" : "justify-end"} `}>
-          <PaymentBadges />
         </div>
 
         <div className="mt-8 text-center text-sm">
