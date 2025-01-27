@@ -9,7 +9,7 @@ import { scrollTo } from "@/utils/misc";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { Button } from "./ui/button";
 import { ShoppingBagIcon } from "./misc/icons";
-import { useCart } from "@/lib/zustand";
+import { useCart } from "@/components/stores/cart";
 import useIsMobile from "@/hooks/useIsMobile";
 
 export default function NavBar() {

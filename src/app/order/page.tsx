@@ -30,15 +30,14 @@ import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/
 import { updateOrder } from "@/actions/orders";
 import { getFavorites } from "@/utils/favorites";
 import { identifyUser } from "@/utils/analytics";
-import { useCart } from "@/lib/zustand";
 import { Label } from "@/components/ui/label";
 import { CheckoutProductCard } from "@/components/cards/CheckoutProductCard";
+import { useCart } from "@/components/stores/cart";
 
 const SHIPPING_COST = 100;
 
 const countries = Country.getAllCountries();
 
-// todo: remove cart from form data and let zustand handle it
 const orderFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   name: z.string().min(2, "Enter valid name"),

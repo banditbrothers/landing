@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { LoadingScreen } from "@/components/misc/Loading";
 import { trackDesignShopNow, trackDesignView } from "@/utils/analytics";
-import { useCart } from "@/lib/zustand";
+import { useCart } from "@/components/stores/cart";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 
 export const ProductPageContents = ({ designId: paramDesignId }: { designId: string }) => {

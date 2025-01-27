@@ -3,7 +3,7 @@
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { Button } from "../ui/button";
 
-import { useCart } from "@/lib/zustand";
+import { useCart } from "@/components/stores/cart";
 
 import { DESIGNS_OBJ } from "@/data/designs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
