@@ -15,6 +15,7 @@ export const QuantityStepper = ({ quantity, increment, decrement }: QuantityStep
         type="button"
         size="icon"
         className="h-8 w-8 rounded-l-full hover:bg-transparent"
+        disabled={quantity <= 1}
         onClick={() => quantity > 1 && decrement()}>
         <MinusIcon className="w-4 h-4" />
       </Button>
