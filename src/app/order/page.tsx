@@ -34,7 +34,7 @@ import { CheckoutProductCard } from "@/components/cards/CheckoutProductCard";
 import { useCart } from "@/components/stores/cart";
 import { useFavorites } from "@/components/stores/favorites";
 
-const SHIPPING_COST = 100;
+const SHIPPING_COST = 50;
 
 const countries = Country.getAllCountries();
 
