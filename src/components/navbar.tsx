@@ -68,7 +68,7 @@ export default function NavBar() {
 const CartButton = () => {
   const { setParam } = useParamBasedFeatures("cart", { replaceRoute: true });
 
-  const cartItems = useCart(state => state.items);
+  const cartItems = useCart(state => state.cart);
 
   const totalCartItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   return (

@@ -106,7 +106,7 @@ function OrderPageContent() {
   const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
 
   const router = useRouter();
-  const { items: cart, updateCartItem, removeCartItem, setCart } = useCart();
+  const { cart, updateCartItem, removeCartItem, setCart } = useCart();
   const { orderLoading, createOrder } = useOrderActions();
   const { couponLoading, validateCoupon } = useCouponActions();
 

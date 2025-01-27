@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 type CartState = {
-  items: {
+  cart: {
     designId: string;
     quantity: number;
   }[];
@@ -15,14 +15,14 @@ type CartState = {
 export const useCart = create<CartState>()(
   persist(
     set => ({
-      items: [],
+      cart: [],
 
       updateCartItem: (id, quantity = 1) => {
         set(state => {
-          const itemExists = state.items.some(item => item.designId === id);
+          const itemExists = state.cart.some(item => item.designId === id);
           if (itemExists) {
             return {
-              items: state.items.map(item => {
+              cart: state.cart.map(item => {
                 if (item.designId !== id) return item;
 
                 const newQuantity = item.quantity + quantity;
@@ -31,17 +31,17 @@ export const useCart = create<CartState>()(
               }),
             };
           } else {
-            if (quantity > 0) return { items: [...state.items, { designId: id, quantity }] };
-            else return { items: [...state.items, { designId: id, quantity: 1 }] };
+            if (quantity > 0) return { cart: [...state.cart, { designId: id, quantity }] };
+            else return { cart: [...state.cart, { designId: id, quantity: 1 }] };
           }
         });
       },
 
-      setCart: (items: { designId: string; quantity: number }[]) => set({ items }),
+      setCart: (items: { designId: string; quantity: number }[]) => set({ cart: items }),
 
-      removeCartItem: id => set(state => ({ items: state.items.filter(i => i.designId !== id) })),
+      removeCartItem: id => set(state => ({ cart: state.cart.filter(i => i.designId !== id) })),
 
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ cart: [] }),
     }),
     {
       name: "cart",

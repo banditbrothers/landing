@@ -17,7 +17,7 @@ export const CartSheet = () => {
   const isOpen = !!value;
 
   const CartContent = () => {
-    const cartItems = useCart(state => state.items);
+    const cartItems = useCart(state => state.cart);
 
     return (
       <div className="flex flex-col gap-4 py-4">
@@ -48,7 +48,7 @@ export const CartSheet = () => {
 
   const CartFooter = () => {
     const router = useRouter();
-    const cartItems = useCart(state => state.items);
+    const cartItems = useCart(state => state.cart);
     const subtotal = cartItems.reduce((acc, item) => {
       const design = DESIGNS_OBJ[item.designId];
       return acc + design.price * item.quantity;
