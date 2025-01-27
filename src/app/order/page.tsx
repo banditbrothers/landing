@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { AlertCircle, X } from "lucide-react";
 import { z } from "zod";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,6 +55,19 @@ const orderFormSchema = z.object({
   }),
 });
 
+const validateCoupon = (
+  coupon: Coupon | null,
+  subtotal: number
+): { error: true; message: string } | { error: false; message: null } => {
+  if (!coupon) return { error: false, message: null };
+  if (subtotal < coupon.minOrderAmount)
+    return {
+      error: true,
+      message: `Minimum Order Amount should be more than ₹${coupon.minOrderAmount} to apply this coupon`,
+    };
+  return { error: false, message: null };
+};
+
 const getSubtotal = (products: SelectedDesignsType[]) => {
   if (products.length === 0) return 0;
   return products.reduce((total, product) => {
@@ -95,27 +108,25 @@ const showErrorToast = (message: string) => {
 };
 
 function OrderPageContent() {
-  const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
-
-  const router = useRouter();
-  const { cart, updateCartItem, removeCartItem, setCart } = useCart();
-  const { favorites } = useFavorites();
-  const { orderLoading, createOrder } = useOrderActions();
-  const { couponLoading, validateCoupon } = useCouponActions();
-
-  const searchParams = useSearchParams();
-  const [countryStates, setCountryStates] = useState<IState[]>([]);
-  const [orderTotal, setOrderTotal] = useState(0);
-  const [coupon, setCoupon] = useState<Coupon | null>(null);
-  const [favFirstDesigns, setFavFirstDesigns] = useState<Design[]>([]);
-
-  const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
-
   const form = useForm({
     resolver: zodResolver(orderFormSchema),
     defaultValues: DEFAULT_ORDER_VALUES,
     mode: "onTouched",
   });
+
+  const router = useRouter();
+  const { favorites } = useFavorites();
+  const searchParams = useSearchParams();
+  const { orderLoading, createOrder } = useOrderActions();
+  const { couponLoading, validateCoupon: serverValidateCoupon } = useCouponActions();
+  const { cart, updateCartItem, removeCartItem, setCart } = useCart();
+
+  const [countryStates, setCountryStates] = useState<IState[]>([]);
+  const [orderTotal, setOrderTotal] = useState(0);
+  const [coupon, setCoupon] = useState<Coupon | null>(null);
+  const [favFirstDesigns, setFavFirstDesigns] = useState<Design[]>([]);
+
+  const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
 
   const watchCountry = useWatch({ control: form.control, name: "address.country" });
   const watchCouponCode = useWatch({ control: form.control, name: "couponCode" });
@@ -169,18 +180,20 @@ function OrderPageContent() {
     setFavFirstDesigns([...favDesigns, ...otherDesigns]);
   }, [favorites]);
 
+  const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
+
   const handleDesignChange = (id: string, checked: boolean) => {
     let newDesignIds = [...selectedDesignsIds];
 
     if (checked) newDesignIds.push(id);
     else newDesignIds = newDesignIds.filter(_id => _id !== id);
 
-    const designsFormContent = newDesignIds.map(id => {
+    const newCart = newDesignIds.map(id => {
       const qty = cart.find(design => design.designId === id)?.quantity ?? 1;
       return { designId: id, quantity: qty };
     });
 
-    setCart(designsFormContent);
+    setCart(newCart);
   };
 
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
@@ -219,15 +232,16 @@ function OrderPageContent() {
   const handleValidateCoupon = async () => {
     const code = form.getValues("couponCode");
     if (code.length > 0) {
-      const { isValid, coupon } = await validateCoupon(code);
+      const { isValid, coupon: serverCoupon } = await serverValidateCoupon(code);
 
-      if (coupon && isValid) {
-        if (orderTotal < coupon.minOrderAmount) {
-          showErrorToast("Minimum Order Amount should be more than ₹" + coupon.minOrderAmount);
+      if (isValid) {
+        const { error, message } = validateCoupon(serverCoupon, orderTotal);
+        if (error) {
+          showErrorToast(message);
           return;
         }
 
-        setCoupon(coupon);
+        setCoupon(serverCoupon);
         toast.success("Coupon Applied 🎉");
       } else showErrorToast("Invalid Coupon");
 
@@ -241,6 +255,8 @@ function OrderPageContent() {
   const subtotal = getSubtotal(cart);
   const shippingCost = getShippingCost(cart, coupon);
   const isShippingFree = shippingCost === 0;
+
+  const { message: couponError } = validateCoupon(coupon, subtotal);
 
   return (
     <>
@@ -558,13 +574,21 @@ function OrderPageContent() {
                     </div>
                   )}
 
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={!formIsReady || orderLoading.create || orderLoading.update}>
-                    {formIsReady ? `Pay ₹${orderTotal}` : "Pay Now"}
-                    {(orderLoading.create || orderLoading.update) && <LoadingIcon />}
-                  </Button>
+                  <div className="flex flex-col gap-2">
+                    {!!couponError && (
+                      <div className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 rounded-md">
+                        <AlertCircle className="h-4 w-4" />
+                        <p>{couponError}</p>
+                      </div>
+                    )}
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={!formIsReady || orderLoading.create || orderLoading.update || !!couponError}>
+                      {formIsReady ? `Pay ₹${orderTotal}` : "Pay Now"}
+                      {(orderLoading.create || orderLoading.update) && <LoadingIcon />}
+                    </Button>
+                  </div>
                 </div>
               </form>
             </Form>
