@@ -14,13 +14,16 @@ export const identifyUser = (
 };
 
 export const trackDesignView = (designId: string) => {
+  console.debug("posthog design_viewed", { design_id: designId });
   posthog.capture("design_viewed", { design_id: designId });
 };
 
 export const trackDesignShopNow = (designId: string) => {
+  console.debug("posthog design_shopnow", { design_id: designId });
   posthog.capture("design_shopnow", { design_id: designId });
 };
 
 export const trackDesignShare = (designId: string) => {
+  console.debug("posthog design_share", { design_id: designId });
   posthog.capture("design_share", { design_id: designId });
 };
