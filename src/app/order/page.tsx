@@ -119,7 +119,7 @@ function OrderPageContent() {
   const searchParams = useSearchParams();
   const { orderLoading, createOrder } = useOrderActions();
   const { couponLoading, validateCoupon: serverValidateCoupon } = useCouponActions();
-  const { cart, updateCartItem, removeCartItem, setCart } = useCart();
+  const { cart, updateCartItem, removeCartItem } = useCart();
 
   const [countryStates, setCountryStates] = useState<IState[]>([]);
   const [orderTotal, setOrderTotal] = useState(0);
@@ -183,17 +183,8 @@ function OrderPageContent() {
   const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
 
   const handleDesignChange = (id: string, checked: boolean) => {
-    let newDesignIds = [...selectedDesignsIds];
-
-    if (checked) newDesignIds.push(id);
-    else newDesignIds = newDesignIds.filter(_id => _id !== id);
-
-    const newCart = newDesignIds.map(id => {
-      const qty = cart.find(design => design.designId === id)?.quantity ?? 1;
-      return { designId: id, quantity: qty };
-    });
-
-    setCart(newCart);
+    if (checked) updateCartItem(id);
+    else removeCartItem(id);
   };
 
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
