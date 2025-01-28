@@ -18,9 +18,9 @@ export const trackDesignView = (designId: string) => {
   posthog.capture("design_viewed", { design_id: designId });
 };
 
-export const trackDesignShopNow = (designId: string) => {
-  console.debug("posthog design_shopnow", { design_id: designId });
-  posthog.capture("design_shopnow", { design_id: designId });
+export const trackDesignAddToCart = (designId: string) => {
+  console.debug("posthog design_add_to_cart", { design_id: designId });
+  posthog.capture("design_add_to_cart", { design_id: designId });
 };
 
 export const trackDesignShare = (designId: string) => {

@@ -25,7 +25,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LoadingScreen } from "@/components/misc/Loading";
-import { trackDesignShopNow, trackDesignView } from "@/utils/analytics";
+import { trackDesignAddToCart, trackDesignView } from "@/utils/analytics";
 import { useCart } from "@/components/stores/cart";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { QuantityStepper } from "@/components/misc/QuantityStepper";
@@ -53,17 +53,17 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
   }, [design, router]);
 
   useEffect(() => {
-    if (design) trackDesignView(design.id);
-  }, [design]);
+    if (paramDesignId) trackDesignView(paramDesignId);
+  }, [paramDesignId]);
 
   const handleShare = () => {
     if (!design) return;
     shareDesign(design);
   };
 
-  const handleShopNowClicked = () => {
+  const handleAddToCartClicked = () => {
     if (!design) return;
-    trackDesignShopNow(design.id);
+    trackDesignAddToCart(design.id);
     addOrUpdateCartItem(design.id, quantity);
     openCart();
   };
@@ -116,7 +116,7 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
               decrement={() => setQuantity(q => q - 1)}
             />
             <div className="flex flex-row gap-2">
-              <Button className="w-full" onClick={handleShopNowClicked}>
+              <Button className="w-full" onClick={handleAddToCartClicked}>
                 <ShoppingCartIcon /> Add to Cart
               </Button>
               <Button variant="outline" onClick={handleShare}>
