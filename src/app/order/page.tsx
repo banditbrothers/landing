@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState } from "react";
-import { AlertCircle } from "lucide-react";
 import { z } from "zod";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,6 +34,8 @@ import { useCart } from "@/components/stores/cart";
 import { useFavorites } from "@/components/stores/favorites";
 import { CouponInput } from "@/components/inputs/Coupon";
 import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
+import { FEATURED_COUPON } from "@/data/coupons";
+import { DangerBanner } from "@/components/misc/Banners";
 
 const SHIPPING_COST = 50;
 const MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING = 750;
@@ -449,12 +450,22 @@ function OrderPageContent() {
                     <div className="flex flex-col gap-2">
                       <Separator className="mb-4" />
 
-                      <CouponInput
-                        coupon={coupon}
-                        onCouponApplied={handleCouponApplied}
-                        onCouponRemoved={handleCouponRemoved}
-                        onCouponError={handleCouponError}
-                      />
+                      <div className="flex flex-col gap-2">
+                        <CouponInput
+                          coupon={coupon}
+                          onCouponApplied={handleCouponApplied}
+                          onCouponRemoved={handleCouponRemoved}
+                          onCouponError={handleCouponError}
+                        />
+                        {!coupon && (
+                          <span className="text-xs text-muted-foreground">
+                            {FEATURED_COUPON.noCouponAppliedMessage}
+                          </span>
+                        )}
+                        {coupon && coupon.code !== FEATURED_COUPON.code && (
+                          <span className="text-xs text-muted-foreground">{FEATURED_COUPON.couponAppliedMessage}</span>
+                        )}
+                      </div>
 
                       <Separator className="my-4" />
 
@@ -470,7 +481,10 @@ function OrderPageContent() {
 
                       {coupon && (
                         <div className="flex justify-between items-center text-sm">
-                          <span>Discount ({coupon.name})</span>
+                          <span className="flex flex-col gap-1">
+                            Discount
+                            <span className="text-xs text-muted-foreground">Applied {coupon.code}</span>
+                          </span>
                           <span>- ₹{getDiscountAmount(subtotal, coupon)}</span>
                         </div>
                       )}
@@ -505,12 +519,8 @@ function OrderPageContent() {
                   )}
 
                   <div className="flex flex-col gap-2">
-                    {!!couponError && (
-                      <div className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 rounded-md">
-                        <AlertCircle className="h-4 w-4" />
-                        <p>{couponError}</p>
-                      </div>
-                    )}
+                    {!!couponError && <DangerBanner message={couponError} />}
+
                     <Button
                       type="submit"
                       className="w-full"

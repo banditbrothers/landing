@@ -9,18 +9,33 @@ import { DESIGNS_OBJ } from "@/data/designs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { CheckoutProductCard } from "../cards/CheckoutProductCard";
 import { useRouter } from "next/navigation";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { FEATURED_COUPON, STANDARD_COUPON } from "@/data/coupons";
 
 export const CartSheet = () => {
   const { value, removeParam: closeCart } = useParamBasedFeatures("cart", { replaceRoute: true });
-  const { updateCartItem, removeCartItem } = useCart();
+  const { cart: cartItems, updateCartItem, removeCartItem } = useCart();
+
+  const subtotal = cartItems.reduce((acc, item) => {
+    const design = DESIGNS_OBJ[item.designId];
+    return acc + design.price * item.quantity;
+  }, 0);
 
   const isOpen = !!value;
 
   const CartContent = () => {
-    const cartItems = useCart(state => state.cart);
-
     return (
       <div className="flex flex-col gap-4 py-4">
+        <div className="bg-primary/5 rounded-lg p-3 border border-primary/10">
+          <span className="flex flex-col items-center gap-2 text-xs text-muted-foreground">
+            <span className="font-medium text-sm">LIMITED TIME OFFER</span>
+            <span className="flex items-center gap-1">
+              {STANDARD_COUPON.cartMessage}
+              <span className="animate-pulse">🧡</span>
+            </span>
+          </span>
+        </div>
+
         {cartItems.map(item => {
           const design = { ...DESIGNS_OBJ[item.designId], id: item.designId };
           return (
@@ -37,7 +52,7 @@ export const CartSheet = () => {
         {cartItems.length > 0 && (
           <span className="">
             <p className="text-muted-foreground text-xs">
-              <span className="italic">Psst... use BROCODE for 15% off!</span>
+              <span className="italic">Psst... {FEATURED_COUPON.cartMessage}</span>
               <span className="ml-1">🧡🤫</span>
             </p>
           </span>
@@ -48,11 +63,6 @@ export const CartSheet = () => {
 
   const CartFooter = () => {
     const router = useRouter();
-    const cartItems = useCart(state => state.cart);
-    const subtotal = cartItems.reduce((acc, item) => {
-      const design = DESIGNS_OBJ[item.designId];
-      return acc + design.price * item.quantity;
-    }, 0);
 
     return (
       <div className="flex flex-col gap-2 w-full items-center pt-4">
@@ -87,5 +97,60 @@ export const CartSheet = () => {
         </div>
       </SheetContent>
     </Sheet>
+  );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const PromotionsAccordion = () => {
+  return (
+    <Accordion type="single" collapsible className="bg-muted/50 rounded-lg">
+      <AccordionItem value="promotions" className="border-none">
+        <AccordionTrigger className="px-4 py-3 hover:no-underline">
+          <h3 className="font-medium text-sm">Active Promotions</h3>
+        </AccordionTrigger>
+        <AccordionContent className="px-4 pb-4">
+          <div className="grid gap-3">
+            {/* Site-wide Discount */}
+            <div className="relative overflow-hidden rounded-lg p-3 border border-primary/10">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
+                  <span className="text-primary text-lg font-semibold">%</span>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-sm text-foreground">Site-wide Discount</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5">Enjoy 5% off on all products</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Bulk Purchase Offer */}
+            <div className="relative overflow-hidden rounded-lg p-3 border border-primary/10">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
+                  <span className="text-primary text-lg font-semibold">4x</span>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-sm text-foreground">Bulk Purchase Offer</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5">Buy 4 for ₹1000</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Free Shipping */}
+            <div className="relative overflow-hidden rounded-lg p-3 border border-primary/10">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
+                  <span className="text-primary text-lg">🚚</span>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-sm text-foreground">Free Shipping</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5">On all orders above ₹750</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
