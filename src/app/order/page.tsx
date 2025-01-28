@@ -16,7 +16,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DESIGNS_OBJ, DESIGNS, Design } from "@/data/designs";
 import { MultiSelectDropdown } from "@/components/dropdowns/MultiSelectDropdown";
 
-import { Coupon, Order, SelectedDesignsType } from "@/types/order";
+import { Order, SelectedDesignsType } from "@/types/order";
+import { Coupon } from "@/types/coupon";
 import { getTimestamp } from "@/utils/timestamp";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LoadingIcon, LoadingScreen } from "@/components/misc/Loading";
