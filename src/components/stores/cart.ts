@@ -1,20 +1,24 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { Coupon } from "@/types/coupon";
 
 type CartState = {
   cart: {
     designId: string;
     quantity: number;
   }[];
+  coupon: Coupon | null;
   updateCartItem: (id: string, quantity?: number) => void;
   removeCartItem: (id: string) => void;
-  clearCart: () => void;
+  setCoupon: (coupon: Coupon | null) => void;
+  clearCoupon: () => void;
 };
 
 export const useCart = create<CartState>()(
   persist(
     set => ({
       cart: [],
+      coupon: null,
 
       updateCartItem: (id, quantity = 1) => {
         set(state => {
@@ -38,7 +42,9 @@ export const useCart = create<CartState>()(
 
       removeCartItem: id => set(state => ({ cart: state.cart.filter(i => i.designId !== id) })),
 
-      clearCart: () => set({ cart: [] }),
+      setCoupon: coupon => set({ coupon }),
+
+      clearCoupon: () => set({ coupon: null }),
     }),
     {
       name: "cart",

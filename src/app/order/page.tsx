@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState } from "react";
-import { AlertCircle, X } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { z } from "zod";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,7 +26,6 @@ import { Separator } from "@/components/ui/separator";
 
 import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
 import { useOrderActions } from "@/hooks/useOrderActions";
-import { useCouponActions } from "@/hooks/useCouponActions";
 import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/payments/RazorpayGateway";
 import { updateOrder } from "@/actions/orders";
 import { identifyUser } from "@/utils/analytics";
@@ -34,8 +33,11 @@ import { Label } from "@/components/ui/label";
 import { CheckoutProductCard } from "@/components/cards/CheckoutProductCard";
 import { useCart } from "@/components/stores/cart";
 import { useFavorites } from "@/components/stores/favorites";
+import { CouponInput } from "@/components/inputs/Coupon";
+import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
 
 const SHIPPING_COST = 50;
+const MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING = 750;
 
 const countries = Country.getAllCountries();
 
@@ -56,21 +58,9 @@ const orderFormSchema = z.object({
   }),
 });
 
-const validateCoupon = (
-  coupon: Coupon | null,
-  subtotal: number
-): { error: true; message: string } | { error: false; message: null } => {
-  if (!coupon) return { error: false, message: null };
-  if (subtotal < coupon.minOrderAmount)
-    return {
-      error: true,
-      message: `Minimum Order Amount should be more than ₹${coupon.minOrderAmount} to apply this coupon`,
-    };
-  return { error: false, message: null };
-};
-
 const getSubtotal = (products: SelectedDesignsType[]) => {
   if (products.length === 0) return 0;
+
   return products.reduce((total, product) => {
     const design = DESIGNS_OBJ[product.designId];
     return total + design.price * product.quantity;
@@ -79,18 +69,12 @@ const getSubtotal = (products: SelectedDesignsType[]) => {
 
 const getShippingCost = (products: SelectedDesignsType[], coupon: Coupon | null) => {
   if (products.length === 0) return 0;
-  if (coupon && coupon.code === "BROCODE") return 0;
+  const subtotal = getSubtotal(products);
+  const discount = getDiscountAmount(subtotal, coupon);
+  const total = subtotal - discount;
 
+  if (total >= MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING) return 0;
   return SHIPPING_COST;
-};
-
-const getDiscountAmount = (subtotal: number, coupon: Coupon | null) => {
-  if (!coupon) return 0;
-
-  if (coupon.discountType === "fixed") return coupon.discount;
-  else if (coupon.discountType === "percentage") return (subtotal * coupon.discount) / 100;
-
-  return 0;
 };
 
 const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) => {
@@ -104,10 +88,6 @@ const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) 
   return total;
 };
 
-const showErrorToast = (message: string) => {
-  toast.error(message, { position: "top-right" });
-};
-
 function OrderPageContent() {
   const form = useForm({
     resolver: zodResolver(orderFormSchema),
@@ -119,18 +99,14 @@ function OrderPageContent() {
   const { favorites } = useFavorites();
   const searchParams = useSearchParams();
   const { orderLoading, createOrder } = useOrderActions();
-  const { couponLoading, validateCoupon: serverValidateCoupon } = useCouponActions();
-  const { cart, updateCartItem, removeCartItem } = useCart();
+  const { cart, coupon, setCoupon, updateCartItem, removeCartItem } = useCart();
 
-  const [countryStates, setCountryStates] = useState<IState[]>([]);
-  const [orderTotal, setOrderTotal] = useState(0);
-  const [coupon, setCoupon] = useState<Coupon | null>(null);
   const [favFirstDesigns, setFavFirstDesigns] = useState<Design[]>([]);
+  const [countryStates, setCountryStates] = useState<IState[]>([]);
 
   const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
 
   const watchCountry = useWatch({ control: form.control, name: "address.country" });
-  const watchCouponCode = useWatch({ control: form.control, name: "couponCode" });
 
   const oldFieldsValues = useRef(form.getValues());
   const watchAllFields = form.watch();
@@ -171,17 +147,13 @@ function OrderPageContent() {
   }, [watchCountry]);
 
   useEffect(() => {
-    const total = calculateTotal(cart, coupon);
-    setOrderTotal(total);
-  }, [cart, coupon]);
-
-  useEffect(() => {
     const favDesigns = DESIGNS.filter(design => favorites.includes(design.id));
     const otherDesigns = DESIGNS.filter(design => !favorites.includes(design.id));
     setFavFirstDesigns([...favDesigns, ...otherDesigns]);
   }, [favorites]);
 
   const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
+  const orderTotal = calculateTotal(cart, coupon);
 
   const handleDesignChange = (id: string, checked: boolean) => {
     if (checked) updateCartItem(id);
@@ -221,24 +193,19 @@ function OrderPageContent() {
     toast.error("Payment Failed");
   };
 
-  const handleValidateCoupon = async () => {
-    const code = form.getValues("couponCode");
-    if (code.length > 0) {
-      const { isValid, coupon: serverCoupon } = await serverValidateCoupon(code);
+  const handleCouponApplied = (coupon: Coupon) => {
+    const { error, message } = validateCouponInCart(coupon, orderTotal);
+    if (error) return handleCouponError(message);
 
-      if (isValid) {
-        const { error, message } = validateCoupon(serverCoupon, orderTotal);
-        if (error) {
-          showErrorToast(message);
-          return;
-        }
+    setCoupon(coupon);
+  };
 
-        setCoupon(serverCoupon);
-        toast.success("Coupon Applied 🎉");
-      } else showErrorToast("Invalid Coupon");
+  const handleCouponRemoved = () => {
+    setCoupon(null);
+  };
 
-      form.resetField("couponCode");
-    }
+  const handleCouponError = (error: string) => {
+    toast.error(error);
   };
 
   const selectedDesignsIds = cart.map(product => product.designId);
@@ -248,7 +215,9 @@ function OrderPageContent() {
   const shippingCost = getShippingCost(cart, coupon);
   const isShippingFree = shippingCost === 0;
 
-  const { message: couponError } = validateCoupon(coupon, subtotal);
+  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+  const { message: couponError } = validateCouponInCart(coupon, subtotal);
 
   return (
     <>
@@ -480,58 +449,22 @@ function OrderPageContent() {
                     <div className="flex flex-col gap-2">
                       <Separator className="mb-4" />
 
-                      <div className="flex flex-col gap-2">
-                        <div className="flex gap-2">
-                          <FormField
-                            control={form.control}
-                            name="couponCode"
-                            render={({ field }) => (
-                              <FormItem className="flex-1">
-                                <FormControl>
-                                  <Input
-                                    {...field}
-                                    value={field.value ?? ""}
-                                    placeholder="Enter coupon code"
-                                    onKeyDown={e => {
-                                      if (e.key === "Enter") {
-                                        e.preventDefault();
-                                        handleValidateCoupon();
-                                      }
-                                    }}
-                                  />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                          <Button
-                            disabled={couponLoading.validating || watchCouponCode.length === 0}
-                            type="button"
-                            className="min-w-20"
-                            onClick={handleValidateCoupon}
-                            variant="secondary">
-                            {couponLoading.validating ? <LoadingIcon /> : "Apply"}
-                          </Button>
-                        </div>
-
-                        {coupon && (
-                          <div className="flex items-center gap-2 pl-3 pr-2 py-1 bg-secondary rounded-full text-xs w-fit">
-                            <span>{coupon.code}</span>
-                            <a
-                              href=""
-                              onClick={e => {
-                                e.preventDefault();
-                                setCoupon(null);
-                              }}>
-                              <X className="h-3 w-3" />
-                            </a>
-                          </div>
-                        )}
-                      </div>
+                      <CouponInput
+                        coupon={coupon}
+                        onCouponApplied={handleCouponApplied}
+                        onCouponRemoved={handleCouponRemoved}
+                        onCouponError={handleCouponError}
+                      />
 
                       <Separator className="my-4" />
 
                       <div className="flex justify-between items-center text-sm">
-                        <span>Subtotal</span>
+                        <span className="flex flex-col gap-1">
+                          Subtotal
+                          <span className="text-xs text-muted-foreground">
+                            {totalItems} {totalItems > 1 ? "items" : "item"}
+                          </span>
+                        </span>
                         <span>₹{subtotal}</span>
                       </div>
 
@@ -543,7 +476,12 @@ function OrderPageContent() {
                       )}
 
                       <div className="flex justify-between items-center text-sm">
-                        <span>Shipping</span>
+                        <span className="flex flex-col gap-1">
+                          Shipping
+                          <span className="text-xs text-muted-foreground">
+                            Get Free Shipping on orders above ₹{MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING}
+                          </span>
+                        </span>
 
                         <span className="flex items-center gap-1 capitalize">
                           {isShippingFree ? (
