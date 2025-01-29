@@ -28,7 +28,7 @@ export const CartSheet = () => {
       <div className="flex h-full flex-col gap-4 py-4">
         <div className="bg-primary/5 rounded-lg p-3 border border-primary/10">
           <span className="flex flex-col items-center gap-2 text-xs text-muted-foreground">
-            <span className="text-center">
+            <span className="text-center leading-normal">
               <STANDARD_COUPON.CartMessage />
             </span>
           </span>
@@ -60,7 +60,7 @@ export const CartSheet = () => {
         )}
         {cartItems.length > 0 && (
           <span className="">
-            <p className="text-muted-foreground text-xs">
+            <p className="text-muted-foreground text-xs text-center leading-normal">
               <FEATURED_COUPON.CartMessage />
             </p>
           </span>
