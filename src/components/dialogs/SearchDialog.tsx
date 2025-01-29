@@ -64,7 +64,9 @@ export function SearchDialog() {
           {query !== null && (
             <div className="max-h-[50vh] overflow-y-auto">
               {query.length > 0 && filteredDesigns.length === 0 && (
-                <p className="text-muted-foreground">No products found</p>
+                <p className="text-muted-foreground text-center text-lg font-semibold italic ">
+                  No Loot Found, Fellow Bandit!!
+                </p>
               )}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {filteredDesigns.map(design => (
