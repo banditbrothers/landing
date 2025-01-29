@@ -22,7 +22,7 @@ export const CouponInput = ({ coupon, onCouponApplied, onCouponRemoved, onCoupon
   const handleValidateCoupon = async () => {
     if (couponCodeInput.length === 0) return;
 
-    const { error, isValid, coupon } = await validateCoupon(couponCodeInput);
+    const { error, isValid, coupon } = await validateCoupon(couponCodeInput.trim());
     if (error) return onCouponError(error);
     if (!isValid) onCouponError("Invalid coupon code");
     if (coupon && isValid) onCouponApplied(coupon);

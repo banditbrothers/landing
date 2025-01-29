@@ -53,7 +53,6 @@ export const CartSheet = () => {
               <span className="italic">
                 Psst... <FEATURED_COUPON.CartMessage />
               </span>
-              <span className="ml-1">🧡🤫</span>
             </p>
           </span>
         )}
