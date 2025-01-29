@@ -30,7 +30,7 @@ export const ProductCarousel = ({ designs }: ProductCarouselProps) => {
         {designs.map(design => (
           <CarouselItem key={design.id} className="basis-3/5 md:basis-1/2 lg:basis-1/4">
             <div className="scale-[0.9] w-full h-full transition-transform duration-300">
-              <DesignCard design={design} openInNewTab showFavoriteButton={false}>
+              <DesignCard design={design} showFavoriteButton={false}>
                 <DesignNameAndArrowBanner design={design} />
               </DesignCard>
             </div>
