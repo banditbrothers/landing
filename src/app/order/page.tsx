@@ -459,11 +459,13 @@ function OrderPageContent() {
                         />
                         {!coupon && (
                           <span className="text-xs text-muted-foreground">
-                            {FEATURED_COUPON.noCouponAppliedMessage}
+                            <FEATURED_COUPON.NoCouponAppliedMessage />
                           </span>
                         )}
                         {coupon && coupon.code !== FEATURED_COUPON.code && (
-                          <span className="text-xs text-muted-foreground">{FEATURED_COUPON.couponAppliedMessage}</span>
+                          <span className="text-xs text-muted-foreground">
+                            <FEATURED_COUPON.CouponAppliedMessage />
+                          </span>
                         )}
                       </div>
 
