@@ -30,7 +30,12 @@ export const CheckoutProductCard = ({
       </Button>
       <div className="w-20 h-20 sm:w-24 sm:h-24 relative">
         <Link href={`/designs/${design.id}`}>
-          <Image src={design.image} alt={design.name} fill className="object-cover rounded-md w-full h-full" />
+          <Image
+            fill
+            src={design.image}
+            alt={design.name + " design image"}
+            className="object-cover rounded-md w-full h-full"
+          />
         </Link>
       </div>
       <div className="flex-1">

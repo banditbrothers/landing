@@ -40,7 +40,7 @@ export function MultiSelectDropdown(props: {
                 width={40}
                 height={40}
                 quality={40}
-                alt={design.name}
+                alt={design.name + " design image"}
                 className="object-cover rounded-md"
               />
               <span className="flex flex-row gap-2 items-center">

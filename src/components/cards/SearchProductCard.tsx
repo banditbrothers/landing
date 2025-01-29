@@ -13,7 +13,12 @@ export const SearchProductCard = ({ design }: SearchProductCardProps) => {
       <Link href={`/designs/${design.id}`}>
         <div className="flex flex-col gap-4">
           <div className="relative w-full aspect-square">
-            <Image src={design.image} alt={design.name} fill className="object-cover rounded-md w-full h-full" />
+            <Image
+              fill
+              src={design.image}
+              alt={design.name + " design image"}
+              className="object-cover rounded-md w-full h-full"
+            />
           </div>
           <div className="flex-1 flex flex-col gap-1">
             <h3 className="font-semibold text-sm sm:text-base pr-3">{design.name}</h3>

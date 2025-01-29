@@ -42,7 +42,7 @@ export const DesignCard = ({
                 <Image
                   fill
                   src={design.image}
-                  alt={design.name}
+                  alt={design.name + " design image"}
                   className="object-cover rounded-xl"
                   quality={optimizeImageQualityOnMobile && isMobile ? 40 : 75}
                 />
