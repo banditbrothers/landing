@@ -47,7 +47,7 @@ export function SearchDialog() {
               <span className="flex flex-1 items-center justify-start gap-2">
                 <SearchIcon className="w-4 h-4" />
                 <Input
-                  placeholder="Search for our Mischief"
+                  placeholder="Search Your Mischief"
                   onChange={handleInputChange}
                   className="w-full border-none p-0 focus-visible:ring-0"
                 />
