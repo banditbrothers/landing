@@ -16,6 +16,8 @@ import { LoadingIcon } from "../misc/Loading";
 const options: IFuseOptions<Design> = {
   includeScore: true,
   threshold: 0.1,
+  distance: 200, // 0.1 * 200 = 20 characters will be considered to find a match
+  location: 0,
   keys: ["name", "tags", "colors", "category"],
 };
 
