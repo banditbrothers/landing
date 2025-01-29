@@ -6,19 +6,20 @@ export const FEATURED_COUPON = {
   code: "LOOT4B4NDITS",
   name: "Buy 4 for ₹999",
   CartMessage: () => (
-    <span>
-      Get <FeaturedText>Any 4 for ₹999</FeaturedText>, use code <CouponText>{FEATURED_COUPON.code}</CouponText>
+    <span className="italic">
+      Psst... Get <FeaturedText>Any 4 for ₹999</FeaturedText>, use code{" "}
+      <CouponText className="italic" code={FEATURED_COUPON.code} />
     </span>
   ),
   NoCouponAppliedMessage: () => (
     <span>
-      Get <FeaturedText>Any 4 for ₹999</FeaturedText>, use code <CouponText>{FEATURED_COUPON.code}</CouponText>
+      Get <FeaturedText>Any 4 for ₹999</FeaturedText>, use code <CouponText code={FEATURED_COUPON.code} />
     </span>
   ),
   CouponAppliedMessage: () => (
     <span>
       Want more discount? Get <FeaturedText>Any 4 for ₹999</FeaturedText>, use code{" "}
-      <CouponText>{FEATURED_COUPON.code}</CouponText>
+      <CouponText code={FEATURED_COUPON.code} />
     </span>
   ),
 };
@@ -28,7 +29,7 @@ export const STANDARD_COUPON = {
   name: "Site-wide 5% off",
   CartMessage: () => (
     <span>
-      Get <FeaturedText>5% off</FeaturedText> on all orders, use code <CouponText>{STANDARD_COUPON.code}</CouponText>
+      Get <FeaturedText>5% off</FeaturedText> on all orders, use code <CouponText code={STANDARD_COUPON.code} />
       <span className="ml-1 animate-pulse">🧡</span>
     </span>
   ),
@@ -42,18 +43,22 @@ const FeaturedText = ({ children, className, ...rest }: React.HTMLAttributes<HTM
   );
 };
 
-const CouponText = ({ children }: { children: React.ReactNode }) => {
+type CouponTextProps = React.HTMLAttributes<HTMLButtonElement> & {
+  code: string;
+};
+
+const CouponText = ({ code, ...rest }: CouponTextProps) => {
   const { copy } = useCopyToClipboard();
 
   const handleCopy = () => {
-    copy(children as string);
+    copy(code);
     toast.success("Copied to clipboard");
   };
 
   return (
     <FeaturedText className="font-semibold">
       <button type="button" onClick={handleCopy}>
-        {children}
+        <span {...rest}>{code}</span>
       </button>
     </FeaturedText>
   );

@@ -6,15 +6,23 @@ import { Input } from "../ui/input";
 import { useCouponActions } from "@/hooks/useCouponActions";
 import { Coupon } from "@/types/coupon";
 import { CheckIcon, XMarkIcon } from "../misc/icons";
+import { validateCouponInCart } from "@/utils/coupon";
 
 type CouponInputProps = {
   coupon: Coupon | null;
+  cartValue: number;
   onCouponApplied: (coupon: Coupon) => void;
   onCouponRemoved: () => void;
   onCouponError: (error: string) => void;
 };
 
-export const CouponInput = ({ coupon, onCouponApplied, onCouponRemoved, onCouponError }: CouponInputProps) => {
+export const CouponInput = ({
+  coupon,
+  cartValue,
+  onCouponApplied,
+  onCouponRemoved,
+  onCouponError,
+}: CouponInputProps) => {
   const { couponLoading, validateCoupon } = useCouponActions();
 
   const [couponCodeInput, setCouponCodeInput] = useState("");
@@ -25,7 +33,12 @@ export const CouponInput = ({ coupon, onCouponApplied, onCouponRemoved, onCoupon
     const { error, isValid, coupon } = await validateCoupon(couponCodeInput.trim());
     if (error) return onCouponError(error);
     if (!isValid) onCouponError("Invalid coupon code");
-    if (coupon && isValid) onCouponApplied(coupon);
+    if (coupon && isValid) {
+      const { error, message } = validateCouponInCart(coupon, cartValue);
+      if (error) return onCouponError(message);
+
+      onCouponApplied(coupon);
+    }
 
     setCouponCodeInput("");
   };

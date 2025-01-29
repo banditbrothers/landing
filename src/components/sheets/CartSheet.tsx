@@ -61,9 +61,7 @@ export const CartSheet = () => {
         {cartItems.length > 0 && (
           <span className="">
             <p className="text-muted-foreground text-xs">
-              <span className="italic">
-                Psst... <FEATURED_COUPON.CartMessage />
-              </span>
+              <FEATURED_COUPON.CartMessage />
             </p>
           </span>
         )}

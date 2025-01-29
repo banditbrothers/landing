@@ -195,9 +195,6 @@ function OrderPageContent() {
   };
 
   const handleCouponApplied = (coupon: Coupon) => {
-    const { error, message } = validateCouponInCart(coupon, orderTotal);
-    if (error) return handleCouponError(message);
-
     setCoupon(coupon);
   };
 
@@ -453,6 +450,7 @@ function OrderPageContent() {
                       <div className="flex flex-col gap-2">
                         <CouponInput
                           coupon={coupon}
+                          cartValue={subtotal}
                           onCouponApplied={handleCouponApplied}
                           onCouponRemoved={handleCouponRemoved}
                           onCouponError={handleCouponError}
