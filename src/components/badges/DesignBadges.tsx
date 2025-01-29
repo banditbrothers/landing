@@ -5,7 +5,11 @@ import { DESIGN_CATEGORIES_OBJ } from "@/data/designs";
 import { invertColor } from "@/utils/misc";
 
 export const CategoryBadge = ({ category }: { category: Design["category"] }) => {
-  return <Badge variant="secondary">{DESIGN_CATEGORIES_OBJ[category].name}</Badge>;
+  return (
+    <Badge className="w-fit" variant="secondary">
+      {DESIGN_CATEGORIES_OBJ[category].name}
+    </Badge>
+  );
 };
 
 export const ColorBadge = ({ color, ...rest }: { color: Design["colors"][number] } & BadgeProps) => {

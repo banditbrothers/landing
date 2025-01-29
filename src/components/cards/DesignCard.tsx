@@ -2,15 +2,16 @@ import Image from "next/image";
 import { Design } from "@/data/designs";
 import { FavoriteButton } from "../misc/FavoriteButton";
 import { CategoryBadge } from "../badges/DesignBadges";
-import { ArrowRightCircleIcon } from "../misc/icons";
-import { useFavorites } from "@/contexts/FavoritesContext";
+import { ArrowRightCircleIcon, ShoppingCartIcon } from "../misc/icons";
+import { useFavorites } from "@/components/stores/favorites";
 import useIsMobile from "@/hooks/useIsMobile";
+import Link from "next/link";
+import { Button } from "../ui/button";
+import { useCart } from "../stores/cart";
 
 interface DesignCardProps {
   design: Design;
-  onClick: () => void;
-  selected: boolean;
-  showRingAroundSelectedCard?: boolean;
+  openInNewTab?: boolean;
   showFavoriteButton?: boolean;
   children: React.ReactNode;
   optimizeImageQualityOnMobile?: boolean;
@@ -18,28 +19,23 @@ interface DesignCardProps {
 
 export const DesignCard = ({
   design,
-  onClick,
-  selected,
   children,
-  showRingAroundSelectedCard = false,
   optimizeImageQualityOnMobile = true,
   showFavoriteButton = true,
+  openInNewTab = false,
 }: DesignCardProps) => {
   const { isFavorite, toggleFav } = useFavorites();
   const isMobile = useIsMobile();
 
   return (
     <div className="w-full h-full">
-      <div
-        className={`p-4 bg-card rounded-xl relative ${
-          showRingAroundSelectedCard && selected ? "ring-2 ring-primary" : ""
-        }`}>
+      <div className={`p-4 bg-card rounded-xl relative`}>
         {showFavoriteButton && (
           <div className="absolute top-5 right-5 z-10">
             <FavoriteButton selected={isFavorite(design.id)} toggle={() => toggleFav(design.id)} />
           </div>
         )}
-        <button onClick={onClick} className="w-full h-full">
+        <Link href={`/designs/${design.id}`} target={openInNewTab ? "_blank" : undefined} className="w-full h-full">
           <div>
             <div className="flex flex-col items-center">
               <div className="relative w-full aspect-square">
@@ -54,22 +50,40 @@ export const DesignCard = ({
               {children}
             </div>
           </div>
-        </button>
+        </Link>
       </div>
     </div>
   );
 };
 
 export const DesignNameAndPriceBanner = ({ design }: { design: Design }) => {
+  const { updateCartItem, cart } = useCart();
+
+  function handleAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    updateCartItem(design.id, 1);
+  }
+
+  const cartItem = cart.find(item => item.designId === design.id);
   return (
-    <div className="flex flex-row w-full mt-4 px-1 justify-between items-start gap-6">
-      <div className="flex flex-col justify-start items-start">
-        <h3 className="text-xl font-semibold">{design.name}</h3>
-        <span className="flex flex-row gap-2 items-center mt-2">
-          <CategoryBadge category={design.category} />
-        </span>
+    <div className="flex flex-col w-full mt-4 px-1 justify-between items-start gap-6">
+      <div className="flex flex-col justify-between items-center w-full">
+        <div className="flex flex-row justify-between items-start w-full ">
+          <h3 className="text-xl font-semibold">{design.name}</h3>
+          <p className="text-sm text-muted-foreground">₹{design.price}</p>
+        </div>
+        <div className="flex flex-row justify-between items-center w-full">
+          <span>
+            <CategoryBadge category={design.category} />
+          </span>
+          <Button type="button" variant="outline" className="w-fit" onClick={handleAddToCart}>
+            <ShoppingCartIcon className="w-4 h-4" />
+            {cartItem && cartItem.quantity}
+          </Button>
+        </div>
       </div>
-      <p className="text-sm text-muted-foreground">₹{design.price}</p>
     </div>
   );
 };

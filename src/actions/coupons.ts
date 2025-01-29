@@ -1,7 +1,7 @@
 "use server";
 
 import { getTimestamp } from "@/utils/timestamp";
-import { Coupon } from "@/types/order";
+import { Coupon } from "@/types/coupon";
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase";
 

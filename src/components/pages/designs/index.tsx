@@ -14,8 +14,8 @@ import {
 import { RecommendedProducts } from "./RecommendedProducts";
 import { FavoriteButton } from "../../misc/FavoriteButton";
 import { CategoryBadge } from "../../badges/DesignBadges";
-import { useFavorites } from "@/contexts/FavoritesContext";
-import Link from "next/link";
+import { useFavorites } from "@/components/stores/favorites";
+
 import { Button } from "../../ui/button";
 import { ShoppingCartIcon } from "../../misc/icons";
 import { ShareIcon } from "lucide-react";
@@ -23,13 +23,25 @@ import { shareDesign } from "@/utils/share";
 import { ImageCarousel } from "../../carousels/ImageCarousel";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LoadingScreen } from "@/components/misc/Loading";
-import { trackDesignShopNow, trackDesignView } from "@/utils/analytics";
+import { trackDesignAddToCart, trackDesignView } from "@/utils/analytics";
+import { useCart } from "@/components/stores/cart";
+import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
+import { QuantityStepper } from "@/components/misc/QuantityStepper";
 
 export const ProductPageContents = ({ designId: paramDesignId }: { designId: string }) => {
   const { isFavorite, toggleFav } = useFavorites();
+  const addOrUpdateCartItem = useCart(state => state.updateCartItem);
+
+  const [quantity, setQuantity] = useState(1);
+
+  const { setParam: openCartParam } = useParamBasedFeatures("cart", { replaceRoute: true });
   const router = useRouter();
+
+  function openCart() {
+    openCartParam("true");
+  }
 
   const design = DESIGNS.find(d => d.id === paramDesignId);
 
@@ -41,12 +53,19 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
   }, [design, router]);
 
   useEffect(() => {
-    if (design) trackDesignView(design.id);
-  }, [design]);
+    if (paramDesignId) trackDesignView(paramDesignId);
+  }, [paramDesignId]);
 
   const handleShare = () => {
     if (!design) return;
     shareDesign(design);
+  };
+
+  const handleAddToCartClicked = () => {
+    if (!design) return;
+    trackDesignAddToCart(design.id);
+    addOrUpdateCartItem(design.id, quantity);
+    openCart();
   };
 
   if (!design) {
@@ -90,20 +109,21 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
             <p className="text-muted-foreground">{design.description}</p>
           </div>
 
-          <div className="flex flex-row gap-2">
-            <Link
-              target="_blank"
-              className="w-full"
-              href={`/order?design=${design.id}`}
-              onClick={() => trackDesignShopNow(design.id)}>
-              <Button className="w-full">
-                <ShoppingCartIcon /> Shop Now
+          <div className="flex flex-col gap-2">
+            <QuantityStepper
+              quantity={quantity}
+              increment={() => setQuantity(q => q + 1)}
+              decrement={() => setQuantity(q => q - 1)}
+            />
+            <div className="flex flex-row gap-2">
+              <Button className="w-full" onClick={handleAddToCartClicked}>
+                <ShoppingCartIcon /> Add to Cart
               </Button>
-            </Link>
-            <Button variant="outline" onClick={handleShare}>
-              <ShareIcon className="w-4 h-4" />
-              Share
-            </Button>
+              <Button variant="outline" onClick={handleShare}>
+                <ShareIcon className="w-4 h-4" />
+                Share
+              </Button>
+            </div>
           </div>
 
           {/* Standard Product Details */}

@@ -5,22 +5,21 @@ import { FilterDialog, FilterState } from "../dialogs/FilterDialog";
 import { useState } from "react";
 import { FilterIcon, XIcon } from "lucide-react";
 import { CheckBadgeIcon, HeartIconOutline } from "../misc/icons";
-import { isFavorite } from "@/utils/favorites";
 import useIsMobile from "@/hooks/useIsMobile";
 import { invertColor } from "@/utils/misc";
 import { handleMultipleParams, useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
+import { useFavorites } from "../stores/favorites";
 
 interface DesignGridProps {
   designs: Design[];
-  selectedDesignId: string | null;
-  handleDesignClick: (design: Design) => void;
 }
 
 const isValidColor = (value: string) => DESIGN_COLOR_OBJ[value as DesignColor] !== undefined;
 const isValidCategory = (value: string) => DESIGN_CATEGORIES_OBJ[value as DesignCategory] !== undefined;
 
-export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick }: DesignGridProps) => {
+export const ProductGridLayout = ({ designs }: DesignGridProps) => {
   const isMobile = useIsMobile();
+  const { isFavorite } = useFavorites();
 
   const {
     value: colorsParam,
@@ -154,12 +153,7 @@ export const ProductGridLayout = ({ designs, selectedDesignId, handleDesignClick
           )}
           {filteredDesigns.map(design => (
             <div key={design.id} className="w-full h-full hover:scale-105 transition-transform duration-300">
-              <DesignCard
-                design={design}
-                showRingAroundSelectedCard
-                optimizeImageQualityOnMobile={false}
-                onClick={() => handleDesignClick(design)}
-                selected={selectedDesignId === design.id}>
+              <DesignCard design={design} optimizeImageQualityOnMobile={false}>
                 <DesignNameAndPriceBanner design={design} />
               </DesignCard>
             </div>

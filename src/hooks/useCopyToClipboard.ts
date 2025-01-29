@@ -10,9 +10,13 @@ export const useCopyToClipboard = (timeout = 2000) => {
   }, [isCopied, timeout]);
 
   const copy = (text: string) => {
-    navigator.clipboard.writeText(text);
+    copyToClipboard(text);
     setIsCopied(true);
   };
 
   return { isCopied, copy };
+};
+
+export const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
 };

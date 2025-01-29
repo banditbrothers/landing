@@ -1,23 +1,22 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
 import { z } from "zod";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Country, State, IState } from "country-state-city";
 import { toast } from "sonner";
-import Image from "next/image";
 
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DESIGNS_OBJ, DESIGNS } from "@/data/designs";
+import { DESIGNS_OBJ, DESIGNS, Design } from "@/data/designs";
 import { MultiSelectDropdown } from "@/components/dropdowns/MultiSelectDropdown";
 
-import { Coupon, Order, SelectedDesignsType } from "@/types/order";
+import { Order, SelectedDesignsType } from "@/types/order";
+import { Coupon } from "@/types/coupon";
 import { getTimestamp } from "@/utils/timestamp";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LoadingIcon, LoadingScreen } from "@/components/misc/Loading";
@@ -26,13 +25,20 @@ import { Separator } from "@/components/ui/separator";
 
 import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
 import { useOrderActions } from "@/hooks/useOrderActions";
-import { useCouponActions } from "@/hooks/useCouponActions";
 import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/payments/RazorpayGateway";
 import { updateOrder } from "@/actions/orders";
-import { getFavorites } from "@/utils/favorites";
 import { identifyUser } from "@/utils/analytics";
+import { Label } from "@/components/ui/label";
+import { CheckoutProductCard } from "@/components/cards/CheckoutProductCard";
+import { useCart } from "@/components/stores/cart";
+import { useFavorites } from "@/components/stores/favorites";
+import { CouponInput } from "@/components/inputs/Coupon";
+import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
+import { FEATURED_COUPON } from "@/components/typography/coupons";
+import { DangerBanner } from "@/components/misc/Banners";
 
-const SHIPPING_COST = 100;
+const SHIPPING_COST = 50;
+const MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING = 750;
 
 const countries = Country.getAllCountries();
 
@@ -51,16 +57,11 @@ const orderFormSchema = z.object({
     city: z.string().min(2, "Enter valid city"),
     zip: z.string().length(6, "Enter valid zip code"),
   }),
-  products: z.array(
-    z.object({
-      designId: z.string(),
-      quantity: z.number().gte(1, "Enter valid quantity"),
-    })
-  ),
 });
 
 const getSubtotal = (products: SelectedDesignsType[]) => {
   if (products.length === 0) return 0;
+
   return products.reduce((total, product) => {
     const design = DESIGNS_OBJ[product.designId];
     return total + design.price * product.quantity;
@@ -69,18 +70,12 @@ const getSubtotal = (products: SelectedDesignsType[]) => {
 
 const getShippingCost = (products: SelectedDesignsType[], coupon: Coupon | null) => {
   if (products.length === 0) return 0;
-  if (coupon && coupon.code === "BROCODE") return 0;
+  const subtotal = getSubtotal(products);
+  const discount = getDiscountAmount(subtotal, coupon);
+  const total = subtotal - discount;
 
+  if (total >= MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING) return 0;
   return SHIPPING_COST;
-};
-
-const getDiscountAmount = (subtotal: number, coupon: Coupon | null) => {
-  if (!coupon) return 0;
-
-  if (coupon.discountType === "fixed") return coupon.discount;
-  else if (coupon.discountType === "percentage") return (subtotal * coupon.discount) / 100;
-
-  return 0;
 };
 
 const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) => {
@@ -94,43 +89,25 @@ const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) 
   return total;
 };
 
-let favFirstDesigns = DESIGNS;
-if (typeof window !== "undefined") {
-  const favoriteDesignIds = getFavorites();
-  const favDesigns = DESIGNS.filter(design => favoriteDesignIds.includes(design.id));
-  const otherDesigns = DESIGNS.filter(design => !favoriteDesignIds.includes(design.id));
-  favFirstDesigns = [...favDesigns, ...otherDesigns];
-}
-
-const showErrorToast = (message: string) => {
-  toast.error(message, { position: "top-right" });
-};
-
 function OrderPageContent() {
-  const [countryStates, setCountryStates] = useState<IState[]>([]);
-  const [orderTotal, setOrderTotal] = useState(0);
-  const [coupon, setCoupon] = useState<Coupon | null>(null);
-
-  const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
-
-  const { orderLoading, createOrder } = useOrderActions();
-  const { couponLoading, validateCoupon } = useCouponActions();
-  const router = useRouter();
-
-  const searchParams = useSearchParams();
-  const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
-  const paramDesignId = searchParams.get("design");
-  if (paramDesignId) DEFAULT_ORDER_VALUES.products = [{ designId: paramDesignId, quantity: 1 }];
-
   const form = useForm({
     resolver: zodResolver(orderFormSchema),
     defaultValues: DEFAULT_ORDER_VALUES,
     mode: "onTouched",
   });
 
+  const router = useRouter();
+  const { favorites } = useFavorites();
+  const searchParams = useSearchParams();
+  const { orderLoading, createOrder } = useOrderActions();
+  const { cart, coupon, setCoupon, updateCartItem, removeCartItem } = useCart();
+
+  const [favFirstDesigns, setFavFirstDesigns] = useState<Design[]>([]);
+  const [countryStates, setCountryStates] = useState<IState[]>([]);
+
+  const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
+
   const watchCountry = useWatch({ control: form.control, name: "address.country" });
-  const watchProducts = useWatch({ control: form.control, name: "products" });
-  const watchCouponCode = useWatch({ control: form.control, name: "couponCode" });
 
   const oldFieldsValues = useRef(form.getValues());
   const watchAllFields = form.watch();
@@ -171,21 +148,17 @@ function OrderPageContent() {
   }, [watchCountry]);
 
   useEffect(() => {
-    const total = calculateTotal(watchProducts, coupon);
-    setOrderTotal(total);
-  }, [watchProducts, coupon]);
+    const favDesigns = DESIGNS.filter(design => favorites.includes(design.id));
+    const otherDesigns = DESIGNS.filter(design => !favorites.includes(design.id));
+    setFavFirstDesigns([...favDesigns, ...otherDesigns]);
+  }, [favorites]);
 
-  const handleDesignChange = (id: string, checked: boolean, onChange: (designs: SelectedDesignsType[]) => void) => {
-    let newDesignIds = [...selectedDesignsIds];
+  const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
+  const orderTotal = calculateTotal(cart, coupon);
 
-    if (checked) newDesignIds.push(id);
-    else newDesignIds = newDesignIds.filter(_id => _id !== id);
-
-    const designsFormContent = newDesignIds.map(id => {
-      const qty = form.getValues("products").find(design => design.designId === id)?.quantity ?? 1;
-      return { designId: id, quantity: qty };
-    });
-    onChange(designsFormContent);
+  const handleDesignChange = (id: string, checked: boolean) => {
+    if (checked) updateCartItem(id);
+    else removeCartItem(id);
   };
 
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
@@ -221,31 +194,28 @@ function OrderPageContent() {
     toast.error("Payment Failed");
   };
 
-  const handleValidateCoupon = async () => {
-    const code = form.getValues("couponCode");
-    if (code.length > 0) {
-      const { isValid, coupon } = await validateCoupon(code);
-
-      if (coupon && isValid) {
-        if (orderTotal < coupon.minOrderAmount) {
-          showErrorToast("Minimum Order Amount should be more than ₹" + coupon.minOrderAmount);
-          return;
-        }
-
-        setCoupon(coupon);
-        toast.success("Coupon Applied 🎉");
-      } else showErrorToast("Invalid Coupon");
-
-      form.resetField("couponCode");
-    }
+  const handleCouponApplied = (coupon: Coupon) => {
+    setCoupon(coupon);
   };
 
-  const selectedDesignsIds = watchProducts.map(product => product.designId);
+  const handleCouponRemoved = () => {
+    setCoupon(null);
+  };
+
+  const handleCouponError = (error: string) => {
+    toast.error(error);
+  };
+
+  const selectedDesignsIds = cart.map(product => product.designId);
   const formIsReady = form.formState.isValid && selectedDesignsIds.length > 0;
 
-  const subtotal = getSubtotal(watchProducts);
-  const shippingCost = getShippingCost(watchProducts, coupon);
+  const subtotal = getSubtotal(cart);
+  const shippingCost = getShippingCost(cart, coupon);
   const isShippingFree = shippingCost === 0;
+
+  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+  const { message: couponError } = validateCouponInCart(coupon, subtotal);
 
   return (
     <>
@@ -438,149 +408,96 @@ function OrderPageContent() {
                       )}
                     />
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="products"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Choose your Mischief
-                          <RequiredStar />
-                        </FormLabel>
-                        <FormControl>
-                          <div>
-                            <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
-                              <span>
-                                {selectedDesignsIds.map(id => (
-                                  <Badge key={id}>{DESIGNS_OBJ[id].name}</Badge>
-                                ))}
-                              </span>
+                  <div>
+                    <Label>
+                      Choose your Mischief
+                      <RequiredStar />
+                    </Label>
 
-                              <MultiSelectDropdown
-                                designs={favFirstDesigns}
-                                selectedIds={selectedDesignsIds}
-                                onChange={(id, checked) => handleDesignChange(id, checked, field.onChange)}
-                              />
-                            </div>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
+                        <span>
+                          {selectedDesignsIds.map(id => (
+                            <Badge key={id}>{DESIGNS_OBJ[id].name}</Badge>
+                          ))}
+                        </span>
 
-                            {selectedDesignsIds.map((id, index) => {
-                              return (
-                                <div key={id} className="flex items-center gap-4 mt-4 p-4 border rounded-lg relative">
-                                  <Image
-                                    width={80}
-                                    height={80}
-                                    alt={DESIGNS_OBJ[id].name}
-                                    src={DESIGNS_OBJ[id].image}
-                                    className="w-20 h-20 object-cover rounded-md"
-                                  />
+                        <MultiSelectDropdown
+                          designs={favFirstDesigns}
+                          selectedIds={selectedDesignsIds}
+                          onChange={(id, checked) => handleDesignChange(id, checked)}
+                        />
+                      </div>
 
-                                  <div className="flex-1">
-                                    <h3 className="font-medium">{DESIGNS_OBJ[id].name}</h3>
-                                    <p className="text-sm text-muted-foreground">₹{DESIGNS_OBJ[id].price}</p>
-                                  </div>
+                      {selectedDesignsIds.map(id => {
+                        return (
+                          <CheckoutProductCard
+                            key={id}
+                            design={{ ...DESIGNS_OBJ[id], id }}
+                            updateCartItemBy={updateCartItem}
+                            removeCartItem={removeCartItem}
+                            quantity={cart.find(design => design.designId === id)?.quantity ?? 1}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
 
-                                  <FormField
-                                    control={form.control}
-                                    name={`products.${index}.quantity`}
-                                    render={({ field, formState }) => (
-                                      <Input
-                                        {...field}
-                                        onChange={e => {
-                                          const intQty = parseInt(e.target.value);
-                                          if (intQty < 0 || intQty > 100) return;
-                                          field.onChange(!isNaN(intQty) ? intQty : 0);
-                                        }}
-                                        type="number"
-                                        onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
-                                        className={`max-w-20 self-end ${
-                                          formState.errors.products?.[index]?.quantity ? "border-destructive" : ""
-                                        }`}
-                                      />
-                                    )}
-                                  />
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => handleDesignChange(id, false, field.onChange)}
-                                    className="absolute top-0 right-0">
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
                   {selectedDesignsIds.length > 0 && (
                     <div className="flex flex-col gap-2">
                       <Separator className="mb-4" />
 
                       <div className="flex flex-col gap-2">
-                        <div className="flex gap-2">
-                          <FormField
-                            control={form.control}
-                            name="couponCode"
-                            render={({ field }) => (
-                              <FormItem className="flex-1">
-                                <FormControl>
-                                  <Input
-                                    {...field}
-                                    value={field.value ?? ""}
-                                    placeholder="Enter coupon code"
-                                    onKeyDown={e => {
-                                      if (e.key === "Enter") {
-                                        e.preventDefault();
-                                        handleValidateCoupon();
-                                      }
-                                    }}
-                                  />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                          <Button
-                            disabled={couponLoading.validating || watchCouponCode.length === 0}
-                            type="button"
-                            className="min-w-20"
-                            onClick={handleValidateCoupon}
-                            variant="secondary">
-                            {couponLoading.validating ? <LoadingIcon /> : "Apply"}
-                          </Button>
-                        </div>
-
-                        {coupon && (
-                          <div className="flex items-center gap-2 pl-3 pr-2 py-1 bg-secondary rounded-full text-xs w-fit">
-                            <span>{coupon.code}</span>
-                            <a
-                              href=""
-                              onClick={e => {
-                                e.preventDefault();
-                                setCoupon(null);
-                              }}>
-                              <X className="h-3 w-3" />
-                            </a>
-                          </div>
+                        <CouponInput
+                          coupon={coupon}
+                          cartValue={subtotal}
+                          onCouponApplied={handleCouponApplied}
+                          onCouponRemoved={handleCouponRemoved}
+                          onCouponError={handleCouponError}
+                        />
+                        {!coupon && (
+                          <span className="text-xs text-muted-foreground">
+                            <FEATURED_COUPON.NoCouponAppliedMessage />
+                          </span>
                         )}
+                        {coupon &&
+                          coupon.code !== FEATURED_COUPON.code &&
+                          getDiscountAmount(subtotal, coupon) < 200 && (
+                            <span className="text-xs text-muted-foreground">
+                              <FEATURED_COUPON.CouponAppliedMessage />
+                            </span>
+                          )}
                       </div>
 
                       <Separator className="my-4" />
 
                       <div className="flex justify-between items-center text-sm">
-                        <span>Subtotal</span>
+                        <span className="flex flex-col gap-1">
+                          Subtotal
+                          <span className="text-xs text-muted-foreground">
+                            {totalItems} {totalItems > 1 ? "items" : "item"}
+                          </span>
+                        </span>
                         <span>₹{subtotal}</span>
                       </div>
 
                       {coupon && (
                         <div className="flex justify-between items-center text-sm">
-                          <span>Discount ({coupon.name})</span>
+                          <span className="flex flex-col gap-1">
+                            Discount
+                            <span className="text-xs text-muted-foreground">Applied {coupon.code}</span>
+                          </span>
                           <span>- ₹{getDiscountAmount(subtotal, coupon)}</span>
                         </div>
                       )}
 
                       <div className="flex justify-between items-center text-sm">
-                        <span>Shipping</span>
+                        <span className="flex flex-col gap-1">
+                          Shipping
+                          <span className="text-xs text-muted-foreground">
+                            Get Free Shipping on orders above ₹{MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING}
+                          </span>
+                        </span>
 
                         <span className="flex items-center gap-1 capitalize">
                           {isShippingFree ? (
@@ -603,13 +520,17 @@ function OrderPageContent() {
                     </div>
                   )}
 
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={!formIsReady || orderLoading.create || orderLoading.update}>
-                    {formIsReady ? `Pay ₹${orderTotal}` : "Pay Now"}
-                    {(orderLoading.create || orderLoading.update) && <LoadingIcon />}
-                  </Button>
+                  <div className="flex flex-col gap-2">
+                    {!!couponError && <DangerBanner message={couponError} />}
+
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={!formIsReady || orderLoading.create || orderLoading.update || !!couponError}>
+                      {formIsReady ? `Pay ₹${orderTotal}` : "Pay Now"}
+                      {(orderLoading.create || orderLoading.update) && <LoadingIcon />}
+                    </Button>
+                  </div>
                 </div>
               </form>
             </Form>

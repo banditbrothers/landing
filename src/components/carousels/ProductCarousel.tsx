@@ -8,11 +8,9 @@ import { DesignCard, DesignNameAndArrowBanner } from "../cards/DesignCard";
 
 interface ProductCarouselProps {
   designs: Design[];
-  selectedDesignId: string | null;
-  handleDesignClick: (design: Design) => void;
 }
 
-export const ProductCarousel = ({ designs, selectedDesignId, handleDesignClick }: ProductCarouselProps) => {
+export const ProductCarousel = ({ designs }: ProductCarouselProps) => {
   return (
     <Carousel
       opts={{ align: "center", loop: true }}
@@ -21,7 +19,7 @@ export const ProductCarousel = ({ designs, selectedDesignId, handleDesignClick }
         WheelGesturesPlugin({ wheelDraggingClass: "" }),
         ClassNamesPlugin({ loop: "", draggable: "", dragging: "", inView: "" }),
         AutoplayPlugin({
-          active: !selectedDesignId,
+          active: true,
           delay: 3000,
           playOnInit: true,
           stopOnInteraction: false,
@@ -32,11 +30,7 @@ export const ProductCarousel = ({ designs, selectedDesignId, handleDesignClick }
         {designs.map(design => (
           <CarouselItem key={design.id} className="basis-3/5 md:basis-1/2 lg:basis-1/4">
             <div className="scale-[0.9] w-full h-full transition-transform duration-300">
-              <DesignCard
-                design={design}
-                showFavoriteButton={false}
-                onClick={() => handleDesignClick(design)}
-                selected={selectedDesignId === design.id}>
+              <DesignCard design={design} openInNewTab showFavoriteButton={false}>
                 <DesignNameAndArrowBanner design={design} />
               </DesignCard>
             </div>
