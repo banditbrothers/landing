@@ -10,7 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { CheckoutProductCard } from "../cards/CheckoutProductCard";
 import { useRouter } from "next/navigation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { FEATURED_COUPON, STANDARD_COUPON } from "@/data/coupons";
+import { FEATURED_COUPON, STANDARD_COUPON } from "@/components/typography/coupons";
 
 export const CartSheet = () => {
   const { value, removeParam: closeCart } = useParamBasedFeatures("cart", { replaceRoute: true });

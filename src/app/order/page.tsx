@@ -34,7 +34,7 @@ import { useCart } from "@/components/stores/cart";
 import { useFavorites } from "@/components/stores/favorites";
 import { CouponInput } from "@/components/inputs/Coupon";
 import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
-import { FEATURED_COUPON } from "@/data/coupons";
+import { FEATURED_COUPON } from "@/components/typography/coupons";
 import { DangerBanner } from "@/components/misc/Banners";
 
 const SHIPPING_COST = 50;
@@ -462,11 +462,13 @@ function OrderPageContent() {
                             <FEATURED_COUPON.NoCouponAppliedMessage />
                           </span>
                         )}
-                        {coupon && coupon.code !== FEATURED_COUPON.code && (
-                          <span className="text-xs text-muted-foreground">
-                            <FEATURED_COUPON.CouponAppliedMessage />
-                          </span>
-                        )}
+                        {coupon &&
+                          coupon.code !== FEATURED_COUPON.code &&
+                          getDiscountAmount(subtotal, coupon) < 200 && (
+                            <span className="text-xs text-muted-foreground">
+                              <FEATURED_COUPON.CouponAppliedMessage />
+                            </span>
+                          )}
                       </div>
 
                       <Separator className="my-4" />
