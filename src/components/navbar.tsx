@@ -8,7 +8,7 @@ import Link from "next/link";
 import { scrollTo } from "@/utils/misc";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { Button } from "./ui/button";
-import { ShoppingBagIcon } from "./misc/icons";
+import { ShoppingBagIcon, SearchIcon } from "./misc/icons";
 import { useCart } from "@/components/stores/cart";
 import useIsMobile from "@/hooks/useIsMobile";
 
@@ -39,10 +39,10 @@ export default function NavBar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}>
       <div
-        className={`container mx-auto p-4 gap-4 flex items-center ${
+        className={`container mx-auto p-4 gap-2 flex items-center ${
           showNavLinks ? "justify-between" : "justify-center"
         }`}>
-        {showNavLinks && !isMobile && <div className="min-w-20" />}
+        {showNavLinks && !isMobile && <div className="min-w-40" />}
         <div className="flex items-center">
           <Link
             href="/"
@@ -56,7 +56,8 @@ export default function NavBar() {
           </Link>
         </div>
         {showNavLinks && (
-          <div className="min-w-20 flex justify-end">
+          <div className="min-w-40 flex justify-end gap-2">
+            <SearchButton />
             <CartButton />
           </div>
         )}
@@ -67,7 +68,6 @@ export default function NavBar() {
 
 const CartButton = () => {
   const { setParam } = useParamBasedFeatures("cart", { replaceRoute: true });
-
   const cartItems = useCart(state => state.cart);
 
   const totalCartItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
@@ -75,6 +75,16 @@ const CartButton = () => {
     <Button variant="outline" onClick={() => setParam("true")}>
       <ShoppingBagIcon className="w-4 h-4" />
       {totalCartItems > 0 && <span className="text-sm">{totalCartItems}</span>}
+    </Button>
+  );
+};
+
+const SearchButton = () => {
+  const { setParam } = useParamBasedFeatures("q", { replaceRoute: true });
+
+  return (
+    <Button variant="outline" onClick={() => setParam("")}>
+      <SearchIcon className="w-4 h-4" />
     </Button>
   );
 };

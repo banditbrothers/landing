@@ -12,6 +12,7 @@ export type Design = {
   isBestSeller: boolean;
   colors: DesignColor[];
   category: DesignCategory;
+  tags: string[];
 };
 
 export const DESIGN_COLORS = [
@@ -124,6 +125,7 @@ export const DESIGNS: Design[] = [
     colors: ["green", "purple", "black"],
     category: "character",
     isBestSeller: true,
+    tags: [],
   },
   {
     id: "awestruck",
@@ -135,6 +137,7 @@ export const DESIGNS: Design[] = [
     colors: ["red", "black"],
     category: "pattern",
     isBestSeller: true,
+    tags: [],
   },
   {
     id: "meow-meow",
@@ -146,6 +149,7 @@ export const DESIGNS: Design[] = [
     colors: ["white", "green", "red", "orange"],
     category: "character",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "mooshi-mooshi",
@@ -157,6 +161,7 @@ export const DESIGNS: Design[] = [
     colors: ["red", "black", "white"],
     category: "texture",
     isBestSeller: true,
+    tags: [],
   },
   {
     id: "chai-pila-do",
@@ -168,6 +173,7 @@ export const DESIGNS: Design[] = [
     colors: ["yellow", "brown"],
     category: "pattern",
     isBestSeller: true,
+    tags: [],
   },
   {
     id: "psychedelic-chaos",
@@ -179,6 +185,7 @@ export const DESIGNS: Design[] = [
     colors: ["green", "black", "blue", "red", "yellow"],
     category: "graffiti",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "holy-funk",
@@ -190,6 +197,7 @@ export const DESIGNS: Design[] = [
     colors: ["blue", "orange", "pink", "black", "purple", "white"],
     category: "abstract",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "soda-lightful",
@@ -201,6 +209,7 @@ export const DESIGNS: Design[] = [
     colors: ["red", "white"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "un-boo-lievable",
@@ -212,6 +221,7 @@ export const DESIGNS: Design[] = [
     colors: ["white", "black", "purple"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "tick-tick-boom",
@@ -223,6 +233,7 @@ export const DESIGNS: Design[] = [
     colors: ["red", "yellow", "blue", "black", "orange"],
     category: "graphic",
     isBestSeller: true,
+    tags: [],
   },
   {
     id: "fin-tastic",
@@ -234,6 +245,7 @@ export const DESIGNS: Design[] = [
     colors: ["blue", "white", "gray"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "out-of-words",
@@ -245,6 +257,7 @@ export const DESIGNS: Design[] = [
     colors: ["black", "white", "gray"],
     category: "abstract",
     isBestSeller: true,
+    tags: [],
   },
   {
     id: "dolphin-ately-cool",
@@ -256,6 +269,7 @@ export const DESIGNS: Design[] = [
     colors: ["blue", "white", "black"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "only-confusion",
@@ -267,6 +281,7 @@ export const DESIGNS: Design[] = [
     colors: ["red", "black", "white"],
     category: "character",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "another-one-iykyk",
@@ -278,6 +293,7 @@ export const DESIGNS: Design[] = [
     colors: ["blue", "yellow", "white"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "do-the-doodle-do",
@@ -289,6 +305,7 @@ export const DESIGNS: Design[] = [
     colors: ["blue", "green", "yellow", "red", "white", "pink", "black"],
     category: "graffiti",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "sketchy-business",
@@ -300,6 +317,7 @@ export const DESIGNS: Design[] = [
     colors: ["white", "black", "yellow", "red", "blue", "orange", "pink"],
     category: "graffiti",
     isBestSeller: true,
+    tags: [],
   },
   {
     id: "dont-egg-nore-this",
@@ -311,6 +329,7 @@ export const DESIGNS: Design[] = [
     colors: ["yellow", "white", "black"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "ichiban-penguins",
@@ -322,6 +341,7 @@ export const DESIGNS: Design[] = [
     colors: ["black", "pink", "blue", "yellow"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "akatsuki-allure",
@@ -333,6 +353,7 @@ export const DESIGNS: Design[] = [
     colors: ["red", "black"],
     category: "anime",
     isBestSeller: true,
+    tags: [],
   },
   {
     id: "comic-craze",
@@ -344,6 +365,7 @@ export const DESIGNS: Design[] = [
     colors: ["red", "yellow", "blue", "black", "green", "brown"],
     category: "character",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "looks-fishy",
@@ -355,6 +377,7 @@ export const DESIGNS: Design[] = [
     colors: ["red", "white"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "zero-g-style",
@@ -366,6 +389,7 @@ export const DESIGNS: Design[] = [
     colors: ["red", "yellow", "blue", "white", "black"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "similie-metaphorically",
@@ -377,6 +401,7 @@ export const DESIGNS: Design[] = [
     colors: ["yellow", "black", "blue"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "frog-it-about-it",
@@ -388,6 +413,7 @@ export const DESIGNS: Design[] = [
     colors: ["green", "blue", "yellow", "black"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
   {
     id: "tou-can-do-it",
@@ -399,6 +425,7 @@ export const DESIGNS: Design[] = [
     colors: ["black", "pink", "yellow", "white"],
     category: "pattern",
     isBestSeller: false,
+    tags: [],
   },
 ];
 

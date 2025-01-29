@@ -10,6 +10,7 @@ import Footer from "@/components/footer";
 import { CartSheet } from "@/components/sheets/CartSheet";
 import { Suspense } from "react";
 import { LoadingScreen } from "@/components/misc/Loading";
+import { SearchDialog } from "@/components/dialogs/SearchDialog";
 
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
@@ -52,6 +53,7 @@ export default function RootLayout({
               {children}
               <Footer />
             </main>
+            <SearchDialog />
             <CartSheet />
           </Suspense>
         </CSPostHogProvider>

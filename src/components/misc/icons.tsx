@@ -21,10 +21,11 @@ import {
   ShoppingCartIcon as ShoppingCartIconSolid,
 } from "@heroicons/react/24/solid";
 
-import { HandHeartIcon } from "lucide-react";
+import { HandHeartIcon, SearchIcon } from "lucide-react";
 
 export {
   ArrowTopRightOnSquareIcon,
+  SearchIcon,
   MinusIcon,
   ShoppingBagIcon,
   ChevronDownIcon,
