@@ -25,7 +25,7 @@ export const CartSheet = () => {
 
   const CartContent = () => {
     return (
-      <div className="flex flex-col gap-4 py-4">
+      <div className="flex h-full flex-col gap-4 py-4">
         <div className="bg-primary/5 rounded-lg p-3 border border-primary/10">
           <span className="flex flex-col items-center gap-2 text-xs text-muted-foreground">
             <span className="text-center">
@@ -46,7 +46,18 @@ export const CartSheet = () => {
             />
           );
         })}
-        {cartItems.length === 0 && <p className="text-center text-muted-foreground">Cart is empty 🙁</p>}
+
+        {cartItems.length === 0 && (
+          <div className="text-center text-muted h-full flex items-center justify-center">
+            <p className="text-3xl font-semibold sm:text-5xl flex flex-col gap-3">
+              {"“No Bandit Should Be Without A Loot”".split(" ").map((char, i) => (
+                <span key={i} className="italic">
+                  {char}
+                </span>
+              ))}
+            </p>
+          </div>
+        )}
         {cartItems.length > 0 && (
           <span className="">
             <p className="text-muted-foreground text-xs">
