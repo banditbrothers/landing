@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { motion } from "motion/react";
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { scrollTo } from "@/utils/misc";
-import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
+
 import { Button } from "./ui/button";
 import { ShoppingBagIcon, SearchIcon } from "./misc/icons";
 import { useCart } from "@/components/stores/cart";
 import useIsMobile from "@/hooks/useIsMobile";
+import { LoadingIcon } from "./misc/Loading";
+import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -57,7 +59,9 @@ export default function NavBar() {
         </div>
         {showNavLinks && (
           <div className="min-w-40 flex justify-end gap-2">
-            <SearchButton />
+            <Suspense fallback={<LoadingIcon />}>
+              <SearchButton />
+            </Suspense>
             <CartButton />
           </div>
         )}
@@ -67,12 +71,12 @@ export default function NavBar() {
 }
 
 const CartButton = () => {
-  const { setParam } = useParamBasedFeatures("cart", { replaceRoute: true });
   const cartItems = useCart(state => state.cart);
+  const { openCart } = useCart();
 
   const totalCartItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   return (
-    <Button variant="outline" onClick={() => setParam("true")}>
+    <Button variant="outline" onClick={openCart}>
       <ShoppingBagIcon className="w-4 h-4" />
       {totalCartItems > 0 && <span className="text-sm">{totalCartItems}</span>}
     </Button>
@@ -82,8 +86,12 @@ const CartButton = () => {
 const SearchButton = () => {
   const { setParam } = useParamBasedFeatures("q", { replaceRoute: true });
 
+  const handleOnSearch = () => {
+    setParam("");
+  };
+
   return (
-    <Button variant="outline" onClick={() => setParam("")}>
+    <Button variant="outline" onClick={handleOnSearch}>
       <SearchIcon className="w-4 h-4" />
     </Button>
   );

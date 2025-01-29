@@ -2,13 +2,14 @@ import { Design, DesignColor, DESIGN_COLOR_OBJ, DesignCategory, DESIGN_CATEGORIE
 import { DesignCard, DesignNameAndPriceBanner } from "../cards/DesignCard";
 import { Button } from "../ui/button";
 import { FilterDialog, FilterState } from "../dialogs/FilterDialog";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { FilterIcon, XIcon } from "lucide-react";
 import { CheckBadgeIcon, HeartIconOutline } from "../misc/icons";
 import useIsMobile from "@/hooks/useIsMobile";
 import { invertColor } from "@/utils/misc";
 import { handleMultipleParams, useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { useFavorites } from "../stores/favorites";
+import { LoadingIcon } from "../misc/Loading";
 
 interface DesignGridProps {
   designs: Design[];
@@ -17,7 +18,7 @@ interface DesignGridProps {
 const isValidColor = (value: string) => DESIGN_COLOR_OBJ[value as DesignColor] !== undefined;
 const isValidCategory = (value: string) => DESIGN_CATEGORIES_OBJ[value as DesignCategory] !== undefined;
 
-export const ProductGridLayout = ({ designs }: DesignGridProps) => {
+const ProductGridLayoutContent = ({ designs }: DesignGridProps) => {
   const isMobile = useIsMobile();
   const { isFavorite } = useFavorites();
 
@@ -207,5 +208,13 @@ const CategoryFilterChip = ({ categoryId, removeFilter }: CategoryFilterChipProp
         <XIcon className="w-3 h-3" />
       </button>
     </div>
+  );
+};
+
+export const ProductGridLayout = ({ designs }: DesignGridProps) => {
+  return (
+    <Suspense fallback={<LoadingIcon />}>
+      <ProductGridLayoutContent designs={designs} />
+    </Suspense>
   );
 };

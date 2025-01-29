@@ -2,22 +2,16 @@
 
 import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
 import { DESIGNS } from "@/data/designs";
-import { Suspense } from "react";
-import { LoadingIcon } from "@/components/misc/Loading";
 import { Button } from "@/components/ui/button";
 import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
-import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
+import { useState } from "react";
 
 function DesignsPageContent() {
-  const {
-    value: isHowToWearDialogOpen,
-    removeParam: closeHowToWearDialog,
-    setParam: openHowToWearDialog,
-  } = useParamBasedFeatures<string>("how-to-wear");
+  const [isHowToWearDialogOpen, setIsHowToWearDialogOpen] = useState(false);
 
   return (
     <>
-      <HowToWearDialog open={!!isHowToWearDialogOpen} onClose={closeHowToWearDialog} />
+      <HowToWearDialog open={isHowToWearDialogOpen} onClose={() => setIsHowToWearDialogOpen(false)} />
 
       <div className="container mx-auto mt-16 min-h-screen">
         <div className="pt-16 mx-auto">
@@ -25,7 +19,7 @@ function DesignsPageContent() {
             <div className="text-4xl max-w-screen-2xl mx-auto">
               <div className="flex flex-col gap-4">
                 <span className="w-fit font-bold">Our Mischief</span>
-                <Button variant="link" onClick={() => openHowToWearDialog("true")}>
+                <Button variant="link" onClick={() => setIsHowToWearDialogOpen(true)}>
                   <span>How to Wear</span>
                 </Button>
               </div>
@@ -41,9 +35,5 @@ function DesignsPageContent() {
 }
 
 export default function DesignsPage() {
-  return (
-    <Suspense fallback={<LoadingIcon />}>
-      <DesignsPageContent />
-    </Suspense>
-  );
+  return <DesignsPageContent />;
 }

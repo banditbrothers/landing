@@ -1,7 +1,7 @@
 "use client";
 
 import Fuse, { IFuseOptions } from "fuse.js";
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Design, DESIGNS } from "@/data/designs";
@@ -11,6 +11,7 @@ import VisuallyHidden from "../ui/visually-hidden";
 import { SearchIcon, XMarkIcon } from "../misc/icons";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
+import { LoadingIcon } from "../misc/Loading";
 
 const options: IFuseOptions<Design> = {
   includeScore: true,
@@ -20,7 +21,7 @@ const options: IFuseOptions<Design> = {
 
 const FuseDesigns = new Fuse(DESIGNS, options);
 
-export function SearchDialog() {
+function SearchDialogContent() {
   const { value: query, setParam, removeParam } = useParamBasedFeatures<string>("q", { replaceRoute: true });
 
   const handleOpenChange = (open: boolean) => {
@@ -78,5 +79,13 @@ export function SearchDialog() {
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+export function SearchDialog() {
+  return (
+    <Suspense fallback={<LoadingIcon />}>
+      <SearchDialogContent />
+    </Suspense>
   );
 }

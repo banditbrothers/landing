@@ -7,10 +7,8 @@ import { CSPostHogProvider } from "@/provider/posthog";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import { CartSheet } from "@/components/sheets/CartSheet";
-import { Suspense } from "react";
-import { LoadingScreen } from "@/components/misc/Loading";
 import { SearchDialog } from "@/components/dialogs/SearchDialog";
+import { CartSheet } from "@/components/sheets/CartSheet";
 
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
@@ -47,15 +45,13 @@ export default function RootLayout({
       <body className={`${spaceGrotesk.className} ${Calera.className}`}>
         <CSPostHogProvider>
           <Toaster theme={theme} richColors position="top-right" />
-          <Suspense fallback={<LoadingScreen />}>
-            <main>
-              <Navbar />
-              {children}
-              <Footer />
-            </main>
-            <SearchDialog />
-            <CartSheet />
-          </Suspense>
+          <main>
+            <Navbar />
+            {children}
+            <Footer />
+          </main>
+          <SearchDialog />
+          <CartSheet />
         </CSPostHogProvider>
       </body>
     </html>

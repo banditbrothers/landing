@@ -1,6 +1,5 @@
 "use client";
 
-import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { Button } from "../ui/button";
 
 import { useCart } from "@/components/stores/cart";
@@ -13,15 +12,12 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { FEATURED_COUPON, STANDARD_COUPON } from "@/components/typography/coupons";
 
 export const CartSheet = () => {
-  const { value, removeParam: closeCart } = useParamBasedFeatures("cart", { replaceRoute: true });
-  const { cart: cartItems, updateCartItem, removeCartItem } = useCart();
+  const { cart: cartItems, isCartOpen, closeCart, updateCartItem, removeCartItem } = useCart();
 
   const subtotal = cartItems.reduce((acc, item) => {
     const design = DESIGNS_OBJ[item.designId];
     return acc + design.price * item.quantity;
   }, 0);
-
-  const isOpen = !!value;
 
   const CartContent = () => {
     return (
@@ -72,6 +68,11 @@ export const CartSheet = () => {
   const CartFooter = () => {
     const router = useRouter();
 
+    const handleCheckout = () => {
+      router.push("/order");
+      closeCart();
+    };
+
     return (
       <div className="flex flex-col gap-2 w-full items-center pt-4">
         <div className="w-full text-sm">
@@ -81,7 +82,7 @@ export const CartSheet = () => {
           </div>
           <p className="text-muted-foreground text-xs mb-2">Coupons can be applied on the next page</p>
         </div>
-        <Button disabled={cartItems.length === 0} className="w-full" onClick={() => router.push("/order")}>
+        <Button disabled={cartItems.length === 0} className="w-full" onClick={handleCheckout}>
           Checkout
         </Button>
         <Button variant="ghost" className="w-full" onClick={closeCart}>
@@ -92,7 +93,7 @@ export const CartSheet = () => {
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={closeCart}>
+    <Sheet open={isCartOpen} onOpenChange={closeCart}>
       <SheetContent>
         <div className="h-full flex flex-col">
           <SheetHeader>

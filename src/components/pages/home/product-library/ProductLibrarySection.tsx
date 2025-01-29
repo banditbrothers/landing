@@ -1,24 +1,17 @@
 import { Design, DESIGNS as designsData } from "@/data/designs";
 
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { shuffleArray } from "@/utils/misc";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ProductCarousel } from "@/components/carousels/ProductCarousel";
 
-import { LoadingIcon } from "@/components/misc/Loading";
 import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
-import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 
 export const ProductLibraryContent = () => {
-  const {
-    value: isHowToWearDialogOpen,
-    removeParam: closeHowToWearDialog,
-    setParam: openHowToWearDialog,
-  } = useParamBasedFeatures<string>("how-to-wear");
-
   const [designs, setDesigns] = useState<Design[]>([]);
+  const [isHowToWearDialogOpen, setIsHowToWearDialogOpen] = useState(false);
 
   useEffect(() => {
     const shuffledDesigns = shuffleArray(designsData);
@@ -33,7 +26,7 @@ export const ProductLibraryContent = () => {
             <span>Our Products</span>
           </h2>
           <div className="flex flex-row gap-4">
-            <Button variant="link" onClick={() => openHowToWearDialog("true")}>
+            <Button variant="link" onClick={() => setIsHowToWearDialogOpen(true)}>
               <span>How to Wear</span>
             </Button>
             <Link href="/designs">
@@ -48,15 +41,11 @@ export const ProductLibraryContent = () => {
         </div>
       </div>
 
-      <HowToWearDialog open={!!isHowToWearDialogOpen} onClose={closeHowToWearDialog} />
+      <HowToWearDialog open={isHowToWearDialogOpen} onClose={() => setIsHowToWearDialogOpen(false)} />
     </section>
   );
 };
 
 export const ProductLibrary = () => {
-  return (
-    <Suspense fallback={<LoadingIcon />}>
-      <ProductLibraryContent />
-    </Suspense>
-  );
+  return <ProductLibraryContent />;
 };

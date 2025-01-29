@@ -7,9 +7,15 @@ type CartState = {
     designId: string;
     quantity: number;
   }[];
-  coupon: Coupon | null;
   updateCartItem: (id: string, quantity?: number) => void;
   removeCartItem: (id: string) => void;
+  clearCart: () => void;
+
+  isCartOpen: boolean;
+  closeCart: () => void;
+  openCart: () => void;
+
+  coupon: Coupon | null;
   setCoupon: (coupon: Coupon | null) => void;
   clearCoupon: () => void;
 };
@@ -19,6 +25,10 @@ export const useCart = create<CartState>()(
     set => ({
       cart: [],
       coupon: null,
+      isCartOpen: false,
+
+      closeCart: () => set({ isCartOpen: false }),
+      openCart: () => set({ isCartOpen: true }),
 
       updateCartItem: (id, quantity = 1) => {
         set(state => {
@@ -41,9 +51,9 @@ export const useCart = create<CartState>()(
       },
 
       removeCartItem: id => set(state => ({ cart: state.cart.filter(i => i.designId !== id) })),
+      clearCart: () => set({ cart: [] }),
 
       setCoupon: coupon => set({ coupon }),
-
       clearCoupon: () => set({ coupon: null }),
     }),
     {

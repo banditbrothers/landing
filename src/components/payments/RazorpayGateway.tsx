@@ -3,7 +3,6 @@
 import { useImperativeHandle } from "react";
 import { Order } from "@/types/order";
 import Script from "next/script";
-import { useState } from "react";
 import { toast } from "sonner";
 
 declare global {
@@ -31,13 +30,11 @@ export type RazorpayPaymentGatewayRef = {
 };
 
 export const RazorpayPaymentGateway = ({ ref, onSuccess, onCancel, onFailed }: RazorpayPaymentGatewayProps) => {
-  const [loaded, setLoaded] = useState(false);
-
   useImperativeHandle(ref, () => ({ handlePayment }));
 
   const handlePayment = (order: Order) => {
-    if (!loaded) {
-      toast.warning("Payment gateway is loading, Please try in a moment");
+    if (typeof window.Razorpay === "undefined") {
+      toast.warning("RazorPay failed to load. Please refresh the page");
       return;
     }
 
@@ -76,7 +73,7 @@ export const RazorpayPaymentGateway = ({ ref, onSuccess, onCancel, onFailed }: R
 
   return (
     <>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" onLoad={() => setLoaded(true)} />
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
     </>
   );
 };

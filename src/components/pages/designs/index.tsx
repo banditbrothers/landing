@@ -27,21 +27,14 @@ import { useEffect, useState } from "react";
 import { LoadingScreen } from "@/components/misc/Loading";
 import { trackDesignAddToCart, trackDesignView } from "@/utils/analytics";
 import { useCart } from "@/components/stores/cart";
-import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { QuantityStepper } from "@/components/misc/QuantityStepper";
 
 export const ProductPageContents = ({ designId: paramDesignId }: { designId: string }) => {
+  const router = useRouter();
   const { isFavorite, toggleFav } = useFavorites();
-  const addOrUpdateCartItem = useCart(state => state.updateCartItem);
+  const { openCart, updateCartItem: addOrUpdateCartItem } = useCart();
 
   const [quantity, setQuantity] = useState(1);
-
-  const { setParam: openCartParam } = useParamBasedFeatures("cart", { replaceRoute: true });
-  const router = useRouter();
-
-  function openCart() {
-    openCartParam("true");
-  }
 
   const design = DESIGNS.find(d => d.id === paramDesignId);
 

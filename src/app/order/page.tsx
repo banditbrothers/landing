@@ -100,7 +100,7 @@ function OrderPageContent() {
   const { favorites } = useFavorites();
   const searchParams = useSearchParams();
   const { orderLoading, createOrder } = useOrderActions();
-  const { cart, coupon, setCoupon, updateCartItem, removeCartItem } = useCart();
+  const { cart, coupon, setCoupon, updateCartItem, removeCartItem, clearCart, clearCoupon } = useCart();
 
   const [favFirstDesigns, setFavFirstDesigns] = useState<Design[]>([]);
   const [countryStates, setCountryStates] = useState<IState[]>([]);
@@ -177,12 +177,16 @@ function OrderPageContent() {
     if (orderObj.paymentMode === "rzp") rzpRef.current?.handlePayment(orderObj);
     else if (orderObj.paymentMode === "cash") {
       toast.success("Order Placed in Cash 🎉");
+      clearCart();
+      clearCoupon();
       router.replace("/");
     }
   };
 
   const handlePaymentSuccess = async () => {
     toast.success("Order Placed 🎉");
+    clearCart();
+    clearCoupon();
     router.replace("/");
   };
 
@@ -199,7 +203,7 @@ function OrderPageContent() {
   };
 
   const handleCouponRemoved = () => {
-    setCoupon(null);
+    clearCoupon();
   };
 
   const handleCouponError = (error: string) => {
