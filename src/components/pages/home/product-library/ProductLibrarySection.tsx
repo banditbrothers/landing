@@ -19,7 +19,7 @@ export const ProductLibraryContent = () => {
   }, []);
 
   return (
-    <section id="product-library" className="py-20 scroll-mt-16">
+    <section id="library" className="py-20 scroll-mt-16">
       <div className=" mx-auto">
         <div className={`mb-16 flex justify-between items-center gap-4 max-w-screen-2xl mx-auto px-6 flex-col`}>
           <h2 className="text-4xl font-bold text-center flex flex-row justify-center items-center gap-4 relative">
