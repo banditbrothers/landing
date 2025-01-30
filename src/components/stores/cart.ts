@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { shared } from "use-broadcast-ts";
 import { Coupon } from "@/types/coupon";
 
 type CartState = {
@@ -21,44 +22,44 @@ type CartState = {
 };
 
 export const useCart = create<CartState>()(
-  persist(
-    set => ({
-      cart: [],
-      coupon: null,
-      isCartOpen: false,
+  shared(
+    persist(
+      set => ({
+        cart: [],
+        coupon: null,
+        isCartOpen: false,
 
-      closeCart: () => set({ isCartOpen: false }),
-      openCart: () => set({ isCartOpen: true }),
+        closeCart: () => set({ isCartOpen: false }),
+        openCart: () => set({ isCartOpen: true }),
 
-      updateCartItem: (id, quantity = 1) => {
-        set(state => {
-          const itemExists = state.cart.some(item => item.designId === id);
-          if (itemExists) {
-            return {
-              cart: state.cart.map(item => {
-                if (item.designId !== id) return item;
+        updateCartItem: (id, quantity = 1) => {
+          set(state => {
+            const itemExists = state.cart.some(item => item.designId === id);
+            if (itemExists) {
+              return {
+                cart: state.cart.map(item => {
+                  if (item.designId !== id) return item;
 
-                const newQuantity = item.quantity + quantity;
-                if (newQuantity > 0) return { ...item, quantity: newQuantity };
-                else return { ...item, quantity: 1 };
-              }),
-            };
-          } else {
-            const newQuantity = quantity > 0 ? quantity : 1;
-            return { cart: [{ designId: id, quantity: newQuantity }, ...state.cart] };
-          }
-        });
-      },
+                  const newQuantity = item.quantity + quantity;
+                  if (newQuantity > 0) return { ...item, quantity: newQuantity };
+                  else return { ...item, quantity: 1 };
+                }),
+              };
+            } else {
+              const newQuantity = quantity > 0 ? quantity : 1;
+              return { cart: [{ designId: id, quantity: newQuantity }, ...state.cart] };
+            }
+          });
+        },
 
-      removeCartItem: id => set(state => ({ cart: state.cart.filter(i => i.designId !== id) })),
-      clearCart: () => set({ cart: [] }),
+        removeCartItem: id => set(state => ({ cart: state.cart.filter(i => i.designId !== id) })),
+        clearCart: () => set({ cart: [] }),
 
-      setCoupon: coupon => set({ coupon }),
-      clearCoupon: () => set({ coupon: null }),
-    }),
-    {
-      name: "cart",
-      storage: createJSONStorage(() => localStorage),
-    }
+        setCoupon: coupon => set({ coupon }),
+        clearCoupon: () => set({ coupon: null }),
+      }),
+      { name: "cart", storage: createJSONStorage(() => localStorage) }
+    ),
+    { name: "cart" }
   )
 );
