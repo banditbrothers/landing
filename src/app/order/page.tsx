@@ -36,6 +36,7 @@ import { CouponInput } from "@/components/inputs/Coupon";
 import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
 import { FEATURED_COUPON } from "@/components/typography/coupons";
 import { DangerBanner } from "@/components/misc/Banners";
+import { validatePincode } from "@/lib/pincode";
 
 const SHIPPING_COST = 50;
 const MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING = 750;
@@ -100,14 +101,16 @@ function OrderPageContent() {
   const { favorites } = useFavorites();
   const searchParams = useSearchParams();
   const { orderLoading, createOrder } = useOrderActions();
+
+  const watchCountry = useWatch({ control: form.control, name: "address.country" });
+
   const { cart, coupon, setCoupon, updateCartItem, removeCartItem, clearCart, clearCoupon } = useCart();
 
   const [favFirstDesigns, setFavFirstDesigns] = useState<Design[]>([]);
   const [countryStates, setCountryStates] = useState<IState[]>([]);
 
   const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
-
-  const watchCountry = useWatch({ control: form.control, name: "address.country" });
+  const pincodeDebounceRef = useRef<NodeJS.Timeout>(undefined);
 
   const oldFieldsValues = useRef(form.getValues());
   const watchAllFields = form.watch();
@@ -210,6 +213,29 @@ function OrderPageContent() {
     toast.error(error);
   };
 
+  const handlePincodeValidation = async (pincode: string) => {
+    if (pincodeDebounceRef.current) clearTimeout(pincodeDebounceRef.current);
+    pincodeDebounceRef.current = setTimeout(async () => {
+      const pincodeResponse = await validatePincode(pincode);
+      if (!pincodeResponse.isValid) {
+        form.setError("address.zip", { message: "Invalid Pincode", type: "validate" });
+        return;
+      }
+
+      const selectedStateCode = form.getValues().address.state;
+      const selectedCountryCode = form.getValues().address.country;
+
+      const selectedState = State.getStateByCodeAndCountry(selectedStateCode, selectedCountryCode);
+
+      if (pincodeResponse.data.state.toLowerCase() !== selectedState!.name.toLowerCase()) {
+        form.setError("address.zip", { message: `Not a ${selectedState!.name} pincode`, type: "validate" });
+        return;
+      }
+
+      form.resetField("address.zip", { keepDirty: true, keepError: false, keepTouched: true, defaultValue: pincode });
+    }, 700);
+  };
+
   const selectedDesignsIds = cart.map(product => product.designId);
   const formIsReady = form.formState.isValid && selectedDesignsIds.length > 0;
 
@@ -291,7 +317,11 @@ function OrderPageContent() {
                           <RequiredStar />
                         </FormLabel>
                         <FormControl>
-                          <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
+                          <Input
+                            type="tel"
+                            onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -335,7 +365,7 @@ function OrderPageContent() {
                         <FormItem>
                           <FormLabel>Country</FormLabel>
                           <FormControl>
-                            <Select onValueChange={field.onChange} defaultValue={field.value} {...field}>
+                            <Select disabled onValueChange={field.onChange} defaultValue={field.value} {...field}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select Country" />
                               </SelectTrigger>
@@ -360,7 +390,13 @@ function OrderPageContent() {
                         <FormItem>
                           <FormLabel>State</FormLabel>
                           <FormControl>
-                            <Select onValueChange={field.onChange} defaultValue={field.value} {...field}>
+                            <Select
+                              onValueChange={v => {
+                                field.onChange(v);
+                                handlePincodeValidation(form.getValues().address.zip);
+                              }}
+                              defaultValue={field.value}
+                              {...field}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select State" />
                               </SelectTrigger>
@@ -405,7 +441,17 @@ function OrderPageContent() {
                             <RequiredStar />
                           </FormLabel>
                           <FormControl>
-                            <Input onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)} {...field} />
+                            <Input
+                              type="number"
+                              min={100000}
+                              max={999999}
+                              onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
+                              {...field}
+                              onChange={e => {
+                                field.onChange(e);
+                                handlePincodeValidation(e.target.value);
+                              }}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
