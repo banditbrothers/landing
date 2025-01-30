@@ -165,12 +165,13 @@ function OrderPageContent() {
   };
 
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
-    const order: Partial<Order> = {
+    const order: Omit<Order, "id" | "status"> = {
       ...values,
       paymentMode,
       amount: orderTotal,
       couponCode: coupon?.code ?? null,
       createdAt: getTimestamp(),
+      products: cart,
     };
 
     identifyUser(order.email, { name: order.name, phone: order.phone, email: order.email });
