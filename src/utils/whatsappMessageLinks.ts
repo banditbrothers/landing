@@ -1,24 +1,23 @@
-import { DESIGNS_OBJ } from "@/data/designs";
 import { Order } from "@/types/order";
 import { getAddressString } from "./address";
 
 const whatsappPhoneNumber = "917977884773";
 
-export const whatsappKnowMoreLink = `https://api.whatsapp.com/send?phone=${whatsappPhoneNumber}&text=${encodeURIComponent(
+export const whatsappKnowMoreLink = `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(
   "Hey, I would like to know more about your products"
 )}`;
 
-export const getWhatsappNeedHelpLink = (orderDetails: Partial<Order>) => {
+export const getWhatsappNeedHelpWithOrderLink = (orderDetails: Partial<Order>) => {
   let message = `Hey, I need help with my order ${orderDetails.id ? `\n\`ID: ${orderDetails.id}\`` : ""}`;
 
   if (orderDetails.products) {
     message += `\n\n*Products* \n${orderDetails
-      .products!.map(product => `- ${DESIGNS_OBJ[product.designId]!.name}: ${product.quantity}`)
+      .products!.map(product => `- ${product.design.name}: ${product.quantity}`)
       .join("\n")}`;
   }
 
   const encodedMessage = encodeURIComponent(message);
-  return `https://api.whatsapp.com/send?phone=${whatsappPhoneNumber}&text=${encodedMessage}`;
+  return `https://wa.me/${whatsappPhoneNumber}?text=${encodedMessage}`;
 };
 
 export const getWhatsappOrderConfirmationLink = (order: Order) => {
@@ -37,5 +36,9 @@ export const getWhatsappOrderConfirmationLink = (order: Order) => {
     "May the Bandits be with you!",
   ].join("\n");
   const encodedMessage = encodeURIComponent(message);
-  return `https://api.whatsapp.com/send?phone=${order.phone}&text=${encodedMessage}`;
+  return `https://wa.me/${order.phone}?text=${encodedMessage}`;
+};
+
+export const getWhatsappNeedHelpLink = (orderId: string) => {
+  return `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(`Hey, I need help with order ${orderId}`)}`;
 };

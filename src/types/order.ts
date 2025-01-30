@@ -18,7 +18,7 @@ export type Order = {
   amount: number;
   couponCode: string | null;
   address: Address;
-  products: SelectedDesignsType[];
+  products: OrderProduct[];
   status: OrderStatus;
 } & (
   | {
@@ -39,6 +39,16 @@ export type Order = {
       };
     }
 );
+
+export type OrderProduct = {
+  design: {
+    id: string;
+    name: string;
+    price: number;
+    image: string;
+  };
+  quantity: number;
+};
 
 export type SelectedDesignsType = {
   designId: string;
