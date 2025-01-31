@@ -7,7 +7,7 @@ import { Order } from "@/types/order";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -15,26 +15,35 @@ import Image from "next/image";
 import { StarRating } from "@/components/misc/StarRating";
 import { Textarea } from "@/components/ui/textarea";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useReviewActions } from "@/hooks/useReviewActions";
+import { Review } from "@/types/review";
+import { getTimestamp } from "@/utils/timestamp";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const reviewSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
   title: z.string().min(3, "Title must be at least 3 characters"),
   comment: z.string().min(10, "Comment must be at least 10 characters"),
-  rating: z.number().min(1).max(5),
-  images: z.array(z.string()).optional(),
+  rating: z.number().min(1, "Oops! You forgot to rate us 5 stars!").max(5),
+  images: z.array(z.string()),
 });
 
 type OrderPageProps = { params: Promise<{ orderId: string }> };
 
 export default function OrderReviewPage({ params }: OrderPageProps) {
-  const [order, setOrder] = useState<Order | null>(null);
-  const [images, setImages] = useState<string[]>([]);
+  const { createReview, loading } = useReviewActions();
+  const router = useRouter();
 
+  const [order, setOrder] = useState<Order | null>(null);
+  //   const [images, setImages] = useState<string[]>([]);
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
     mode: "onTouched",
     defaultValues: {
-      name: order?.name ?? "",
+      name: "",
+      email: "",
       title: "",
       comment: "",
       rating: 0,
@@ -51,12 +60,31 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     fetchOrder();
   }, [params]);
 
-  const onSubmit = async (data: z.infer<typeof reviewSchema>) => {
-    // TODO: Implement review submission
-    console.log(data);
-  };
+  useEffect(() => {
+    if (order) {
+      form.setValue("name", order.name);
+      form.setValue("email", order.email);
+    }
+  }, [order, form]);
 
-  console.log(form.getValues());
+  const onSubmit = async (data: z.infer<typeof reviewSchema>) => {
+    if (!order) {
+      console.error("[OrderReviewPage] Order not found while submitting review");
+      return;
+    }
+
+    const review: Omit<Review, "id"> = {
+      ...data,
+      status: "pending",
+      orderId: order.id,
+      createdAt: getTimestamp(),
+      productIds: order.products.map(product => product.id),
+    };
+
+    await createReview(review);
+    toast.success("Review submitted successfully");
+    router.push("/");
+  };
 
   if (!order) return <LoadingScreen />;
 
@@ -173,7 +201,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                       )}
                     />
 
-                    <FormField
+                    {/* <FormField
                       control={form.control}
                       name="images"
                       render={({ field }) => (
@@ -189,16 +217,20 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                               }}
                             />
                           </FormControl>
-                          <FormDescription>You can upload up to 5 images of your products</FormDescription>
+                          <FormDescription>We will use these images to showcase your review</FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> */}
                   </form>
                 </Form>
               </CardContent>
               <CardFooter>
-                <Button type="submit" className="w-full" onClick={form.handleSubmit(onSubmit)}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loading.creatingReview}
+                  onClick={form.handleSubmit(onSubmit)}>
                   Submit Review
                 </Button>
               </CardFooter>

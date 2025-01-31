@@ -1,5 +1,5 @@
 import { getOrder, updateOrder } from "@/actions/orders";
-import { sendDiscordOrderMessage } from "@/lib/discord";
+import { sendDiscordOrderMessage } from "@/actions/discord";
 import { getDiscordOrderMessage } from "@/utils/discordMessages";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 

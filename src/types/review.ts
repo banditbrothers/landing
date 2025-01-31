@@ -1,17 +1,15 @@
 export interface Review {
   id: string;
   orderId: string;
+  name: string;
+  email: string;
   rating: number;
   title: string;
   comment: string;
-  images?: string[];
+  images: string[];
   createdAt: number;
   status: ReviewStatus;
   productIds: string[];
 }
 
-export enum ReviewStatus {
-  PENDING = "pending",
-  APPROVED = "approved",
-  REJECTED = "rejected",
-}
+export type ReviewStatus = "pending" | "approved" | "rejected";

@@ -4,7 +4,7 @@ import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase";
 import { Order } from "@/types/order";
 import { createOrder as createRzpOrder } from "./payments/rzp";
-import { sendDiscordOrderMessage } from "@/lib/discord";
+import { sendDiscordOrderMessage } from "@/actions/discord";
 import { getDiscordOrderMessage } from "@/utils/discordMessages";
 
 export const getOrders = async (): Promise<Order[]> => {
