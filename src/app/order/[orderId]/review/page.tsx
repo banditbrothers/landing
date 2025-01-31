@@ -20,6 +20,8 @@ import { Review } from "@/types/review";
 import { getTimestamp } from "@/utils/timestamp";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { getWhatsappHelpWithCreateReviewLink, getWhatsappUpdateReviewLink } from "@/utils/whatsappMessageLinks";
+import { CheckCircle, MessageCircle } from "lucide-react";
 
 const reviewSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -37,6 +39,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
   const router = useRouter();
 
   const [order, setOrder] = useState<Order | null>(null);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
   //   const [images, setImages] = useState<string[]>([]);
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
@@ -83,16 +86,62 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
 
     await createReview(review);
     toast.success("Review submitted successfully");
-    router.push("/");
+    setReviewSubmitted(true);
   };
 
   if (!order) return <LoadingScreen />;
+  if (order.reviewId || reviewSubmitted)
+    return (
+      <div className="container mx-auto max-w-2xl mt-20 min-h-screen px-4">
+        <Card className="border-0 shadow-lg">
+          <CardHeader className="text-center pb-2">
+            <div className="mb-2">
+              <CheckCircle className="w-16 h-16 text-primary mx-auto" />
+            </div>
+            <CardTitle className="text-3xl font-semibold text-foreground">Review Submitted</CardTitle>
+            <p className="text-muted-foreground mt-2">Thank you for taking the time to share your feedback!</p>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center gap-6 px-6 py-8">
+            <div className="text-center">
+              <p className="text-card-foreground font-medium mb-3">Need to update your review?</p>
+              <Button
+                variant="outline"
+                className="hover:bg-accent transition-colors"
+                onClick={() => {
+                  const link = getWhatsappUpdateReviewLink(order.reviewId!, order.id);
+                  window.open(link, "_blank");
+                }}>
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Contact Support
+              </Button>
+            </div>
+            <div className="w-full pt-4 border-t border-border">
+              <Button
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-colors"
+                onClick={() => router.push("/")}>
+                Return to Homepage
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
 
   return (
     <div className="container mx-auto max-w-2xl mt-20 min-h-screen">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Leave Us A Review</CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-2xl">Leave Us A Review</CardTitle>
+            <Button
+              variant="link"
+              className="px-0"
+              onClick={() =>
+                window.open(getWhatsappHelpWithCreateReviewLink(order.id), "_blank", "noreferrer noopener")
+              }>
+              Need Help?
+            </Button>
+          </div>
           <CardDescription>We value your feedback and would love to hear about your experience.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -156,6 +205,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                     />
 
                     <FormField
+                      disabled
                       control={form.control}
                       name="name"
                       render={({ field }) => (
@@ -163,6 +213,21 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                           <FormLabel>Your Name</FormLabel>
                           <FormControl>
                             <Input placeholder="Enter your name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      disabled
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Your Email</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter your email" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

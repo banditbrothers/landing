@@ -46,3 +46,15 @@ export const getWhatsappOrderConfirmationLink = (order: Order) => {
 export const getWhatsappNeedHelpLink = (orderId: string) => {
   return `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(`Hey, I need help with order ${orderId}`)}`;
 };
+
+export const getWhatsappUpdateReviewLink = (reviewId: string, orderId: string) => {
+  return `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(
+    `Hey, I want to update my review for order ${orderId} with id ${reviewId}`
+  )}`;
+};
+
+export const getWhatsappHelpWithCreateReviewLink = (orderId: string) => {
+  return `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(
+    `Hey, I need help with creating a review for order ${orderId}`
+  )}`;
+};
