@@ -166,12 +166,10 @@ function OrderPageContent() {
 
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
     const products: OrderProduct[] = cart.map(product => ({
-      design: {
-        id: product.designId,
-        name: DESIGNS_OBJ[product.designId].name,
-        price: DESIGNS_OBJ[product.designId].price,
-        image: DESIGNS_OBJ[product.designId].image,
-      },
+      id: product.designId,
+      name: DESIGNS_OBJ[product.designId].name,
+      price: DESIGNS_OBJ[product.designId].price,
+      image: DESIGNS_OBJ[product.designId].image,
       quantity: product.quantity,
     }));
 
@@ -179,9 +177,12 @@ function OrderPageContent() {
       ...values,
       products,
       paymentMode,
-      amount: orderTotal,
-      couponCode: coupon?.code ?? null,
+      total: orderTotal,
+      subtotal: getSubtotal(cart),
+      discount: getDiscountAmount(subtotal, coupon),
+      shipping: getShippingCost(cart, coupon),
       createdAt: getTimestamp(),
+      couponCode: coupon?.code ?? null,
     };
 
     identifyUser(order.email, { name: order.name, phone: order.phone, email: order.email });

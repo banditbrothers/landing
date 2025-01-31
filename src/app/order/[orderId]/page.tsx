@@ -104,26 +104,20 @@ export default function OrderPage({ params }: OrderPageProps) {
             <CardContent>
               <div className="space-y-4">
                 {order.products.map((product, index) => (
-                  <>
-                    <div key={index} className="flex items-center gap-4 py-2">
-                      <Image
-                        width={80}
-                        height={80}
-                        className="rounded"
-                        alt={product.design.name}
-                        src={product.design.image}
-                      />
+                  <div key={product.id}>
+                    <div className="flex items-center gap-4 py-2">
+                      <Image width={80} height={80} className="rounded" alt={product.name} src={product.image} />
                       <div className="flex-1">
-                        <h4 className="font-medium">{product.design.name}</h4>
+                        <h4 className="font-medium">{product.name}</h4>
                         <p className="text-sm text-muted-foreground">Quantity: {product.quantity}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">{formatCurrency(product.design.price * product.quantity)}</p>
-                        <p className="text-sm text-muted-foreground">{formatCurrency(product.design.price)} each</p>
+                        <p className="font-medium">{formatCurrency(product.price * product.quantity)}</p>
+                        <p className="text-sm text-muted-foreground">{formatCurrency(product.price)} each</p>
                       </div>
                     </div>
                     {index < order.products.length - 1 && <Separator />}
-                  </>
+                  </div>
                 ))}
               </div>
             </CardContent>
@@ -135,25 +129,46 @@ export default function OrderPage({ params }: OrderPageProps) {
               <CardTitle className="text-lg">Payment Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Payment Method</span>
-                  <span className="font-medium capitalize">{order.paymentMode === "rzp" ? "Razorpay" : "Cash"}</span>
+              <div className="space-y-4">
+                {/* Payment Method */}
+                <div className="flex justify-between items-center mb-6">
+                  <span className="text-muted-foreground">Payment Method</span>
+                  <span className="font-medium capitalize">
+                    {order.paymentMode === "rzp" ? `${order.rzp.paymentMethod} / Razorpay` : "Cash"}
+                  </span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>{formatCurrency(order.amount)}</span>
-                </div>
-                {order.couponCode && (
-                  <div className="flex justify-between text-primary">
-                    <span>Coupon Applied</span>
-                    <span>{order.couponCode}</span>
-                  </div>
-                )}
 
-                <div className="flex justify-between text-lg font-medium">
-                  <span>Total</span>
-                  <span>{formatCurrency(order.amount)}</span>
+                {/* Order Summary */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span>{formatCurrency(order.subtotal)}</span>
+                  </div>
+
+                  {order.discount > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="flex items-center gap-2 text-muted-foreground">
+                        Discount
+                        <span className="text-xs bg-muted text-green-600 px-2 py-0.5 rounded-full">
+                          {order.couponCode}
+                        </span>
+                      </span>
+                      <span>-{formatCurrency(order.discount)}</span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Shipping</span>
+                    <span>{formatCurrency(order.shipping)}</span>
+                  </div>
+                </div>
+
+                <Separator className="my-4" />
+
+                {/* Total */}
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-semibold">Total</span>
+                  <span className="text-lg font-bold">{formatCurrency(order.total)}</span>
                 </div>
               </div>
             </CardContent>

@@ -18,12 +18,12 @@ export const getDiscordOrderMessage = (order: Order) => {
           { name: "Name", value: order.name },
           {
             name: "Payment Details",
-            value: `${order.paymentMode} / ₹${order.amount} ${order.couponCode ? `(${order.couponCode})` : ""}`,
+            value: `${order.paymentMode} / ₹${order.total} ${order.couponCode ? `(${order.couponCode})` : ""}`,
           },
           { name: "Address", value: getAddressString(order.address) },
           {
             name: "Products",
-            value: order.products.map(product => `${product.quantity}x ${product.design.name}`).join("\n"),
+            value: order.products.map(product => `${product.quantity}x ${product.name}`).join("\n"),
           },
         ],
         timestamp: new Date(getDate(order.createdAt)).toISOString(),

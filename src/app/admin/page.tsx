@@ -31,6 +31,7 @@ import { Switch } from "@/components/ui/switch";
 import { useCouponActions } from "@/hooks/useCouponActions";
 import { toast } from "sonner";
 import { getCoupons } from "@/actions/coupons";
+import { formatCurrency } from "@/utils/price";
 
 type FilterOrder =
   | {
@@ -190,7 +191,7 @@ function OrderManagement() {
 
                     <TableCell className="max-w-xs">{getAddressString(order.address)}</TableCell>
 
-                    <TableCell>₹{order.amount.toFixed(2)}</TableCell>
+                    <TableCell>{formatCurrency(order.total)}</TableCell>
 
                     <TableCell>
                       <div

@@ -20,10 +20,12 @@ export async function POST(request: Request) {
 
         const paymentId = data.payload.payment.entity.id;
         const paymentStatus = data.payload.payment.entity.status;
+        const paymentMethod = data.payload.payment.entity.method;
 
         const updateOrderPromise = updateOrder(dbId, {
           "rzp.paymentId": paymentId,
           "rzp.paymentStatus": paymentStatus,
+          "rzp.paymentMethod": paymentMethod,
           status: orderStatus,
         });
 

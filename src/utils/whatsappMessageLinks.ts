@@ -12,7 +12,7 @@ export const getWhatsappNeedHelpWithOrderLink = (orderDetails: Partial<Order>) =
 
   if (orderDetails.products) {
     message += `\n\n*Products* \n${orderDetails
-      .products!.map(product => `- ${product.design.name}: ${product.quantity}`)
+      .products!.map(product => `- ${product.name}: ${product.quantity}`)
       .join("\n")}`;
   }
 
@@ -26,7 +26,7 @@ export const getWhatsappOrderConfirmationLink = (order: Order) => {
     "",
     `*Order ID:* ${order.id}`,
     "",
-    `*Order Total:* ₹${order.amount}`,
+    `*Order Total:* ₹${order.total}`,
     "",
     `*Shipping Address:* ${getAddressString(order.address)}`,
     "",

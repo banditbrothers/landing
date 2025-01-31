@@ -1,0 +1,211 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { LoadingScreen } from "@/components/misc/Loading";
+import { getOrder } from "@/actions/orders";
+import { Order } from "@/types/order";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import Image from "next/image";
+import { StarRating } from "@/components/misc/StarRating";
+import { Textarea } from "@/components/ui/textarea";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+
+const reviewSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  title: z.string().min(3, "Title must be at least 3 characters"),
+  comment: z.string().min(10, "Comment must be at least 10 characters"),
+  rating: z.number().min(1).max(5),
+  images: z.array(z.string()).optional(),
+});
+
+type OrderPageProps = { params: Promise<{ orderId: string }> };
+
+export default function OrderReviewPage({ params }: OrderPageProps) {
+  const [order, setOrder] = useState<Order | null>(null);
+  const [images, setImages] = useState<string[]>([]);
+
+  const form = useForm<z.infer<typeof reviewSchema>>({
+    resolver: zodResolver(reviewSchema),
+    mode: "onTouched",
+    defaultValues: {
+      name: order?.name ?? "",
+      title: "",
+      comment: "",
+      rating: 0,
+      images: [],
+    },
+  });
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      const orderId = (await params).orderId;
+      const order = await getOrder(orderId);
+      setOrder(order);
+    };
+    fetchOrder();
+  }, [params]);
+
+  const onSubmit = async (data: z.infer<typeof reviewSchema>) => {
+    // TODO: Implement review submission
+    console.log(data);
+  };
+
+  console.log(form.getValues());
+
+  if (!order) return <LoadingScreen />;
+
+  return (
+    <div className="container mx-auto max-w-2xl mt-20 min-h-screen">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl">Leave Us A Review</CardTitle>
+          <CardDescription>We value your feedback and would love to hear about your experience.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center gap-2 w-full">
+            {/* Products Review Section */}
+            <Accordion type="single" collapsible className="w-full mb-8 rounded-lg bg-bandit-orange/10 ">
+              <AccordionItem value="products" className="border-none">
+                <AccordionTrigger className="px-6 py-3">
+                  <div>
+                    <h3 className="text-lg font-semibold">Your Mischief</h3>
+                    <p className="text-sm text-muted-foreground">Click to view your products</p>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="p-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {order.products.map(product => (
+                      <Card key={product.id} className="">
+                        <CardContent className="flex flex-col items-start gap-4 p-4">
+                          <div className="relative w-full h-48 md:h-32">
+                            <Image
+                              fill
+                              quality={40}
+                              src={product.image}
+                              alt={product.name}
+                              className="object-cover rounded-md"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="font-medium">{product.name}</h3>
+                            <p className="text-sm text-muted-foreground">Quantity: {product.quantity}</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            {/* Review Form */}
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle>Write Your Review</CardTitle>
+                <CardDescription>Share your experience with these products</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="rating"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Rating</FormLabel>
+                          <FormControl>
+                            <StarRating value={field.value} onChange={field.onChange} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Your Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter your name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Review Title</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Summarize your experience" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="comment"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Your Review</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Tell us about your experience with the products"
+                              className="min-h-[120px]"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="images"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Upload Images (Optional)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              onChange={e => {
+                                // TODO: Implement image upload logic
+                              }}
+                            />
+                          </FormControl>
+                          <FormDescription>You can upload up to 5 images of your products</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </form>
+                </Form>
+              </CardContent>
+              <CardFooter>
+                <Button type="submit" className="w-full" onClick={form.handleSubmit(onSubmit)}>
+                  Submit Review
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
