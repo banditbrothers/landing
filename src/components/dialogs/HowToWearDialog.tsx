@@ -17,7 +17,7 @@ export function HowToWearDialog({ open, onClose }: HowToWearDialogProps) {
           </DialogHeader>
         </VisuallyHidden>
 
-        <div className="relative aspect-square max-h-[80vh] h-fit w-full">
+        <div className="relative aspect-square max-h-[80vh]">
           <Image
             fill
             priority

@@ -1,10 +1,9 @@
 import { Review } from "@/types/review";
-import { createReview as createReviewAction, updateReview as updateReviewAction } from "@/actions/reviews";
+import { createReview as createReviewAction } from "@/actions/reviews";
 import { useState } from "react";
 
 export const useReviewActions = () => {
   const [creatingReview, setCreatingReview] = useState(false);
-  const [updatingReview, setUpdatingReview] = useState(false);
 
   const createReview = async (review: Omit<Review, "id">) => {
     setCreatingReview(true);
@@ -17,20 +16,8 @@ export const useReviewActions = () => {
     }
   };
 
-  const updateReview = async (reviewId: string, review: Partial<Review>) => {
-    setUpdatingReview(true);
-    try {
-      return await updateReviewAction(reviewId, review);
-    } catch (error) {
-      throw error;
-    } finally {
-      setUpdatingReview(false);
-    }
-  };
-
   return {
-    loading: { creatingReview, updatingReview },
+    loading: { creatingReview },
     createReview,
-    updateReview,
   };
 };

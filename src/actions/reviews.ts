@@ -17,13 +17,27 @@ export const createReview = async (review: Omit<Review, "id">) => {
 };
 
 export const getReviewsByProductId = async (productId: string, limit = 10) => {
-  const reviews = await firestore()
-    .collection(Collections.reviews)
-    .where("productIds", "array-contains", productId)
-    .orderBy("createdAt", "desc")
-    .limit(limit)
-    .get();
-  return reviews.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Review[];
+  console.log("getting reviews for", productId, "with limit", limit);
+  try {
+    const reviews = await firestore()
+      .collection(Collections.reviews)
+      .where("productIds", "array-contains", productId)
+      .orderBy("productIds")
+      .orderBy("createdAt", "desc")
+      .limit(limit)
+      .get();
+
+    const finalReviews = reviews.docs.map(doc => {
+      const data = doc.data();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { email, ...rest } = data;
+      return { id: doc.id, ...rest };
+    }) as Review[];
+    return finalReviews;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };
 
 export const getReviewsAdmin = async (limit = 10) => {

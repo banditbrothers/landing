@@ -7,12 +7,12 @@ import { Order } from "@/types/order";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Image from "next/image";
-import { StarRating } from "@/components/misc/StarRating";
+import { StarRatingInput } from "@/components/misc/StarRating";
 import { Textarea } from "@/components/ui/textarea";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useReviewActions } from "@/hooks/useReviewActions";
@@ -22,6 +22,9 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { getWhatsappHelpWithCreateReviewLink, getWhatsappUpdateReviewLink } from "@/utils/whatsappMessageLinks";
 import { CheckCircle, MessageCircle } from "lucide-react";
+import { FileDropzone } from "@/components/misc/FileUploader";
+import { compressImage } from "@/utils/image";
+import Link from "next/link";
 
 const reviewSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -29,18 +32,19 @@ const reviewSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   comment: z.string().min(10, "Comment must be at least 10 characters"),
   rating: z.number().min(1, "Oops! You forgot to rate us 5 stars!").max(5),
-  images: z.array(z.string()),
 });
 
 type OrderPageProps = { params: Promise<{ orderId: string }> };
 
 export default function OrderReviewPage({ params }: OrderPageProps) {
   const { createReview, loading } = useReviewActions();
-  const router = useRouter();
 
   const [order, setOrder] = useState<Order | null>(null);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  //   const [images, setImages] = useState<string[]>([]);
+  const [isCompressing, setIsCompressing] = useState<boolean>(false);
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
     mode: "onTouched",
@@ -50,7 +54,6 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
       title: "",
       comment: "",
       rating: 0,
-      images: [],
     },
   });
 
@@ -76,12 +79,15 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
       return;
     }
 
+    // todo: upload image to firebase
+
     const review: Omit<Review, "id"> = {
       ...data,
       status: "pending",
       orderId: order.id,
       createdAt: getTimestamp(),
       productIds: order.products.map(product => product.id),
+      //   images: image ? [image] : [],
     };
 
     await createReview(review);
@@ -89,43 +95,21 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     setReviewSubmitted(true);
   };
 
+  const handleOnImageSelect = async (files: File[]) => {
+    setIsCompressing(true);
+    const compressedFile = await compressImage(files[0]);
+    setIsCompressing(false);
+    setImage(compressedFile);
+    // Create URL for preview
+    setImagePreview(URL.createObjectURL(compressedFile));
+    console.log("Dropped files", files);
+    console.log("Compressed file", compressedFile);
+  };
+
+  console.log("imagePreview", imagePreview);
+
   if (!order) return <LoadingScreen />;
-  if (order.reviewId || reviewSubmitted)
-    return (
-      <div className="container mx-auto max-w-2xl mt-20 min-h-screen px-4">
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="text-center pb-2">
-            <div className="mb-2">
-              <CheckCircle className="w-16 h-16 text-primary mx-auto" />
-            </div>
-            <CardTitle className="text-3xl font-semibold text-foreground">Review Submitted</CardTitle>
-            <p className="text-muted-foreground mt-2">Thank you for taking the time to share your feedback!</p>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center gap-6 px-6 py-8">
-            <div className="text-center">
-              <p className="text-card-foreground font-medium mb-3">Need to update your review?</p>
-              <Button
-                variant="outline"
-                className="hover:bg-accent transition-colors"
-                onClick={() => {
-                  const link = getWhatsappUpdateReviewLink(order.reviewId!, order.id);
-                  window.open(link, "_blank");
-                }}>
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Contact Support
-              </Button>
-            </div>
-            <div className="w-full pt-4 border-t border-border">
-              <Button
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-colors"
-                onClick={() => router.push("/")}>
-                Return to Homepage
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
+  if (order.reviewId || reviewSubmitted) return <ReviewSubmitted order={order} />;
 
   return (
     <div className="container mx-auto max-w-2xl mt-20 min-h-screen">
@@ -158,23 +142,25 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                 <AccordionContent className="p-3">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {order.products.map(product => (
-                      <Card key={product.id} className="">
-                        <CardContent className="flex flex-col items-start gap-4 p-4">
-                          <div className="relative w-full h-48 md:h-32">
-                            <Image
-                              fill
-                              quality={40}
-                              src={product.image}
-                              alt={product.name}
-                              className="object-cover rounded-md"
-                            />
-                          </div>
-                          <div>
-                            <h3 className="font-medium">{product.name}</h3>
-                            <p className="text-sm text-muted-foreground">Quantity: {product.quantity}</p>
-                          </div>
-                        </CardContent>
-                      </Card>
+                      <Link href={`/designs/${product.id}`} target="_blank" key={product.id}>
+                        <Card key={product.id} className="">
+                          <CardContent className="flex flex-col items-start gap-4 p-4">
+                            <div className="relative w-full h-48 md:h-32">
+                              <Image
+                                fill
+                                quality={40}
+                                src={product.image}
+                                alt={product.name}
+                                className="object-cover rounded-md"
+                              />
+                            </div>
+                            <div>
+                              <h3 className="font-medium">{product.name}</h3>
+                              <p className="text-sm text-muted-foreground">Quantity: {product.quantity}</p>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
                     ))}
                   </div>
                 </AccordionContent>
@@ -197,7 +183,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                         <FormItem>
                           <FormLabel>Rating</FormLabel>
                           <FormControl>
-                            <StarRating value={field.value} onChange={field.onChange} />
+                            <StarRatingInput value={field.value} onChange={field.onChange} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -266,27 +252,37 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                       )}
                     />
 
-                    {/* <FormField
-                      control={form.control}
-                      name="images"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Upload Images (Optional)</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              multiple
-                              onChange={e => {
-                                // TODO: Implement image upload logic
-                              }}
-                            />
-                          </FormControl>
-                          <FormDescription>We will use these images to showcase your review</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    /> */}
+                    {!image && (
+                      <FormItem>
+                        <FormLabel>Upload Image</FormLabel>
+                        <FormControl>
+                          <FileDropzone loading={isCompressing} onDrop={handleOnImageSelect} />
+                        </FormControl>
+                        <FormDescription>We will use this image to showcase your review</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                    {imagePreview && (
+                      <div className="relative w-full h-64">
+                        <Image
+                          fill
+                          src={imagePreview}
+                          alt="Review image preview"
+                          className="object-contain rounded-lg"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="absolute top-2 right-2"
+                          onClick={() => {
+                            setImage(null);
+                            setImagePreview(null);
+                          }}>
+                          Remove
+                        </Button>
+                      </div>
+                    )}
                   </form>
                 </Form>
               </CardContent>
@@ -306,3 +302,42 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     </div>
   );
 }
+
+const ReviewSubmitted = ({ order }: { order: Order }) => {
+  const router = useRouter();
+  return (
+    <div className="container mx-auto max-w-2xl mt-20 min-h-screen px-4">
+      <Card className="border-0 shadow-lg">
+        <CardHeader className="text-center pb-2">
+          <div className="mb-2">
+            <CheckCircle className="w-16 h-16 text-primary mx-auto" />
+          </div>
+          <CardTitle className="text-3xl font-semibold text-foreground">Review Submitted</CardTitle>
+          <p className="text-muted-foreground mt-2">Thank you for taking the time to share your feedback!</p>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center gap-6 px-6 py-8">
+          <div className="text-center">
+            <p className="text-card-foreground font-medium mb-3">Need to update your review?</p>
+            <Button
+              variant="outline"
+              className="hover:bg-accent transition-colors"
+              onClick={() => {
+                const link = getWhatsappUpdateReviewLink(order.reviewId!, order.id);
+                window.open(link, "_blank");
+              }}>
+              <MessageCircle className="w-4 h-4 mr-2" />
+              Contact Support
+            </Button>
+          </div>
+          <div className="w-full pt-4 border-t border-border">
+            <Button
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-colors"
+              onClick={() => router.push("/")}>
+              Return to Homepage
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};

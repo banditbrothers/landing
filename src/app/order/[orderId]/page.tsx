@@ -11,7 +11,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
-import { formattedDateTime } from "@/utils/timestamp";
+import { formattedDateTimeLong } from "@/utils/timestamp";
 import { Separator } from "@/components/ui/separator";
 import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
 
@@ -47,7 +47,7 @@ export default function OrderPage({ params }: OrderPageProps) {
                   </Button>
                 </span>
               </CardTitle>
-              <CardDescription>Placed on {formattedDateTime(order.createdAt)}</CardDescription>
+              <CardDescription>Placed on {formattedDateTimeLong(order.createdAt)}</CardDescription>
             </div>
             <span className="px-4 py-2 rounded-full bg-primary/10 text-primary font-medium capitalize">
               {order.status}

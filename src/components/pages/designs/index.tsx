@@ -28,6 +28,7 @@ import { LoadingScreen } from "@/components/misc/Loading";
 import { trackDesignAddToCart, trackDesignView } from "@/utils/analytics";
 import { useCart } from "@/components/stores/cart";
 import { QuantityStepper } from "@/components/misc/QuantityStepper";
+import { Reviews } from "./Reviews";
 
 export const ProductPageContents = ({ designId: paramDesignId }: { designId: string }) => {
   const router = useRouter();
@@ -138,6 +139,7 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
         </div>
       </div>
 
+      <Reviews currentDesignId={design.id} />
       <RecommendedProducts currentDesignId={design.id} />
     </div>
   );

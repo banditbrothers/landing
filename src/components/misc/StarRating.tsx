@@ -8,7 +8,7 @@ interface StarRatingProps {
   onChange: (value: number) => void;
 }
 
-export function StarRating({ value, onChange }: StarRatingProps) {
+export function StarRatingInput({ value, onChange }: StarRatingProps) {
   return (
     <div className="flex gap-1">
       {[1, 2, 3, 4, 5].map(star => (
@@ -20,6 +20,19 @@ export function StarRating({ value, onChange }: StarRatingProps) {
           )}
           onClick={() => onChange(star)}
         />
+      ))}
+    </div>
+  );
+}
+
+export function StarRating({ value }: { value: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {Array.from({ length: value }).map((_, i) => (
+        <Star key={i} className="w-3 h-3 fill-bandit-orange text-bandit-orange" />
+      ))}
+      {Array.from({ length: 5 - value }).map((_, i) => (
+        <Star key={i} className="w-3 h-3 stroke-muted-foreground" />
       ))}
     </div>
   );

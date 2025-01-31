@@ -4,7 +4,7 @@ import { Order } from "@/types/order";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { getOrders } from "@/actions/orders";
-import { formattedDateTime, getDate } from "@/utils/timestamp";
+import { formattedDateTimeLong, getDate } from "@/utils/timestamp";
 import { LoadingScreen } from "@/components/misc/Loading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DateRangePicker } from "@/components/misc/DateRangePicker";
@@ -174,7 +174,7 @@ export function OrderManagement() {
                     className={`${
                       order.status === "payment-failed" ? "bg-destructive/10 hover:bg-destructive/20" : ""
                     }`}>
-                    <TableCell>{formattedDateTime(order.createdAt)}</TableCell>
+                    <TableCell>{formattedDateTimeLong(order.createdAt)}</TableCell>
 
                     <TableCell>{order.name}</TableCell>
 

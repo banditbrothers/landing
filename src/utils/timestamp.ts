@@ -1,7 +1,7 @@
 export const getTimestamp = () => Math.floor(Date.now() / 1000);
 export const getDate = (timestamp: number) => new Date(timestamp * 1000);
 
-export const formattedDateTime = (timestamp: number) => {
+export const formattedDateTimeLong = (timestamp: number) => {
   const date = getDate(timestamp);
   return date.toLocaleDateString("en-IN", {
     weekday: "short",
@@ -9,6 +9,16 @@ export const formattedDateTime = (timestamp: number) => {
     minute: "2-digit",
     day: "2-digit",
     hour12: true,
+    month: "short",
+    year: "numeric",
+  });
+};
+
+export const formatDateShort = (timestamp: number) => {
+  const date = getDate(timestamp);
+  return date.toLocaleDateString("en-IN", {
+    weekday: "short",
+    day: "2-digit",
     month: "short",
     year: "numeric",
   });
