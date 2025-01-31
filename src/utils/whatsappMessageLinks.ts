@@ -32,7 +32,11 @@ export const getWhatsappOrderConfirmationLink = (order: Order) => {
     "",
     `*Payment Method:* ${order.paymentMode === "rzp" ? "Razorpay" : "Cash"}`,
     "",
+    "Please read through the wash and care instructions here:",
+    "https://www.banditbrothers.in/#product-specs",
+    "",
     "You should receive your order in 7-10 days.",
+    "",
     "May the Bandits be with you!",
   ].join("\n");
   const encodedMessage = encodeURIComponent(message);
