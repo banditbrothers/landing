@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/pagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EyeIcon } from "@/components/misc/icons";
+import { SignatureIcon } from "lucide-react";
+import { getWhatsappOrderReviewLink } from "@/utils/whatsappMessageLinks";
 
 type FilterOrder =
   | {
@@ -197,6 +199,17 @@ export function OrderManagement() {
                       <Button variant="outline" size="icon" onClick={() => showDialog(order)}>
                         <EyeIcon />
                       </Button>
+                      {!order.reviewId && (
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            const link = getWhatsappOrderReviewLink(order);
+                            window.open(link, "_blank");
+                          }}>
+                          <SignatureIcon />
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

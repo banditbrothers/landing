@@ -43,6 +43,18 @@ export const getWhatsappOrderConfirmationLink = (order: Order) => {
   return `https://wa.me/${order.phone}?text=${encodedMessage}`;
 };
 
+export const getWhatsappOrderReviewLink = (order: Order) => {
+  const message = [
+    "Hello Fellow Bandit!",
+    "We hope you're enjoying your Bandit Brothers bandana!",
+    "",
+    "We'd love to hear about your experience with our products.",
+    `Click here to share your feedback: https://www.banditbrothers.in/order/${order.id}/review`,
+  ].join("\n");
+  const encodedMessage = encodeURIComponent(message);
+  return `https://wa.me/${order.phone}?text=${encodedMessage}`;
+};
+
 export const getWhatsappNeedHelpLink = (orderId: string) => {
   return `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(`Hey, I need help with order ${orderId}`)}`;
 };
