@@ -53,7 +53,7 @@ export type OrderProduct = {
   quantity: number;
 };
 
-export type SelectedDesignsType = {
+export type CartItem = {
   designId: string;
   quantity: number;
 };

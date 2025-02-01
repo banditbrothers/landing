@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DESIGNS_OBJ, DESIGNS, Design } from "@/data/designs";
 import { MultiSelectDropdown } from "@/components/dropdowns/MultiSelectDropdown";
 
-import { Order, OrderProduct, SelectedDesignsType } from "@/types/order";
+import { Order, OrderProduct, CartItem } from "@/types/order";
 import { Coupon } from "@/types/coupon";
 import { getTimestamp } from "@/utils/timestamp";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -60,7 +60,7 @@ const orderFormSchema = z.object({
   }),
 });
 
-const getSubtotal = (products: SelectedDesignsType[]) => {
+const getSubtotal = (products: CartItem[]) => {
   if (products.length === 0) return 0;
 
   return products.reduce((total, product) => {
@@ -69,7 +69,7 @@ const getSubtotal = (products: SelectedDesignsType[]) => {
   }, 0);
 };
 
-const getShippingCost = (products: SelectedDesignsType[], coupon: Coupon | null) => {
+const getShippingCost = (products: CartItem[], coupon: Coupon | null) => {
   if (products.length === 0) return 0;
   const subtotal = getSubtotal(products);
   const discount = getDiscountAmount(subtotal, coupon);
@@ -79,7 +79,7 @@ const getShippingCost = (products: SelectedDesignsType[], coupon: Coupon | null)
   return SHIPPING_COST;
 };
 
-const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) => {
+const calculateTotal = (products: CartItem[], coupon: Coupon | null) => {
   const subtotal = getSubtotal(products);
   const discount = getDiscountAmount(subtotal, coupon);
   const shippingCost = getShippingCost(products, coupon);
