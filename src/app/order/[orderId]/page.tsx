@@ -14,6 +14,7 @@ import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { formattedDateTimeLong } from "@/utils/timestamp";
 import { Separator } from "@/components/ui/separator";
 import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
+import { redactEmail, redactPhone, redactName } from "@/utils/redact";
 import Link from "next/link";
 
 type OrderPageProps = { params: Promise<{ orderId: string }> };
@@ -66,32 +67,14 @@ export default function OrderPage({ params }: OrderPageProps) {
               <CardContent>
                 <div className="space-y-2">
                   <p>
-                    <span className="font-medium">Name:</span> {order.name}
+                    <span className="font-medium">Name:</span> {redactName(order.name)}
                   </p>
                   <p>
-                    <span className="font-medium">Email:</span> {order.email}
+                    <span className="font-medium">Email:</span> {redactEmail(order.email)}
                   </p>
                   <p>
-                    <span className="font-medium">Phone:</span> {order.phone}
+                    <span className="font-medium">Phone:</span> {redactPhone(order.phone)}
                   </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Shipping Address */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Shipping Address</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p>{order.address.line1}</p>
-                  {order.address.line2 && <p>{order.address.line2}</p>}
-                  <p>
-                    {order.address.city}, {order.address.state}
-                  </p>
-                  <p>{order.address.zip}</p>
-                  <p>{order.address.country}</p>
                 </div>
               </CardContent>
             </Card>
