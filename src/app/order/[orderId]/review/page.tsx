@@ -33,7 +33,6 @@ signInAnonymously();
 
 const reviewSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
   title: z.string().min(3, "Title must be at least 3 characters"),
   comment: z.string().min(10, "Comment must be at least 10 characters"),
   rating: z.number().min(1, "Oops! You forgot to rate us 5 stars!").max(5),
@@ -50,13 +49,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
     mode: "onTouched",
-    defaultValues: {
-      name: "",
-      email: "",
-      title: "",
-      comment: "",
-      rating: 0,
-    },
+    defaultValues: { name: "", title: "", comment: "", rating: 0 },
   });
 
   useEffect(() => {
@@ -76,7 +69,6 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
   useEffect(() => {
     if (order) {
       form.setValue("name", order.name);
-      form.setValue("email", order.email);
     }
   }, [order, form]);
 
@@ -99,6 +91,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     const review: Omit<Review, "id"> = {
       ...data,
       status: "pending",
+      email: order.email,
       orderId: order.id,
       createdAt: getTimestamp(),
       productIds: order.products.map(product => product.id),
@@ -200,21 +193,6 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                           <FormLabel>Your Name</FormLabel>
                           <FormControl>
                             <Input autoComplete="off" placeholder="Enter your name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      disabled
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Your Email</FormLabel>
-                          <FormControl>
-                            <Input autoComplete="off" placeholder="Enter your email" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
