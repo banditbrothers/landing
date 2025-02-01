@@ -5,10 +5,10 @@ import { getStorage } from "firebase/storage";
 import { getFirestore, collection, doc } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBiHJ3OTkRqMQghmqf-Jrin0HKvZRLlrLk",
-  authDomain: "banditbrothers-5253.firebaseapp.com",
-  projectId: "banditbrothers-5253",
-  storageBucket: "banditbrothers-5253.firebasestorage.app",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: `${process.env.NEXT_PUBLIC_PROJECT_ID}.firebaseapp.com`,
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
+  storageBucket: `${process.env.NEXT_PUBLIC_PROJECT_ID}.firebasestorage.app`,
   messagingSenderId: "643825030957",
   appId: "1:643825030957:web:b3dfc9609e0321e128e5a4",
 };
