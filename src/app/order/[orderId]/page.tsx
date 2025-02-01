@@ -60,7 +60,7 @@ export default function OrderPage({ params }: OrderPageProps) {
           <div className="grid md:grid-cols-2 gap-8">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Customer Details</CardTitle>
+                <CardTitle className="text-lg">Bandit Details</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">

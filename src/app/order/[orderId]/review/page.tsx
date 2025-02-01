@@ -242,7 +242,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                         <FormItem>
                           <FormLabel>Review Title</FormLabel>
                           <FormControl>
-                            <Input placeholder="Summarize your experience" {...field} />
+                            <Input placeholder="How was your loot?" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -257,7 +257,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                           <FormLabel>Your Review</FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="Tell us about your experience with the products"
+                              placeholder="Bandits don't hesitate! Unload your loot experience"
                               className="min-h-[120px]"
                               {...field}
                             />
