@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { QuantityStepper } from "../misc/QuantityStepper";
+import { useCart } from "../stores/cart";
 
 interface CheckoutProductCardProps {
   design: Design;
@@ -18,6 +19,7 @@ export const CheckoutProductCard = ({
   updateCartItemBy,
   removeCartItem,
 }: CheckoutProductCardProps) => {
+  const closeCart = useCart(s => s.closeCart);
   return (
     <div key={design.id} className="flex gap-4 p-4 bg-card rounded-lg relative border border-border">
       <Button
@@ -29,7 +31,7 @@ export const CheckoutProductCard = ({
         <XMarkIcon className="w-4 h-4" />
       </Button>
       <div className="w-20 h-20 sm:w-24 sm:h-24 relative">
-        <Link href={`/designs/${design.id}`}>
+        <Link href={`/designs/${design.id}`} onClick={closeCart}>
           <Image
             fill
             src={design.image}

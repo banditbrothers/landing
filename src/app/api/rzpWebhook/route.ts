@@ -1,5 +1,5 @@
 import { getOrder, updateOrder } from "@/actions/orders";
-import { sendDiscordOrderMessage } from "@/lib/discord";
+import { sendDiscordOrderMessage } from "@/actions/discord";
 import { getDiscordOrderMessage } from "@/utils/discordMessages";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 
@@ -20,10 +20,12 @@ export async function POST(request: Request) {
 
         const paymentId = data.payload.payment.entity.id;
         const paymentStatus = data.payload.payment.entity.status;
+        const paymentMethod = data.payload.payment.entity.method;
 
         const updateOrderPromise = updateOrder(dbId, {
           "rzp.paymentId": paymentId,
           "rzp.paymentStatus": paymentStatus,
+          "rzp.paymentMethod": paymentMethod,
           status: orderStatus,
         });
 

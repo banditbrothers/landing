@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DESIGNS_OBJ, DESIGNS, Design } from "@/data/designs";
 import { MultiSelectDropdown } from "@/components/dropdowns/MultiSelectDropdown";
 
-import { Order, SelectedDesignsType } from "@/types/order";
+import { Order, OrderProduct, CartItem } from "@/types/order";
 import { Coupon } from "@/types/coupon";
 import { getTimestamp } from "@/utils/timestamp";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -23,7 +23,7 @@ import { LoadingIcon, LoadingScreen } from "@/components/misc/Loading";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";
 import { Separator } from "@/components/ui/separator";
 
-import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
+import { getWhatsappNeedHelpWithOrderLink } from "@/utils/whatsappMessageLinks";
 import { useOrderActions } from "@/hooks/useOrderActions";
 import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/payments/RazorpayGateway";
 import { updateOrder } from "@/actions/orders";
@@ -60,7 +60,7 @@ const orderFormSchema = z.object({
   }),
 });
 
-const getSubtotal = (products: SelectedDesignsType[]) => {
+const getSubtotal = (products: CartItem[]) => {
   if (products.length === 0) return 0;
 
   return products.reduce((total, product) => {
@@ -69,7 +69,7 @@ const getSubtotal = (products: SelectedDesignsType[]) => {
   }, 0);
 };
 
-const getShippingCost = (products: SelectedDesignsType[], coupon: Coupon | null) => {
+const getShippingCost = (products: CartItem[], coupon: Coupon | null) => {
   if (products.length === 0) return 0;
   const subtotal = getSubtotal(products);
   const discount = getDiscountAmount(subtotal, coupon);
@@ -79,7 +79,7 @@ const getShippingCost = (products: SelectedDesignsType[], coupon: Coupon | null)
   return SHIPPING_COST;
 };
 
-const calculateTotal = (products: SelectedDesignsType[], coupon: Coupon | null) => {
+const calculateTotal = (products: CartItem[], coupon: Coupon | null) => {
   const subtotal = getSubtotal(products);
   const discount = getDiscountAmount(subtotal, coupon);
   const shippingCost = getShippingCost(products, coupon);
@@ -165,30 +165,43 @@ function OrderPageContent() {
   };
 
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
+    const products: OrderProduct[] = cart.map(product => ({
+      id: product.designId,
+      name: DESIGNS_OBJ[product.designId].name,
+      price: DESIGNS_OBJ[product.designId].price,
+      image: DESIGNS_OBJ[product.designId].image,
+      quantity: product.quantity,
+    }));
+
     const order: Omit<Order, "id" | "status"> = {
       ...values,
+      products,
       paymentMode,
-      amount: orderTotal,
-      couponCode: coupon?.code ?? null,
+      total: orderTotal,
+      subtotal: getSubtotal(cart),
+      discount: getDiscountAmount(subtotal, coupon),
+      shipping: getShippingCost(cart, coupon),
       createdAt: getTimestamp(),
-      products: cart,
+      couponCode: coupon?.code ?? null,
     };
 
-    identifyUser(order.email, { name: order.name, phone: order.phone, email: order.email });
+    identifyUser(order.email, { name: order.name, email: order.email });
 
     const orderObj = await createOrder(order);
 
     if (orderObj.paymentMode === "rzp") rzpRef.current?.handlePayment(orderObj);
     else if (orderObj.paymentMode === "cash") {
       toast.success("Order Placed in Cash 🎉");
-      clearCart();
-      clearCoupon();
-      router.replace("/");
+      finalizeOrder();
     }
   };
 
   const handlePaymentSuccess = async () => {
     toast.success("Order Placed 🎉");
+    finalizeOrder();
+  };
+
+  const finalizeOrder = () => {
     clearCart();
     clearCoupon();
     router.replace("/");
@@ -267,7 +280,9 @@ function OrderPageContent() {
               <Button
                 variant="link"
                 className="px-0"
-                onClick={() => window.open(getWhatsappNeedHelpLink(form.getValues()), "_blank", "noreferrer noopener")}>
+                onClick={() =>
+                  window.open(getWhatsappNeedHelpWithOrderLink(form.getValues()), "_blank", "noreferrer noopener")
+                }>
                 Need Help?
               </Button>
             </CardTitle>

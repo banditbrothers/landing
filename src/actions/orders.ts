@@ -1,10 +1,10 @@
 "use server";
 
 import { Collections } from "@/constants/collections";
-import { firestore } from "@/lib/firebase";
+import { firestore } from "@/lib/firebase-admin";
 import { Order } from "@/types/order";
 import { createOrder as createRzpOrder } from "./payments/rzp";
-import { sendDiscordOrderMessage } from "@/lib/discord";
+import { sendDiscordOrderMessage } from "@/actions/discord";
 import { getDiscordOrderMessage } from "@/utils/discordMessages";
 
 export const getOrders = async (): Promise<Order[]> => {
@@ -27,7 +27,7 @@ export const createOrder = async (order: Partial<Order>) => {
 
   const newOrder = { ...order };
   if (newOrder.paymentMode === "rzp") {
-    const rzpOrder = await createRzpOrder(order.amount!, dbId);
+    const rzpOrder = await createRzpOrder(order.total!, dbId);
 
     newOrder.status = "initiated";
     newOrder.rzp = {
@@ -36,10 +36,11 @@ export const createOrder = async (order: Partial<Order>) => {
       currency: rzpOrder.currency,
       paymentId: null,
       paymentStatus: null,
+      paymentMethod: null,
     };
   } else if (newOrder.paymentMode === "cash") {
     newOrder.status = "paid";
-    newOrder.cash = { amount: +order.amount! * 100, paymentStatus: "paid" };
+    newOrder.cash = { amount: +order.total! * 100, paymentStatus: "paid" };
   }
 
   await orderRef.create(newOrder);

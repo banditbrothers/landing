@@ -11,14 +11,18 @@ export type Address = {
 
 export type Order = {
   id: string;
+  reviewId?: string;
   createdAt: number;
   name: string;
   email: string;
   phone: string;
-  amount: number;
+  total: number;
+  subtotal: number;
+  discount: number;
+  shipping: number;
   couponCode: string | null;
   address: Address;
-  products: SelectedDesignsType[];
+  products: OrderProduct[];
   status: OrderStatus;
 } & (
   | {
@@ -29,6 +33,7 @@ export type Order = {
         currency: string;
         paymentId: string | null;
         paymentStatus: string | null;
+        paymentMethod: "card" | "netbanking" | "wallet" | "emi" | "upi" | null;
       };
     }
   | {
@@ -40,7 +45,15 @@ export type Order = {
     }
 );
 
-export type SelectedDesignsType = {
+export type OrderProduct = {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+};
+
+export type CartItem = {
   designId: string;
   quantity: number;
 };

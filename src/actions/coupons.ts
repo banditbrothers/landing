@@ -3,7 +3,7 @@
 import { getTimestamp } from "@/utils/timestamp";
 import { Coupon } from "@/types/coupon";
 import { Collections } from "@/constants/collections";
-import { firestore } from "@/lib/firebase";
+import { firestore } from "@/lib/firebase-admin";
 
 export const validateCoupon = async (code: string) => {
   const coupon = await getCoupon(code);

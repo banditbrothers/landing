@@ -3,7 +3,9 @@ import { DESIGNS_OBJ } from "@/data/designs";
 import { Metadata } from "next";
 import React from "react";
 
-export async function generateMetadata({ params }: { params: Promise<{ designId: string }> }): Promise<Metadata> {
+type DesignPageProps = { params: Promise<{ designId: string }> };
+
+export async function generateMetadata({ params }: DesignPageProps): Promise<Metadata> {
   const designId = (await params).designId;
   const design = DESIGNS_OBJ[designId];
 
@@ -17,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ designId:
   return {};
 }
 
-export default function DesignPage({ params }: { params: Promise<{ designId: string }> }) {
+export default function DesignPage({ params }: DesignPageProps) {
   const resolvedParams = React.use(params);
 
   return (

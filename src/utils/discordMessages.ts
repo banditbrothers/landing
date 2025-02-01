@@ -5,6 +5,8 @@ import { getDate } from "./timestamp";
 import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
 
 export const getDiscordOrderMessage = (order: Order) => {
+  const paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
+
   return {
     content: `🎉 We have a new order! \nClick [here](${getWhatsappOrderConfirmationLink(order)}) to send ${
       order.name
@@ -18,12 +20,12 @@ export const getDiscordOrderMessage = (order: Order) => {
           { name: "Name", value: order.name },
           {
             name: "Payment Details",
-            value: `${order.paymentMode} / ₹${order.amount} ${order.couponCode ? `(${order.couponCode})` : ""}`,
+            value: `${paymentMethod} / ₹${order.total} ${order.couponCode ? `(${order.couponCode})` : ""}`,
           },
           { name: "Address", value: getAddressString(order.address) },
           {
             name: "Products",
-            value: order.products.map(product => `${product.quantity}x ${product.designId}`).join("\n"),
+            value: order.products.map(product => `${product.quantity}x ${product.name}`).join("\n"),
           },
         ],
         timestamp: new Date(getDate(order.createdAt)).toISOString(),

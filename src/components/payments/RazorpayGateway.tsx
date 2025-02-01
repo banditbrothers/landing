@@ -45,7 +45,7 @@ export const RazorpayPaymentGateway = ({ ref, onSuccess, onCancel, onFailed }: R
 
     const options = {
       key: process.env.NEXT_PUBLIC_RZP_KEY_ID!,
-      amount: order.amount * 100,
+      amount: order.total * 100,
       currency: order.rzp.currency,
       order_id: order.rzp.orderId,
       prefill: { name: order.name, email: order.email, contact: order.phone, method: "upi" },
