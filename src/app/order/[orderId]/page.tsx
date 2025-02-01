@@ -14,6 +14,7 @@ import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { formattedDateTimeLong } from "@/utils/timestamp";
 import { Separator } from "@/components/ui/separator";
 import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
+import Link from "next/link";
 
 type OrderPageProps = { params: Promise<{ orderId: string }> };
 
@@ -106,7 +107,9 @@ export default function OrderPage({ params }: OrderPageProps) {
                 {order.products.map((product, index) => (
                   <div key={product.id}>
                     <div className="flex items-center gap-4 py-2">
-                      <Image width={80} height={80} className="rounded" alt={product.name} src={product.image} />
+                      <Link href={`/designs/${product.id}`} target="_blank">
+                        <Image width={100} height={100} className="rounded" alt={product.name} src={product.image} />
+                      </Link>
                       <div className="flex-1">
                         <h4 className="font-medium">{product.name}</h4>
                         <p className="text-sm text-muted-foreground">Quantity: {product.quantity}</p>
