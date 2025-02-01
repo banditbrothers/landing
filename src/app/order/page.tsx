@@ -185,7 +185,7 @@ function OrderPageContent() {
       couponCode: coupon?.code ?? null,
     };
 
-    identifyUser(order.email, { name: order.name, phone: order.phone, email: order.email });
+    identifyUser(order.email, { name: order.name, email: order.email });
 
     const orderObj = await createOrder(order);
 
