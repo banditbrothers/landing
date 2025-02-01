@@ -1,11 +1,12 @@
 import React from "react";
-import { useDropzone } from "react-dropzone";
+import { DropzoneProps, useDropzone } from "react-dropzone";
 import { Loader2, UploadCloud } from "lucide-react";
 
-export function FileDropzone({ loading, onDrop }: { loading: boolean; onDrop: (files: File[]) => void }) {
+export function FileDropzone({ loading, onDrop }: DropzoneProps & { loading: boolean }) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     maxFiles: 1,
+    multiple: false,
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },

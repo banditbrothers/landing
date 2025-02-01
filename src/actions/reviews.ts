@@ -1,43 +1,18 @@
 "use server";
 
 import { Collections } from "@/constants/collections";
-import { firestore } from "@/lib/firebase";
+import { firestore } from "@/lib/firebase-admin";
 import { Review } from "@/types/review";
 
-export const createReview = async (review: Omit<Review, "id">) => {
-  const reviewRef = firestore().collection(Collections.reviews).doc();
-  const reviewId = reviewRef.id;
+export const createReview = async (id: string, review: Omit<Review, "id">) => {
+  const reviewRef = firestore().collection(Collections.reviews).doc(id);
 
   const reviewPromise = reviewRef.set(review);
-  const orderPromise = firestore().collection(Collections.orders).doc(review.orderId).update({ reviewId });
+  const orderPromise = firestore().collection(Collections.orders).doc(review.orderId).update({ reviewId: id });
   await Promise.all([reviewPromise, orderPromise]);
 
-  const newReview = { ...review, id: reviewId };
+  const newReview = { ...review, id };
   return newReview;
-};
-
-export const getReviewsByProductId = async (productId: string, limit = 10) => {
-  console.log("getting reviews for", productId, "with limit", limit);
-  try {
-    const reviews = await firestore()
-      .collection(Collections.reviews)
-      .where("productIds", "array-contains", productId)
-      .orderBy("productIds")
-      .orderBy("createdAt", "desc")
-      .limit(limit)
-      .get();
-
-    const finalReviews = reviews.docs.map(doc => {
-      const data = doc.data();
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { email, ...rest } = data;
-      return { id: doc.id, ...rest };
-    }) as Review[];
-    return finalReviews;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
 };
 
 export const getReviewsAdmin = async (limit = 10) => {

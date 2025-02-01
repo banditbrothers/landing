@@ -10,7 +10,6 @@ import { LoadingScreen } from "@/components/misc/Loading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, EyeIcon, XMarkIcon } from "@/components/misc/icons";
 import {
@@ -89,7 +88,9 @@ export function ReviewManagement() {
                     {review.images.map((image, index) => (
                       <Link key={index} href={image} target="_blank">
                         <div className="flex flex-row gap-2 items-center">
-                          <Image quality={10} src={image} alt="Review Image" width={100} height={100} />
+                          <Button variant="link" size="icon">
+                            Image {index + 1}
+                          </Button>
                         </div>
                       </Link>
                     ))}

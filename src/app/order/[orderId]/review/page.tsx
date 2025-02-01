@@ -15,16 +15,21 @@ import Image from "next/image";
 import { StarRatingInput } from "@/components/misc/StarRating";
 import { Textarea } from "@/components/ui/textarea";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { useReviewActions } from "@/hooks/useReviewActions";
 import { Review } from "@/types/review";
 import { getTimestamp } from "@/utils/timestamp";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { getWhatsappHelpWithCreateReviewLink, getWhatsappUpdateReviewLink } from "@/utils/whatsappMessageLinks";
-import { CheckCircle, MessageCircle } from "lucide-react";
+import { CheckCircle, Loader2, MessageCircle } from "lucide-react";
 import { FileDropzone } from "@/components/misc/FileUploader";
 import { compressImage } from "@/utils/image";
 import Link from "next/link";
+import { getCollectionDocumentId, signInAnonymously, storage } from "@/lib/firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { Collections } from "@/constants/collections";
+import { createReview } from "@/actions/reviews";
+
+signInAnonymously();
 
 const reviewSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -37,13 +42,10 @@ const reviewSchema = z.object({
 type OrderPageProps = { params: Promise<{ orderId: string }> };
 
 export default function OrderReviewPage({ params }: OrderPageProps) {
-  const { createReview, loading } = useReviewActions();
-
   const [order, setOrder] = useState<Order | null>(null);
-  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"not-submitted" | "submitting" | "submitted">("not-submitted");
   const [isCompressing, setIsCompressing] = useState<boolean>(false);
   const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
@@ -61,6 +63,11 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     const fetchOrder = async () => {
       const orderId = (await params).orderId;
       const order = await getOrder(orderId);
+      if (!order) {
+        toast.error("Order not found");
+        return;
+      }
+      setSubmitStatus(order.reviewId ? "submitted" : "not-submitted");
       setOrder(order);
     };
     fetchOrder();
@@ -79,7 +86,15 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
       return;
     }
 
-    // todo: upload image to firebase
+    setSubmitStatus("submitting");
+    const reviewId = getCollectionDocumentId(Collections.reviews);
+
+    let imageUrl = "";
+    if (image) {
+      const storageRef = ref(storage, `${Collections.reviews}/${reviewId}/${image.name}`);
+      const uploadTask = await uploadBytes(storageRef, image);
+      imageUrl = await getDownloadURL(uploadTask.ref);
+    }
 
     const review: Omit<Review, "id"> = {
       ...data,
@@ -87,29 +102,29 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
       orderId: order.id,
       createdAt: getTimestamp(),
       productIds: order.products.map(product => product.id),
-      //   images: image ? [image] : [],
+      images: imageUrl ? [imageUrl] : [],
     };
 
-    await createReview(review);
+    await createReview(reviewId, review);
     toast.success("Review submitted successfully");
-    setReviewSubmitted(true);
+    setSubmitStatus("submitted");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleOnImageSelect = async (files: File[]) => {
+    if (files.length === 0) {
+      toast.error("Oops, this file is not supported");
+      return;
+    }
+
     setIsCompressing(true);
     const compressedFile = await compressImage(files[0]);
     setIsCompressing(false);
     setImage(compressedFile);
-    // Create URL for preview
-    setImagePreview(URL.createObjectURL(compressedFile));
-    console.log("Dropped files", files);
-    console.log("Compressed file", compressedFile);
   };
 
-  console.log("imagePreview", imagePreview);
-
   if (!order) return <LoadingScreen />;
-  if (order.reviewId || reviewSubmitted) return <ReviewSubmitted order={order} />;
+  if (submitStatus === "submitted") return <ReviewSubmitted order={order} />;
 
   return (
     <div className="container mx-auto max-w-2xl mt-20 min-h-screen">
@@ -177,20 +192,6 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField
-                      control={form.control}
-                      name="rating"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Rating</FormLabel>
-                          <FormControl>
-                            <StarRatingInput value={field.value} onChange={field.onChange} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
                       disabled
                       control={form.control}
                       name="name"
@@ -198,7 +199,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                         <FormItem>
                           <FormLabel>Your Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your name" {...field} />
+                            <Input autoComplete="off" placeholder="Enter your name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -213,7 +214,21 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                         <FormItem>
                           <FormLabel>Your Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your email" {...field} />
+                            <Input autoComplete="off" placeholder="Enter your email" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="rating"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Rating</FormLabel>
+                          <FormControl>
+                            <StarRatingInput value={field.value} onChange={field.onChange} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -262,11 +277,11 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                         <FormMessage />
                       </FormItem>
                     )}
-                    {imagePreview && (
+                    {image && (
                       <div className="relative w-full h-64">
                         <Image
                           fill
-                          src={imagePreview}
+                          src={URL.createObjectURL(image)}
                           alt="Review image preview"
                           className="object-contain rounded-lg"
                         />
@@ -275,10 +290,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                           variant="destructive"
                           size="sm"
                           className="absolute top-2 right-2"
-                          onClick={() => {
-                            setImage(null);
-                            setImagePreview(null);
-                          }}>
+                          onClick={() => setImage(null)}>
                           Remove
                         </Button>
                       </div>
@@ -290,9 +302,10 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                 <Button
                   type="submit"
                   className="w-full"
-                  disabled={loading.creatingReview}
+                  disabled={submitStatus === "submitting"}
                   onClick={form.handleSubmit(onSubmit)}>
                   Submit Review
+                  {submitStatus === "submitting" && <Loader2 className="w-4 h-4 animate-spin" />}
                 </Button>
               </CardFooter>
             </Card>
@@ -325,8 +338,8 @@ const ReviewSubmitted = ({ order }: { order: Order }) => {
                 const link = getWhatsappUpdateReviewLink(order.reviewId!, order.id);
                 window.open(link, "_blank");
               }}>
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Contact Support
+              <MessageCircle className="w-4 h-4" />
+              Contact Us
             </Button>
           </div>
           <div className="w-full pt-4 border-t border-border">

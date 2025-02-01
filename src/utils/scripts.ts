@@ -1,7 +1,7 @@
 "use server";
 
 import { Collections } from "@/constants/collections";
-import { firestore } from "@/lib/firebase";
+import { firestore } from "@/lib/firebase-admin";
 
 export const migrateOrders = async () => {
   return false;

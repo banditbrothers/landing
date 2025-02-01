@@ -1,7 +1,7 @@
 "use server";
 
 import { Collections } from "@/constants/collections";
-import { firestore } from "@/lib/firebase";
+import { firestore } from "@/lib/firebase-admin";
 import { Order } from "@/types/order";
 import { createOrder as createRzpOrder } from "./payments/rzp";
 import { sendDiscordOrderMessage } from "@/actions/discord";
