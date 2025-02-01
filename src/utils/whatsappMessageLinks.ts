@@ -21,6 +21,8 @@ export const getWhatsappNeedHelpWithOrderLink = (orderDetails: Partial<Order>) =
 };
 
 export const getWhatsappOrderConfirmationLink = (order: Order) => {
+  const paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
+
   const message = [
     "Hey, we have received your order!",
     "",
@@ -30,7 +32,10 @@ export const getWhatsappOrderConfirmationLink = (order: Order) => {
     "",
     `*Shipping Address:* ${getAddressString(order.address)}`,
     "",
-    `*Payment Method:* ${order.paymentMode === "rzp" ? "Razorpay" : "Cash"}`,
+    `*Payment Method:* ${paymentMethod}`,
+    "",
+    "Check your order details here:",
+    `https://www.banditbrothers.in/order/${order.id}`,
     "",
     "Please read through the wash and care instructions here:",
     "https://www.banditbrothers.in/#product-specs",
