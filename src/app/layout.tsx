@@ -10,8 +10,6 @@ import Footer from "@/components/footer";
 import { SearchDialog } from "@/components/dialogs/SearchDialog";
 import { CartSheet } from "@/components/sheets/CartSheet";
 
-import { TanstackQueryProvider } from "@/provider/TanstackQuery";
-
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
   variable: "--font-calera",
@@ -45,18 +43,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${theme}`}>
       <body className={`${spaceGrotesk.className} ${Calera.className}`}>
-        <TanstackQueryProvider>
-          <CSPostHogProvider>
-            <Toaster theme={theme} richColors position="top-right" />
-            <main>
-              <Navbar />
-              {children}
-              <Footer />
-            </main>
-            <SearchDialog />
-            <CartSheet />
-          </CSPostHogProvider>
-        </TanstackQueryProvider>
+        <CSPostHogProvider>
+          <Toaster theme={theme} richColors position="top-right" />
+          <main>
+            <Navbar />
+            {children}
+            <Footer />
+          </main>
+          <SearchDialog />
+          <CartSheet />
+        </CSPostHogProvider>
       </body>
     </html>
   );
