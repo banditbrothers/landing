@@ -8,6 +8,7 @@ import useIsMobile from "@/hooks/useIsMobile";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { useCart } from "../stores/cart";
+import { formatCurrency } from "@/utils/price";
 
 interface DesignCardProps {
   design: Design;
@@ -72,7 +73,7 @@ export const DesignNameAndPriceBanner = ({ design }: { design: Design }) => {
       <div className="flex flex-col justify-between items-center w-full">
         <div className="flex flex-row justify-between items-start w-full ">
           <h3 className="text-xl font-semibold">{design.name}</h3>
-          <p className="text-sm text-muted-foreground">₹{design.price}</p>
+          <p className="text-sm text-muted-foreground">{formatCurrency(design.price)}</p>
         </div>
         <div className="flex flex-row justify-between items-center w-full">
           <span>

@@ -2,6 +2,7 @@ import { Design } from "@/data/designs";
 import Image from "next/image";
 import Link from "next/link";
 import { CategoryBadge } from "../badges/DesignBadges";
+import { formatCurrency } from "@/utils/price";
 
 interface SearchProductCardProps {
   design: Design;
@@ -24,7 +25,7 @@ export const SearchProductCard = ({ design }: SearchProductCardProps) => {
             <h3 className="font-semibold text-sm sm:text-base pr-3">{design.name}</h3>
             <span className="flex flex-row gap-2 items-center justify-between">
               <CategoryBadge category={design.category} />
-              <p className="text-muted-foreground text-sm">₹{design.price}</p>
+              <p className="text-muted-foreground text-sm">{formatCurrency(design.price)}</p>
             </span>
           </div>
         </div>

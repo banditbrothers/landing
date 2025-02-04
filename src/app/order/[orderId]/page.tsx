@@ -98,8 +98,8 @@ export default function OrderPage({ params }: OrderPageProps) {
                         <p className="text-sm text-muted-foreground">Quantity: {product.quantity}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">{formatCurrency(product.price * product.quantity)}</p>
-                        <p className="text-sm text-muted-foreground">{formatCurrency(product.price)} each</p>
+                        <p className="font-medium">{formatCurrency(product.price * product.quantity, 2)}</p>
+                        <p className="text-sm text-muted-foreground">{formatCurrency(product.price, 2)} each</p>
                       </div>
                     </div>
                     {index < order.products.length - 1 && <Separator />}
@@ -128,7 +128,7 @@ export default function OrderPage({ params }: OrderPageProps) {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>{formatCurrency(order.subtotal)}</span>
+                    <span>{formatCurrency(order.subtotal, 2)}</span>
                   </div>
 
                   {order.discount > 0 && (
@@ -139,7 +139,7 @@ export default function OrderPage({ params }: OrderPageProps) {
                           {order.couponCode}
                         </span>
                       </span>
-                      <span>-{formatCurrency(order.discount)}</span>
+                      <span>-{formatCurrency(order.discount, 2)}</span>
                     </div>
                   )}
 
@@ -154,7 +154,7 @@ export default function OrderPage({ params }: OrderPageProps) {
                 {/* Total */}
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold">Total</span>
-                  <span className="text-lg font-bold">{formatCurrency(order.total)}</span>
+                  <span className="text-lg font-bold">{formatCurrency(order.total, 2)}</span>
                 </div>
               </div>
             </CardContent>

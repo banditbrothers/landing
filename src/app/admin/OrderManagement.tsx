@@ -184,7 +184,7 @@ export function OrderManagement() {
 
                     <TableCell className="max-w-xs">{getAddressString(order.address)}</TableCell>
 
-                    <TableCell>{formatCurrency(order.total)}</TableCell>
+                    <TableCell>{formatCurrency(order.total, 2)}</TableCell>
 
                     <TableCell>
                       <div

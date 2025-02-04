@@ -1,5 +1,6 @@
 import { Order } from "@/types/order";
 import { getAddressString } from "./address";
+import { formatCurrency } from "./price";
 
 const whatsappPhoneNumber = "917977884773";
 
@@ -28,7 +29,7 @@ export const getWhatsappOrderConfirmationLink = (order: Order) => {
     "",
     `*Order ID:* ${order.id}`,
     "",
-    `*Order Total:* ₹${order.total}`,
+    `*Order Total:* ${formatCurrency(order.total, 2)}`,
     "",
     `*Shipping Address:* ${getAddressString(order.address)}`,
     "",
@@ -45,7 +46,7 @@ export const getWhatsappOrderConfirmationLink = (order: Order) => {
     "May the Bandits be with you!",
   ].join("\n");
   const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/${order.phone}?text=${encodedMessage}`;
+  return `https://wa.me/91${order.phone}?text=${encodedMessage}`;
 };
 
 export const getWhatsappOrderReviewLink = (order: Order) => {
@@ -57,7 +58,7 @@ export const getWhatsappOrderReviewLink = (order: Order) => {
     `Click here to share your feedback: https://www.banditbrothers.in/order/${order.id}/review`,
   ].join("\n");
   const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/${order.phone}?text=${encodedMessage}`;
+  return `https://wa.me/91${order.phone}?text=${encodedMessage}`;
 };
 
 export const getWhatsappNeedHelpLink = (orderId: string) => {

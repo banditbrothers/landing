@@ -28,6 +28,7 @@ import { LoadingScreen } from "@/components/misc/Loading";
 import { trackDesignAddToCart, trackDesignView } from "@/utils/analytics";
 import { useCart } from "@/components/stores/cart";
 import { QuantityStepper } from "@/components/misc/QuantityStepper";
+import { formatCurrency } from "@/utils/price";
 
 export const ProductPageContents = ({ designId: paramDesignId }: { designId: string }) => {
   const router = useRouter();
@@ -94,7 +95,7 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
           </div>
 
           <span className="flex flex-row gap-2 items-end">
-            <p className="text-2xl/6  font-semibold text-foreground">₹{design.price.toLocaleString()}</p>
+            <p className="text-2xl/6  font-semibold text-foreground">{formatCurrency(design.price)}</p>
             <p className="text-muted-foreground text-xs">(excl. shipping)</p>
           </span>
 

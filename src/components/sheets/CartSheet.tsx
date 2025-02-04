@@ -10,6 +10,7 @@ import { CheckoutProductCard } from "../cards/CheckoutProductCard";
 import { useRouter } from "next/navigation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FEATURED_COUPON, STANDARD_COUPON } from "@/components/typography/coupons";
+import { formatCurrency } from "@/utils/price";
 
 export const CartSheet = () => {
   const { cart: cartItems, isCartOpen, closeCart, updateCartItem, removeCartItem } = useCart();
@@ -78,7 +79,7 @@ export const CartSheet = () => {
         <div className="w-full text-sm">
           <div className="flex justify-between mb-1">
             <span>Subtotal</span>
-            <span>₹{subtotal.toFixed(2)}</span>
+            <span>{formatCurrency(subtotal, 2)}</span>
           </div>
           <p className="text-muted-foreground text-xs mb-2">Coupons can be applied on the next page</p>
         </div>

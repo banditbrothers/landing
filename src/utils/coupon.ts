@@ -1,4 +1,5 @@
 import { Coupon } from "@/types/coupon";
+import { formatCurrency } from "./price";
 
 export const validateCouponInCart = (
   coupon: Coupon | null,
@@ -8,7 +9,7 @@ export const validateCouponInCart = (
   if (subtotal < coupon.minOrderAmount)
     return {
       error: true,
-      message: `Minimum Order Amount should be more than ₹${coupon.minOrderAmount} to apply this coupon`,
+      message: `Minimum Order Amount should be more than ${formatCurrency(coupon.minOrderAmount)} to apply this coupon`,
     };
   return { error: false, message: null };
 };

@@ -37,8 +37,9 @@ import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
 import { FEATURED_COUPON } from "@/components/typography/coupons";
 import { DangerBanner } from "@/components/misc/Banners";
 import { validatePincode } from "@/lib/pincode";
+import { formatCurrency } from "@/utils/price";
 
-const SHIPPING_COST = 50;
+const SHIPPING_COST = 100;
 const MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING = 750;
 
 const countries = Country.getAllCountries();
@@ -47,7 +48,7 @@ const orderFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   name: z.string().min(2, "Enter valid name"),
   couponCode: z.string(),
-  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, {
+  phone: z.string().regex(/^\d{1,10}$/, {
     message: "Enter valid phone number",
   }),
   address: z.object({
@@ -333,11 +334,14 @@ function OrderPageContent() {
                           <RequiredStar />
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            type="tel"
-                            onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
-                            {...field}
-                          />
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground text-sm">+91</span>
+                            <Input
+                              inputMode="numeric"
+                              onKeyDown={e => (e.key === "Enter" ? e.preventDefault() : null)}
+                              {...field}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -544,7 +548,7 @@ function OrderPageContent() {
                             {totalItems} {totalItems > 1 ? "items" : "item"}
                           </span>
                         </span>
-                        <span>₹{subtotal}</span>
+                        <span>{formatCurrency(subtotal, 2)}</span>
                       </div>
 
                       {coupon && (
@@ -553,7 +557,7 @@ function OrderPageContent() {
                             Discount
                             <span className="text-xs text-muted-foreground">Applied {coupon.code}</span>
                           </span>
-                          <span>- ₹{getDiscountAmount(subtotal, coupon)}</span>
+                          <span>- {formatCurrency(getDiscountAmount(subtotal, coupon), 2)}</span>
                         </div>
                       )}
 
@@ -561,18 +565,20 @@ function OrderPageContent() {
                         <span className="flex flex-col gap-1">
                           Shipping
                           <span className="text-xs text-muted-foreground">
-                            Get Free Shipping on orders above ₹{MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING}
+                            Get Free Shipping on orders above {formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}
                           </span>
                         </span>
 
                         <span className="flex items-center gap-1 capitalize">
                           {isShippingFree ? (
                             <>
-                              <span className="text-muted-foreground line-through">₹{SHIPPING_COST}</span>
+                              <span className="text-muted-foreground line-through">
+                                {formatCurrency(SHIPPING_COST)}
+                              </span>
                               FREE
                             </>
                           ) : (
-                            <span>₹{shippingCost}</span>
+                            <span>{formatCurrency(shippingCost)}</span>
                           )}
                         </span>
                       </div>
@@ -581,7 +587,7 @@ function OrderPageContent() {
                           <span className="text-lg font-medium">Total Amount</span>
                           <p className="text-sm text-muted-foreground">Inclusive of all</p>
                         </span>
-                        <span className="text-2xl font-bold self-start">₹{orderTotal}</span>
+                        <span className="text-2xl font-bold self-start">{formatCurrency(orderTotal, 2)}</span>
                       </div>
                     </div>
                   )}
@@ -593,7 +599,7 @@ function OrderPageContent() {
                       type="submit"
                       className="w-full"
                       disabled={!formIsReady || orderLoading.create || orderLoading.update || !!couponError}>
-                      {formIsReady ? `Pay ₹${orderTotal}` : "Pay Now"}
+                      {formIsReady ? `Pay ${formatCurrency(orderTotal, 2)}` : "Pay Now"}
                       {(orderLoading.create || orderLoading.update) && <LoadingIcon />}
                     </Button>
                   </div>

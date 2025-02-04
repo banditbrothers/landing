@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { QuantityStepper } from "../misc/QuantityStepper";
 import { useCart } from "../stores/cart";
+import { formatCurrency } from "@/utils/price";
 
 interface CheckoutProductCardProps {
   design: Design;
@@ -42,7 +43,7 @@ export const CheckoutProductCard = ({
       </div>
       <div className="flex-1">
         <h3 className="font-semibold text-sm sm:text-base pr-3">{design.name}</h3>
-        <p className="text-muted-foreground text-sm">₹{design.price}</p>
+        <p className="text-muted-foreground text-sm">{formatCurrency(design.price)}</p>
         <div className="flex items-center gap-2 mt-2 justify-end">
           <QuantityStepper
             quantity={quantity}
