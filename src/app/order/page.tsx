@@ -579,7 +579,7 @@ function OrderPageContent() {
                       <div className="flex justify-between items-center mt-2">
                         <span>
                           <span className="text-lg font-medium">Total Amount</span>
-                          <p className="text-sm text-muted-foreground">Inclusive of all taxes</p>
+                          <p className="text-sm text-muted-foreground">Inclusive of all</p>
                         </span>
                         <span className="text-2xl font-bold self-start">₹{orderTotal}</span>
                       </div>

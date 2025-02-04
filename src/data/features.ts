@@ -26,7 +26,7 @@ export const features = [
   },
   {
     title: "Custom Designs",
-    description: "Customize your bandana with your own style",
+    description: "Stay tuned to customize your bandana with your own style",
     icon: "🧡",
   },
 ];
