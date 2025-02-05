@@ -488,7 +488,9 @@ function OrderPageContent() {
                       <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
                         <span>
                           {selectedDesignsIds.map(id => (
-                            <Badge key={id}>{DESIGNS_OBJ[id].name}</Badge>
+                            <span key={id} className="mr-1 mb-1">
+                              <ProductBadge>{DESIGNS_OBJ[id].name}</ProductBadge>
+                            </span>
                           ))}
                         </span>
 
@@ -617,9 +619,9 @@ const RequiredStar = () => {
   return <span className="text-destructive ml-1">*</span>;
 };
 
-function Badge(props: { children: React.ReactNode }) {
+export function ProductBadge(props: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20 mr-1 mb-1">
+    <span className="inline-flex w-fit items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
       {props.children}
     </span>
   );

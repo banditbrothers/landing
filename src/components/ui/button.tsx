@@ -3,8 +3,6 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
-import { useState } from "react";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
@@ -46,39 +44,5 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 Button.displayName = "Button";
-
-export const ButtonWithTooltip = ({
-  children,
-  tooltipContent,
-  tooltipDisabled,
-  ...props
-}: ButtonProps & { tooltipContent: string; tooltipDisabled?: boolean }) => {
-  const [open, setOpen] = useState(false);
-
-  if (tooltipDisabled) return <Button {...props}>{children}</Button>;
-
-  return (
-    <TooltipProvider delayDuration={0}>
-      <Tooltip open={open}>
-        <TooltipTrigger asChild>
-          <a
-            onClick={() => setOpen(!open)}
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
-            onTouchStart={() => setOpen(!open)}
-            onKeyDown={e => {
-              e.preventDefault();
-              if (e.key === "Enter") setOpen(!open);
-            }}>
-            <Button {...props}>{children}</Button>
-          </a>
-        </TooltipTrigger>
-        <TooltipContent className={!tooltipContent ? "hidden" : ""}>
-          <span className="inline-block select-none">{tooltipContent}</span>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-};
 
 export { Button, buttonVariants };

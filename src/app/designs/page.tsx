@@ -16,9 +16,9 @@ function DesignsPageContent() {
       <div className="container mx-auto mt-16 min-h-screen">
         <div className="pt-16 mx-auto">
           <div className="flex flex-col gap-4">
-            <div className="text-4xl max-w-screen-2xl mx-auto">
+            <div className=" max-w-screen-2xl mx-auto">
               <div className="flex flex-col gap-4">
-                <span className="w-fit font-bold">Our Mischief</span>
+                <span className="text-4xl w-fit font-bold">Our Mischief</span>
                 <Button variant="link" onClick={() => setIsHowToWearDialogOpen(true)}>
                   <span>How to Wear</span>
                 </Button>
