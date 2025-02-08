@@ -42,3 +42,5 @@ next-env.d.ts
 
 .vscode
 firebase-service-account-admin.json
+firestore-debug.log
+functions/firebase-debug.log
