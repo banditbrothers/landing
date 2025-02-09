@@ -38,6 +38,7 @@ import { FEATURED_COUPON } from "@/components/typography/coupons";
 import { DangerBanner } from "@/components/misc/Banners";
 import { validatePincode } from "@/lib/pincode";
 import { formatCurrency } from "@/utils/price";
+import { ProductBadge } from "@/components/badges/ProductBadge";
 
 const SHIPPING_COST = 100;
 const MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING = 750;
@@ -618,14 +619,6 @@ function OrderPageContent() {
 const RequiredStar = () => {
   return <span className="text-destructive ml-1">*</span>;
 };
-
-export function ProductBadge(props: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex w-fit items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
-      {props.children}
-    </span>
-  );
-}
 
 export default function OrderPage() {
   return (
