@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { Review } from "@/types/review";
-import { ProductBadge } from "@/app/order/page";
 import { DESIGNS_OBJ } from "@/data/designs";
 import { StarRating } from "../misc/StarRating";
+import { ProductBadge } from "../badges/ProductBadge";
 
 export const ReviewCard = ({ review }: { review: Review }) => {
   return (
