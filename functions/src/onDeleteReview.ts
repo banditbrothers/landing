@@ -18,9 +18,17 @@ export const onDeleteReview = async (event: Event) => {
     console.log({ reviewId, orderId, images, imagesPath });
 
     // remove reviewId from order
-    await firestore().collection("orders").doc(orderId).update({ reviewId: FieldValue.delete() });
+    const removeOrderIdPromise = firestore()
+      .collection("orders")
+      .doc(orderId)
+      .update({ reviewId: FieldValue.delete() });
 
     // delete images folder from storage
-    await storage.bucket("gs://banditbrothers-5253.firebasestorage.app").deleteFiles({ prefix: `reviews/${reviewId}` });
+    const deleteImagesPromise = storage
+      .bucket("gs://banditbrothers-5253.firebasestorage.app")
+      .deleteFiles({ prefix: `reviews/${reviewId}` });
+
+    const results = await Promise.allSettled([removeOrderIdPromise, deleteImagesPromise]);
+    console.log({ results });
   }
 };
