@@ -4,12 +4,16 @@ import { DESIGNS_OBJ } from "@/data/designs";
 import { StarRating } from "../misc/StarRating";
 import { ProductBadge } from "../badges/ProductBadge";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
 
 export const ReviewCard = ({ review }: { review: Review }) => {
   const name = review.name
     .split(" ")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
+
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <div className="relative p-8 rounded-xl bg-card shadow-md hover:shadow-xl transition-all duration-300">
@@ -38,7 +42,16 @@ export const ReviewCard = ({ review }: { review: Review }) => {
 
         {review.images.length > 0 && (
           <div className="relative w-full h-96 rounded-lg overflow-hidden">
-            <Image fill priority quality={50} src={review.images[0]} alt="Review Image" className="object-contain" />
+            {isLoading && <Skeleton className="absolute inset-0 w-full h-full" aria-hidden="true" />}
+            <Image
+              fill
+              priority
+              quality={50}
+              src={review.images[0]}
+              alt="Review Image"
+              className="object-contain"
+              onLoadingComplete={() => setIsLoading(false)}
+            />
           </div>
         )}
       </div>
