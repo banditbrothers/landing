@@ -52,7 +52,7 @@ const CouponText = ({ code, ...rest }: CouponTextProps) => {
 
   const handleCopy = () => {
     copy(code);
-    toast.success("Copied to clipboard");
+    toast.success("Coupon code copied to clipboard");
   };
 
   return (
