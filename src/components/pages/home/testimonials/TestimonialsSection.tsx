@@ -8,7 +8,9 @@ export const TestimonialsSection = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-12">
           <h2 className="text-3xl font-bold tracking-tight mb-4">Looking for reviews?</h2>
-          <p className="text-muted-foreground mb-6">Discover what other Bandits are saying about their experience</p>
+          <p className="text-muted-foreground mb-6">
+            Discover what our fellow Bandits are saying about their experience
+          </p>
           <Link href="/reviews">
             <Button variant="default" className="group">
               View all reviews
