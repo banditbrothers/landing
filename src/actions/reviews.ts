@@ -20,13 +20,18 @@ export const getReviewsAdmin = async (limit = 10) => {
   return reviews.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Review[];
 };
 
-export const getReviews = async (limit = 10) => {
-  const reviews = await firestore()
+export const getReviews = async (limit = 10, lastReview?: Review) => {
+  let query = firestore()
     .collection(Collections.reviews)
     .where("status", "==", "approved")
     .orderBy("createdAt", "desc")
-    .limit(limit)
-    .get();
+    .limit(limit);
+
+  if (lastReview) {
+    query = query.startAfter(lastReview.createdAt);
+  }
+
+  const reviews = await query.get();
   return reviews.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Review[];
 };
 

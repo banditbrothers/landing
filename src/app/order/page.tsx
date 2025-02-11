@@ -34,10 +34,11 @@ import { useCart } from "@/components/stores/cart";
 import { useFavorites } from "@/components/stores/favorites";
 import { CouponInput } from "@/components/inputs/Coupon";
 import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
-import { FEATURED_COUPON } from "@/components/typography/coupons";
+import { BULK_BUY_COUPON } from "@/components/typography/coupons";
 import { DangerBanner } from "@/components/misc/Banners";
 import { validatePincode } from "@/lib/pincode";
 import { formatCurrency } from "@/utils/price";
+import { ProductBadge } from "@/components/badges/ProductBadge";
 
 const SHIPPING_COST = 100;
 const MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING = 750;
@@ -488,7 +489,9 @@ function OrderPageContent() {
                       <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
                         <span>
                           {selectedDesignsIds.map(id => (
-                            <Badge key={id}>{DESIGNS_OBJ[id].name}</Badge>
+                            <span key={id} className="mr-1 mb-1">
+                              <ProductBadge>{DESIGNS_OBJ[id].name}</ProductBadge>
+                            </span>
                           ))}
                         </span>
 
@@ -527,14 +530,14 @@ function OrderPageContent() {
                         />
                         {!coupon && (
                           <span className="text-xs text-muted-foreground">
-                            <FEATURED_COUPON.NoCouponAppliedMessage />
+                            <BULK_BUY_COUPON.NoCouponAppliedMessage />
                           </span>
                         )}
                         {coupon &&
-                          coupon.code !== FEATURED_COUPON.code &&
+                          coupon.code !== BULK_BUY_COUPON.code &&
                           getDiscountAmount(subtotal, coupon) < 200 && (
                             <span className="text-xs text-muted-foreground">
-                              <FEATURED_COUPON.CouponAppliedMessage />
+                              <BULK_BUY_COUPON.CouponAppliedMessage />
                             </span>
                           )}
                       </div>
@@ -616,14 +619,6 @@ function OrderPageContent() {
 const RequiredStar = () => {
   return <span className="text-destructive ml-1">*</span>;
 };
-
-function Badge(props: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20 mr-1 mb-1">
-      {props.children}
-    </span>
-  );
-}
 
 export default function OrderPage() {
   return (

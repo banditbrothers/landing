@@ -44,7 +44,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
   const [order, setOrder] = useState<Order | null>(null);
   const [submitStatus, setSubmitStatus] = useState<"not-submitted" | "submitting" | "submitted">("not-submitted");
   const [isCompressing, setIsCompressing] = useState<boolean>(false);
-  const [image, setImage] = useState<File | null>(null);
+  const [images, setImages] = useState<File[]>([]);
 
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
@@ -81,11 +81,12 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     setSubmitStatus("submitting");
     const reviewId = getCollectionDocumentId(Collections.reviews);
 
-    let imageUrl = "";
-    if (image) {
-      const storageRef = ref(storage, `${Collections.reviews}/${reviewId}/${image.name}`);
-      const uploadTask = await uploadBytes(storageRef, image);
-      imageUrl = await getDownloadURL(uploadTask.ref);
+    const imageUrls = [];
+    if (images.length > 0) {
+      const imageExtension = images[0].name.split(".").pop();
+      const storageRef = ref(storage, `${Collections.reviews}/${reviewId}/0.${imageExtension}`);
+      const uploadTask = await uploadBytes(storageRef, images[0]);
+      imageUrls.push(await getDownloadURL(uploadTask.ref));
     }
 
     const review: Omit<Review, "id"> = {
@@ -95,7 +96,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
       orderId: order.id,
       createdAt: getTimestamp(),
       productIds: order.products.map(product => product.id),
-      images: imageUrl ? [imageUrl] : [],
+      images: imageUrls,
     };
 
     await createReview(reviewId, review);
@@ -113,7 +114,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     setIsCompressing(true);
     const compressedFile = await compressImage(files[0]);
     setIsCompressing(false);
-    setImage(compressedFile);
+    setImages([compressedFile]);
   };
 
   if (!order) return <LoadingScreen />;
@@ -245,7 +246,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                       )}
                     />
 
-                    {!image && (
+                    {!images.length && (
                       <FormItem>
                         <FormLabel>Upload Image</FormLabel>
                         <FormControl>
@@ -255,11 +256,11 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                         <FormMessage />
                       </FormItem>
                     )}
-                    {image && (
+                    {images.length > 0 && (
                       <div className="relative w-full h-64">
                         <Image
                           fill
-                          src={URL.createObjectURL(image)}
+                          src={URL.createObjectURL(images[0])}
                           alt="Review image preview"
                           className="object-contain rounded-lg"
                         />
@@ -268,7 +269,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                           variant="destructive"
                           size="sm"
                           className="absolute top-2 right-2"
-                          onClick={() => setImage(null)}>
+                          onClick={() => setImages([])}>
                           Remove
                         </Button>
                       </div>

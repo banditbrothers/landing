@@ -17,7 +17,7 @@ import { CategoryBadge } from "../../badges/DesignBadges";
 import { useFavorites } from "@/components/stores/favorites";
 
 import { Button } from "../../ui/button";
-import { ShoppingCartIcon } from "../../misc/icons";
+import { ArrowRightIcon, ShoppingCartIcon } from "../../misc/icons";
 import { ShareIcon } from "lucide-react";
 import { shareDesign } from "@/utils/share";
 import { ImageCarousel } from "../../carousels/ImageCarousel";
@@ -29,6 +29,7 @@ import { trackDesignAddToCart, trackDesignView } from "@/utils/analytics";
 import { useCart } from "@/components/stores/cart";
 import { QuantityStepper } from "@/components/misc/QuantityStepper";
 import { formatCurrency } from "@/utils/price";
+import Link from "next/link";
 
 export const ProductPageContents = ({ designId: paramDesignId }: { designId: string }) => {
   const router = useRouter();
@@ -135,6 +136,22 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
           <div className=" pt-4 border-t border-muted">
             <h2 className="text-lg font-semibold text-foreground mb-3">Product Specifications</h2>
             <ProductDetailsAccordion />
+          </div>
+
+          {/* Reviews Link */}
+          <div className="space-y-4 pt-6 border-t border-muted">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">Bandit Reviews</h2>
+                <p className="text-sm text-muted-foreground">Hear from our fellow Bandits about their experience</p>
+              </div>
+              <Link href="/reviews" target="_blank">
+                <Button variant="outline" className="text-sm">
+                  View All
+                  <ArrowRightIcon className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

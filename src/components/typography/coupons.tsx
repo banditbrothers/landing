@@ -2,24 +2,24 @@ import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-export const FEATURED_COUPON = {
+export const BULK_BUY_COUPON = {
   code: "LOOT4B4NDITS",
   name: "Buy 4 for ₹999",
   CartMessage: () => (
     <span className="italic">
       Psst... Get <FeaturedText>Any 4 for ₹999</FeaturedText>, use code{" "}
-      <CouponText className="italic" code={FEATURED_COUPON.code} />
+      <CouponText className="italic" code={BULK_BUY_COUPON.code} />
     </span>
   ),
   NoCouponAppliedMessage: () => (
     <span>
-      Get <FeaturedText>Any 4 for ₹999</FeaturedText>, use code <CouponText code={FEATURED_COUPON.code} />
+      Get <FeaturedText>Any 4 for ₹999</FeaturedText>, use code <CouponText code={BULK_BUY_COUPON.code} />
     </span>
   ),
   CouponAppliedMessage: () => (
     <span>
       Want more discount? Get <FeaturedText>Any 4 for ₹999</FeaturedText>, use code{" "}
-      <CouponText code={FEATURED_COUPON.code} />
+      <CouponText code={BULK_BUY_COUPON.code} />
     </span>
   ),
 };
@@ -52,7 +52,7 @@ const CouponText = ({ code, ...rest }: CouponTextProps) => {
 
   const handleCopy = () => {
     copy(code);
-    toast.success("Copied to clipboard");
+    toast.success("Coupon code copied to clipboard");
   };
 
   return (
