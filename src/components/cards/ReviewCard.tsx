@@ -38,7 +38,7 @@ export const ReviewCard = ({ review }: { review: Review }) => {
 
         {review.images.length > 0 && (
           <div className="relative w-full h-96 rounded-lg overflow-hidden">
-            <Image fill src={review.images[0]} alt="Review Image" className="object-contain" />
+            <Image fill priority quality={50} src={review.images[0]} alt="Review Image" className="object-contain" />
           </div>
         )}
       </div>
