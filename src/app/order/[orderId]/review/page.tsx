@@ -246,7 +246,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                       )}
                     />
 
-                    {!images && (
+                    {!images.length && (
                       <FormItem>
                         <FormLabel>Upload Image</FormLabel>
                         <FormControl>
@@ -256,7 +256,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                         <FormMessage />
                       </FormItem>
                     )}
-                    {images && (
+                    {images.length > 0 && (
                       <div className="relative w-full h-64">
                         <Image
                           fill
