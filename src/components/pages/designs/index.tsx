@@ -140,7 +140,7 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
 
           {/* Reviews Link */}
           <div className="space-y-4 pt-6 border-t border-muted">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-6">
               <div>
                 <h2 className="text-xl font-semibold text-foreground">Bandit Reviews</h2>
                 <p className="text-sm text-muted-foreground">Hear from our fellow Bandits about their experience</p>
