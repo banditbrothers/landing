@@ -6,6 +6,11 @@ import { ProductBadge } from "../badges/ProductBadge";
 import Link from "next/link";
 
 export const ReviewCard = ({ review }: { review: Review }) => {
+  const name = review.name
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+
   return (
     <div className="relative p-8 rounded-xl bg-card shadow-md hover:shadow-xl transition-all duration-300">
       <div className="flex flex-col gap-8">
@@ -13,7 +18,7 @@ export const ReviewCard = ({ review }: { review: Review }) => {
           <div className="flex flex-col gap-4">
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <h6 className="text-sm font-medium text-muted-foreground">{review.name}</h6>
+                <h6 className="text-sm font-medium text-muted-foreground">{name}</h6>
                 <StarRating value={review.rating} />
               </div>
               <h3 className="text-xl font-semibold tracking-tight text-card-foreground">{review.title}</h3>
