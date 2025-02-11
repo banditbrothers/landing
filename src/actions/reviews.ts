@@ -27,6 +27,7 @@ export const getReviews = async (limit = 10) => {
     .orderBy("createdAt", "desc")
     .limit(limit)
     .get();
+
   return reviews.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Review[];
 };
 

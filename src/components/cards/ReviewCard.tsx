@@ -7,12 +7,18 @@ import Link from "next/link";
 
 export const ReviewCard = ({ review }: { review: Review }) => {
   return (
-    <div className="relative p-6 rounded-lg bg-card shadow hover:shadow-lg transition-shadow duration-200">
-      <div className="flex flex-col  gap-6">
+    <div className="relative p-8 rounded-xl bg-card shadow-md hover:shadow-xl transition-all duration-300">
+      <div className="flex flex-col gap-8">
         <div className="flex-1">
-          <div className="flex flex-col gap-3">
-            <h3 className="text-xl font-semibold text-card-foreground">{review.title}</h3>
-            <div className="flex flex-col items-start gap-3 mb-1">
+          <div className="flex flex-col gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <h6 className="text-sm font-medium text-muted-foreground">{review.name}</h6>
+                <StarRating value={review.rating} />
+              </div>
+              <h3 className="text-xl font-semibold tracking-tight text-card-foreground">{review.title}</h3>
+            </div>
+            <div className="flex flex-col items-start gap-4">
               <div className="flex flex-wrap gap-2 items-center">
                 {review.productIds.map(productId => (
                   <Link href={`/designs/${productId}`} key={productId}>
@@ -20,15 +26,16 @@ export const ReviewCard = ({ review }: { review: Review }) => {
                   </Link>
                 ))}
               </div>
-              <StarRating value={review.rating} />
             </div>
-            <p className="text-sm leading-relaxed text-muted-foreground">{review.comment}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground/90">{review.comment}</p>
           </div>
         </div>
 
-        <div className="relative w-full  aspect-[4/3] rounded-lg overflow-hidden">
-          <Image fill src={review.images[0]} alt="Review Image" className="object-cover" />
-        </div>
+        {review.images.length > 0 && (
+          <div className="relative w-full h-96 rounded-lg overflow-hidden">
+            <Image fill src={review.images[0]} alt="Review Image" className="object-contain" />
+          </div>
+        )}
       </div>
     </div>
   );
