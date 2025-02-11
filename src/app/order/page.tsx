@@ -34,7 +34,7 @@ import { useCart } from "@/components/stores/cart";
 import { useFavorites } from "@/components/stores/favorites";
 import { CouponInput } from "@/components/inputs/Coupon";
 import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
-import { FEATURED_COUPON } from "@/components/typography/coupons";
+import { BULK_BUY_COUPON } from "@/components/typography/coupons";
 import { DangerBanner } from "@/components/misc/Banners";
 import { validatePincode } from "@/lib/pincode";
 import { formatCurrency } from "@/utils/price";
@@ -530,14 +530,14 @@ function OrderPageContent() {
                         />
                         {!coupon && (
                           <span className="text-xs text-muted-foreground">
-                            <FEATURED_COUPON.NoCouponAppliedMessage />
+                            <BULK_BUY_COUPON.NoCouponAppliedMessage />
                           </span>
                         )}
                         {coupon &&
-                          coupon.code !== FEATURED_COUPON.code &&
+                          coupon.code !== BULK_BUY_COUPON.code &&
                           getDiscountAmount(subtotal, coupon) < 200 && (
                             <span className="text-xs text-muted-foreground">
-                              <FEATURED_COUPON.CouponAppliedMessage />
+                              <BULK_BUY_COUPON.CouponAppliedMessage />
                             </span>
                           )}
                       </div>

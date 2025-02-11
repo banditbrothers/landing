@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { CheckoutProductCard } from "../cards/CheckoutProductCard";
 import { useRouter } from "next/navigation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { FEATURED_COUPON, STANDARD_COUPON } from "@/components/typography/coupons";
+import { BULK_BUY_COUPON, STANDARD_COUPON } from "@/components/typography/coupons";
 import { formatCurrency } from "@/utils/price";
 
 export const CartSheet = () => {
@@ -58,7 +58,7 @@ export const CartSheet = () => {
         {cartItems.length > 0 && (
           <span className="">
             <p className="text-muted-foreground text-xs text-center leading-normal">
-              <FEATURED_COUPON.CartMessage />
+              <BULK_BUY_COUPON.CartMessage />
             </p>
           </span>
         )}
