@@ -3,6 +3,7 @@ import { Review } from "@/types/review";
 import { DESIGNS_OBJ } from "@/data/designs";
 import { StarRating } from "../misc/StarRating";
 import { ProductBadge } from "../badges/ProductBadge";
+import Link from "next/link";
 
 export const ReviewCard = ({ review }: { review: Review }) => {
   return (
@@ -12,12 +13,12 @@ export const ReviewCard = ({ review }: { review: Review }) => {
           <div className="flex flex-col gap-3">
             <h3 className="text-xl font-semibold text-card-foreground">{review.title}</h3>
             <div className="flex flex-col items-start gap-3 mb-1">
-              <div className="flex flex-row gap-2 items-center">
-                <ProductBadge>{DESIGNS_OBJ[review.productIds[0]].name}</ProductBadge>
-                {review.productIds[1] && <ProductBadge>{DESIGNS_OBJ[review.productIds[1]].name}</ProductBadge>}
-                {review.productIds.length > 2 && (
-                  <span className="text-xs text-muted-foreground">+{review.productIds.length - 2}</span>
-                )}
+              <div className="flex flex-wrap gap-2 items-center">
+                {review.productIds.map(productId => (
+                  <Link href={`/designs/${productId}`} key={productId}>
+                    <ProductBadge>{DESIGNS_OBJ[productId].name}</ProductBadge>
+                  </Link>
+                ))}
               </div>
               <StarRating value={review.rating} />
             </div>
