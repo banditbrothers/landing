@@ -7,7 +7,6 @@ import { Review } from "@/types/review";
 import { useEffect } from "react";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getTimestamp } from "@/utils/timestamp";
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
