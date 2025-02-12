@@ -8,9 +8,9 @@ export const getDiscordOrderMessage = (order: Order) => {
   const paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
 
   return {
-    content: `🎉 We have a new order! \nClick [here](${getWhatsappOrderConfirmationLink(order)}) to send ${
+    content: `🎉 We have a new order! \nSend ${
       order.name
-    } their order info + shipping details`,
+    } their order info + shipping details by clicking [here](${getWhatsappOrderConfirmationLink(order)})`,
     embeds: [
       {
         title: "Order Details",

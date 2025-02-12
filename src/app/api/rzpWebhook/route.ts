@@ -31,6 +31,8 @@ export async function POST(request: Request) {
 
         const sendDiscordMessagePromise = new Promise(async resolve => {
           const order = await getOrder(dbId);
+          if (!order) return;
+
           if (order.paymentMode === "rzp") order.rzp.paymentMethod = paymentMethod;
           await sendDiscordOrderMessage(getDiscordOrderMessage(order));
           resolve(true);
