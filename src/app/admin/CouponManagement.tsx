@@ -41,7 +41,7 @@ export function CouponManagement() {
     const couponMinAmount = e.currentTarget.couponMinAmount.value;
 
     const expiresAtStr = e.currentTarget.couponExpires.value;
-    let expiresAt: Date | null = new Date(expiresAtStr);
+    let expiresAt: Date | null = new Date(expiresAtStr + "T23:59:59+05:30");
 
     if (expiresAt.getTime() < Date.now()) {
       toast.error("Expiry date cannot be in the past");
@@ -106,7 +106,7 @@ export function CouponManagement() {
                   <TableHead>ID</TableHead>
                   <TableHead>Code</TableHead>
                   <TableHead>Discount</TableHead>
-                  <TableHead>Expires</TableHead>
+                  <TableHead>Expiry </TableHead>
                   <TableHead>Active</TableHead>
                 </TableRow>
               </TableHeader>
@@ -120,7 +120,7 @@ export function CouponManagement() {
                         ? `₹${coupon.discount} off on orders above ₹${coupon.minOrderAmount}`
                         : `${coupon.discount}% off on orders above ₹${coupon.minOrderAmount}`}
                     </TableCell>
-                    <TableCell>{coupon.expiresAt ? getDate(coupon.expiresAt).toLocaleDateString() : "Never"}</TableCell>
+                    <TableCell>{coupon.expiresAt ? getDate(coupon.expiresAt).toLocaleString() : "Never"}</TableCell>
                     <TableCell>
                       <Switch
                         id={`coupon-${coupon.id}-active`}
