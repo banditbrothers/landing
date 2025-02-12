@@ -64,6 +64,7 @@ export const theme = {
       },
       "bandit-orange": "#fd6e00",
       "bandit-white": "#ffffff",
+      "valentine-pink": "#FF69B4",
     },
     keyframes: {
       "accordion-down": {

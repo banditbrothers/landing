@@ -18,7 +18,7 @@ export const DEFAULT_ORDER_VALUES = isProduction
   : {
       email: "test@gmail.com",
       name: "test",
-      phone: "+919876543210",
+      phone: "9876543210",
       couponCode: "",
       address: {
         line1: "test",

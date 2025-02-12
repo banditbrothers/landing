@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { CheckoutProductCard } from "../cards/CheckoutProductCard";
 import { useRouter } from "next/navigation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { BULK_BUY_COUPON, STANDARD_COUPON } from "@/components/typography/coupons";
+import { BULK_BUY_COUPON, RUNNING_COUPON } from "@/components/typography/coupons";
 import { formatCurrency } from "@/utils/price";
 
 export const CartSheet = () => {
@@ -23,13 +23,7 @@ export const CartSheet = () => {
   const CartContent = () => {
     return (
       <div className="flex h-full flex-col gap-4 py-4">
-        <div className="bg-primary/5 rounded-lg p-3 border border-primary/10">
-          <span className="flex flex-col items-center gap-2 text-xs text-muted-foreground">
-            <span className="text-center leading-normal">
-              <STANDARD_COUPON.CartMessage />
-            </span>
-          </span>
-        </div>
+        <RUNNING_COUPON.CartMessageElement />
 
         {cartItems.map(item => {
           const design = { ...DESIGNS_OBJ[item.designId], id: item.designId };

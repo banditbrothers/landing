@@ -537,13 +537,6 @@ function OrderPageContent() {
                             <BULK_BUY_COUPON.NoCouponAppliedMessage />
                           </span>
                         )}
-                        {coupon &&
-                          coupon.code !== BULK_BUY_COUPON.code &&
-                          getDiscountAmount(subtotal, coupon) < 200 && (
-                            <span className="text-xs text-muted-foreground">
-                              <BULK_BUY_COUPON.CouponAppliedMessage />
-                            </span>
-                          )}
                       </div>
 
                       <Separator className="my-4" />
@@ -562,7 +555,9 @@ function OrderPageContent() {
                         <div className="flex justify-between items-center text-sm">
                           <span className="flex flex-col gap-1">
                             Discount
-                            <span className="text-xs text-muted-foreground">Applied {coupon.code}</span>
+                            <span className="text-xs text-muted-foreground">
+                              Applied <span className="text-bandit-orange">{coupon.code}</span>
+                            </span>
                           </span>
                           <span>- {formatCurrency(getDiscountAmount(subtotal, coupon), 2)}</span>
                         </div>
