@@ -41,7 +41,9 @@ import { formatCurrency } from "@/utils/price";
 import { ProductBadge } from "@/components/badges/ProductBadge";
 
 const SHIPPING_COST = 100;
-const MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING = 750;
+
+// `null` means free shipping is not applicable
+const MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING: number | null = null;
 
 const countries = Country.getAllCountries();
 
@@ -73,6 +75,8 @@ const getSubtotal = (products: CartItem[]) => {
 
 const getShippingCost = (products: CartItem[], coupon: Coupon | null) => {
   if (products.length === 0) return 0;
+  if (MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING === null) return SHIPPING_COST;
+
   const subtotal = getSubtotal(products);
   const discount = getDiscountAmount(subtotal, coupon);
   const total = subtotal - discount;
@@ -568,7 +572,8 @@ function OrderPageContent() {
                         <span className="flex flex-col gap-1">
                           Shipping
                           <span className="text-xs text-muted-foreground">
-                            Get Free Shipping on orders above {formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}
+                            {MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING !== null &&
+                              `Get Free Shipping on orders above ${formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}`}
                           </span>
                         </span>
 
