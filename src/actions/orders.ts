@@ -18,6 +18,8 @@ export const getOrders = async (): Promise<Order[]> => {
 
 export const getOrder = async (id: string) => {
   const order = await firestore().collection(Collections.orders).doc(id).get();
+
+  if (!order.exists) return null;
   return { id: order.id, ...order.data() } as Order;
 };
 

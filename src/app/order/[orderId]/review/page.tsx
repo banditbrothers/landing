@@ -41,6 +41,8 @@ const reviewSchema = z.object({
 type OrderPageProps = { params: Promise<{ orderId: string }> };
 
 export default function OrderReviewPage({ params }: OrderPageProps) {
+  const router = useRouter();
+
   const [order, setOrder] = useState<Order | null>(null);
   const [submitStatus, setSubmitStatus] = useState<"not-submitted" | "submitting" | "submitted">("not-submitted");
   const [isCompressing, setIsCompressing] = useState<boolean>(false);
@@ -57,7 +59,8 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
       const orderId = (await params).orderId;
       const order = await getOrder(orderId);
       if (!order) {
-        toast.error("Order not found");
+        toast.error("Invalid Order ID... Please contact us to resolve this issue");
+        router.push("/");
         return;
       }
       setSubmitStatus(order.reviewId ? "submitted" : "not-submitted");
@@ -280,10 +283,10 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
               <CardFooter>
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full text-wrap"
                   disabled={submitStatus === "submitting"}
                   onClick={form.handleSubmit(onSubmit)}>
-                  Submit Review
+                  {submitStatus === "submitting" ? "Submitting... This may take a while" : "Submit Review"}
                   {submitStatus === "submitting" && <Loader2 className="w-4 h-4 animate-spin" />}
                 </Button>
               </CardFooter>
