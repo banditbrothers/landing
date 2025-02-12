@@ -33,6 +33,7 @@ export const getReviews = async (limit = 10, lastReviewCreatedAt?: number) => {
 
   const reviews = await query.get();
   return reviews.docs.map(doc => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { email, ...rest } = doc.data();
     return { id: doc.id, ...rest };
   }) as Omit<Review, "email">[];

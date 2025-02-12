@@ -1,6 +1,6 @@
 import { getReviews } from "@/actions/reviews";
 
-export const revalidate = 2 * 60 * 60; // 2 hours
+export const revalidate = 7200; // 2 * 60 * 60 = 2 hours
 
 export async function GET(request: Request) {
   const url = new URL(request.url);

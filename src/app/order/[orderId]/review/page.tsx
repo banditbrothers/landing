@@ -67,7 +67,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
       setOrder(order);
     };
     fetchOrder();
-  }, [params]);
+  }, [params, router]);
 
   useEffect(() => {
     if (order) {
