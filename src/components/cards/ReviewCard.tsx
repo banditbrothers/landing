@@ -50,7 +50,7 @@ export const ReviewCard = ({ review }: { review: Review }) => {
               src={review.images[0]}
               alt="Review Image"
               className="object-contain"
-              onLoadingComplete={() => setIsLoading(false)}
+              onLoad={() => setIsLoading(false)}
             />
           </div>
         )}

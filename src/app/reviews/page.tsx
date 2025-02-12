@@ -1,49 +1,45 @@
 "use client";
 
-import { getReviews } from "@/actions/reviews";
 import { ReviewCard } from "@/components/cards/ReviewCard";
 import { MasonryGridItem, MasonryGridLayout } from "@/components/layouts/MasonryGridLayout";
 import { Review } from "@/types/review";
-import { useEffect } from "react";
-import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { LoaderPinwheel } from "lucide-react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 const LIMIT = 10;
 
+const fetchReviewsApi = async (limit: number, lastReviewCreatedAt?: number) => {
+  const url = new URL("/api/reviews", window.location.origin);
+
+  url.searchParams.set("limit", limit.toString());
+  if (lastReviewCreatedAt) url.searchParams.set("lastReviewCreatedAt", lastReviewCreatedAt.toString());
+
+  const response = await fetch(url.toString());
+  return response.json() as Promise<Review[]>;
+};
+
 export default function ReviewsPage() {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const {
+    data: pageWiseReviews,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["reviews"],
+    queryFn: ({ pageParam }) => fetchReviewsApi(LIMIT, pageParam.lastReviewCreatedAt),
+    getNextPageParam: lastPage => {
+      if (lastPage.length < LIMIT) return undefined;
 
-  const fetchReviews = async (lastReview?: Review) => {
-    const newReviews = await getReviews(LIMIT, lastReview);
-    if (newReviews.length < LIMIT) {
-      setHasMore(false);
-    }
-    return newReviews;
-  };
+      const lastReview = lastPage[lastPage.length - 1];
+      return { lastReviewCreatedAt: lastReview.createdAt };
+    },
+    initialPageParam: { lastReviewCreatedAt: 0 },
+  });
 
-  useEffect(() => {
-    const loadInitialReviews = async () => {
-      const initialReviews = await fetchReviews();
-      setReviews(initialReviews);
-      setIsLoading(false);
-    };
-    loadInitialReviews();
-  }, []);
-
-  const handleLoadMore = async () => {
-    if (isLoadingMore || !hasMore) return;
-
-    setIsLoadingMore(true);
-    const lastReview = reviews[reviews.length - 1];
-    const newReviews = await fetchReviews(lastReview);
-    setReviews(prev => [...prev, ...newReviews]);
-    setIsLoadingMore(false);
-  };
+  const reviews = pageWiseReviews ? pageWiseReviews?.pages.flat() : [];
 
   return (
     <div className="max-w-7xl mx-auto mt-32 min-h-screen">
@@ -62,11 +58,15 @@ export default function ReviewsPage() {
               ))}
             </MasonryGridLayout>
 
-            {hasMore && (
+            {hasNextPage && (
               <div className="flex justify-center mt-8 mb-16">
-                <Button onClick={handleLoadMore} disabled={isLoadingMore} variant="outline" className="w-fit">
+                <Button
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                  variant="outline"
+                  className="w-fit">
                   Load More
-                  {isLoadingMore && <LoaderPinwheel className="ml-2 h-4 w-4 animate-spin" />}
+                  {isFetchingNextPage && <LoaderPinwheel className="ml-2 h-4 w-4 animate-spin" />}
                 </Button>
               </div>
             )}
