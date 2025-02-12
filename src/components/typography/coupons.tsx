@@ -41,7 +41,7 @@ const LIMITED_TIME_COUPON = {
     <CouponCardContainer className="bg-valentine-pink/5 border-valentine-pink/30">
       <CouponCardContentWrapper>
         <span className="flex flex-col gap-1">
-          <span className="text-valentine-pink font-semibold text-sm">Valentine's Day Sale</span>
+          <span className="text-valentine-pink font-semibold text-sm">Valentine&apos;s Day Sale</span>
           <span>
             Get <FeaturedText className="text-valentine-pink">Any 2 for ₹449</FeaturedText>, use code{" "}
             <CouponText className="text-valentine-pink" code={LIMITED_TIME_COUPON.code} />
