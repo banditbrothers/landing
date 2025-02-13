@@ -199,17 +199,17 @@ export function OrderManagement() {
                       <Button variant="outline" size="icon" onClick={() => showDialog(order)}>
                         <EyeIcon />
                       </Button>
-                      {!order.reviewId && (
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => {
-                            const link = getWhatsappOrderReviewLink(order);
-                            window.open(link, "_blank");
-                          }}>
-                          <SignatureIcon />
-                        </Button>
-                      )}
+
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        disabled={!!order.reviewId}
+                        onClick={() => {
+                          const link = getWhatsappOrderReviewLink(order);
+                          window.open(link, "_blank");
+                        }}>
+                        <SignatureIcon className={`w-4 h-4 ${order.reviewId ? "text-[#00ff00]" : ""}`} />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
