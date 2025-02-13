@@ -3,6 +3,7 @@ import { MessageCreateOptions } from "discord.js";
 import { getAddressString } from "./address";
 import { getDate } from "./timestamp";
 import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
+import { Review } from "@/types/review";
 
 export const getDiscordOrderMessage = (order: Order) => {
   const paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
@@ -29,6 +30,25 @@ export const getDiscordOrderMessage = (order: Order) => {
           },
         ],
         timestamp: new Date(getDate(order.createdAt)).toISOString(),
+      },
+    ],
+  } as MessageCreateOptions;
+};
+
+export const getDiscordReviewMessage = (review: Review) => {
+  return {
+    content: `${review.name} has submitted a review for their order! `,
+    embeds: [
+      {
+        title: "Review Details",
+        fields: [
+          { name: "ID", value: review.id },
+          { name: "Name", value: review.name },
+          { name: "Rating", value: review.rating },
+          { name: "Title", value: review.title },
+          { name: "Comment", value: review.comment },
+          { name: "Contains Images", value: review.images.length > 0 ? "Yes" : "No" },
+        ],
       },
     ],
   } as MessageCreateOptions;

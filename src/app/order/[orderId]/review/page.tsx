@@ -28,6 +28,8 @@ import { getCollectionDocumentId, signInAnonymously, storage } from "@/lib/fireb
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Collections } from "@/constants/collections";
 import { createReview } from "@/actions/reviews";
+import { getDiscordReviewMessage } from "@/utils/discordMessages";
+import { sendDiscordReviewMessage } from "@/actions/discord";
 
 signInAnonymously();
 
@@ -103,6 +105,8 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     };
 
     await createReview(reviewId, review);
+    await sendDiscordReviewMessage(getDiscordReviewMessage({ ...review, id: reviewId }));
+
     toast.success("Review submitted successfully");
     setSubmitStatus("submitted");
     window.scrollTo({ top: 0, behavior: "smooth" });
