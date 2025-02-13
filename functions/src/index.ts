@@ -5,6 +5,6 @@ dotenv.config();
 
 import { onDocumentDeleted } from "firebase-functions/v2/firestore";
 
-import { onDeleteReview as onDeleteReviewFunction } from "./onDeleteReview";
+import { onReviewDeleted as onReviewDeletedFunction } from "./onReviewDeleted";
 
-export const onDeleteReview = onDocumentDeleted("reviews/{reviewId}", onDeleteReviewFunction);
+export const onReviewDeleted = onDocumentDeleted("reviews/{reviewId}", onReviewDeletedFunction);

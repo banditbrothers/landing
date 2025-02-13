@@ -6,7 +6,7 @@ import { getPathStorageFromUrl } from "./utils";
 
 type Event = FirestoreEvent<QueryDocumentSnapshot | undefined, { reviewId: string }>;
 
-export const onDeleteReview = async (event: Event) => {
+export const onReviewDeleted = async (event: Event) => {
   const reviewId = event.params.reviewId;
 
   if (event.data) {
