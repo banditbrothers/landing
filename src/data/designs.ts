@@ -1,5 +1,5 @@
 export const standardDescription = {
-  Dimension: `9" x 20"`,
+  Dimension: `9.5" x 20"`,
   Material: "4 Way Quick-Dri DryFit Fabric",
 };
 

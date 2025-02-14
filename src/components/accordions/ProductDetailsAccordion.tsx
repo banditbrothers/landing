@@ -25,7 +25,7 @@ export const ProductDetailsAccordion = () => {
               <div>
                 <strong>Material</strong>
                 <br />
-                <span className="text-muted-foreground">Quick Dry Polyester-Spandex - 160 GSM</span>
+                <span className="text-muted-foreground">Quick Dry Polyester-Spandex - 140 GSM</span>
               </div>
               <div>
                 <strong>Weight</strong>
