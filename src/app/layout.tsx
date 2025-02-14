@@ -34,6 +34,9 @@ export const metadata: Metadata = {
     images: "/logo-full-socials.png",
     card: "summary_large_image",
   },
+  other: {
+    "google-site-verification": "PKSwI99CoRqBVviv78Ad1KU1KVOkSrGk_CuICBrk0M8",
+  },
 };
 
 const theme = "dark";
