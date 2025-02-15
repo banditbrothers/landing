@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Design } from "@/data/designs";
 import { FavoriteButton } from "../misc/FavoriteButton";
 import { CategoryBadge } from "../badges/DesignBadges";
-import { ArrowRightCircleIcon, ShoppingCartIcon } from "../misc/icons";
+import { ArrowRightCircleIcon, ShoppingCartIcon } from "../../Icons/icons";
 import { useFavorites } from "@/components/stores/favorites";
 import useIsMobile from "@/hooks/useIsMobile";
 import Link from "next/link";

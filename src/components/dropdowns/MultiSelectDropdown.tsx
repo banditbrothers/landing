@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Design } from "@/data/designs";
-import { HeartIconSolid, PlusIcon } from "../misc/icons";
+import { HeartIconSolid, PlusIcon } from "../../Icons/icons";
 import Image from "next/image";
 import { useFavorites } from "@/components/stores/favorites";
 

@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useCouponActions } from "@/hooks/useCouponActions";
 import { Coupon } from "@/types/coupon";
-import { CheckIcon, XMarkIcon } from "../misc/icons";
+import { CheckIcon, XMarkIcon } from "../../Icons/icons";
 import { validateCouponInCart } from "@/utils/coupon";
 
 type CouponInputProps = {

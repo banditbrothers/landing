@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { FilterDialog, FilterState } from "../dialogs/FilterDialog";
 import { Suspense, useState } from "react";
 import { FilterIcon, XIcon } from "lucide-react";
-import { CheckBadgeIcon, HeartIconOutline } from "../misc/icons";
+import { CheckBadgeIcon, HeartIconOutline } from "../../Icons/icons";
 import useIsMobile from "@/hooks/useIsMobile";
 import { invertColor } from "@/utils/misc";
 import { handleMultipleParams, useParamBasedFeatures } from "@/hooks/useParamBasedFeature";

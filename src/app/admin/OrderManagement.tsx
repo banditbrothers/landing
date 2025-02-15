@@ -22,7 +22,7 @@ import {
   PaginationNext,
 } from "@/components/ui/pagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { EyeIcon } from "@/components/misc/icons";
+import { EyeIcon } from "@/Icons/icons";
 import { SignatureIcon } from "lucide-react";
 import { getWhatsappOrderReviewLink } from "@/utils/whatsappMessageLinks";
 

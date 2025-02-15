@@ -5,7 +5,7 @@ import {
   AccordionTitle,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { DocumentMagnifyingGlassIcon, HandHeartIcon, TruckIcon } from "../misc/icons";
+import { DocumentMagnifyingGlassIcon, HandHeartIcon, TruckIcon } from "../../Icons/icons";
 
 export const ProductDetailsAccordion = () => {
   return (

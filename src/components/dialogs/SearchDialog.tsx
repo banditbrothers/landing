@@ -8,7 +8,7 @@ import { Design, DESIGNS } from "@/data/designs";
 import { SearchProductCard } from "../cards/SearchProductCard";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import VisuallyHidden from "../ui/visually-hidden";
-import { SearchIcon, XMarkIcon } from "../misc/icons";
+import { SearchIcon, XMarkIcon } from "../../Icons/icons";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import { LoadingIcon } from "../misc/Loading";

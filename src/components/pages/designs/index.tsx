@@ -17,7 +17,7 @@ import { CategoryBadge } from "../../badges/DesignBadges";
 import { useFavorites } from "@/components/stores/favorites";
 
 import { Button } from "../../ui/button";
-import { ArrowRightIcon, ShoppingCartIcon } from "../../misc/icons";
+import { ArrowRightIcon, ShoppingCartIcon } from "../../../Icons/icons";
 import { ShareIcon } from "lucide-react";
 import { shareDesign } from "@/utils/share";
 import { ImageCarousel } from "../../carousels/ImageCarousel";

@@ -8,7 +8,7 @@ import Link from "next/link";
 import { scrollTo } from "@/utils/misc";
 
 import { Button } from "./ui/button";
-import { ShoppingBagIcon, SearchIcon } from "./misc/icons";
+import { ShoppingBagIcon, SearchIcon } from "../Icons/icons";
 import { useCart } from "@/components/stores/cart";
 import useIsMobile from "@/hooks/useIsMobile";
 import { LoadingIcon } from "./misc/Loading";

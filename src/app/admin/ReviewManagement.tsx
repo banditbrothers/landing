@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { CheckIcon, EyeIcon, XMarkIcon } from "@/components/misc/icons";
+import { CheckIcon, EyeIcon, XMarkIcon } from "@/Icons/icons";
 import {
   Pagination,
   PaginationPrevious,

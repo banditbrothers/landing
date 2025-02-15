@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { Button } from "../ui/button";
-import { MinusIcon, PlusIcon } from "./icons";
+import { MinusIcon, PlusIcon } from "../../Icons/icons";
 
 type QuantityStepperProps = {
   quantity: number;

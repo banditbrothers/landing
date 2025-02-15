@@ -1,5 +1,5 @@
 import { Design } from "@/data/designs";
-import { XMarkIcon } from "../misc/icons";
+import { XMarkIcon } from "../../Icons/icons";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import Link from "next/link";

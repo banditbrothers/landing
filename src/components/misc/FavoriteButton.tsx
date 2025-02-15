@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useState } from "react";
-import { HeartIconOutline, HeartIconSolid } from "./icons";
+import { HeartIconOutline, HeartIconSolid } from "../../Icons/icons";
 
 export const FavoriteButton = ({ selected, toggle }: { selected: boolean; toggle: () => void }) => {
   const [isMounted, setIsMounted] = useState(false);
