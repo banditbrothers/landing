@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 
 export const TestimonialsSection = () => {
   return (
-    <section id="reviews" className="py-20 bg-background text-foreground scroll-mt-16">
+    <section id="reviews" className="bg-background text-foreground scroll-mt-16">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-12">
           <h2 className="text-3xl font-bold tracking-tight mb-4">Looking for reviews?</h2>

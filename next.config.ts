@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "firebasestorage.googleapis.com",
       },
+      {
+        protocol: "https",
+        hostname: "scontent.cdninstagram.com",
+      },
+      {
+        protocol: "https",
+        hostname: "instagram.fbom6-1.fna.fbcdn.net",
+      },
     ],
   },
 };

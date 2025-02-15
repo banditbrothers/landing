@@ -7,11 +7,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ProductCarousel } from "@/components/carousels/ProductCarousel";
 
-import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
+import { ArrowRight } from "lucide-react";
 
 export const ProductLibraryContent = () => {
   const [designs, setDesigns] = useState<Design[]>([]);
-  const [isHowToWearDialogOpen, setIsHowToWearDialogOpen] = useState(false);
 
   useEffect(() => {
     const shuffledDesigns = shuffleArray(designsData);
@@ -19,29 +18,23 @@ export const ProductLibraryContent = () => {
   }, []);
 
   return (
-    <section id="library" className="py-20 scroll-mt-16">
+    <section id="library" className="scroll-mt-16">
       <div className=" mx-auto">
         <div className={`mb-16 flex justify-between items-center gap-4 max-w-screen-2xl mx-auto px-6 flex-col`}>
           <h2 className="text-4xl font-bold text-center flex flex-row justify-center items-center gap-4 relative">
-            <span>Our Products</span>
+            Our Products
           </h2>
-          <div className="flex flex-row gap-4">
-            <Button variant="link" onClick={() => setIsHowToWearDialogOpen(true)}>
-              <span>How to Wear</span>
-            </Button>
-            <Link href="/designs">
-              <Button variant="link">
-                <span>View All</span>
-              </Button>
-            </Link>
-          </div>
         </div>
-        <div className="mx-auto">
+        <div className="mx-auto flex flex-col items-center gap-4">
           <ProductCarousel designs={designs} />
+          <Link href="/designs">
+            <Button variant="outline" className="group">
+              <span>View All</span>
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
         </div>
       </div>
-
-      <HowToWearDialog open={isHowToWearDialogOpen} onClose={() => setIsHowToWearDialogOpen(false)} />
     </section>
   );
 };

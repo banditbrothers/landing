@@ -24,6 +24,8 @@ import {
 
 import { HandHeartIcon, SearchIcon } from "lucide-react";
 
+import InstagramIcon from "./brands/instagram.svg";
+
 export {
   ArrowTopRightOnSquareIcon,
   ArrowRightIcon,
@@ -46,4 +48,5 @@ export {
   HandHeartIcon,
   TruckIcon,
   DocumentMagnifyingGlassIcon,
+  InstagramIcon,
 };
