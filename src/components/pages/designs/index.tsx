@@ -80,7 +80,7 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column - Image */}
         <div className="relative aspect-square">
-          <ImageCarousel images={[design.image, "/how-to-wear.webp"]} alt={design.name} />
+          <ImageCarousel images={[design.image, "/how-to-wear.webp"]} alt={design.name} indicatorType="dot" />
           <div className="absolute top-2 right-2 z-10">
             <FavoriteButton selected={isFavorite(design.id)} toggle={() => toggleFav(design.id)} />
           </div>

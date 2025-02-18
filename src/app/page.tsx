@@ -7,6 +7,7 @@ import { ProductLibrary } from "@/components/pages/home/product-library/ProductL
 import { KnowYourProductSection } from "@/components/pages/home/know-your-product/KnowYourProductSection";
 import { TestimonialsSection } from "@/components/pages/home/testimonials/TestimonialsSection";
 import { InstagramFeedSection } from "@/components/pages/home/instagram/InstagramFeedSection";
+import { HowToWearSection } from "@/components/pages/home/how-to-wear/HowToWearSection";
 
 export default function LandingPage() {
   useEffect(() => {
@@ -30,6 +31,8 @@ export default function LandingPage() {
       <ProductLibrary />
 
       <KnowYourProductSection />
+
+      <HowToWearSection />
 
       <InstagramFeedSection />
 

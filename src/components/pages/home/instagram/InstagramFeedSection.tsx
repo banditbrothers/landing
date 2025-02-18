@@ -30,7 +30,7 @@ export const InstagramFeedSection = () => {
   }, []);
 
   return (
-    <section className="w-full max-w-7xl mx-auto container">
+    <section id="instagram-feed" className="w-full max-w-7xl mx-auto container">
       <div className="flex flex-col items-center mb-12">
         <h2 className="text-3xl font-bold text-primary">Follow Our Journey</h2>
         <Link href="https://www.instagram.com/be.a.banditbrother/" target="_blank" rel="noopener noreferrer">
@@ -42,7 +42,7 @@ export const InstagramFeedSection = () => {
       </div>
 
       <div className="grid grid-cols-3 gap-[2px] max-w-5xl mx-auto px-4">
-        {feed.map((post: InstagramPost) => (
+        {feed?.map((post: InstagramPost) => (
           <Link
             key={post.id}
             href={post.permalink}
