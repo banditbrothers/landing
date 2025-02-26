@@ -2,10 +2,9 @@ import Image from "next/image";
 import { Review } from "@/types/review";
 import { DESIGNS_OBJ } from "@/data/designs";
 import { StarRating } from "../misc/StarRating";
-import { ProductBadge } from "../badges/ProductBadge";
-import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
+import { ClickableProductBadge } from "../badges/ClickableProductBadges";
 
 export const ReviewCard = ({ review }: { review: Review }) => {
   const name = review.name
@@ -30,9 +29,9 @@ export const ReviewCard = ({ review }: { review: Review }) => {
             <div className="flex flex-col items-start gap-4">
               <div className="flex flex-wrap gap-2 items-center">
                 {review.productIds.map(productId => (
-                  <Link href={`/designs/${productId}`} key={productId}>
-                    <ProductBadge>{DESIGNS_OBJ[productId].name}</ProductBadge>
-                  </Link>
+                  <ClickableProductBadge productId={productId} key={productId}>
+                    {DESIGNS_OBJ[productId].name}
+                  </ClickableProductBadge>
                 ))}
               </div>
             </div>
