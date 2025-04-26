@@ -31,14 +31,16 @@ export const HowToWearSection = () => {
           </div>
 
           <div className="w-full md:w-1/2 2xl:w-2/5 space-y-8">
-            <h3 className="text-3xl font-semibold text-foreground">One Bandana, Endless Possibilities</h3>
-            <p className="text-muted-foreground text-lg leading-relaxed">
+            <h3 className="text-2xl font-semibold text-foreground text-center md:text-left">
+              One Bandana, Endless Possibilities
+            </h3>
+            <p className="text-muted-foreground text-lg leading-relaxed text-center md:text-left">
               Our premium bandanas are designed for maximum versatility and style. Wear them as bandanas, face
               coverings, neck warmers, headbands, or even as wristbands.
             </p>
-            <div>
+            <div className="flex justify-center">
               <Link href="/designs">
-                <Button variant="bandit-hover" className="group w-full md:w-fit">
+                <Button variant="bandit-hover" className="group w-fit">
                   Get Yours Now
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
