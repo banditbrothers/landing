@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 interface ImageCarouselProps {
   images: string[];
   alt: string;
-  indicatorType: "dot" | "preview" | null;
+  indicatorType?: "dot" | "preview" | null;
   indicatorConfig?: {
     position: "vertical" | "horizontal";
   };
@@ -89,7 +89,13 @@ export function ImageCarousel({
 
       {images.length > 1 && indicatorType === "preview" && (
         <div
-          className={`h-fit flex flex-row justify-start ${indicatorConfig.position === "vertical" ? "px-4" : "py-4"}`}>
+          className={`h-fit flex flex-row justify-start overflow-auto ${
+            indicatorConfig.position === "vertical" ? "px-4" : "py-4"
+          }`}
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}>
           <div
             className={`flex gap-2 items-center ${indicatorConfig.position === "vertical" ? "flex-col" : "flex-row"}`}>
             {images.map((image, index) => {

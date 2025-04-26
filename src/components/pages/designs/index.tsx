@@ -142,12 +142,12 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
           <div className="space-y-4 pt-6 border-t border-muted">
             <div className="flex items-center justify-between gap-6">
               <div>
-                <h2 className="text-xl font-semibold text-foreground">Bandit Reviews</h2>
+                <h2 className="text-xl font-semibold text-foreground">Reviews</h2>
                 <p className="text-sm text-muted-foreground">Hear from our fellow Bandits about their experience</p>
               </div>
               <Link href="/reviews" target="_blank">
                 <Button variant="outline" className="text-sm">
-                  View All
+                  View All Reviews
                   <ArrowRightIcon className="w-4 h-4 ml-1" />
                 </Button>
               </Link>
