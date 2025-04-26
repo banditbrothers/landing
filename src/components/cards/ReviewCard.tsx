@@ -3,10 +3,15 @@ import { Review } from "@/types/review";
 import { DESIGNS_OBJ } from "@/data/designs";
 import { StarRating } from "../misc/StarRating";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StyleHTMLAttributes, useState } from "react";
+import { CSSProperties, useState } from "react";
 import { ClickableProductBadge } from "../badges/ClickableProductBadges";
 
-export const ReviewCard = ({ review, containerStyle }: { review: Omit<Review, "email">; containerStyle: any }) => {
+interface ReviewCardProps {
+  review: Omit<Review, "email">;
+  containerStyle?: CSSProperties;
+}
+
+export const ReviewCard = ({ review, containerStyle = {} }: ReviewCardProps) => {
   const name = review.name
     .split(" ")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
