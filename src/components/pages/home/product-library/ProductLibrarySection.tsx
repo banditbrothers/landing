@@ -28,8 +28,8 @@ export const ProductLibraryContent = () => {
         <div className="mx-auto flex flex-col items-center gap-4">
           <ProductCarousel designs={designs} />
           <Link href="/designs">
-            <Button variant="outline" className="group">
-              <span>View All</span>
+            <Button variant="bandit-hover" className="group">
+              <span>View All Products</span>
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>

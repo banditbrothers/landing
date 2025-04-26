@@ -12,6 +12,7 @@ import { SearchIcon, XMarkIcon } from "../../Icons/icons";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import { LoadingIcon } from "../misc/Loading";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 const options: IFuseOptions<Design> = {
   includeScore: true,

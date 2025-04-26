@@ -30,13 +30,13 @@ export default function LandingPage() {
 
       <ProductLibrary />
 
-      <KnowYourProductSection />
-
       <HowToWearSection />
 
-      <InstagramFeedSection />
-
       <TestimonialsSection />
+
+      <KnowYourProductSection />
+
+      <InstagramFeedSection />
     </div>
   );
 }

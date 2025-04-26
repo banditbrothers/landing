@@ -9,7 +9,14 @@ export const HowToWearSection = () => {
         <div className="flex flex-col-reverse md:flex-row items-start justify-around gap-4">
           <div className="relative aspect-square w-full md:w-1/2 2xl:w-1/3">
             <ImageCarousel
-              images={["/how-to-wear.webp", "/designs/gimme-some-space.webp", "/designs/mooshi-mooshi.webp"]}
+              images={[
+                "/how-to-wear/mugshot-2.webp",
+                "/how-to-wear/mugshot-1.webp",
+                "/how-to-wear/mugshot-3.webp",
+                "/how-to-wear/mugshot-4.webp",
+                "/how-to-wear/mugshot-5.webp",
+                "/how-to-wear.webp",
+              ]}
               indicatorConfig={{ position: "vertical" }}
               indicatorType="preview"
               alt="How to Wear"
