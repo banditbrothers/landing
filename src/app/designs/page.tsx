@@ -1,13 +1,24 @@
 "use client";
 
 import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
-import { DESIGNS } from "@/data/designs";
+import { Design, DESIGNS } from "@/data/designs";
 import { Button } from "@/components/ui/button";
 import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { shuffleArray } from "@/utils/misc";
+import { LoadingIcon } from "@/components/misc/Loading";
 
 function DesignsPageContent() {
   const [isHowToWearDialogOpen, setIsHowToWearDialogOpen] = useState(false);
+  const [designs, setDesigns] = useState<Design[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Shuffle the designs array when the component mounts
+    const shuffledDesigns = shuffleArray(DESIGNS);
+    setDesigns(shuffledDesigns);
+    setIsLoading(false);
+  }, []);
 
   return (
     <>
@@ -25,7 +36,13 @@ function DesignsPageContent() {
               </div>
             </div>
             <div>
-              <ProductGridLayout designs={DESIGNS} />
+              {isLoading ? (
+                <div className="flex justify-center items-center h-screen">
+                  <LoadingIcon />
+                </div>
+              ) : (
+                <ProductGridLayout designs={designs} />
+              )}
             </div>
           </div>
         </div>
