@@ -38,7 +38,7 @@ export const HowToWearSection = () => {
               Our premium bandanas are designed for maximum versatility and style. Wear them as bandanas, face
               coverings, neck warmers, headbands, or even as wristbands.
             </p>
-            <div className="flex justify-center">
+            <div className="flex md:justify-start justify-center">
               <Link href="/designs">
                 <Button variant="bandit-hover" className="group w-fit">
                   Get Yours Now
