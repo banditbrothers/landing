@@ -35,8 +35,8 @@ export const HowToWearSection = () => {
               One Bandana, Endless Possibilities
             </h3>
             <p className="text-muted-foreground text-lg leading-relaxed text-center md:text-left">
-              Our premium bandanas are designed for maximum versatility and style. Wear them as bandanas, face
-              coverings, neck warmers, headbands, or even as wristbands.
+              Our premium bandanas are designed for maximum versatility and style. Wear them as bandanas, face masks,
+              neck warmers, headbands, or even as wristbands.
             </p>
             <div className="flex md:justify-start justify-center">
               <Link href="/designs">

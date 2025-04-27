@@ -57,9 +57,7 @@ export const TestimonialsSection = () => {
       <div className="container mx-auto px-4 mb-6">
         <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-6">
           <h2 className="text-4xl font-bold tracking-tight mb-4">Looking for reviews?</h2>
-          <p className="text-muted-foreground mb-6">
-            Discover what our fellow Bandits are saying about their experience
-          </p>
+          <p className="text-muted-foreground mb-6">Hear It From Our Fellow Bandits</p>
         </div>
         <div className="flex flex-col md:flex-row gap-2">
           {FEATURED_REVIEWS.map(review => (
