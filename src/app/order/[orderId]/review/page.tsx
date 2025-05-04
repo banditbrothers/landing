@@ -94,10 +94,11 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
       imageUrls.push(await getDownloadURL(uploadTask.ref));
     }
 
-    const review: Omit<Review, "id"> = {
+    const review: Omit<Extract<Review, { source: "website" }>, "id"> = {
       ...data,
       status: "pending",
       email: order.email,
+      source: "website",
       orderId: order.id,
       createdAt: getTimestamp(),
       productIds: order.products.map(product => product.id),

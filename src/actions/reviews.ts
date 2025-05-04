@@ -2,15 +2,21 @@
 
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase-admin";
-import { Review } from "@/types/review";
+import { Review, ReviewWithoutEmail } from "@/types/review";
 
-export const createReview = async (id: string, review: Omit<Review, "id">) => {
+export const createReview = async (
+  id: string,
+  review: Omit<Extract<Review, { source: "website" }>, "id">
+) => {
   const reviewRef = firestore().collection(Collections.reviews).doc(id);
-
   const reviewPromise = reviewRef.set(review);
-  const orderPromise = firestore().collection(Collections.orders).doc(review.orderId).update({ reviewId: id });
-  await Promise.all([reviewPromise, orderPromise]);
 
+  const orderPromise = firestore()
+    .collection(Collections.orders)
+    .doc(review.orderId)
+    .update({ reviewId: id });
+
+  await Promise.all([reviewPromise, orderPromise]);
   const newReview = { ...review, id };
   return newReview;
 };
@@ -36,7 +42,7 @@ export const getReviews = async (limit = 10, lastReviewCreatedAt?: number) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { email, ...rest } = doc.data();
     return { id: doc.id, ...rest };
-  }) as Omit<Review, "email">[];
+  }) as ReviewWithoutEmail[];
 };
 
 export const updateReview = async (reviewId: string, review: Partial<Review>) => {
