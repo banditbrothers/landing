@@ -24,7 +24,9 @@ export type Design = {
 export type ProductVariant = {
   designId: Design["id"];
   productId: Product["id"];
-  price: number;
+  price?: number;
+  name?: string;
+  description?: string;
   stockLevel?: number;
   isAvailable?: boolean;
   // Product-design specific images
