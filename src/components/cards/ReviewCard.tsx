@@ -1,13 +1,13 @@
 import Image from "next/image";
-import { Review } from "@/types/review";
-import { DESIGNS_OBJ } from "@/data/designs";
+import { ReviewWithoutEmail } from "@/types/review";
+import { DESIGNS_OBJ } from "@/data/products";
 import { StarRating } from "../misc/StarRating";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CSSProperties, useState } from "react";
 import { ClickableProductBadge } from "../badges/ClickableProductBadges";
 
 interface ReviewCardProps {
-  review: Omit<Review, "email">;
+  review: ReviewWithoutEmail;
   containerStyle?: CSSProperties;
 }
 
@@ -35,11 +35,12 @@ export const ReviewCard = ({ review, containerStyle = {} }: ReviewCardProps) => 
             </div>
             <div className="flex flex-col items-start gap-4">
               <div className="flex flex-wrap gap-2 items-center">
-                {review.productIds.map(productId => (
-                  <ClickableProductBadge productId={productId} key={productId}>
-                    {DESIGNS_OBJ[productId].name}
-                  </ClickableProductBadge>
-                ))}
+                {review.source === "website" &&
+                  review.productIds.map(productId => (
+                    <ClickableProductBadge productId={productId} key={productId}>
+                      {DESIGNS_OBJ[productId].name}
+                    </ClickableProductBadge>
+                  ))}
               </div>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground/90">{review.comment}</p>
