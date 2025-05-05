@@ -1,4 +1,5 @@
-import { Design } from "@/data/designs";
+
+import { Design } from "@/types/product";
 import { trackDesignShare } from "./analytics";
 
 const shareMessage = (design: Design) => {
