@@ -2,6 +2,33 @@ import { motion } from "motion/react";
 import { scrollTo } from "@/utils/misc";
 import { Button } from "@/components/ui/button";
 
+// const uploadVariantImages = async () => {
+//   try {
+//     // Define the bucket name from environment variable
+//     const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET || "";
+//     if (!bucketName) {
+//       toast.error("S3 bucket not configured");
+//       return;
+//     }
+
+//     // Example: Upload a specific webp image from public directory
+//     // You can modify this to handle multiple images or different paths
+
+//     for (const design of DESIGNS) {
+//       const imageName = `${design.id}.webp`; // Image in public folder
+//       const s3Key = `bandana/${design.id}/mockup.webp`; // Path in S3
+
+//       // toast.loading("Uploading image...");
+//       await uploadImage(imageName, s3Key, bucketName, design.id);
+//     }
+
+//     toast.success("All images uploaded successfully");
+//   } catch (error) {
+//     console.error("Failed to upload images:", error);
+//     toast.error("Failed to upload images");
+//   }
+// };
+
 export const HeroSection = () => {
   return (
     <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
