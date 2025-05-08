@@ -1,10 +1,10 @@
 "use server";
 
-import { DESIGNS, PRODUCTS } from "@/data/products";
-import { firestore } from "@/lib/firebase-admin";
-import { ProductVariant } from "@/types/product";
-import { getSKU } from "@/utils/product";
-import { uploadWebpImageToS3 } from "@/utils/s3Upload";
+// import { DESIGNS, PRODUCTS } from "@/data/products";
+// import { firestore } from "@/lib/firebase-admin";
+// import { ProductVariant } from "@/types/product";
+// import { getSKU } from "@/utils/product";
+// import { uploadWebpImageToS3 } from "@/utils/s3Upload";
 
 // export const addVariants = async () => {
 //   const variantRef = firestore().collection("variants");
