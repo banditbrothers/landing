@@ -1,5 +1,5 @@
 
-import { Design } from "@/types/product";
+import { Design, ProductVariant } from "@/types/product";
 import { trackDesignShare } from "./analytics";
 
 const shareMessage = (design: Design) => {
@@ -13,4 +13,8 @@ export const shareDesign = async (design: Design) => {
   } catch (e) {
     console.error(e);
   }
+};
+
+export const getProductVariantUrl = (productVariant: ProductVariant) => {
+  return `${window.location.origin}/products/${productVariant.productId}/${productVariant.id}`;
 };

@@ -1,5 +1,5 @@
 import { Design, DesignColor, DESIGN_COLOR_OBJ, DesignCategory, DESIGN_CATEGORIES_OBJ } from "@/data/designs";
-import { DesignCard, DesignNameAndPriceBanner } from "../cards/DesignCard";
+import { ProductVariantCard, DesignNameAndPriceBanner } from "../cards/DesignCard";
 import { Button } from "../ui/button";
 import { FilterDialog, FilterState } from "../dialogs/FilterDialog";
 import { Suspense, useState } from "react";
@@ -10,15 +10,17 @@ import { invertColor } from "@/utils/misc";
 import { handleMultipleParams, useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { useFavorites } from "../stores/favorites";
 import { LoadingIcon } from "../misc/Loading";
+import { ProductVariant } from "@/types/product";
+import { DESIGNS_OBJ } from "@/data/products";
 
-interface DesignGridProps {
-  designs: Design[];
+interface ProductVariantGridProps {
+  productVariants: ProductVariant[];
 }
 
 const isValidColor = (value: string) => DESIGN_COLOR_OBJ[value as DesignColor] !== undefined;
 const isValidCategory = (value: string) => DESIGN_CATEGORIES_OBJ[value as DesignCategory] !== undefined;
 
-const ProductGridLayoutContent = ({ designs }: DesignGridProps) => {
+const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) => {
   const isMobile = useIsMobile();
   const { isFavorite } = useFavorites();
 
@@ -83,22 +85,31 @@ const ProductGridLayoutContent = ({ designs }: DesignGridProps) => {
     }
   };
 
-  const filteredDesigns = designs
-    .filter(design => {
-      return isBestSellerFilterSelected ? design.isBestSeller : true;
+  const filteredDesigns = productVariants
+    .filter(productVariant => {
+      return isBestSellerFilterSelected ? productVariant.isBestSeller : true;
     })
-    .filter(design => {
-      return isFavFilterSelected ? isFavorite(design.id) : true;
+    .filter(productVariant => {
+      return isFavFilterSelected ? isFavorite(productVariant.designId) : true;
     })
-    .filter(design => {
-      return selectedCategories.length === 0 || selectedCategories.includes(design.category);
+    .filter(productVariant => {
+      return (
+        selectedCategories.length === 0 || selectedCategories.includes(DESIGNS_OBJ[productVariant.designId].category)
+      );
     })
-    .filter(design => {
-      return selectedColors.length === 0 || selectedColors.some(color => design.colors.includes(color));
+    .filter(productVariant => {
+      return (
+        selectedColors.length === 0 ||
+        selectedColors.some(color => DESIGNS_OBJ[productVariant.designId].colors.includes(color))
+      );
+    })
+    .filter(productVariant => {
+      return productVariant.images.mockup.length > 0;
     });
 
   const isColorOrCategoryFilterSelected = selectedColors.length > 0 || selectedCategories.length > 0;
 
+  console.log({ filteredDesigns });
   return (
     <>
       <div className="max-w-screen-2xl mx-auto">
@@ -152,11 +163,11 @@ const ProductGridLayoutContent = ({ designs }: DesignGridProps) => {
               <p className="text-muted-foreground">No Designs Found</p>
             </div>
           )}
-          {filteredDesigns.map(design => (
-            <div key={design.id} className="w-full h-full hover:scale-105 transition-transform duration-300">
-              <DesignCard design={design} optimizeImageQualityOnMobile={false}>
-                <DesignNameAndPriceBanner design={design} />
-              </DesignCard>
+          {filteredDesigns.map(productVariant => (
+            <div key={productVariant.id} className="w-full h-full hover:scale-105 transition-transform duration-300">
+              <ProductVariantCard productVariant={productVariant} optimizeImageQualityOnMobile={false}>
+                <DesignNameAndPriceBanner productVariant={productVariant} />
+              </ProductVariantCard>
             </div>
           ))}
         </div>
@@ -211,10 +222,10 @@ const CategoryFilterChip = ({ categoryId, removeFilter }: CategoryFilterChipProp
   );
 };
 
-export const ProductGridLayout = ({ designs }: DesignGridProps) => {
+export const ProductGridLayout = ({ productVariants }: ProductVariantGridProps) => {
   return (
     <Suspense fallback={<LoadingIcon />}>
-      <ProductGridLayoutContent designs={designs} />
+      <ProductGridLayoutContent productVariants={productVariants} />
     </Suspense>
   );
 };

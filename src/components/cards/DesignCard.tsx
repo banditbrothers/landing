@@ -8,23 +8,26 @@ import useIsMobile from "@/hooks/useIsMobile";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { useCart } from "../stores/cart";
-import { formatCurrency } from "@/utils/price";
+import { formatCurrency, getProductVariantPrice } from "@/utils/price";
+import { ProductVariant } from "@/types/product";
+import { DESIGNS_OBJ } from "@/data/products";
+import { getProductVariantUrl } from "@/utils/share";
 
-interface DesignCardProps {
-  design: Design;
+interface ProductVariantCardProps {
+  productVariant: ProductVariant;
   openInNewTab?: boolean;
   showFavoriteButton?: boolean;
   children: React.ReactNode;
   optimizeImageQualityOnMobile?: boolean;
 }
 
-export const DesignCard = ({
-  design,
+export const ProductVariantCard = ({
+  productVariant,
   children,
   optimizeImageQualityOnMobile = true,
   showFavoriteButton = true,
   openInNewTab = false,
-}: DesignCardProps) => {
+}: ProductVariantCardProps) => {
   const { isFavorite, toggleFav } = useFavorites();
   const isMobile = useIsMobile();
 
@@ -33,17 +36,20 @@ export const DesignCard = ({
       <div className={`p-4 bg-card rounded-xl relative`}>
         {showFavoriteButton && (
           <div className="absolute top-5 right-5 z-10">
-            <FavoriteButton selected={isFavorite(design.id)} toggle={() => toggleFav(design.id)} />
+            <FavoriteButton selected={isFavorite(productVariant.id)} toggle={() => toggleFav(productVariant.id)} />
           </div>
         )}
-        <Link href={`/designs/${design.id}`} target={openInNewTab ? "_blank" : undefined} className="w-full h-full">
+        <Link
+          href={getProductVariantUrl(productVariant)}
+          target={openInNewTab ? "_blank" : undefined}
+          className="w-full h-full">
           <div>
             <div className="flex flex-col items-center">
               <div className="relative w-full aspect-square">
                 <Image
                   fill
-                  src={design.image}
-                  alt={design.name + " design image"}
+                  src={productVariant.images.mockup[0]}
+                  alt={productVariant.name + " image"}
                   className="object-cover rounded-xl"
                   quality={optimizeImageQualityOnMobile && isMobile ? 40 : 75}
                 />
@@ -57,27 +63,30 @@ export const DesignCard = ({
   );
 };
 
-export const DesignNameAndPriceBanner = ({ design }: { design: Design }) => {
+export const DesignNameAndPriceBanner = ({ productVariant }: { productVariant: ProductVariant }) => {
   const { updateCartItem, cart } = useCart();
 
   function handleAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     e.stopPropagation();
 
-    updateCartItem(design.id, 1);
+    updateCartItem(productVariant.id, 1);
   }
 
-  const cartItem = cart.find(item => item.designId === design.id);
+  const productDesign = DESIGNS_OBJ[productVariant.designId];
+  const productPrice = getProductVariantPrice(productVariant);
+
+  const cartItem = cart.find(item => item.designId === productVariant.id);
   return (
     <div className="flex flex-col w-full mt-4 px-1 justify-between items-start gap-6">
       <div className="flex flex-col justify-between items-center w-full">
         <div className="flex flex-row justify-between items-start w-full ">
-          <h3 className="text-xl font-semibold">{design.name}</h3>
-          <p className="text-sm text-muted-foreground">{formatCurrency(design.price)}</p>
+          <h3 className="text-xl font-semibold">{DESIGNS_OBJ[productVariant.designId].name}</h3>
+          <p className="text-sm text-muted-foreground">{formatCurrency(productPrice)}</p>
         </div>
         <div className="flex flex-row justify-between items-center w-full">
           <span>
-            <CategoryBadge category={design.category} />
+            <CategoryBadge category={productDesign.category} />
           </span>
           <Button type="button" variant="outline" className="w-fit" onClick={handleAddToCart}>
             <ShoppingCartIcon className="w-4 h-4" />
@@ -89,10 +98,10 @@ export const DesignNameAndPriceBanner = ({ design }: { design: Design }) => {
   );
 };
 
-export const DesignNameAndArrowBanner = ({ design }: { design: Design }) => {
+export const DesignNameAndArrowBanner = ({ productVariant }: { productVariant: ProductVariant }) => {
   return (
     <div className="flex flex-row w-full mt-4 px-1 justify-between">
-      <h3 className="text-xl font-semibold self-center">{design.name}</h3>
+      <h3 className="text-xl font-semibold self-center">{DESIGNS_OBJ[productVariant.designId].name}</h3>
       <ArrowRightCircleIcon className="w-8 h-8 text-bandit-orange" />
     </div>
   );

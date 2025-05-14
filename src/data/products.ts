@@ -307,3 +307,7 @@ export const PRODUCTS: Product[] = [
     dimensions: '9.5" x 20"',
   },
 ];
+export const PRODUCTS_OBJ = PRODUCTS.reduce((acc, product) => {
+  const { id, ...rest } = product;
+  return { ...acc, [id]: rest };
+}, {} as Record<string, Omit<(typeof PRODUCTS)[number], "id">>);

@@ -8,7 +8,7 @@ export type ImageSet = {
   main?: string[];  // Multiple angles of the main product
   detail?: string[]; // Close-up details
   lifestyle?: string[]; // In-use images
-  mockup?: string[]; // Digital mockups
+  mockup: string[]; // Digital mockups
 };
 
 export type Design = {
@@ -22,6 +22,7 @@ export type Design = {
 };
 
 export type ProductVariant = {
+  id: string;
   designId: Design["id"];
   productId: Product["id"];
   price?: number;
@@ -32,6 +33,7 @@ export type ProductVariant = {
   // Product-design specific images
   images: ImageSet;
   sku?: string; // Stock keeping unit for inventory
+  isBestSeller?: boolean;
 };
 
 export type Product = {

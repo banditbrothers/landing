@@ -1,3 +1,6 @@
+import { DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
+import { ProductVariant } from "@/types/product";
+
 /**
  * Formats a number as currency in INR format
  * @param amount - The amount to format
@@ -11,3 +14,7 @@ export function formatCurrency(amount: number, decimalPlaces = 0): string {
     maximumFractionDigits: decimalPlaces,
   }).format(amount);
 }
+
+export const getProductVariantPrice = (productVariant: ProductVariant) => {
+  return productVariant.price || PRODUCTS_OBJ[productVariant.productId].basePrice;
+};

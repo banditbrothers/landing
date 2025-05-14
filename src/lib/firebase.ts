@@ -2,7 +2,9 @@ import { initializeApp, getApp, getApps } from "firebase/app";
 
 import { getAuth, signInAnonymously as signInAnonymouslyFirebase } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { getFirestore, collection, doc } from "firebase/firestore";
+import { getFirestore, collection, doc, getDocs } from "firebase/firestore";
+import { Collections } from "@/constants/collections";
+import { ProductVariant } from "@/types/product";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -31,4 +33,20 @@ export const getCollectionDocumentId = (collectionName: string) => {
   const collectionRef = collection(db, collectionName);
   const newDocRef = doc(collectionRef);
   return newDocRef.id;
+};
+
+export const db = getFirestore(app);
+
+export const getVariants = async () => {
+  try {
+    const variantsRef = collection(db, Collections.variants);
+    const snapshot = await getDocs(variantsRef);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as ProductVariant[];
+  } catch (error) {
+    console.error("Error fetching variants:", error);
+    return [] as ProductVariant[];
+  }
 };
