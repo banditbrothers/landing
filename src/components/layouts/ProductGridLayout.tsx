@@ -158,7 +158,7 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
           {filteredDesigns.length === 0 && (
             <div className="col-span-4 flex flex-col items-center justify-center h-full">
-              <p className="text-muted-foreground">No Designs Found</p>
+              <p className="text-muted-foreground">No Products Found</p>
             </div>
           )}
           {filteredDesigns.map(productVariant => (

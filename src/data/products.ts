@@ -296,6 +296,7 @@ export const PRODUCTS: Product[] = [
     sizes: ["one-size"],
     material: "4 Way Quick-Dri DryFit Fabric",
     dimensions: '9.5" x 20"',
+    baseImages: { mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/bandana/chai-pila-do/mockup.webp"] },
   },
   {
     id: "balaclava",

@@ -38,7 +38,6 @@ export async function generateMetadata({ params }: VariantPageProps): Promise<Me
 
 export default function DesignPage({ params }: VariantPageProps) {
   const resolvedParams = React.use(params);
-  console.log(resolvedParams);
 
   return (
     <>

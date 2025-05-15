@@ -188,7 +188,7 @@ function Breadcrumb({ variant }: { variant: ProductVariant }) {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/#library">Products</BreadcrumbLink>
+          <BreadcrumbLink href="/products">Products</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
