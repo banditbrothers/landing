@@ -7,7 +7,9 @@ export const getSKU = (productId: string, designId: string) => {
 
 export const getProductVariantName = (productVariant: ProductVariant, config: { includeProductName?: boolean } = { includeProductName: false }) => {
   if(!productVariant) return "";
-  return productVariant.name ?? `${DESIGNS_OBJ[productVariant.designId].name} ${config.includeProductName ? PRODUCTS_OBJ[productVariant.productId].name : ""}`;
+  if(productVariant.name) return productVariant.name;
+  if(config.includeProductName) return `${PRODUCTS_OBJ[productVariant.productId].name}: ${DESIGNS_OBJ[productVariant.designId].name}`;
+  return DESIGNS_OBJ[productVariant.designId].name;
 };
 
 export const getProductVariantPrice = (productVariant: ProductVariant) => {
