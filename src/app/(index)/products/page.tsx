@@ -67,7 +67,7 @@ export default function ProductsPage() {
 
         <div className="flex flex-wrap justify-center gap-8">
           {PRODUCTS.map(product => (
-            <div className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.33rem)]" key={product.id}>
+            <div key={product.id} className="w-full md:w-1/2 lg:w-1/3 px-4">
               <ProductCard product={product} />
             </div>
           ))}
