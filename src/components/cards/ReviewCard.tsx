@@ -35,11 +35,17 @@ export const ReviewCard = ({ review, containerStyle = {} }: ReviewCardProps) => 
             </div>
             <div className="flex flex-col items-start gap-4">
               <div className="flex flex-wrap gap-2 items-center">
-                {review.productIds.map(productId => (
-                  <ClickableProductBadge productId={productId} key={productId}>
-                    {DESIGNS_OBJ[productId].name}
-                  </ClickableProductBadge>
-                ))}
+                {/** @ts-expect-error: new schema */}
+                {review.variantIds.map(variantId => {
+                  const tempDesignId = variantId.split("-")[1].toLowerCase() as string;
+                  const designId = tempDesignId.replaceAll("_", "-");
+
+                  return (
+                    <ClickableProductBadge productId={designId} key={variantId}>
+                      {DESIGNS_OBJ[designId].name}
+                    </ClickableProductBadge>
+                  );
+                })}
               </div>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground/90">{review.comment}</p>

@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "instagram.fbom6-1.fna.fbcdn.net",
       },
+      {
+        protocol: "https",
+        hostname: "bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com",
+      },
     ],
   },
 };
