@@ -137,16 +137,17 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
             </div>
           </div>
 
-          {/* Standard Product Details */}
-          {/* <div className=" pt-4 border-t border-muted">
+          <div className=" pt-4 border-t border-muted">
             <h2 className="text-lg font-semibold text-foreground mb-3">Product Details</h2>
-            {Object.entries(variantProduct.description).map(([key, value]) => (
-              <div key={key} className="flex py-2">
-                <span className="font-medium text-foreground text-sm w-24">{key}:</span>
-                <span className="text-muted-foreground text-sm">{value}</span>
-              </div>
-            ))}
-          </div> */}
+            <div className="flex py-2">
+              <span className="font-medium text-foreground text-sm w-24">Material:</span>
+              <span className="text-muted-foreground text-sm">{variantProduct.material}</span>
+            </div>
+            <div className="flex py-2">
+              <span className="font-medium text-foreground text-sm w-24">Dimensions:</span>
+              <span className="text-muted-foreground text-sm">{variantProduct.dimensions}</span>
+            </div>
+          </div>
 
           {/* Standard Product Details */}
           <div className=" pt-4 border-t border-muted">

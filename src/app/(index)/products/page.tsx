@@ -52,13 +52,6 @@ const ProductCard = ({ product }: { product: Product }) => {
             </div>
           </div>
         </CardContent>
-
-        {/* View Details Hint */}
-        {/* <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <span className="text-white font-medium text-sm px-4 py-2 border border-white/40 rounded-full">
-            View All Designs
-          </span>
-        </div> */}
       </Card>
     </Link>
   );
