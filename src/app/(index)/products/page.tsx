@@ -1,7 +1,7 @@
-import { PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { PRODUCTS } from "@/data/products";
 import { Product } from "@/types/product";
 import Image from "next/image";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { formatCurrency } from "@/utils/price";
 import Link from "next/link";
