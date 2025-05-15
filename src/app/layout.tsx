@@ -7,8 +7,6 @@ import { CSPostHogProvider } from "@/provider/posthog";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import { SearchDialog } from "@/components/dialogs/SearchDialog";
-import { CartSheet } from "@/components/sheets/CartSheet";
 
 import { TanstackQueryProvider } from "@/provider/TanstackQuery";
 
@@ -56,8 +54,6 @@ export default function RootLayout({
               {children}
               <Footer />
             </main>
-            <SearchDialog />
-            <CartSheet />
           </TanstackQueryProvider>
         </CSPostHogProvider>
       </body>

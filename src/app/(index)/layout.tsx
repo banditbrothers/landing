@@ -1,9 +1,19 @@
 "use client";
 
+import { SearchDialog } from "@/components/dialogs/SearchDialog";
+import { LoadingScreen } from "@/components/misc/Loading";
+import { CartSheet } from "@/components/sheets/CartSheet";
 import { useVariants } from "@/hooks/useVariants";
 
 export default function IndexLayout({ children }: { children: React.ReactNode }) {
-  useVariants();
+  const { data: variants } = useVariants();
 
-  return <>{children}</>;
+  if (!variants || variants.length === 0) return <LoadingScreen />;
+  return (
+    <>
+      {children}
+      <SearchDialog />
+      <CartSheet />
+    </>
+  );
 }

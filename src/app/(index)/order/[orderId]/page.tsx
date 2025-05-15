@@ -16,10 +16,15 @@ import { Separator } from "@/components/ui/separator";
 import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
 import { redactEmail, redactPhone, redactName } from "@/utils/redact";
 import Link from "next/link";
+import { getProductVariantUrl } from "@/utils/share";
+import { useVariants } from "@/hooks/useVariants";
+import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
 
 type OrderPageProps = { params: Promise<{ orderId: string }> };
 
 export default function OrderPage({ params }: OrderPageProps) {
+  const { data: variants } = useVariants();
+
   const [order, setOrder] = useState<Order | null>(null);
   const { copy, isCopied } = useCopyToClipboard();
 
@@ -87,24 +92,38 @@ export default function OrderPage({ params }: OrderPageProps) {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {order.products.map((product, index) => (
-                  <div key={product.id}>
-                    <div className="flex items-center gap-4 py-2">
-                      <Link href={`/designs/${product.id}`} target="_blank">
-                        <Image width={100} height={100} className="rounded" alt={product.name} src={product.image} />
-                      </Link>
-                      <div className="flex-1">
-                        <h4 className="font-medium">{product.name}</h4>
-                        <p className="text-sm text-muted-foreground">Quantity: {product.quantity}</p>
+                {order.variants.map((orderVariant, index) => {
+                  const variant = variants.find(v => v.id === orderVariant.variantId)!;
+
+                  const name = getProductVariantName(variant, { includeProductName: true });
+                  const price = getProductVariantPrice(variant);
+                  const quantity = orderVariant.quantity;
+
+                  return (
+                    <div key={variant.id}>
+                      <div className="flex items-center gap-4 py-2">
+                        <Link href={getProductVariantUrl(variant)} target="_blank">
+                          <Image
+                            width={100}
+                            height={100}
+                            className="rounded"
+                            alt={name}
+                            src={variant.images.mockup[0]}
+                          />
+                        </Link>
+                        <div className="flex-1">
+                          <h4 className="font-medium">{name}</h4>
+                          <p className="text-sm text-muted-foreground">Quantity: {quantity}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-medium">{formatCurrency(price * quantity, 2)}</p>
+                          <p className="text-sm text-muted-foreground">{formatCurrency(price, 2)} each</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-medium">{formatCurrency(product.price * product.quantity, 2)}</p>
-                        <p className="text-sm text-muted-foreground">{formatCurrency(product.price, 2)} each</p>
-                      </div>
+                      {index < order.variants.length - 1 && <Separator />}
                     </div>
-                    {index < order.products.length - 1 && <Separator />}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </CardContent>
           </Card>

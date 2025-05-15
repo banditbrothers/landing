@@ -11,7 +11,7 @@ const FEATURED_REVIEWS: ReviewWithoutEmail[] = [
     orderId: "GqN6qRnjSAx2CARC1lJb",
     createdAt: 1739305409,
     source: "website",
-    productIds: ["tick-tick-boom"],
+    variantIds: ["BANDANA-TICK_TICK_BOOM"],
     images: [
       "https://firebasestorage.googleapis.com/v0/b/banditbrothers-5253.firebasestorage.app/o/reviews%2Fh0m9VV8in6nnmQI5N1yc%2F0.jpg?alt=media&token=29b7ac29-88c0-4ae0-88f6-57a0a57a18f4",
     ],
@@ -30,7 +30,7 @@ const FEATURED_REVIEWS: ReviewWithoutEmail[] = [
     source: "website",
     orderId: "9DW96RgvvNhRiUazRvPX",
     createdAt: 1741213282,
-    productIds: ["fin-tastic"],
+    variantIds: ["BANDANA-FIN_TASTIC"],
     images: [
       "https://firebasestorage.googleapis.com/v0/b/banditbrothers-5253.firebasestorage.app/o/reviews%2FuRkhsQX2EmEElz2w1HeJ%2F0.jpeg?alt=media&token=edce2a58-4c63-4f8b-bf72-492a10922d3e",
     ],
@@ -46,7 +46,7 @@ const FEATURED_REVIEWS: ReviewWithoutEmail[] = [
     source: "website",
     orderId: "5TqcbXUEXzIO2duKe5G9",
     createdAt: 1739720056,
-    productIds: ["akatsuki-allure"],
+    variantIds: ["BANDANA-AKATSUKI_ALLURE"],
     images: [
       "https://firebasestorage.googleapis.com/v0/b/banditbrothers-5253.firebasestorage.app/o/reviews%2FYEWqracylGrNMFzjj7ja%2F0.jpeg?alt=media&token=fdf9c463-d04c-4d3f-ba47-9e12dbaf93ed",
     ],

@@ -3,13 +3,11 @@
 import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
 import { Button } from "@/components/ui/button";
 import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
-import { useEffect, useState } from "react";
-import { shuffleArray } from "@/utils/misc";
-import { LoadingIcon } from "@/components/misc/Loading";
 import { useVariants } from "@/hooks/useVariants";
+import { useState } from "react";
 
 function ProductPageContent() {
-  const { data: variants, error } = useVariants();
+  const { data: variants } = useVariants();
 
   const [isHowToWearDialogOpen, setIsHowToWearDialogOpen] = useState(false);
 

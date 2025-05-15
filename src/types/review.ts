@@ -16,7 +16,7 @@ export type Review = {
   | {
       source: "website";
       orderId: string;
-      productIds: string[];
+      variantIds: string[];
     }
 );
 

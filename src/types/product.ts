@@ -25,13 +25,12 @@ export type ProductVariant = {
   id: string;
   designId: Design["id"];
   productId: Product["id"];
+  images: ImageSet;
   price?: number;
   name?: string;
   description?: string;
   stockLevel?: number;
   isAvailable?: boolean;
-  // Product-design specific images
-  images: ImageSet;
   sku?: string; // Stock keeping unit for inventory
   isBestSeller?: boolean;
 };
@@ -46,4 +45,9 @@ export type Product = {
   dimensions: string;
   // Generic product images (no specific design)
   baseImages?: ImageSet; 
+};
+
+export type OrderedVariant = {
+  variantId: string;
+  quantity: number;
 };

@@ -1,3 +1,5 @@
+import { OrderedVariant } from "./product";
+
 export type OrderStatus = "initiated" | "paid" | "cancelled" | "admin-cancelled" | "payment-failed";
 
 export type Address = {
@@ -22,7 +24,7 @@ export type Order = {
   shipping: number;
   couponCode: string | null;
   address: Address;
-  products: OrderProduct[];
+  variants: OrderedVariant[];
   status: OrderStatus;
 } & (
   | {
@@ -45,15 +47,7 @@ export type Order = {
     }
 );
 
-export type OrderProduct = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-};
-
 export type CartItem = {
-  designId: string;
+  variantId: string;
   quantity: number;
 };

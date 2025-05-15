@@ -1,5 +1,4 @@
-import { Design, DesignColor, DESIGN_COLOR_OBJ, DesignCategory, DESIGN_CATEGORIES_OBJ } from "@/data/designs";
-import { ProductVariantCard, DesignNameAndPriceBanner } from "../cards/DesignCard";
+import { ProductVariantCard, VariantNameAndPriceBanner } from "../cards/VariantCard";
 import { Button } from "../ui/button";
 import { FilterDialog, FilterState } from "../dialogs/FilterDialog";
 import { Suspense, useState } from "react";
@@ -10,8 +9,8 @@ import { invertColor } from "@/utils/misc";
 import { handleMultipleParams, useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { useFavorites } from "../stores/favorites";
 import { LoadingIcon } from "../misc/Loading";
-import { ProductVariant } from "@/types/product";
-import { DESIGNS_OBJ } from "@/data/products";
+import { DesignCategory, DesignColor, ProductVariant } from "@/types/product";
+import { DESIGN_CATEGORIES_OBJ, DESIGN_COLOR_OBJ, DESIGNS_OBJ } from "@/data/products";
 
 interface ProductVariantGridProps {
   productVariants: ProductVariant[];
@@ -109,7 +108,6 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
 
   const isColorOrCategoryFilterSelected = selectedColors.length > 0 || selectedCategories.length > 0;
 
-  console.log({ filteredDesigns });
   return (
     <>
       <div className="max-w-screen-2xl mx-auto">
@@ -166,7 +164,7 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
           {filteredDesigns.map(productVariant => (
             <div key={productVariant.id} className="w-full h-full hover:scale-105 transition-transform duration-300">
               <ProductVariantCard productVariant={productVariant} optimizeImageQualityOnMobile={false}>
-                <DesignNameAndPriceBanner productVariant={productVariant} />
+                <VariantNameAndPriceBanner productVariant={productVariant} />
               </ProductVariantCard>
             </div>
           ))}

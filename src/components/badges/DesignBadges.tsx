@@ -1,8 +1,9 @@
-import { Design, DESIGN_COLOR_OBJ } from "@/data/designs";
+import { DESIGN_COLOR_OBJ } from "@/data/products";
 
 import { Badge, BadgeProps } from "../ui/badge";
-import { DESIGN_CATEGORIES_OBJ } from "@/data/designs";
+import { DESIGN_CATEGORIES_OBJ } from "@/data/products";
 import { invertColor } from "@/utils/misc";
+import { Design } from "@/types/product";
 
 export const CategoryBadge = ({ category }: { category: Design["category"] }) => {
   return (

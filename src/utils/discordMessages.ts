@@ -26,7 +26,7 @@ export const getDiscordOrderMessage = (order: Order) => {
           { name: "Address", value: getAddressString(order.address) },
           {
             name: "Products",
-            value: order.products.map(product => `${product.quantity}x ${product.name}`).join("\n"),
+            value: order.variants.map(variant => `${variant.quantity}x ${variant.variantId}`).join("\n"),
           },
         ],
         timestamp: new Date(getDate(order.createdAt)).toISOString(),

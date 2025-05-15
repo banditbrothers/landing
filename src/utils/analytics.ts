@@ -13,17 +13,17 @@ export const identifyUser = (
   });
 };
 
-export const trackDesignView = (designId: string) => {
-  console.debug("posthog design_viewed", { design_id: designId });
-  posthog.capture("design_viewed", { design_id: designId });
+export const trackVariantView = ({ productId, designId }: { productId: string; designId: string }) => {
+  console.debug("posthog variant_viewed", { product_id: productId, design_id: designId });
+  posthog.capture("variant_viewed", { product_id: productId, design_id: designId });
 };
 
-export const trackDesignAddToCart = (designId: string) => {
-  console.debug("posthog design_add_to_cart", { design_id: designId });
-  posthog.capture("design_add_to_cart", { design_id: designId });
+export const trackVariantAddToCart = ({ productId, designId }: { productId: string; designId: string }) => {
+  console.debug("posthog variant_add_to_cart", { product_id: productId, design_id: designId });
+  posthog.capture("variant_add_to_cart", { product_id: productId, design_id: designId });
 };
 
-export const trackDesignShare = (designId: string) => {
-  console.debug("posthog design_share", { design_id: designId });
-  posthog.capture("design_share", { design_id: designId });
+export const trackVariantShare = ({ productId, designId }: { productId: string; designId: string }) => {
+  console.debug("posthog variant_share", { product_id: productId, design_id: designId });
+  posthog.capture("variant_share", { product_id: productId, design_id: designId });
 };

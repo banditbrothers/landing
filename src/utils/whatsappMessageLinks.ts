@@ -11,9 +11,9 @@ export const whatsappKnowMoreLink = `https://wa.me/${whatsappPhoneNumber}?text=$
 export const getWhatsappNeedHelpWithOrderLink = (orderDetails: Partial<Order>) => {
   let message = `Hey, I need help with my order ${orderDetails.id ? `\n\`ID: ${orderDetails.id}\`` : ""}`;
 
-  if (orderDetails.products) {
+  if (orderDetails.variants) {
     message += `\n\n*Products* \n${orderDetails
-      .products!.map(product => `- ${product.name}: ${product.quantity}`)
+      .variants!.map(variant => `- ${variant.variantId}: ${variant.quantity}`)
       .join("\n")}`;
   }
 

@@ -2,7 +2,7 @@ import { initializeApp, getApp, getApps } from "firebase/app";
 
 import { getAuth, signInAnonymously as signInAnonymouslyFirebase } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { getFirestore, collection, doc, getDocs } from "firebase/firestore";
+import { getFirestore, collection, doc, getDocs, query, where } from "firebase/firestore";
 import { Collections } from "@/constants/collections";
 import { ProductVariant } from "@/types/product";
 
@@ -23,9 +23,12 @@ export const auth = getAuth(app);
 export const storage = getStorage(app);
 
 export const signInAnonymously = async () => {
-  signInAnonymouslyFirebase(auth).catch(error => {
+  try {
+    await signInAnonymouslyFirebase(auth);
+    console.log("signed in anonymously");
+  } catch (error) {
     console.error("error", error);
-  });
+  }
 };
 
 export const getCollectionDocumentId = (collectionName: string) => {
@@ -38,6 +41,8 @@ export const getCollectionDocumentId = (collectionName: string) => {
 export const db = getFirestore(app);
 
 export const getVariants = async () => {
+  console.log("fetching variants");
+
   try {
     const variantsRef = collection(db, Collections.variants);
     const snapshot = await getDocs(variantsRef);
@@ -48,5 +53,19 @@ export const getVariants = async () => {
   } catch (error) {
     console.error("Error fetching variants:", error);
     return [] as ProductVariant[];
+  }
+};
+
+export const getVariant = async (variantId: string) => {
+  try {
+    const variantsRef = collection(db, Collections.variants);
+    const q = query(variantsRef, where("id", "==", variantId));
+
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) return null;
+    return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as ProductVariant;
+  } catch (error) {
+    console.error("Error fetching variant:", error);
+    return null;
   }
 };

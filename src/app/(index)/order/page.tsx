@@ -12,10 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DESIGNS_OBJ, DESIGNS, Design } from "@/data/designs";
 import { MultiSelectDropdown } from "@/components/dropdowns/MultiSelectDropdown";
 
-import { Order, OrderProduct, CartItem } from "@/types/order";
+import { Order, CartItem } from "@/types/order";
 import { Coupon } from "@/types/coupon";
 import { getTimestamp } from "@/utils/timestamp";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -39,6 +38,9 @@ import { DangerBanner } from "@/components/misc/Banners";
 import { validatePincode } from "@/lib/pincode";
 import { formatCurrency } from "@/utils/price";
 import { ProductBadge } from "@/components/badges/ProductBadge";
+import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
+import { OrderedVariant, ProductVariant } from "@/types/product";
+import { useVariants } from "@/hooks/useVariants";
 
 const SHIPPING_COST = 100;
 
@@ -64,20 +66,20 @@ const orderFormSchema = z.object({
   }),
 });
 
-const getSubtotal = (products: CartItem[]) => {
-  if (products.length === 0) return 0;
+const getSubtotal = (cart: CartItem[], variants: ProductVariant[]) => {
+  if (cart.length === 0) return 0;
 
-  return products.reduce((total, product) => {
-    const design = DESIGNS_OBJ[product.designId];
-    return total + design.price * product.quantity;
+  return cart.reduce((total, item) => {
+    const variant = variants.find(v => v.id === item.variantId)!;
+    return total + getProductVariantPrice(variant) * item.quantity;
   }, 0);
 };
 
-const getShippingCost = (products: CartItem[], coupon: Coupon | null) => {
-  if (products.length === 0) return 0;
+const getShippingCost = (cart: CartItem[], coupon: Coupon | null, variants: ProductVariant[]) => {
+  if (cart.length === 0) return 0;
   if (MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING === null) return SHIPPING_COST;
 
-  const subtotal = getSubtotal(products);
+  const subtotal = getSubtotal(cart, variants);
   const discount = getDiscountAmount(subtotal, coupon);
   const total = subtotal - discount;
 
@@ -85,10 +87,10 @@ const getShippingCost = (products: CartItem[], coupon: Coupon | null) => {
   return SHIPPING_COST;
 };
 
-const calculateTotal = (products: CartItem[], coupon: Coupon | null) => {
-  const subtotal = getSubtotal(products);
+const calculateTotal = (cart: CartItem[], coupon: Coupon | null, variants: ProductVariant[]) => {
+  const subtotal = getSubtotal(cart, variants);
   const discount = getDiscountAmount(subtotal, coupon);
-  const shippingCost = getShippingCost(products, coupon);
+  const shippingCost = getShippingCost(cart, coupon, variants);
 
   const total = subtotal - discount + shippingCost;
 
@@ -104,6 +106,8 @@ function OrderPageContent() {
   });
 
   const router = useRouter();
+  const { data: variants } = useVariants();
+
   const { favorites } = useFavorites();
   const searchParams = useSearchParams();
   const { orderLoading, createOrder } = useOrderActions();
@@ -112,7 +116,7 @@ function OrderPageContent() {
 
   const { cart, coupon, setCoupon, updateCartItem, removeCartItem, clearCart, clearCoupon } = useCart();
 
-  const [favFirstDesigns, setFavFirstDesigns] = useState<Design[]>([]);
+  const [favFirstVariants, setFavFirstVariants] = useState<ProductVariant[]>([]);
   const [countryStates, setCountryStates] = useState<IState[]>([]);
 
   const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
@@ -157,36 +161,33 @@ function OrderPageContent() {
   }, [watchCountry]);
 
   useEffect(() => {
-    const favDesigns = DESIGNS.filter(design => favorites.includes(design.id));
-    const otherDesigns = DESIGNS.filter(design => !favorites.includes(design.id));
-    setFavFirstDesigns([...favDesigns, ...otherDesigns]);
-  }, [favorites]);
+    const favVariants = variants.filter(variant => favorites.includes(variant.id));
+    const otherVariants = variants.filter(variant => !favorites.includes(variant.id));
+    setFavFirstVariants([...favVariants, ...otherVariants]);
+  }, [favorites, variants]);
 
   const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
-  const orderTotal = calculateTotal(cart, coupon);
+  const orderTotal = calculateTotal(cart, coupon, variants);
 
-  const handleDesignChange = (id: string, checked: boolean) => {
+  const handleVariantChange = (id: string, checked: boolean) => {
     if (checked) updateCartItem(id);
     else removeCartItem(id);
   };
 
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
-    const products: OrderProduct[] = cart.map(product => ({
-      id: product.designId,
-      name: DESIGNS_OBJ[product.designId].name,
-      price: DESIGNS_OBJ[product.designId].price,
-      image: DESIGNS_OBJ[product.designId].image,
+    const orderedVariants: OrderedVariant[] = cart.map(product => ({
+      variantId: product.variantId,
       quantity: product.quantity,
     }));
 
     const order: Omit<Order, "id" | "status"> = {
       ...values,
-      products,
+      variants: orderedVariants,
       paymentMode,
       total: orderTotal,
-      subtotal: getSubtotal(cart),
+      subtotal: getSubtotal(cart, variants),
       discount: getDiscountAmount(subtotal, coupon),
-      shipping: getShippingCost(cart, coupon),
+      shipping: getShippingCost(cart, coupon, variants),
       createdAt: getTimestamp(),
       couponCode: coupon?.code ?? null,
     };
@@ -256,11 +257,11 @@ function OrderPageContent() {
     }, 700);
   };
 
-  const selectedDesignsIds = cart.map(product => product.designId);
-  const formIsReady = form.formState.isValid && selectedDesignsIds.length > 0;
+  const selectedVariantIds = cart.map(product => product.variantId);
+  const formIsReady = form.formState.isValid && selectedVariantIds.length > 0 && variants;
 
-  const subtotal = getSubtotal(cart);
-  const shippingCost = getShippingCost(cart, coupon);
+  const subtotal = getSubtotal(cart, variants);
+  const shippingCost = getShippingCost(cart, coupon, variants);
   const isShippingFree = shippingCost === 0;
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -492,35 +493,40 @@ function OrderPageContent() {
                     <div className="flex flex-col gap-2">
                       <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
                         <span>
-                          {selectedDesignsIds.map(id => (
-                            <span key={id} className="mr-1 mb-1">
-                              <ProductBadge>{DESIGNS_OBJ[id].name}</ProductBadge>
-                            </span>
-                          ))}
+                          {selectedVariantIds.map(id => {
+                            const variant = variants.find(v => v.id === id);
+                            const name = getProductVariantName(variant!);
+
+                            return (
+                              <span key={id} className="mr-1 mb-1">
+                                <ProductBadge>{name}</ProductBadge>
+                              </span>
+                            );
+                          })}
                         </span>
 
                         <MultiSelectDropdown
-                          designs={favFirstDesigns}
-                          selectedIds={selectedDesignsIds}
-                          onChange={(id, checked) => handleDesignChange(id, checked)}
+                          variants={favFirstVariants}
+                          selectedIds={selectedVariantIds}
+                          onChange={(id, checked) => handleVariantChange(id, checked)}
                         />
                       </div>
 
-                      {selectedDesignsIds.map(id => {
+                      {selectedVariantIds.map(id => {
                         return (
                           <CheckoutProductCard
                             key={id}
-                            design={{ ...DESIGNS_OBJ[id], id }}
+                            variant={variants.find(v => v.id === id)!}
                             updateCartItemBy={updateCartItem}
                             removeCartItem={removeCartItem}
-                            quantity={cart.find(design => design.designId === id)?.quantity ?? 1}
+                            quantity={cart.find(variant => variant.variantId === id)?.quantity ?? 1}
                           />
                         );
                       })}
                     </div>
                   </div>
 
-                  {selectedDesignsIds.length > 0 && (
+                  {selectedVariantIds.length > 0 && (
                     <div className="flex flex-col gap-2">
                       <Separator className="mb-4" />
 

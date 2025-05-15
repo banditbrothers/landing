@@ -4,20 +4,22 @@ import { Button } from "../ui/button";
 
 import { useCart } from "@/components/stores/cart";
 
-import { DESIGNS_OBJ } from "@/data/designs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { CheckoutProductCard } from "../cards/CheckoutProductCard";
 import { useRouter } from "next/navigation";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { BULK_BUY_COUPON, RUNNING_COUPON } from "@/components/typography/coupons";
 import { formatCurrency } from "@/utils/price";
+import { useVariants } from "@/hooks/useVariants";
+import { getProductVariantPrice } from "@/utils/product";
 
 export const CartSheet = () => {
   const { cart: cartItems, isCartOpen, closeCart, updateCartItem, removeCartItem } = useCart();
+  const { data: variants } = useVariants();
 
   const subtotal = cartItems.reduce((acc, item) => {
-    const design = DESIGNS_OBJ[item.designId];
-    return acc + design.price * item.quantity;
+    const variant = variants.find(v => v.id === item.variantId);
+    return acc + getProductVariantPrice(variant!) * item.quantity;
   }, 0);
 
   const CartContent = () => {
@@ -26,11 +28,12 @@ export const CartSheet = () => {
         <RUNNING_COUPON.CartMessageElement />
 
         {cartItems.map(item => {
-          const design = { ...DESIGNS_OBJ[item.designId], id: item.designId };
+          const variant = variants.find(v => v.id === item.variantId)!;
+
           return (
             <CheckoutProductCard
-              key={design.id}
-              design={design}
+              key={variant.id}
+              variant={variant}
               quantity={item.quantity}
               updateCartItemBy={updateCartItem}
               removeCartItem={removeCartItem}
@@ -41,7 +44,7 @@ export const CartSheet = () => {
         {cartItems.length === 0 && (
           <div className="text-center text-muted h-full flex items-center justify-center">
             <p className="text-3xl font-semibold sm:text-5xl flex flex-col gap-3">
-              {"“No Bandit Should Be Without A Loot”".split(" ").map((char, i) => (
+              {"“No Bandit Should Be Without Any Loot”".split(" ").map((char, i) => (
                 <span key={i} className="italic">
                   {char}
                 </span>

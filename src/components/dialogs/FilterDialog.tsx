@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { DesignColor, DESIGN_COLORS, DesignCategory, DESIGN_CATEGORIES, DESIGN_CATEGORIES_OBJ } from "@/data/designs";
 import { ColorBadge } from "../badges/DesignBadges";
+import { DesignCategory, DesignColor } from "@/types/product";
+import { DESIGN_CATEGORIES, DESIGN_CATEGORIES_OBJ, DESIGN_COLORS } from "@/data/products";
 
 export interface FilterState {
   colors: DesignColor[];
