@@ -6,6 +6,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Country, State, IState } from "country-state-city";
 import { toast } from "sonner";
+import ReactPixel from "react-facebook-pixel";
 
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -204,6 +205,7 @@ function OrderPageContent() {
 
   const handlePaymentSuccess = async () => {
     toast.success("Order Placed 🎉");
+    ReactPixel.track("Purchase", { value: orderTotal, currency: "INR" });
     finalizeOrder();
   };
 

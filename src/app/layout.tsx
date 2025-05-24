@@ -1,8 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 import { Space_Grotesk } from "next/font/google";
-import Script from "next/script";
 
 import { CSPostHogProvider } from "@/provider/posthog";
 import { Toaster } from "@/components/ui/sonner";
@@ -12,6 +12,7 @@ import { SearchDialog } from "@/components/dialogs/SearchDialog";
 import { CartSheet } from "@/components/sheets/CartSheet";
 
 import { TanstackQueryProvider } from "@/provider/TanstackQuery";
+const PixelTracker = dynamic(() => import("@/components/pixel-tracker/PixelTracker"), { ssr: false });
 
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
@@ -41,6 +42,7 @@ export const metadata: Metadata = {
 };
 
 const theme = "dark";
+const PIXEL_ID = "1023145726553010";
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,8 +51,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${theme}`}>
       <head>
-        <Script id="facebook-pixel" strategy="beforeInteractive">
-          {`
+        <script
+          id="facebook-pixel"
+          dangerouslySetInnerHTML={{
+            __html: `
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
             n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -59,16 +63,16 @@ export default function RootLayout({
             t.src=v;s=b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '1023145726553010');
+            fbq('init', '${PIXEL_ID}');
             fbq('track', 'PageView');
-          `}
-        </Script>
+          `,
+          }}></script>
         <noscript>
           <img
             height="1"
             width="1"
             style={{ display: "none" }}
-            src="https://www.facebook.com/tr?id=1023145726553010&ev=PageView&noscript=1"
+            src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
             alt=""
           />
         </noscript>
@@ -79,6 +83,7 @@ export default function RootLayout({
             <Toaster theme={theme} richColors position="top-right" />
             <main>
               <Navbar />
+              <PixelTracker />
               {children}
               <Footer />
             </main>
