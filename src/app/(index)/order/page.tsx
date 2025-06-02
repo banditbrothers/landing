@@ -131,6 +131,22 @@ function OrderPageContent() {
     for (const target of Object.keys(watchAllFields)) {
       const targetKey = target as keyof typeof watchAllFields;
 
+      if (targetKey === "phone") {
+        console.log("running phone check");
+        if (watchAllFields[targetKey]) {
+          let phone = watchAllFields[targetKey];
+
+          const prefixes = ["+91", "0"];
+          for (const prefix of prefixes) {
+            if (phone.startsWith(prefix)) {
+              phone = phone.slice(prefix.length);
+              form.setValue("phone", phone);
+              break;
+            }
+          }
+        }
+      }
+
       if (targetKey === "address") {
         const oldAddress = oldFieldsValues?.current?.[targetKey];
         const newAddress = watchAllFields[targetKey];
