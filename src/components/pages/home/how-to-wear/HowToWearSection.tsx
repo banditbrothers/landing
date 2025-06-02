@@ -39,7 +39,7 @@ export const HowToWearSection = () => {
               neck warmers, headbands, or even as wristbands.
             </p>
             <div className="flex md:justify-start justify-center">
-              <Link href="/designs">
+              <Link href="/products">
                 <Button variant="bandit-hover" className="group w-fit">
                   Get Yours Now
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
