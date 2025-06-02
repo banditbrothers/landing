@@ -52,7 +52,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
   useEffect(() => {
     if (!variant) {
       toast.error("Oops! Looks like the variant you're looking for doesn't exist");
-      router.replace(`/`); // todo: replace with /products
+      router.replace(`/products`);
     }
   }, [variant, router]);
 

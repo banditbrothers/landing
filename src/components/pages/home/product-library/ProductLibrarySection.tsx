@@ -20,7 +20,6 @@ export const ProductLibraryContent = () => {
         </div>
         <div className="mx-auto flex flex-col items-center gap-10">
           <ProductCarousel variants={bestSellerVariants} />
-          {/* todo: replace link here in favour of 2 cards for bandana and balaclava */}
           <Link href="/products">
             <Button variant="bandit-hover" className="group">
               <span>View All Products</span>
