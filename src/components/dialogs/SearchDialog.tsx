@@ -20,7 +20,7 @@ const options: IFuseOptions<ProductVariant> = {
   threshold: 0.1,
   distance: 200, // 0.1 * 200 = 20 characters will be considered to find a match
   location: 0,
-  keys: ["name", "tags", "colors", "category", "productId"],
+  keys: ["design.name", "design.tags", "design.colors", "design.category", "productId"],
 };
 
 type SearchVariant = ProductVariant & { product: Omit<Product, "id">; design: Omit<Design, "id"> };
