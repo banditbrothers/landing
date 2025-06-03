@@ -101,7 +101,7 @@ export default function OrderPage({ params }: OrderPageProps) {
 
                   return (
                     <div key={variant.id}>
-                      <div className="flex items-center gap-4 py-2">
+                      <div className="flex items-start gap-4 py-2">
                         <Link href={getProductVariantUrl(variant)} target="_blank">
                           <Image
                             width={100}
@@ -117,7 +117,6 @@ export default function OrderPage({ params }: OrderPageProps) {
                         </div>
                         <div className="text-right">
                           <p className="font-medium">{formatCurrency(price * quantity, 2)}</p>
-                          <p className="text-sm text-muted-foreground">{formatCurrency(price, 2)} each</p>
                         </div>
                       </div>
                       {index < order.variants.length - 1 && <Separator />}
