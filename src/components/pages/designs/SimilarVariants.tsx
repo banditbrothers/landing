@@ -14,7 +14,6 @@ interface SimilarVariantsProps {
 }
 
 export const SimilarVariants = ({ similarVariants, currentVariantId }: SimilarVariantsProps) => {
-  // Filter out the current variant
   const filteredVariants = similarVariants.filter(variant => variant.id !== currentVariantId);
 
   if (filteredVariants.length === 0) {
@@ -29,7 +28,7 @@ export const SimilarVariants = ({ similarVariants, currentVariantId }: SimilarVa
         </div>
 
         <div className="flex flex-wrap gap-3">
-          {filteredVariants.map((variant, index) => {
+          {filteredVariants.map(variant => {
             const variantName = getProductVariantName(variant);
             const variantDesign = DESIGNS_OBJ[variant.designId];
 
