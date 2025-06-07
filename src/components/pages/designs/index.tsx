@@ -30,8 +30,9 @@ import { formatCurrency } from "@/utils/price";
 import Link from "next/link";
 import { ProductVariant } from "@/types/product";
 import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
-import { DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
+import { DESIGNS_OBJ, getSimilarDesigns, PRODUCTS_OBJ } from "@/data/products";
 import { useVariants } from "@/hooks/useVariants";
+import { SimilarVariants } from "./SimilarVariants";
 
 type ProductPageContentsProps = {
   designId: string;
@@ -46,6 +47,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
   const { openCart, updateCartItem: addOrUpdateCartItem } = useCart();
 
   const [quantity, setQuantity] = useState(1);
+  const [similarVariants, setSimilarVariants] = useState<ProductVariant[]>([]);
 
   const variant = variants?.find(v => v.designId === designId && v.productId === productId);
 
@@ -55,6 +57,14 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
       router.replace(`/products`);
     }
   }, [variant, router]);
+
+  useEffect(() => {
+    if (variant && variants) {
+      const similarDesigns = getSimilarDesigns(variant.designId);
+      const similarVariants = variants.filter(v => similarDesigns.includes(v.designId) && v.productId === productId);
+      setSimilarVariants(similarVariants ?? []);
+    }
+  }, [variant, variants, productId]);
 
   useEffect(() => {
     if (variant) trackVariantView({ productId: variant.productId, designId: variant.designId });
@@ -136,6 +146,8 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
               </Button>
             </div>
           </div>
+
+          <SimilarVariants similarVariants={similarVariants} currentVariantId={variant.id} />
 
           <div className=" pt-4 border-t border-muted">
             <h2 className="text-lg font-semibold text-foreground mb-3">Product Details</h2>

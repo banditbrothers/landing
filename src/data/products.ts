@@ -286,7 +286,6 @@ export const DESIGNS_OBJ = DESIGNS.reduce((acc, product) => {
   return { ...acc, [id]: rest };
 }, {} as Record<string, Omit<(typeof DESIGNS)[number], "id">>);
 
-
 export const PRODUCTS: Product[] = [
   {
     id: "bandana",
@@ -296,7 +295,9 @@ export const PRODUCTS: Product[] = [
     sizes: ["one-size"],
     material: "4 Way Quick-Dri DryFit Fabric",
     dimensions: '9.5" x 20"',
-    baseImages: { mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/bandana/chai-pila-do/mockup.webp"] },
+    baseImages: {
+      mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/bandana/chai-pila-do/mockup.webp"],
+    },
   },
   {
     id: "balaclava",
@@ -312,3 +313,13 @@ export const PRODUCTS_OBJ = PRODUCTS.reduce((acc, product) => {
   const { id, ...rest } = product;
   return { ...acc, [id]: rest };
 }, {} as Record<string, Omit<(typeof PRODUCTS)[number], "id">>);
+
+const SIMILAR_DESIGNS = [
+  ["chai-pila-do", "un-boo-lievable", "dont-egg-nore-this", "akatsuki-allure", "comic-craze", "zero-g-style"],
+  ["tou-can-do-it", "frog-it-about-it", "similie-metaphorically", "dolphin-ately-cool"],
+];
+
+export const getSimilarDesigns = (designId: string) => {
+  const similarDesigns = SIMILAR_DESIGNS.find(similarDesigns => similarDesigns.includes(designId)) ?? [];
+  return similarDesigns;
+};
