@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+Allow: /products/
+Allow: /reviews/
+Allow: /privacy/
+Allow: /terms/
+
+# Block sensitive/admin routes
+Disallow: /admin/
+Disallow: /order/
+
+# Block API endpoints
+Disallow: /api/
+
+# Block Next.js internals
+Disallow: /_next/
+
+# Static assets are allowed by default
+# (designs/, how-to-wear/, know-your-product/ are in public folder)
+
+Sitemap: https://banditbrothers.com/sitemap.xml 
