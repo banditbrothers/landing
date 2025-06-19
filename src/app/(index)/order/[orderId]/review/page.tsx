@@ -125,7 +125,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     }
 
     setIsCompressing(true);
-    const compressedFile = await compressImage(files[0]);
+    const compressedFile = await compressImage(files[0], { maxWidthOrHeight: 1920 });
     setIsCompressing(false);
     setImages([compressedFile]);
   };

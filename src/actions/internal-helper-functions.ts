@@ -1,4 +1,7 @@
-// "use server";
+"use server";
+
+import { DESIGNS } from "@/data/products";
+import { firestore } from "@/lib/firebase-admin";
 
 // import { firestore } from "@/lib/firebase-admin";
 // import { OldReview, Review } from "@/types/review";
@@ -107,8 +110,6 @@
 
 // //     // https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/reviews/8sUTNMu1bxPQB853p5Sg/image-0.jpeg
 
-    
-
 // //     // if (review.images.length > 0) {
 // //     //   const response = await fetch(review.images[0]);
 // //     //   const buffer = Buffer.from(await response.arrayBuffer());
@@ -142,3 +143,17 @@
 
 // //   await batch.commit();
 // // };
+
+// export const availableBandanaDesigns = async () => {
+//   const batch = firestore().batch();
+
+//   const variants = await firestore().collection("variants").where("productId", "==", "bandana").get();
+//   variants.forEach(variant => {
+//     batch.update(variant.ref, {
+//       isAvailable: true,
+//     });
+//   });
+//   batch.commit();
+
+//   return "done";
+// };

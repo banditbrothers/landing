@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrderManagement } from "./OrderManagement";
 import { CouponManagement } from "./CouponManagement";
 import { ReviewManagement } from "./ReviewManagement";
+import { ProductManagement } from "./ProductsManagement";
 
 export default function ProtectedAdminPage() {
   const isMobile = useIsMobile();
@@ -59,11 +60,12 @@ export default function ProtectedAdminPage() {
 
   return isAdmin ? (
     <div className="flex flex-col gap-4 container mx-auto py-10 mt-16 min-h-screen">
-      <Tabs defaultValue="reviews" className="w-full">
+      <Tabs defaultValue="products" className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="orders">Orders</TabsTrigger>
           <TabsTrigger value="coupons">Coupons</TabsTrigger>
           <TabsTrigger value="reviews">Reviews</TabsTrigger>
+          <TabsTrigger value="products">Products</TabsTrigger>
         </TabsList>
         <TabsContent value="orders">
           <OrderManagement />
@@ -73,6 +75,9 @@ export default function ProtectedAdminPage() {
         </TabsContent>
         <TabsContent value="reviews">
           <ReviewManagement />
+        </TabsContent>
+        <TabsContent value="products">
+          <ProductManagement />
         </TabsContent>
       </Tabs>
     </div>
