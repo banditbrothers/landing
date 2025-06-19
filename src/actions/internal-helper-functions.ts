@@ -1,7 +1,7 @@
 "use server";
 
-import { DESIGNS } from "@/data/products";
-import { firestore } from "@/lib/firebase-admin";
+// import { DESIGNS } from "@/data/products";
+// import { firestore } from "@/lib/firebase-admin";
 
 // import { firestore } from "@/lib/firebase-admin";
 // import { OldReview, Review } from "@/types/review";

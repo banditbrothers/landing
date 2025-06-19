@@ -48,7 +48,8 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
       // Filter out undefined values
       const updates = Object.entries(formData).reduce((acc, [key, value]) => {
         if (value !== undefined && value !== "") {
-          (acc as any)[key] = value;
+          // @ts-expect-error - this is a hack to get the type to work
+          acc[key] = value;
         }
         return acc;
       }, {} as Partial<ProductVariant>);
