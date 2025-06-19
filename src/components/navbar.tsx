@@ -13,6 +13,7 @@ import { useCart } from "@/components/stores/cart";
 import useIsMobile from "@/hooks/useIsMobile";
 import { LoadingIcon } from "./misc/Loading";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
+import { NavBarBanner } from "./layouts/TopBanner";
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -33,40 +34,43 @@ export default function NavBar() {
   const showNavLinks = !["/order", "/admin", "/terms", "/privacy"].includes(pathname);
 
   return (
-    <motion.header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        !isHomePath ? "bg-background" : isScrolled ? "bg-background" : "bg-transparent"
-      }`}
-      initial={{ y: isHomePath ? -100 : 0 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}>
-      <div
-        className={`container mx-auto p-4 gap-2 flex items-center ${
-          showNavLinks ? "justify-between" : "justify-center"
-        }`}>
-        {showNavLinks && !isMobile && <div className="min-w-40" />}
-        <div className="flex items-center">
-          <Link
-            href="/"
-            onClick={e => {
-              if (isHomePath) {
-                e.preventDefault();
-                scrollTo("hero");
-              }
-            }}>
-            <h1 className="text-2xl md:text-3xl text-bandit-orange font-calera ">BANDIT BROTHERS</h1>
-          </Link>
-        </div>
-        {showNavLinks && (
-          <div className="min-w-40 flex justify-end gap-2">
-            <Suspense fallback={<LoadingIcon />}>
-              <SearchButton />
-            </Suspense>
-            <CartButton />
+    <>
+      <motion.header
+        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+          !isHomePath ? "bg-background" : isScrolled ? "bg-background" : "bg-transparent"
+        }`}
+        initial={{ y: isHomePath ? -100 : 0 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}>
+        <NavBarBanner />
+        <div
+          className={`container mx-auto p-4 gap-2 flex items-center ${
+            showNavLinks ? "justify-between" : "justify-center"
+          }`}>
+          {showNavLinks && !isMobile && <div className="min-w-40" />}
+          <div className="flex items-center">
+            <Link
+              href="/"
+              onClick={e => {
+                if (isHomePath) {
+                  e.preventDefault();
+                  scrollTo("hero");
+                }
+              }}>
+              <h1 className="text-2xl md:text-3xl text-bandit-orange font-calera ">BANDIT BROTHERS</h1>
+            </Link>
           </div>
-        )}
-      </div>
-    </motion.header>
+          {showNavLinks && (
+            <div className="min-w-40 flex justify-end gap-2">
+              <Suspense fallback={<LoadingIcon />}>
+                <SearchButton />
+              </Suspense>
+              <CartButton />
+            </div>
+          )}
+        </div>
+      </motion.header>
+    </>
   );
 }
 
