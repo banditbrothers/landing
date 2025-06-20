@@ -31,6 +31,7 @@ export type ProductVariant = {
   description?: string;
   stockLevel?: number;
   isAvailable?: boolean;
+  isDiscoverable?: boolean;
   sku?: string; // Stock keeping unit for inventory
   isBestSeller?: boolean;
 };

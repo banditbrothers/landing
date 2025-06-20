@@ -14,7 +14,7 @@ function ProductPageContent() {
 
   const { productId } = useParams();
 
-  const filteredVariants = variants?.filter(v => v.productId === productId);
+  const filteredVariants = variants?.filter(v => v.productId === productId).filter(v => v.isAvailable);
 
   return (
     <>

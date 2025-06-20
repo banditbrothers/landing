@@ -33,6 +33,7 @@ interface FormData {
   price?: number;
   isAvailable: boolean;
   isBestSeller: boolean;
+  isDiscoverable: boolean;
   mockupImages: string[];
 }
 
@@ -45,6 +46,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
     price: undefined,
     isAvailable: true,
     isBestSeller: false,
+    isDiscoverable: true,
     mockupImages: [],
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -83,6 +85,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
         price: formData.price || undefined,
         isAvailable: formData.isAvailable,
         isBestSeller: formData.isBestSeller,
+        isDiscoverable: formData.isDiscoverable,
         images: {
           mockup: formData.mockupImages,
           detail: [],
@@ -114,6 +117,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
       price: undefined,
       isAvailable: true,
       isBestSeller: false,
+      isDiscoverable: true,
       mockupImages: [],
     });
     onClose();
@@ -344,6 +348,17 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
                 id="isBestSeller"
                 checked={formData.isBestSeller}
                 onCheckedChange={checked => setFormData(prev => ({ ...prev, isBestSeller: checked }))}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label htmlFor="isDiscoverable" className="text-sm font-medium text-foreground">
+                Is Discoverable
+              </Label>
+              <Switch
+                id="isDiscoverable"
+                checked={formData.isDiscoverable}
+                onCheckedChange={checked => setFormData(prev => ({ ...prev, isDiscoverable: checked }))}
               />
             </div>
           </div>

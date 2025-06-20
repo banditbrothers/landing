@@ -86,6 +86,9 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
 
   const filteredDesigns = productVariants
     .filter(productVariant => {
+      return productVariant.isDiscoverable !== false;
+    })
+    .filter(productVariant => {
       return isBestSellerFilterSelected ? productVariant.isBestSeller : true;
     })
     .filter(productVariant => {

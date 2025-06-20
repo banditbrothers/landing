@@ -36,6 +36,7 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
         price: variant.price || 0,
         isAvailable: variant.isAvailable ?? true,
         isBestSeller: variant.isBestSeller ?? false,
+        isDiscoverable: variant.isDiscoverable ?? true,
       });
     }
   }, [variant]);
@@ -228,6 +229,17 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
                 id="isBestSeller"
                 checked={formData.isBestSeller ?? false}
                 onCheckedChange={checked => setFormData(prev => ({ ...prev, isBestSeller: checked }))}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label htmlFor="isDiscoverable" className="text-sm font-medium">
+                Is Discoverable
+              </Label>
+              <Switch
+                id="isDiscoverable"
+                checked={formData.isDiscoverable ?? true}
+                onCheckedChange={checked => setFormData(prev => ({ ...prev, isDiscoverable: checked }))}
               />
             </div>
           </div>

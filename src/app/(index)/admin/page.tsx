@@ -59,7 +59,7 @@ export default function ProtectedAdminPage() {
     );
 
   return isAdmin ? (
-    <div className="flex flex-col gap-4 container mx-auto py-10 mt-16 min-h-screen">
+    <div className="flex flex-col gap-4 container mx-auto py-10 mt-20 min-h-screen">
       <Tabs defaultValue="products" className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="orders">Orders</TabsTrigger>

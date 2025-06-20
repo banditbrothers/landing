@@ -98,7 +98,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
   const variantProduct = PRODUCTS_OBJ[variant.productId];
 
   return (
-    <div className="container mx-auto mt-16 px-4 py-8">
+    <div className="container mx-auto mt-20 px-4 py-8">
       <div className="mb-4">
         <Breadcrumb variant={variant} />
       </div>

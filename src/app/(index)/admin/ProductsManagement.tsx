@@ -157,13 +157,18 @@ export const ProductManagement = () => {
                   </TableCell>
 
                   <TableCell>
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-row gap-1">
                       <Badge variant={variant.isAvailable ? "default" : "secondary"}>
                         {variant.isAvailable ? "Available" : "Unavailable"}
                       </Badge>
                       {variant.isBestSeller && (
                         <Badge variant="destructive" className="text-xs">
                           Best Seller
+                        </Badge>
+                      )}
+                      {variant.isDiscoverable === false && (
+                        <Badge variant="outline" className="text-xs">
+                          Not Discoverable
                         </Badge>
                       )}
                     </div>
