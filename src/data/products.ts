@@ -325,23 +325,26 @@ export const PRODUCTS: Product[] = [
   {
     id: "bandana",
     name: "Bandana",
-    description: "A tube bandana fabric that can be worn around the neck or head.",
+    description: ["Stay stylish and protected with our premium bandanas—designed for bikers, runners, and outdoor adventurers.", "Made from breathable, lightweight fabric, these versatile headwraps offer UV protection, sweat absorption, and dust resistance, making them ideal for long rides and outdoor activities.", "Wear it as a headband, face mask, neck gaiter, wristband, or helmet liner. Quick-drying and stretchable for a comfortable fit. Perfect for bikers, cyclists, hikers, and everyday casual wear."],
     basePrice: 300,
     sizes: ["one-size"],
     material: "4 Way Quick-Dri DryFit Fabric",
     dimensions: '9.5" x 20"',
     baseImages: {
-      mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/bandana/chai-pila-do/mockup.webp"],
+      mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/bandana/shinobi-red/mockup-1750426888985.webp"],
     },
   },
   {
     id: "balaclava",
     name: "Balaclava",
-    description: "A balaclava is a mask bandana fabric that can be worn",
-    basePrice: 600,
+    description: ["Stay stylish and protected with our premium balaclavas—designed for bikers and outdoor adventurers.", " Made from breathable, lightweight fabric, these versatile headwraps offer UV protection, sweat absorption, and dust resistance, making them ideal for long rides and outdoor activities.", "Wear it as a headband, face mask or helmet liner. Quick-drying and stretchable for a comfortable fit. Perfect for bikers, cyclists, hikers, and everyday casual wear."],
+    basePrice: 400,
     sizes: ["one-size"],
     material: "4 Way Quick-Dri DryFit Fabric",
     dimensions: '9.5" x 20"',
+    baseImages: {
+      mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/balaclava/out-of-words/mockup-1750364019457.webp"],
+    },
   },
 ];
 export const PRODUCTS_OBJ = PRODUCTS.reduce((acc, product) => {
@@ -349,12 +352,13 @@ export const PRODUCTS_OBJ = PRODUCTS.reduce((acc, product) => {
   return { ...acc, [id]: rest };
 }, {} as Record<string, Omit<(typeof PRODUCTS)[number], "id">>);
 
-const SIMILAR_DESIGNS = [
-  ["chai-pila-do", "un-boo-lievable", "dont-egg-nore-this", "akatsuki-allure", "comic-craze", "zero-g-style"],
-  ["tou-can-do-it", "frog-it-about-it", "similie-metaphorically", "dolphin-ately-cool"],
+const COLOR_VARIANTS = [
+  ["shinobi-red", "shinobi-green", "shinobi-blue", "shinobi-orange", "shinobi-yellow"],
 ];
 
-export const getSimilarDesigns = (designId: string) => {
-  const similarDesigns = SIMILAR_DESIGNS.find(similarDesigns => similarDesigns.includes(designId)) ?? [];
-  return similarDesigns;
+
+
+export const getColorVariantIds = (designId: string) => {
+  const colorVariants = COLOR_VARIANTS.find(colorVariants => colorVariants.includes(designId)) ?? [];
+  return colorVariants;
 };

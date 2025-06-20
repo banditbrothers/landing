@@ -30,9 +30,9 @@ import { formatCurrency } from "@/utils/price";
 import Link from "next/link";
 import { ProductVariant } from "@/types/product";
 import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
-import { DESIGNS_OBJ, getSimilarDesigns, PRODUCTS_OBJ } from "@/data/products";
+import { DESIGNS_OBJ, getColorVariantIds, PRODUCTS_OBJ } from "@/data/products";
 import { useVariants } from "@/hooks/useVariants";
-import { SimilarVariants } from "./SimilarVariants";
+import { ColorVariants } from "./SimilarVariants";
 
 type ProductPageContentsProps = {
   designId: string;
@@ -47,7 +47,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
   const { openCart, updateCartItem: addOrUpdateCartItem } = useCart();
 
   const [quantity, setQuantity] = useState(1);
-  const [similarVariants, setSimilarVariants] = useState<ProductVariant[]>([]);
+  const [colorVariants, setColorVariants] = useState<ProductVariant[]>([]);
 
   const variant = variants?.find(v => v.designId === designId && v.productId === productId);
 
@@ -60,9 +60,9 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
 
   useEffect(() => {
     if (variant && variants) {
-      const similarDesigns = getSimilarDesigns(variant.designId);
-      const similarVariants = variants.filter(v => similarDesigns.includes(v.designId) && v.productId === productId);
-      setSimilarVariants(similarVariants ?? []);
+      const colorVariantIds = getColorVariantIds(variant.designId);
+      const _colorVariants = variants.filter(v => colorVariantIds.includes(v.designId) && v.productId === productId);
+      setColorVariants(_colorVariants ?? []);
     }
   }, [variant, variants, productId]);
 
@@ -90,12 +90,14 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
     );
   }
 
-  const variantImage = variant.images.mockup[0];
   const variantName = getProductVariantName(variant);
   const variantPrice = getProductVariantPrice(variant);
 
   const variantDesign = DESIGNS_OBJ[variant.designId];
   const variantProduct = PRODUCTS_OBJ[variant.productId];
+
+  const carouselImages = [...variant.images.mockup];
+  if (variant.productId === "bandana") carouselImages.push("/how-to-wear.webp");
 
   return (
     <div className="container mx-auto mt-20 px-4 py-8">
@@ -106,7 +108,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column - Image */}
         <div className="relative aspect-square">
-          <ImageCarousel images={[variantImage, "/how-to-wear.webp"]} alt={variantName} indicatorType="dot" />
+          <ImageCarousel images={carouselImages} alt={variantName} indicatorType="dot" />
           <div className="absolute top-2 right-2 z-10">
             <FavoriteButton selected={isFavorite(variant.id)} toggle={() => toggleFav(variant.id)} />
           </div>
@@ -127,7 +129,9 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
           </span>
 
           <div className="prose max-w-none">
-            <p className="text-muted-foreground">{variant.description ?? variantProduct.description}</p>
+            <p className="text-muted-foreground flex flex-col gap-2">
+              {variant.description ?? variantProduct.description.map(d => <span key={d}>{d}</span>)}
+            </p>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -147,7 +151,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
             </div>
           </div>
 
-          <SimilarVariants similarVariants={similarVariants} currentVariantId={variant.id} />
+          <ColorVariants colorVariants={colorVariants} currentVariantId={variant.id} />
 
           <div className=" pt-4 border-t border-muted">
             <h2 className="text-lg font-semibold text-foreground mb-3">Product Details</h2>
@@ -185,7 +189,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
         </div>
       </div>
 
-      <RecommendedProducts currentVariantId={variant.id} />
+      <RecommendedProducts currentVariant={variant} />
     </div>
   );
 };

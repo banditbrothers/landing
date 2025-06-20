@@ -32,7 +32,7 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
   useEffect(() => {
     if (variant) {
       setFormData({
-        description: variant.description || "",
+        // description: variant.description || "",
         price: variant.price || 0,
         isAvailable: variant.isAvailable ?? true,
         isBestSeller: variant.isBestSeller ?? false,
@@ -197,7 +197,7 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
             </div> */}
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
@@ -206,7 +206,7 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
               placeholder="Variant description"
               rows={3}
             />
-          </div>
+          </div> */}
 
           {/* Switches */}
           <div className="space-y-4">

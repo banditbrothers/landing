@@ -1,5 +1,7 @@
 "use server";
 
+// import { firestore } from "@/lib/firebase-admin";
+
 // import { DESIGNS } from "@/data/products";
 // import { firestore } from "@/lib/firebase-admin";
 
@@ -144,16 +146,18 @@
 // //   await batch.commit();
 // // };
 
-// export const availableBandanaDesigns = async () => {
+// export const setDiscoverable = async () => {
 //   const batch = firestore().batch();
 
-//   const variants = await firestore().collection("variants").where("productId", "==", "bandana").get();
+//   const variants = await firestore().collection("variants").get();
 //   variants.forEach(variant => {
-//     batch.update(variant.ref, {
-//       isAvailable: true,
-//     });
+//     if (variant.data().isDiscoverable === undefined) {
+//       batch.update(variant.ref, {
+//         isDiscoverable: true,
+//       });
+//     }
 //   });
-//   batch.commit();
+//   await batch.commit();
 
 //   return "done";
 // };

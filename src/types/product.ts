@@ -39,7 +39,7 @@ export type ProductVariant = {
 export type Product = {
   id: string;
   name: string;
-  description: string;
+  description: string[];
   basePrice: number;
   sizes: string[];
   material: string;

@@ -81,7 +81,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
         productId: formData.productId,
         designId: formData.designId,
         sku,
-        description: formData.description || undefined,
+        // description: formData.description || undefined,
         price: formData.price || undefined,
         isAvailable: formData.isAvailable,
         isBestSeller: formData.isBestSeller,
@@ -316,7 +316,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
             </div>
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
@@ -325,7 +325,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
               placeholder="Optional variant description"
               rows={3}
             />
-          </div>
+          </div> */}
 
           {/* Switches */}
           <div className="space-y-4 p-4 bg-muted/30 rounded-lg border">

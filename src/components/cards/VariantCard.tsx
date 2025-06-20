@@ -9,9 +9,10 @@ import { Button } from "../ui/button";
 import { useCart } from "../stores/cart";
 import { formatCurrency } from "@/utils/price";
 import { ProductVariant } from "@/types/product";
-import { DESIGNS_OBJ } from "@/data/products";
+import { DESIGNS_OBJ, getColorVariantIds } from "@/data/products";
 import { getProductVariantUrl } from "@/utils/share";
 import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
+import { Badge } from "../ui/badge";
 
 interface ProductVariantCardProps {
   productVariant: ProductVariant;
@@ -33,6 +34,8 @@ export const ProductVariantCard = ({
 
   const name = getProductVariantName(productVariant);
 
+  const hasColorVariants = getColorVariantIds(productVariant.designId).length > 1;
+
   return (
     <div className="w-full h-full">
       <div className={`p-4 bg-card rounded-xl relative`}>
@@ -41,6 +44,18 @@ export const ProductVariantCard = ({
             <FavoriteButton selected={isFavorite(productVariant.id)} toggle={() => toggleFav(productVariant.id)} />
           </div>
         )}
+        <div className="absolute top-5 left-5 z-10 flex flex-col gap-2">
+          {hasColorVariants && (
+            <Badge variant="default" className="bg-bandit-orange text-white w-fit ">
+              More Colors Available
+            </Badge>
+          )}
+          {/* {productVariant.isBestSeller && (
+            <Badge variant="default" className="bg-bandit-orange text-white w-fit">
+              Best Seller
+            </Badge>
+          )} */}
+        </div>
         <Link
           href={getProductVariantUrl(productVariant)}
           target={openInNewTab ? "_blank" : undefined}

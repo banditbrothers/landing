@@ -6,14 +6,28 @@ import { ProductVariantCard, VariantNameAndPriceBanner } from "../../cards/Varia
 import { ProductVariant } from "@/types/product";
 import { useVariants } from "@/hooks/useVariants";
 
-export const RecommendedProducts = ({ currentVariantId, count = 4 }: { currentVariantId: string; count?: number }) => {
+export const RecommendedProducts = ({
+  currentVariant,
+  count = 4,
+}: {
+  currentVariant: ProductVariant;
+  count?: number;
+}) => {
   const { data: variants } = useVariants();
 
   const [recommendedVariants, setRecommendedVariants] = useState<ProductVariant[]>([]);
 
   useEffect(() => {
-    setRecommendedVariants(shuffleArray(variants.filter(v => v.id !== currentVariantId)));
-  }, [currentVariantId, variants]);
+    setRecommendedVariants(
+      shuffleArray(
+        variants
+          .filter(v => v.id !== currentVariant.id)
+          .filter(v => v.productId === currentVariant.productId)
+          .filter(v => v.isDiscoverable)
+          .filter(v => v.isAvailable)
+      )
+    );
+  }, [currentVariant.id, variants]);
 
   return (
     <div className="mt-16">

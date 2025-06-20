@@ -8,13 +8,13 @@ import { getProductVariantName } from "@/utils/product";
 import { DESIGNS_OBJ } from "@/data/products";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-interface SimilarVariantsProps {
-  similarVariants: ProductVariant[];
+interface ColorVariantsProps {
+  colorVariants: ProductVariant[];
   currentVariantId: string;
 }
 
-export const SimilarVariants = ({ similarVariants, currentVariantId }: SimilarVariantsProps) => {
-  const filteredVariants = similarVariants.filter(variant => variant.id !== currentVariantId);
+export const ColorVariants = ({ colorVariants, currentVariantId }: ColorVariantsProps) => {
+  const filteredVariants = colorVariants.filter(variant => variant.id !== currentVariantId);
 
   if (filteredVariants.length === 0) {
     return null;
@@ -24,7 +24,7 @@ export const SimilarVariants = ({ similarVariants, currentVariantId }: SimilarVa
     <TooltipProvider>
       <div className="space-y-4 pt-6 border-t border-muted">
         <div>
-          <h2 className="text-lg font-semibold text-foreground mb-2">Similar Designs</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-2">Color Variants</h2>
         </div>
 
         <div className="flex flex-wrap gap-3">
