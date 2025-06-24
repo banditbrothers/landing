@@ -42,7 +42,6 @@ export default function NavBar() {
         initial={{ y: isHomePath ? -100 : 0 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}>
-        <NavBarBanner />
         <div
           className={`container mx-auto p-4 gap-2 flex items-center ${
             showNavLinks ? "justify-between" : "justify-center"

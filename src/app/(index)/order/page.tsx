@@ -41,6 +41,7 @@ import { ProductBadge } from "@/components/badges/ProductBadge";
 import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
 import { OrderedVariant, ProductVariant } from "@/types/product";
 import { useVariants } from "@/hooks/useVariants";
+import { NavBarBanner } from "@/components/layouts/TopBanner";
 
 const SHIPPING_COST = 100;
 
@@ -295,7 +296,8 @@ function OrderPageContent() {
         />
       )}
 
-      <div className="mx-auto py-10 px-2 max-w-lg mt-16">
+      <div className="mx-auto py-10 px-2 max-w-lg mt-16 flex flex-col gap-4">
+        <NavBarBanner />
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl flex gap-10 justify-between items-center">
