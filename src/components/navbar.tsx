@@ -13,7 +13,6 @@ import { useCart } from "@/components/stores/cart";
 import useIsMobile from "@/hooks/useIsMobile";
 import { LoadingIcon } from "./misc/Loading";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
-import { NavBarBanner } from "./layouts/TopBanner";
 
 export default function NavBar() {
   const pathname = usePathname();
