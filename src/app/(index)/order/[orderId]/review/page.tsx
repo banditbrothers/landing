@@ -30,6 +30,9 @@ import { Collections } from "@/constants/collections";
 import { createReview } from "@/actions/reviews";
 import { getDiscordReviewMessage } from "@/utils/discordMessages";
 import { sendDiscordReviewMessage } from "@/actions/discord";
+import { useVariants } from "@/hooks/useVariants";
+import { getProductVariantName } from "@/utils/product";
+import { getProductVariantUrl } from "@/utils/share";
 
 signInAnonymously();
 
@@ -44,6 +47,8 @@ type OrderPageProps = { params: Promise<{ orderId: string }> };
 
 export default function OrderReviewPage({ params }: OrderPageProps) {
   const router = useRouter();
+
+  const { data: variants } = useVariants();
 
   const [order, setOrder] = useState<Order | null>(null);
   const [submitStatus, setSubmitStatus] = useState<"not-submitted" | "submitting" | "submitted">("not-submitted");
@@ -94,13 +99,14 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
       imageUrls.push(await getDownloadURL(uploadTask.ref));
     }
 
-    const review: Omit<Review, "id"> = {
+    const review: Omit<Extract<Review, { source: "website" }>, "id"> = {
       ...data,
       status: "pending",
       email: order.email,
+      source: "website",
       orderId: order.id,
       createdAt: getTimestamp(),
-      productIds: order.products.map(product => product.id),
+      variantIds: order.variants.map(variant => variant.variantId),
       images: imageUrls,
     };
 
@@ -119,7 +125,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     }
 
     setIsCompressing(true);
-    const compressedFile = await compressImage(files[0]);
+    const compressedFile = await compressImage(files[0], { maxWidthOrHeight: 1920 });
     setIsCompressing(false);
     setImages([compressedFile]);
   };
@@ -157,27 +163,34 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                 </AccordionTrigger>
                 <AccordionContent className="p-3">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {order.products.map(product => (
-                      <Link href={`/designs/${product.id}`} target="_blank" key={product.id}>
-                        <Card key={product.id} className="">
-                          <CardContent className="flex flex-col items-start gap-4 p-4">
-                            <div className="relative w-full h-48 md:h-32">
-                              <Image
-                                fill
-                                quality={40}
-                                src={product.image}
-                                alt={product.name}
-                                className="object-cover rounded-md"
-                              />
-                            </div>
-                            <div>
-                              <h3 className="font-medium">{product.name}</h3>
-                              <p className="text-sm text-muted-foreground">Quantity: {product.quantity}</p>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                    ))}
+                    {order.variants.map(orderVariant => {
+                      const variant = variants.find(v => v.id === orderVariant.variantId)!;
+
+                      const name = getProductVariantName(variant, { includeProductName: true });
+                      const quantity = orderVariant.quantity;
+
+                      return (
+                        <Link href={getProductVariantUrl(variant)} target="_blank" key={variant.id}>
+                          <Card key={variant.id} className="">
+                            <CardContent className="flex flex-col items-start gap-4 p-4">
+                              <div className="relative w-full h-48 md:h-32">
+                                <Image
+                                  fill
+                                  alt={name}
+                                  quality={40}
+                                  src={variant.images.mockup[0]}
+                                  className="object-cover rounded-md"
+                                />
+                              </div>
+                              <div>
+                                <h3 className="font-medium">{name}</h3>
+                                <p className="text-sm text-muted-foreground">Quantity: {quantity}</p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      );
+                    })}
                   </div>
                 </AccordionContent>
               </AccordionItem>

@@ -1,4 +1,4 @@
-import { Design } from "@/data/designs";
+import { Design } from "@/types/product";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { shared } from "use-broadcast-ts";

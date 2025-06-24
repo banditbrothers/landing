@@ -4,6 +4,8 @@
  * @returns Formatted currency string (e.g., "₹1,234.56")
  */
 export function formatCurrency(amount: number, decimalPlaces = 0): string {
+  if(amount === null) return "₹0";
+
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",

@@ -5,7 +5,7 @@ import { Coupon } from "@/types/coupon";
 
 type CartState = {
   cart: {
-    designId: string;
+    variantId: string;
     quantity: number;
   }[];
   updateCartItem: (id: string, quantity?: number) => void;
@@ -34,11 +34,11 @@ export const useCart = create<CartState>()(
 
         updateCartItem: (id, quantity = 1) => {
           set(state => {
-            const itemExists = state.cart.some(item => item.designId === id);
+            const itemExists = state.cart.some(item => item.variantId === id);
             if (itemExists) {
               return {
                 cart: state.cart.map(item => {
-                  if (item.designId !== id) return item;
+                  if (item.variantId !== id) return item;
 
                   const newQuantity = item.quantity + quantity;
                   if (newQuantity > 0) return { ...item, quantity: newQuantity };
@@ -47,12 +47,12 @@ export const useCart = create<CartState>()(
               };
             } else {
               const newQuantity = quantity > 0 ? quantity : 1;
-              return { cart: [{ designId: id, quantity: newQuantity }, ...state.cart] };
+              return { cart: [{ variantId: id, quantity: newQuantity }, ...state.cart] };
             }
           });
         },
 
-        removeCartItem: id => set(state => ({ cart: state.cart.filter(i => i.designId !== id) })),
+        removeCartItem: id => set(state => ({ cart: state.cart.filter(i => i.variantId !== id) })),
         clearCart: () => set({ cart: [] }),
 
         setCoupon: coupon => set({ coupon }),

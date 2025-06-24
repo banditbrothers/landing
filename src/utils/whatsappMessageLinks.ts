@@ -11,9 +11,9 @@ export const whatsappKnowMoreLink = `https://wa.me/${whatsappPhoneNumber}?text=$
 export const getWhatsappNeedHelpWithOrderLink = (orderDetails: Partial<Order>) => {
   let message = `Hey, I need help with my order ${orderDetails.id ? `\n\`ID: ${orderDetails.id}\`` : ""}`;
 
-  if (orderDetails.products) {
+  if (orderDetails.variants) {
     message += `\n\n*Products* \n${orderDetails
-      .products!.map(product => `- ${product.name}: ${product.quantity}`)
+      .variants!.map(variant => `- ${variant.variantId}: ${variant.quantity}`)
       .join("\n")}`;
   }
 
@@ -37,9 +37,6 @@ export const getWhatsappOrderConfirmationLink = (order: Order) => {
     "",
     "Check your order details here:",
     `https://www.banditbrothers.in/order/${order.id}`,
-    "",
-    "Please read through the wash and care instructions here:",
-    "https://www.banditbrothers.in/#product-specs",
     "",
     "You should receive your order in 7-10 days.",
     "",

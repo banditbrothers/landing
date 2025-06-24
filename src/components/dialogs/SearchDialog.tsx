@@ -1,10 +1,9 @@
 "use client";
 
 import Fuse, { IFuseOptions } from "fuse.js";
-import { Suspense, useRef } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Design, DESIGNS } from "@/data/designs";
 import { SearchProductCard } from "../cards/SearchProductCard";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import VisuallyHidden from "../ui/visually-hidden";
@@ -12,19 +11,37 @@ import { SearchIcon, XMarkIcon } from "../../Icons/icons";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import { LoadingIcon } from "../misc/Loading";
+import { Design, Product, ProductVariant } from "@/types/product";
+import { useVariants } from "@/hooks/useVariants";
+import { DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
 
-const options: IFuseOptions<Design> = {
+const options: IFuseOptions<ProductVariant> = {
   includeScore: true,
   threshold: 0.1,
   distance: 200, // 0.1 * 200 = 20 characters will be considered to find a match
   location: 0,
-  keys: ["name", "tags", "colors", "category"],
+  keys: ["design.name", "design.tags", "design.colors", "design.category", "productId"],
 };
 
-const FuseDesigns = new Fuse(DESIGNS, options);
+type SearchVariant = ProductVariant & { product: Omit<Product, "id">; design: Omit<Design, "id"> };
 
 function SearchDialogContent() {
+  const { data: variants } = useVariants();
+
   const { value: query, setParam, removeParam } = useParamBasedFeatures<string>("q", { replaceRoute: true });
+  const [formattedVariants, setFormattedVariants] = useState<SearchVariant[]>([] as SearchVariant[]);
+
+  useEffect(() => {
+    const _formatted = variants.map(v => {
+      const product = PRODUCTS_OBJ[v.productId];
+      const design = DESIGNS_OBJ[v.designId];
+
+      return { ...v, product, design };
+    });
+    setFormattedVariants(_formatted);
+
+    return () => {};
+  }, [variants]);
 
   const handleOpenChange = (open: boolean) => {
     if (!open) removeParam();
@@ -36,7 +53,9 @@ function SearchDialogContent() {
     timerRef.current = setTimeout(() => setParam(e.target.value), 300);
   };
 
-  const filteredDesigns = query === "" ? DESIGNS : FuseDesigns.search(query ?? "").map(result => result.item);
+  const FuseVariants = new Fuse(formattedVariants, options);
+  const filteredVariants =
+    query === "" ? formattedVariants : FuseVariants.search(query ?? "").map(result => result.item);
 
   return (
     <Dialog open={query !== null} onOpenChange={handleOpenChange}>
@@ -66,14 +85,14 @@ function SearchDialogContent() {
         <div className="space-y-4 mb-3">
           {query !== null && (
             <div className="max-h-[50vh] overflow-y-auto">
-              {query.length > 0 && filteredDesigns.length === 0 && (
+              {query.length > 0 && filteredVariants.length === 0 && (
                 <p className="text-muted-foreground text-center text-lg font-semibold italic ">
                   No Loot Found, Fellow Bandit!!
                 </p>
               )}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {filteredDesigns.map(design => (
-                  <SearchProductCard key={design.id} design={design} />
+                {filteredVariants.map(variant => (
+                  <SearchProductCard key={variant.id} variant={variant} />
                 ))}
               </div>
             </div>

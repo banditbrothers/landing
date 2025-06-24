@@ -1,7 +1,5 @@
 "use client";
 
-import { Design, DESIGNS } from "@/data/designs";
-import { standardDescription } from "@/data/designs";
 import { ProductDetailsAccordion } from "../../accordions/ProductDetailsAccordion";
 import {
   Breadcrumb as BreadcrumbUI,
@@ -19,51 +17,72 @@ import { useFavorites } from "@/components/stores/favorites";
 import { Button } from "../../ui/button";
 import { ArrowRightIcon, ShoppingCartIcon } from "../../../Icons/icons";
 import { ShareIcon } from "lucide-react";
-import { shareDesign } from "@/utils/share";
+import { shareVariant } from "@/utils/share";
 import { ImageCarousel } from "../../carousels/ImageCarousel";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LoadingScreen } from "@/components/misc/Loading";
-import { trackDesignAddToCart, trackDesignView } from "@/utils/analytics";
+import { trackVariantAddToCart, trackVariantView } from "@/utils/analytics";
 import { useCart } from "@/components/stores/cart";
 import { QuantityStepper } from "@/components/misc/QuantityStepper";
 import { formatCurrency } from "@/utils/price";
 import Link from "next/link";
+import { ProductVariant } from "@/types/product";
+import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
+import { DESIGNS_OBJ, getColorVariantIds, PRODUCTS_OBJ } from "@/data/products";
+import { useVariants } from "@/hooks/useVariants";
+import { ColorVariants } from "./SimilarVariants";
 
-export const ProductPageContents = ({ designId: paramDesignId }: { designId: string }) => {
+type ProductPageContentsProps = {
+  designId: string;
+  productId: string;
+};
+
+export const ProductPageContents = ({ designId, productId }: ProductPageContentsProps) => {
+  const { data: variants } = useVariants();
+
   const router = useRouter();
   const { isFavorite, toggleFav } = useFavorites();
   const { openCart, updateCartItem: addOrUpdateCartItem } = useCart();
 
   const [quantity, setQuantity] = useState(1);
+  const [colorVariants, setColorVariants] = useState<ProductVariant[]>([]);
 
-  const design = DESIGNS.find(d => d.id === paramDesignId);
+  const variant = variants?.find(v => v.designId === designId && v.productId === productId);
 
   useEffect(() => {
-    if (!design) {
-      toast.error("Oops! Looks like the design you're looking for doesn't exist");
-      router.replace("/designs");
+    if (!variant) {
+      toast.error("Oops! Looks like the variant you're looking for doesn't exist");
+      router.replace(`/products`);
     }
-  }, [design, router]);
+  }, [variant, router]);
 
   useEffect(() => {
-    if (paramDesignId) trackDesignView(paramDesignId);
-  }, [paramDesignId]);
+    if (variant && variants) {
+      const colorVariantIds = getColorVariantIds(variant.designId);
+      const _colorVariants = variants.filter(v => colorVariantIds.includes(v.designId) && v.productId === productId);
+      setColorVariants(_colorVariants ?? []);
+    }
+  }, [variant, variants, productId]);
+
+  useEffect(() => {
+    if (variant) trackVariantView({ productId: variant.productId, designId: variant.designId });
+  }, [variant]);
 
   const handleShare = () => {
-    if (!design) return;
-    shareDesign(design);
+    if (!variant) return;
+    shareVariant(variant);
   };
 
   const handleAddToCartClicked = () => {
-    if (!design) return;
-    trackDesignAddToCart(design.id);
-    addOrUpdateCartItem(design.id, quantity);
+    if (!variant) return;
+    trackVariantAddToCart({ productId: variant.productId, designId: variant.designId });
+    addOrUpdateCartItem(variant.id, quantity);
     openCart();
   };
 
-  if (!design) {
+  if (!variant) {
     return (
       <div className="flex justify-center items-center h-screen">
         <LoadingScreen />
@@ -71,37 +90,48 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
     );
   }
 
+  const variantName = getProductVariantName(variant);
+  const variantPrice = getProductVariantPrice(variant);
+
+  const variantDesign = DESIGNS_OBJ[variant.designId];
+  const variantProduct = PRODUCTS_OBJ[variant.productId];
+
+  const carouselImages = [...variant.images.mockup];
+  if (variant.productId === "bandana") carouselImages.push("/how-to-wear.webp");
+
   return (
-    <div className="container mx-auto mt-16 px-4 py-8">
+    <div className="container mx-auto mt-20 px-4 py-8">
       <div className="mb-4">
-        <Breadcrumb design={design} />
+        <Breadcrumb variant={variant} />
       </div>
       {/* Product Layout Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column - Image */}
         <div className="relative aspect-square">
-          <ImageCarousel images={[design.image, "/how-to-wear.webp"]} alt={design.name} indicatorType="dot" />
+          <ImageCarousel images={carouselImages} alt={variantName} indicatorType="dot" />
           <div className="absolute top-2 right-2 z-10">
-            <FavoriteButton selected={isFavorite(design.id)} toggle={() => toggleFav(design.id)} />
+            <FavoriteButton selected={isFavorite(variant.id)} toggle={() => toggleFav(variant.id)} />
           </div>
         </div>
 
         {/* Right Column - Product Details */}
         <div className="flex flex-col gap-6 max-w-xl mx-auto">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">{design.name}</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2">{variantName}</h1>
             <span className="flex flex-row gap-2 items-center">
-              <CategoryBadge category={design.category} />
+              <CategoryBadge category={variantDesign.category} />
             </span>
           </div>
 
           <span className="flex flex-row gap-2 items-end">
-            <p className="text-2xl/6  font-semibold text-foreground">{formatCurrency(design.price)}</p>
+            <p className="text-2xl/6  font-semibold text-foreground">{formatCurrency(variantPrice)}</p>
             <p className="text-muted-foreground text-xs">(excl. shipping)</p>
           </span>
 
           <div className="prose max-w-none">
-            <p className="text-muted-foreground">{design.description}</p>
+            <p className="text-muted-foreground flex flex-col gap-2">
+              {variant.description ?? variantProduct.description.map(d => <span key={d}>{d}</span>)}
+            </p>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -121,15 +151,18 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
             </div>
           </div>
 
-          {/* Standard Product Details */}
+          <ColorVariants colorVariants={colorVariants} currentVariantId={variant.id} />
+
           <div className=" pt-4 border-t border-muted">
             <h2 className="text-lg font-semibold text-foreground mb-3">Product Details</h2>
-            {Object.entries(standardDescription).map(([key, value]) => (
-              <div key={key} className="flex py-2">
-                <span className="font-medium text-foreground text-sm w-24">{key}:</span>
-                <span className="text-muted-foreground text-sm">{value}</span>
-              </div>
-            ))}
+            <div className="flex py-2">
+              <span className="font-medium text-foreground text-sm w-24">Material:</span>
+              <span className="text-muted-foreground text-sm">{variantProduct.material}</span>
+            </div>
+            <div className="flex py-2">
+              <span className="font-medium text-foreground text-sm w-24">Dimensions:</span>
+              <span className="text-muted-foreground text-sm">{variantProduct.dimensions}</span>
+            </div>
           </div>
 
           {/* Standard Product Details */}
@@ -156,12 +189,14 @@ export const ProductPageContents = ({ designId: paramDesignId }: { designId: str
         </div>
       </div>
 
-      <RecommendedProducts currentDesignId={design.id} />
+      <RecommendedProducts currentVariant={variant} />
     </div>
   );
 };
 
-function Breadcrumb({ design }: { design: Design }) {
+function Breadcrumb({ variant }: { variant: ProductVariant }) {
+  const product = PRODUCTS_OBJ[variant.productId];
+
   return (
     <BreadcrumbUI>
       <BreadcrumbList>
@@ -170,11 +205,15 @@ function Breadcrumb({ design }: { design: Design }) {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/designs">Designs</BreadcrumbLink>
+          <BreadcrumbLink href="/products">Products</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>{design.name}</BreadcrumbPage>
+          <BreadcrumbLink href={`/products/${variant.productId}`}>{product.name}</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{getProductVariantName(variant)}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </BreadcrumbUI>

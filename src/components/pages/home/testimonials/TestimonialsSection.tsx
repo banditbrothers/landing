@@ -2,16 +2,16 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ReviewCard } from "@/components/cards/ReviewCard";
-import { Review } from "@/types/review";
+import { ReviewWithoutEmail } from "@/types/review";
 
-const FEATURED_REVIEWS: Omit<Review, "email">[] = [
+const FEATURED_REVIEWS: ReviewWithoutEmail[] = [
   {
     id: "h0m9VV8in6nnmQI5N1yc",
     rating: 5,
     orderId: "GqN6qRnjSAx2CARC1lJb",
     createdAt: 1739305409,
-    // @ts-expect-error: new schema
-    variantIds: ["bandana-tick_tick_boom"],
+    source: "website",
+    variantIds: ["BANDANA-TICK_TICK_BOOM"],
     images: [
       "https://firebasestorage.googleapis.com/v0/b/banditbrothers-5253.firebasestorage.app/o/reviews%2Fh0m9VV8in6nnmQI5N1yc%2F0.jpg?alt=media&token=29b7ac29-88c0-4ae0-88f6-57a0a57a18f4",
     ],
@@ -27,10 +27,10 @@ const FEATURED_REVIEWS: Omit<Review, "email">[] = [
     title: "Cannot wait to shop more!",
     comment: "Such good quality, prompt delivery and fun designs. A brand that truly understands its customer’s needs.",
     rating: 5,
+    source: "website",
     orderId: "9DW96RgvvNhRiUazRvPX",
     createdAt: 1741213282,
-    // @ts-expect-error: new schema
-    variantIds: ["bandana-fin_tastic"],
+    variantIds: ["BANDANA-FIN_TASTIC"],
     images: [
       "https://firebasestorage.googleapis.com/v0/b/banditbrothers-5253.firebasestorage.app/o/reviews%2FuRkhsQX2EmEElz2w1HeJ%2F0.jpeg?alt=media&token=edce2a58-4c63-4f8b-bf72-492a10922d3e",
     ],
@@ -43,10 +43,10 @@ const FEATURED_REVIEWS: Omit<Review, "email">[] = [
     comment:
       "Must buy for all the riders out there!\nThe material is breathable and is perfect for daily/long rides.\nLoved the design as well!\n10/10 would recommend!🙌🏽",
     rating: 5,
+    source: "website",
     orderId: "5TqcbXUEXzIO2duKe5G9",
     createdAt: 1739720056,
-    // @ts-expect-error: new schema
-    variantIds: ["bandana-akatsuki_allure"],
+    variantIds: ["BANDANA-AKATSUKI_ALLURE"],
     images: [
       "https://firebasestorage.googleapis.com/v0/b/banditbrothers-5253.firebasestorage.app/o/reviews%2FYEWqracylGrNMFzjj7ja%2F0.jpeg?alt=media&token=fdf9c463-d04c-4d3f-ba47-9e12dbaf93ed",
     ],

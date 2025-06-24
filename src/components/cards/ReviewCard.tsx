@@ -1,18 +1,21 @@
 import Image from "next/image";
-import { Review } from "@/types/review";
-import { DESIGNS_OBJ } from "@/data/designs";
+import { ReviewWithoutEmail } from "@/types/review";
 import { StarRating } from "../misc/StarRating";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CSSProperties, useState } from "react";
 import { ClickableProductBadge } from "../badges/ClickableProductBadges";
+import { useVariants } from "@/hooks/useVariants";
+import { getProductVariantName } from "@/utils/product";
 
 interface ReviewCardProps {
-  review: Omit<Review, "email">;
+  review: ReviewWithoutEmail;
   containerStyle?: CSSProperties;
 }
 
 export const ReviewCard = ({ review, containerStyle = {} }: ReviewCardProps) => {
-  const name = review.name
+  const { data: variants } = useVariants();
+
+  const userName = review.name
     .split(" ")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
@@ -28,24 +31,24 @@ export const ReviewCard = ({ review, containerStyle = {} }: ReviewCardProps) => 
           <div className="flex flex-col gap-4">
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <h6 className="text-sm font-medium text-muted-foreground">{name}</h6>
+                <h6 className="text-sm font-medium text-muted-foreground">{userName}</h6>
                 <StarRating value={review.rating} />
               </div>
               <h3 className="text-xl font-semibold tracking-tight text-card-foreground">{review.title}</h3>
             </div>
             <div className="flex flex-col items-start gap-4">
               <div className="flex flex-wrap gap-2 items-center">
-                {/** @ts-expect-error: new schema */}
-                {review.variantIds.map(variantId => {
-                  const tempDesignId = variantId.split("-")[1].toLowerCase() as string;
-                  const designId = tempDesignId.replaceAll("_", "-");
+                {review.source === "website" &&
+                  review.variantIds.map(variantId => {
+                    const variant = variants.find(v => v.id === variantId)!;
+                    const variantName = getProductVariantName(variant, { includeProductName: true });
 
-                  return (
-                    <ClickableProductBadge productId={designId} key={variantId}>
-                      {DESIGNS_OBJ[designId].name}
-                    </ClickableProductBadge>
-                  );
-                })}
+                    return (
+                      <ClickableProductBadge variant={variant} key={variantId}>
+                        {variantName}
+                      </ClickableProductBadge>
+                    );
+                  })}
               </div>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground/90">{review.comment}</p>

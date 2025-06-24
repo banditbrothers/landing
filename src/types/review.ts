@@ -1,6 +1,5 @@
-export interface Review {
+export type Review = {
   id: string;
-  orderId: string;
   name: string;
   email: string;
   rating: number;
@@ -9,7 +8,37 @@ export interface Review {
   images: string[];
   createdAt: number;
   status: ReviewStatus;
-  productIds: string[];
-}
+} & (
+  | {
+      source: "google";
+      googleReviewUrl: string;
+  }
+  | {
+      source: "website";
+      orderId: string;
+      variantIds: string[];
+    }
+);
 
 export type ReviewStatus = "pending" | "approved" | "rejected";
+export type ReviewWithoutEmail =
+  | Omit<Extract<Review, { source: "website" }>, "email">
+  | Omit<Extract<Review, { source: "google" }>, "email">;
+
+
+
+export interface OldReview {
+    id: string;
+    orderId: string;
+    name: string;
+    email: string;
+    rating: number;
+    title: string;
+    comment: string;
+    images: string[];
+    createdAt: number;
+    status: ReviewStatus;
+    productIds: string[];
+  }
+  
+  
