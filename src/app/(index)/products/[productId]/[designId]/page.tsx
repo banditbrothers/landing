@@ -2,7 +2,7 @@ import { ProductPageContents } from "@/components/pages/designs";
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase-admin";
 import { ProductVariant } from "@/types/product";
-import { getProductVariantName } from "@/utils/product";
+import { getProductVariantName, getSKU } from "@/utils/product";
 import { Metadata } from "next";
 import React from "react";
 
@@ -12,21 +12,17 @@ export async function generateMetadata({ params }: VariantPageProps): Promise<Me
   const { productId, designId } = await params;
 
   // todo: verify if this is the correct way to do this
-  const variantRef = await firestore()
-    .collection(Collections.variants)
-    .where("productId", "==", productId)
-    .where("designId", "==", designId)
-    .get();
+  const variantRef = await firestore().collection(Collections.variants).doc(getSKU(productId, designId)).get();
 
-  if (variantRef.empty) {
+  if (!variantRef.exists) {
     return {
       title: "Product Not Found",
       description: "The product you are looking for does not exist.",
     };
   }
 
-  if (variantRef.docs.length > 0) {
-    const variant = variantRef.docs[0].data() as ProductVariant;
+  if (variantRef.exists) {
+    const variant = variantRef.data() as ProductVariant;
     return {
       title: getProductVariantName(variant) + " | " + "by Bandit Brothers",
       openGraph: { images: [variant.images.mockup[0]] },
@@ -36,7 +32,7 @@ export async function generateMetadata({ params }: VariantPageProps): Promise<Me
   return {};
 }
 
-export default function DesignPage({ params }: VariantPageProps) {
+export default function VariantPage({ params }: VariantPageProps) {
   const resolvedParams = React.use(params);
 
   return (

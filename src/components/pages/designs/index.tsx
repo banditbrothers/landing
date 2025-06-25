@@ -49,7 +49,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
   const [quantity, setQuantity] = useState(1);
   const [colorVariants, setColorVariants] = useState<ProductVariant[]>([]);
 
-  const variant = variants?.find(v => v.designId === designId && v.productId === productId);
+  const variant = variants.find(v => v.designId === designId && v.productId === productId);
 
   useEffect(() => {
     if (!variant) {
@@ -201,15 +201,21 @@ function Breadcrumb({ variant }: { variant: ProductVariant }) {
     <BreadcrumbUI>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          <BreadcrumbLink asChild>
+            <Link href="/">Home</Link>
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/products">Products</BreadcrumbLink>
+          <BreadcrumbLink asChild>
+            <Link href="/products">Products</Link>
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href={`/products/${variant.productId}`}>{product.name}</BreadcrumbLink>
+          <BreadcrumbLink asChild>
+            <Link href={`/products/${variant.productId}`}>{product.name}</Link>
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>

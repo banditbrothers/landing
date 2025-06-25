@@ -14,16 +14,16 @@ export const identifyUser = (
 };
 
 export const trackVariantView = ({ productId, designId }: { productId: string; designId: string }) => {
-  console.debug("posthog variant_viewed", { product_id: productId, design_id: designId });
+  // console.debug("posthog variant_viewed", { product_id: productId, design_id: designId });
   posthog.capture("variant_viewed", { product_id: productId, design_id: designId });
 };
 
 export const trackVariantAddToCart = ({ productId, designId }: { productId: string; designId: string }) => {
-  console.debug("posthog variant_add_to_cart", { product_id: productId, design_id: designId });
+  // console.debug("posthog variant_add_to_cart", { product_id: productId, design_id: designId });
   posthog.capture("variant_add_to_cart", { product_id: productId, design_id: designId });
 };
 
 export const trackVariantShare = ({ productId, designId }: { productId: string; designId: string }) => {
-  console.debug("posthog variant_share", { product_id: productId, design_id: designId });
+  // console.debug("posthog variant_share", { product_id: productId, design_id: designId });
   posthog.capture("variant_share", { product_id: productId, design_id: designId });
 };

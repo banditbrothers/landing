@@ -133,7 +133,6 @@ function OrderPageContent() {
       const targetKey = target as keyof typeof watchAllFields;
 
       if (targetKey === "phone") {
-        console.log("running phone check");
         if (watchAllFields[targetKey]) {
           let phone = watchAllFields[targetKey];
 
