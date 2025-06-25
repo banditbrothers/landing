@@ -1,5 +1,6 @@
 import { ProductPageContents } from "@/components/pages/designs";
 import { Collections } from "@/constants/collections";
+import { DESIGN_CATEGORIES_OBJ, DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
 import { firestore } from "@/lib/firebase-admin";
 import { ProductVariant } from "@/types/product";
 import { getProductVariantName, getSKU } from "@/utils/product";
@@ -12,24 +13,27 @@ export async function generateMetadata({ params }: VariantPageProps): Promise<Me
   const { productId, designId } = await params;
 
   // todo: verify if this is the correct way to do this
-  const variantRef = await firestore().collection(Collections.variants).doc(getSKU(productId, designId)).get();
+  // const variantRef = await firestore().collection(Collections.variants).doc(getSKU(productId, designId)).get();
 
-  if (!variantRef.exists) {
-    return {
-      title: "Product Not Found",
-      description: "The product you are looking for does not exist.",
-    };
-  }
+  // if (!variantRef.exists) {
+  //   return {
+  //     title: "Product Not Found",
+  //     description: "The product you are looking for does not exist.",
+  //   };
+  // }
 
-  if (variantRef.exists) {
-    const variant = variantRef.data() as ProductVariant;
-    return {
-      title: getProductVariantName(variant) + " | " + "by Bandit Brothers",
-      openGraph: { images: [variant.images.mockup[0]] },
-      twitter: { images: [variant.images.mockup[0]] },
-    };
-  }
-  return {};
+  // if (variantRef.exists) {
+  //   const variant = variantRef.data() as ProductVariant;
+  //   return {
+  //     title: getProductVariantName(variant) + " | " + "by Bandit Brothers",
+  //     openGraph: { images: [variant.images.mockup[0]] },
+  //     twitter: { images: [variant.images.mockup[0]] },
+  //   };
+  // }
+  return {
+    title: DESIGNS_OBJ[designId].name + " | " + "by Bandit Brothers",
+    description: PRODUCTS_OBJ[productId].description.join(" "),
+  };
 }
 
 export default function VariantPage({ params }: VariantPageProps) {
