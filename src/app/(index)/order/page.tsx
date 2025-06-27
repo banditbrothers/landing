@@ -555,11 +555,11 @@ function OrderPageContent() {
                           onCouponRemoved={handleCouponRemoved}
                           onCouponError={handleCouponError}
                         />
-                        {!coupon && (
+                        {/* {!coupon && (
                           <span className="text-xs text-muted-foreground">
                             <BULK_BUY_COUPON.NoCouponAppliedMessage />
                           </span>
-                        )}
+                        )} */}
                       </div>
 
                       <Separator className="my-4" />

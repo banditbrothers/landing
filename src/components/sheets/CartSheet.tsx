@@ -52,13 +52,13 @@ export const CartSheet = () => {
             </p>
           </div>
         )}
-        {cartItems.length > 0 && (
+        {/* {cartItems.length > 0 && (
           <span className="">
             <p className="text-muted-foreground text-xs text-center leading-normal">
               <BULK_BUY_COUPON.CartMessage />
             </p>
           </span>
-        )}
+        )} */}
       </div>
     );
   };

@@ -1,6 +1,6 @@
 import { ProductPageContents } from "@/components/pages/designs";
 import { Collections } from "@/constants/collections";
-import { DESIGN_CATEGORIES_OBJ, DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
+import { DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
 import { firestore } from "@/lib/firebase-admin";
 import { ProductVariant } from "@/types/product";
 import { getProductVariantName, getSKU } from "@/utils/product";
