@@ -296,7 +296,6 @@ function OrderPageContent() {
       )}
 
       <div className="mx-auto py-10 px-2 max-w-lg mt-16 flex flex-col gap-4">
-        <NavBarBanner />
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl flex gap-10 justify-between items-center">
