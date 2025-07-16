@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MultiSelectDropdown } from "@/components/dropdowns/MultiSelectDropdown";
 
 import { Order, CartItem } from "@/types/order";
 import { Coupon } from "@/types/coupon";
@@ -30,18 +29,15 @@ import { identifyUser } from "@/utils/analytics";
 import { Label } from "@/components/ui/label";
 import { CheckoutProductCard } from "@/components/cards/CheckoutProductCard";
 import { useCart } from "@/components/stores/cart";
-import { useFavorites } from "@/components/stores/favorites";
 import { CouponInput } from "@/components/inputs/Coupon";
 import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
-import { BULK_BUY_COUPON } from "@/components/typography/coupons";
 import { DangerBanner } from "@/components/misc/Banners";
 import { validatePincode } from "@/lib/pincode";
 import { formatCurrency } from "@/utils/price";
-import { ProductBadge } from "@/components/badges/ProductBadge";
-import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
+
+import { getProductVariantPrice } from "@/utils/product";
 import { OrderedVariant, ProductVariant } from "@/types/product";
 import { useVariants } from "@/hooks/useVariants";
-import { NavBarBanner } from "@/components/layouts/TopBanner";
 
 const SHIPPING_COST = 100;
 
@@ -109,7 +105,6 @@ function OrderPageContent() {
   const router = useRouter();
   const { data: variants } = useVariants();
 
-  const { favorites } = useFavorites();
   const searchParams = useSearchParams();
   const { orderLoading, createOrder } = useOrderActions();
 
@@ -117,7 +112,6 @@ function OrderPageContent() {
 
   const { cart, coupon, setCoupon, updateCartItem, removeCartItem, clearCart, clearCoupon } = useCart();
 
-  const [favFirstVariants, setFavFirstVariants] = useState<ProductVariant[]>([]);
   const [countryStates, setCountryStates] = useState<IState[]>([]);
 
   const rzpRef = useRef<RazorpayPaymentGatewayRef>(null);
@@ -176,23 +170,13 @@ function OrderPageContent() {
     }
   }, [watchCountry]);
 
-  useEffect(() => {
-    const favVariants = variants.filter(variant => favorites.includes(variant.id));
-    const otherVariants = variants.filter(variant => !favorites.includes(variant.id));
-    setFavFirstVariants([...favVariants, ...otherVariants]);
-  }, [favorites, variants]);
-
   const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash";
   const orderTotal = calculateTotal(cart, coupon, variants);
-
-  const handleVariantChange = (id: string, checked: boolean) => {
-    if (checked) updateCartItem(id);
-    else removeCartItem(id);
-  };
 
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
     const orderedVariants: OrderedVariant[] = cart.map(product => ({
       variantId: product.variantId,
+      size: product.size,
       quantity: product.quantity,
     }));
 
@@ -502,40 +486,22 @@ function OrderPageContent() {
                   </div>
                   <div>
                     <Label>
-                      Choose your Mischief
+                      Your Mischief
                       <RequiredStar />
                     </Label>
 
                     <div className="flex flex-col gap-2">
-                      <div className="flex justify-between items-center bg-primary/5 p-2 rounded-md">
-                        <span>
-                          {selectedVariantIds.map(id => {
-                            const variant = variants.find(v => v.id === id);
-                            const name = getProductVariantName(variant!);
+                      {cart.map(item => {
+                        const variant = variants.find(v => v.id === item.variantId);
 
-                            return (
-                              <span key={id} className="mr-1 mb-1">
-                                <ProductBadge>{name}</ProductBadge>
-                              </span>
-                            );
-                          })}
-                        </span>
-
-                        <MultiSelectDropdown
-                          variants={favFirstVariants}
-                          selectedIds={selectedVariantIds}
-                          onChange={(id, checked) => handleVariantChange(id, checked)}
-                        />
-                      </div>
-
-                      {selectedVariantIds.map(id => {
                         return (
                           <CheckoutProductCard
-                            key={id}
-                            variant={variants.find(v => v.id === id)!}
+                            key={`${item.variantId}-${item.size}`}
+                            variant={variant!}
                             updateCartItemBy={updateCartItem}
                             removeCartItem={removeCartItem}
-                            quantity={cart.find(variant => variant.variantId === id)?.quantity ?? 1}
+                            quantity={item.quantity}
+                            size={item.size}
                           />
                         );
                       })}

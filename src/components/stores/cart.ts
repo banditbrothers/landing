@@ -6,10 +6,11 @@ import { Coupon } from "@/types/coupon";
 type CartState = {
   cart: {
     variantId: string;
+    size: string;
     quantity: number;
   }[];
-  updateCartItem: (id: string, quantity?: number) => void;
-  removeCartItem: (id: string) => void;
+  updateCartItem: (id: string, quantity?: number, size?: string) => void;
+  removeCartItem: (id: string, size?: string) => void;
   clearCart: () => void;
 
   isCartOpen: boolean;
@@ -32,13 +33,13 @@ export const useCart = create<CartState>()(
         closeCart: () => set({ isCartOpen: false }),
         openCart: () => set({ isCartOpen: true }),
 
-        updateCartItem: (id, quantity = 1) => {
+        updateCartItem: (id, quantity = 1, size = "one-size") => {
           set(state => {
-            const itemExists = state.cart.some(item => item.variantId === id);
+            const itemExists = state.cart.find(item => item.variantId === id && item.size === size);
             if (itemExists) {
               return {
                 cart: state.cart.map(item => {
-                  if (item.variantId !== id) return item;
+                  if (item.variantId !== id || item.size !== size) return item;
 
                   const newQuantity = item.quantity + quantity;
                   if (newQuantity > 0) return { ...item, quantity: newQuantity };
@@ -47,18 +48,40 @@ export const useCart = create<CartState>()(
               };
             } else {
               const newQuantity = quantity > 0 ? quantity : 1;
-              return { cart: [{ variantId: id, quantity: newQuantity }, ...state.cart] };
+              return { cart: [{ variantId: id, size, quantity: newQuantity }, ...state.cart] };
             }
           });
         },
 
-        removeCartItem: id => set(state => ({ cart: state.cart.filter(i => i.variantId !== id) })),
+        removeCartItem: (id, size) => set(state => ({
+          cart: state.cart.filter(item => {
+            if (size) {
+              return !(item.variantId === id && item.size === size);
+            }
+            return item.variantId !== id;
+          })
+        })),
         clearCart: () => set({ cart: [] }),
 
         setCoupon: coupon => set({ coupon }),
         clearCoupon: () => set({ coupon: null }),
       }),
-      { name: "cart", storage: createJSONStorage(() => localStorage) }
+      { 
+        name: "cart", 
+        storage: createJSONStorage(() => localStorage),
+        migrate: (persistedState: any, version: number) => {
+          // Migration logic for backward compatibility
+          if (persistedState && persistedState.cart) {
+            persistedState.cart = persistedState.cart.map((item: any) => ({
+              ...item,
+              // Add size property if it doesn't exist
+              size: item.size || "one-size"
+            }));
+          }
+          return persistedState;
+        },
+        version: 1,
+      }
     ),
     { name: "cart" }
   )

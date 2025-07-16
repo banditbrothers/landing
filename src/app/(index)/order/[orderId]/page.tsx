@@ -18,7 +18,7 @@ import { redactEmail, redactPhone, redactName } from "@/utils/redact";
 import Link from "next/link";
 import { getProductVariantUrl } from "@/utils/share";
 import { useVariants } from "@/hooks/useVariants";
-import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
+import { getProductVariantName, getProductVariantPrice, getSizeLabel } from "@/utils/product";
 
 type OrderPageProps = { params: Promise<{ orderId: string }> };
 
@@ -98,6 +98,7 @@ export default function OrderPage({ params }: OrderPageProps) {
                   const name = getProductVariantName(variant, { includeProductName: true });
                   const price = getProductVariantPrice(variant);
                   const quantity = orderVariant.quantity;
+                  const size = orderVariant.size;
 
                   return (
                     <div key={variant.id}>
@@ -114,6 +115,7 @@ export default function OrderPage({ params }: OrderPageProps) {
                         <div className="flex-1">
                           <h4 className="font-medium">{name}</h4>
                           <p className="text-sm text-muted-foreground">Quantity: {quantity}</p>
+                          <p className="text-sm text-muted-foreground">Size: {getSizeLabel(size)}</p>
                         </div>
                         <div className="text-right">
                           <p className="font-medium">{formatCurrency(price * quantity, 2)}</p>

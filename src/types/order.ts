@@ -49,5 +49,6 @@ export type Order = {
 
 export type CartItem = {
   variantId: string;
+  size: string;
   quantity: number;
 };

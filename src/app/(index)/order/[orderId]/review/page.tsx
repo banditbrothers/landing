@@ -31,7 +31,7 @@ import { createReview } from "@/actions/reviews";
 import { getDiscordReviewMessage } from "@/utils/discordMessages";
 import { sendDiscordReviewMessage } from "@/actions/discord";
 import { useVariants } from "@/hooks/useVariants";
-import { getProductVariantName } from "@/utils/product";
+import { getProductVariantName, getSizeLabel } from "@/utils/product";
 import { getProductVariantUrl } from "@/utils/share";
 
 signInAnonymously();
@@ -168,6 +168,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
 
                       const name = getProductVariantName(variant, { includeProductName: true });
                       const quantity = orderVariant.quantity;
+                      const size = orderVariant.size;
 
                       return (
                         <Link href={getProductVariantUrl(variant)} target="_blank" key={variant.id}>
@@ -185,6 +186,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                               <div>
                                 <h3 className="font-medium">{name}</h3>
                                 <p className="text-sm text-muted-foreground">Quantity: {quantity}</p>
+                                <p className="text-sm text-muted-foreground">Size: {getSizeLabel(size)}</p>
                               </div>
                             </CardContent>
                           </Card>
