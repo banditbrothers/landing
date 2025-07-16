@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Order } from "@/types/order";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
-import { getOrders } from "@/actions/orders";
+import { getOrders, getUserDetailsFromOrders } from "@/actions/orders";
 import { formattedDateTimeLong, getDate } from "@/utils/timestamp";
 import { LoadingScreen } from "@/components/misc/Loading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/pagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EyeIcon } from "@/Icons/icons";
-import { SignatureIcon } from "lucide-react";
+import { SignatureIcon, DownloadIcon } from "lucide-react";
 import { getWhatsappOrderReviewLink } from "@/utils/whatsappMessageLinks";
 
 type FilterOrder =
@@ -45,6 +45,7 @@ const itemsPerPage = 10;
 export function OrderManagement() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [nameFilter, setNameFilter] = useState("");
   const [phoneFilter, setPhoneFilter] = useState("");
@@ -59,6 +60,42 @@ export function OrderManagement() {
       setIsLoading(false);
     });
   }, []);
+
+  const generateCSV = (data: { name: string; phone: string }[]) => {
+    const csvHeader = "Name,Phone\n";
+    const csvContent = data.map(row => `"${row.name.replace(/"/g, '""')}","${row.phone}"`).join("\n");
+    return csvHeader + csvContent;
+  };
+
+  const downloadCSV = (csvContent: string, filename: string) => {
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", filename);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  const handleExportUserDetails = async () => {
+    setIsExporting(true);
+    try {
+      const userDetails = await getUserDetailsFromOrders();
+      const csvContent = generateCSV(userDetails);
+      const timestamp = new Date().toISOString().split("T")[0];
+      const filename = `user-contact-details-${timestamp}.csv`;
+      downloadCSV(csvContent, filename);
+    } catch (error) {
+      console.error("Error exporting user details:", error);
+      alert("Failed to export user details. Please try again.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const showDialog = (order: Order) => {
     setSelectedOrder(order);
@@ -150,6 +187,15 @@ export function OrderManagement() {
             <Button variant="outline" onClick={clearFilters} className="rounded-md">
               Clear
             </Button>
+
+            {/* <Button
+              variant="outline"
+              onClick={handleExportUserDetails}
+              disabled={isExporting}
+              className="rounded-md flex items-center gap-2">
+              <DownloadIcon className="w-4 h-4" />
+              {isExporting ? "Exporting..." : "Export Contact Details"}
+            </Button> */}
 
             <div className="flex items-center justify-self-end">
               <span className="text-sm text-muted-foreground">Total Orders: {orders.length}</span>

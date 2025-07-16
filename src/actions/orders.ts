@@ -16,6 +16,29 @@ export const getOrders = async (): Promise<Order[]> => {
   return orders.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Order[];
 };
 
+export const getUserDetailsFromOrders = async (): Promise<{ name: string; phone: string }[]> => {
+  const orders = await firestore()
+    .collection(Collections.orders)
+    .where("status", "!=", "cancelled")
+    .orderBy("createdAt", "desc")
+    .get();
+  
+  // Extract unique user details based on phone number to avoid duplicates
+  const userDetailsMap = new Map<string, { name: string; phone: string }>();
+  
+  orders.docs.forEach(doc => {
+    const order = doc.data() as Order;
+    if (!userDetailsMap.has(order.phone)) {
+      userDetailsMap.set(order.phone, {
+        name: order.name,
+        phone: order.phone
+      });
+    }
+  });
+  
+  return Array.from(userDetailsMap.values());
+};
+
 export const getOrder = async (id: string) => {
   const order = await firestore().collection(Collections.orders).doc(id).get();
 
