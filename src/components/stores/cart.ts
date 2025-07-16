@@ -69,18 +69,6 @@ export const useCart = create<CartState>()(
       { 
         name: "cart", 
         storage: createJSONStorage(() => localStorage),
-        migrate: (persistedState: any, version: number) => {
-          // Migration logic for backward compatibility
-          if (persistedState && persistedState.cart) {
-            persistedState.cart = persistedState.cart.map((item: any) => ({
-              ...item,
-              // Add size property if it doesn't exist
-              size: item.size || "one-size"
-            }));
-          }
-          return persistedState;
-        },
-        version: 1,
       }
     ),
     { name: "cart" }
