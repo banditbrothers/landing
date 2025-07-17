@@ -74,7 +74,7 @@ export default function RootLayout({
       <body className={`${spaceGrotesk.className} ${Calera.className}`}>
         <CSPostHogProvider>
           <TanstackQueryProvider>
-            <Toaster theme={theme} richColors position="top-right" />
+            <Toaster theme={theme} richColors position="top-right" expand />
             <main>
               <Navbar />
               {children}

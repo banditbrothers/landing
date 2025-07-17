@@ -24,6 +24,7 @@ export type Order = {
   shipping: number;
   couponCode: string | null;
   address: Address;
+  isInternational: boolean;
   variants: OrderedVariant[];
   status: OrderStatus;
 } & (
@@ -44,6 +45,10 @@ export type Order = {
         amount: number;
         paymentStatus: "paid" | "cancelled";
       };
+    }
+  | {
+      paymentMode: "manual";
+      manual: null;
     }
 );
 
