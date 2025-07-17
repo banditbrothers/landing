@@ -31,7 +31,7 @@ export function InternationalOrderSuccessDialog({
               <p className="text-base">Your international order has been submitted!</p>
 
               <p className="text-sm text-muted-foreground">
-                You'll receive an email from <strong>{email}</strong> within 24 hours with payment details and exact
+                You will receive an email from <strong>{email}</strong> within 24 hours with payment details and exact
                 shipping costs.
               </p>
             </div>

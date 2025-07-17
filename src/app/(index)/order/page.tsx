@@ -593,12 +593,12 @@ function OrderPageContent() {
                                   International Order - Manual Processing
                                 </h3>
                                 <p className="text-muted-foreground text-sm mb-3">
-                                  Due to varying international shipping costs and customs regulations, we'll handle your
-                                  order manually to provide the most accurate pricing.
+                                  Due to varying international shipping costs and customs regulations, we will handle
+                                  your order manually to provide the most accurate pricing.
                                 </p>
                                 <div className="text-muted-foreground text-sm space-y-1">
                                   <p>
-                                    • You'll receive an email from{" "}
+                                    • You will receive an email from{" "}
                                     <strong className="text-foreground">{BANDIT_EMAIL}</strong> with the exact cost
                                     breakdown within <strong className="text-foreground">24 hours</strong>
                                   </p>
