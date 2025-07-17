@@ -19,6 +19,7 @@ export const getDiscordOrderMessage = (order: Order) => {
         fields: [
           { name: "ID", value: order.id },
           { name: "Name", value: order.name },
+          { name: "Shipping Region", value: order.isInternational ? "🌍 International" : "🇮🇳 Domestic" },
           {
             name: "Payment Details",
             value: `${paymentMethod} / ₹${order.total} ${order.couponCode ? `(${order.couponCode})` : ""}`,
