@@ -329,7 +329,7 @@ export const PRODUCTS: Product[] = [
     basePrice: 300,
     sizes: ["one-size"],
     material: "4 Way Quick-Dri DryFit Fabric",
-    dimensions: { 'one-size': '9.5" x 20"'},
+    dimensions: { 'one-size': '9.5" (W) x 20" (L)'},
     baseImages: {
       mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/bandana/shinobi-red/mockup-1750426888985.webp"],
     },
@@ -341,7 +341,7 @@ export const PRODUCTS: Product[] = [
     basePrice: 400,
     sizes: ["small", "large"],
     material: "4 Way Quick-Dri DryFit Fabric",
-    dimensions: { 'small': '9" x 16"', 'large': '10" x 16"'},
+    dimensions: { 'small': '9" (W) x 16" (L)', 'large': '10" (W) x 16" (L)'},
     baseImages: {
       mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/balaclava/out-of-words/mockup-1750364019457.webp"],
     },
