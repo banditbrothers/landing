@@ -14,7 +14,9 @@ interface ColorVariantsProps {
 }
 
 export const ColorVariants = ({ colorVariants, currentVariantId }: ColorVariantsProps) => {
-  const filteredVariants = colorVariants.filter(variant => variant.id !== currentVariantId);
+  const filteredVariants = colorVariants
+    // .filter(variant => variant.id !== currentVariantId)
+    .sort((a, b) => DESIGNS_OBJ[a.designId].name.localeCompare(DESIGNS_OBJ[b.designId].name));
 
   if (filteredVariants.length === 0) {
     return null;
@@ -40,7 +42,10 @@ export const ColorVariants = ({ colorVariants, currentVariantId }: ColorVariants
                   <TooltipTrigger asChild>
                     <Link
                       href={getProductVariantUrl(variant)}
-                      className="group block relative overflow-hidden rounded-xl bg-card border border-border/50 hover:border-border transition-all duration-300 hover:shadow-lg">
+                      className="group block relative overflow-hidden rounded-xl bg-card border border-border/50 hover:border-border transition-all duration-300 hover:shadow-lg"
+                      style={{
+                        borderColor: variant.id === currentVariantId ? "var(--border)" : "transparent",
+                      }}>
                       <div className="aspect-square relative overflow-hidden">
                         <Image
                           fill
