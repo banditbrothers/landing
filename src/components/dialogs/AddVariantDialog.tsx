@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { Upload, Loader2, Plus } from "lucide-react";
 import { compressImage } from "@/utils/image";
+import { getTimestamp } from "@/utils/timestamp";
 
 interface AddVariantDialogProps {
   isOpen: boolean;
@@ -79,6 +80,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
       const newVariant: Omit<ProductVariant, "id"> = {
         productId: formData.productId,
         designId: formData.designId,
+        createdAt: getTimestamp(),
         sku,
         // description: formData.description || undefined,
         price: formData.price || undefined,

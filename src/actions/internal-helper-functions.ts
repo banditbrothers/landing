@@ -1,5 +1,8 @@
 "use server";
 
+import { firestore } from "@/lib/firebase-admin";
+import { ProductVariant } from "@/types/product";
+
 // import { firestore } from "@/lib/firebase-admin";
 
 // import { DESIGNS } from "@/data/products";
@@ -12,6 +15,21 @@
 // import { S3Client } from "@aws-sdk/client-s3";
 // import { Upload } from "@aws-sdk/lib-storage";
 // import fetch from "node-fetch";
+
+ const addTimestampToVariants = async () => {
+  const variants = await firestore().collection("variants").get();
+  const batch = firestore().batch();
+
+  variants.forEach(variant => {
+    const variantData = variant.data() as ProductVariant;
+    if (variantData.designId.startsWith("shinobi")) 
+      batch.update(variant.ref, { createdAt: 1752792000 });
+    else 
+        batch.update(variant.ref, { createdAt: 1735689600 });
+  });
+
+//   await batch.commit();
+};
 
 // // Initialize S3 client
 // const s3Client = new S3Client({

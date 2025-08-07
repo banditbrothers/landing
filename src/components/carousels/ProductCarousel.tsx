@@ -30,7 +30,7 @@ export const ProductCarousel = ({ variants }: ProductCarouselProps) => {
         {variants.map(variant => (
           <CarouselItem key={variant.id} className="basis-3/5 md:basis-1/2 lg:basis-1/4">
             <div className="scale-[0.9] w-full h-full transition-transform duration-300">
-              <ProductVariantCard productVariant={variant} showFavoriteButton={false}>
+              <ProductVariantCard productVariant={variant} showFavoriteButton={false} showMoreColorsBadge={false}>
                 <VariantNameAndArrowBanner productVariant={variant} />
               </ProductVariantCard>
             </div>
