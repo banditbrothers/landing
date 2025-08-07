@@ -12,7 +12,7 @@ import { PRODUCTS_OBJ } from "@/data/products";
 import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
 import { formatCurrency } from "@/utils/price";
 import Image from "next/image";
-import { Edit, Eye, Package, Trash2, Plus } from "lucide-react";
+import { Edit, Eye, Package, Trash2, Plus, Download } from "lucide-react";
 import { LoadingIcon } from "@/components/misc/Loading";
 
 export const ProductManagement = () => {
@@ -83,6 +83,34 @@ export const ProductManagement = () => {
     }
   };
 
+  const handleExportVariantImages = () => {
+    // Create CSV content
+    const csvHeaders = "Name,Image URL\n";
+    const csvRows = variants
+      .map(variant => {
+        const variantName = getProductVariantName(variant, { includeProductName: true });
+        const imageUrl = variant.images.mockup[0] || "";
+        // Escape commas and quotes in the name
+        const escapedName = `"${variantName.replace(/"/g, '""')}"`;
+        return `${escapedName},${imageUrl}`;
+      })
+      .join("\n");
+
+    const csvContent = csvHeaders + csvRows;
+
+    // Create and download the file
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `variant-images-${new Date().toISOString().split("T")[0]}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -103,6 +131,14 @@ export const ProductManagement = () => {
             <Package className="w-4 h-4" />
             {variants.length} Variants
           </Badge>
+          {/* <Button
+            variant="outline"
+            onClick={handleExportVariantImages}
+            className="flex items-center gap-2"
+            disabled={variants.length === 0}>
+            <Download className="w-4 h-4" />
+            Export Images CSV
+          </Button> */}
           <Button onClick={() => setIsAddDialogOpen(true)} className="flex items-center gap-2">
             <Plus className="w-4 h-4" />
             Add Variant

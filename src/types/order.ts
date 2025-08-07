@@ -24,6 +24,7 @@ export type Order = {
   shipping: number;
   couponCode: string | null;
   address: Address;
+  isInternational: boolean;
   variants: OrderedVariant[];
   status: OrderStatus;
 } & (
@@ -45,9 +46,14 @@ export type Order = {
         paymentStatus: "paid" | "cancelled";
       };
     }
+  | {
+      paymentMode: "manual";
+      manual: null;
+    }
 );
 
 export type CartItem = {
   variantId: string;
+  size: string;
   quantity: number;
 };

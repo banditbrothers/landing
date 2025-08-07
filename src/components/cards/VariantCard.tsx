@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 import { useCart } from "../stores/cart";
 import { formatCurrency } from "@/utils/price";
 import { ProductVariant } from "@/types/product";
-import { DESIGNS_OBJ, getColorVariantIds } from "@/data/products";
+import { DESIGNS_OBJ, getColorVariantIds, PRODUCTS_OBJ } from "@/data/products";
 import { getProductVariantUrl } from "@/utils/share";
 import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
 import { Badge } from "../ui/badge";
@@ -87,14 +87,21 @@ export const VariantNameAndPriceBanner = ({ productVariant }: { productVariant: 
     e.preventDefault();
     e.stopPropagation();
 
-    updateCartItem(productVariant.id, 1);
+    // Get the default size (first available size) from the product
+    const variantProduct = PRODUCTS_OBJ[productVariant.productId];
+    const defaultSize = variantProduct?.sizes?.[0] || "one-size";
+
+    updateCartItem(productVariant.id, 1, defaultSize);
   }
 
   const variantDesign = DESIGNS_OBJ[productVariant.designId];
   const variantPrice = getProductVariantPrice(productVariant);
   const variantName = getProductVariantName(productVariant);
 
-  const cartItem = cart.find(item => item.variantId === productVariant.id);
+  // Get the default size to check cart status
+  const variantProduct = PRODUCTS_OBJ[productVariant.productId];
+  const defaultSize = variantProduct?.sizes?.[0] || "one-size";
+  const cartItem = cart.find(item => item.variantId === productVariant.id && item.size === defaultSize);
   return (
     <div className="flex flex-col w-full mt-4 px-1 justify-between items-start gap-6">
       <div className="flex flex-col justify-between items-center w-full">

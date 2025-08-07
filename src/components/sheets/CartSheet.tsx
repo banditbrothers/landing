@@ -32,9 +32,10 @@ export const CartSheet = () => {
 
           return (
             <CheckoutProductCard
-              key={variant.id}
+              key={`${variant.id}-${item.size}`}
               variant={variant}
               quantity={item.quantity}
+              size={item.size}
               updateCartItemBy={updateCartItem}
               removeCartItem={removeCartItem}
             />

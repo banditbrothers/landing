@@ -46,10 +46,6 @@ const ProductCard = ({ product }: { product: Product }) => {
               <span className="font-medium">Material:</span>
               <span>{product.material}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="font-medium">Dimensions:</span>
-              <span>{product.dimensions}</span>
-            </div>
           </div>
         </CardContent>
       </Card>

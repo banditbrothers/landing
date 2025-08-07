@@ -39,6 +39,13 @@ type ProductPageContentsProps = {
   productId: string;
 };
 
+type VariantProductSizes = "one-size" | "small" | "large";
+const sizeOptionLabels: Record<VariantProductSizes, string> = {
+  "one-size": "One Size",
+  small: "Small - 52 to 59cm",
+  large: "Large - 60 to 67cm",
+};
+
 export const ProductPageContents = ({ designId, productId }: ProductPageContentsProps) => {
   const { data: variants } = useVariants();
 
@@ -47,6 +54,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
   const { openCart, updateCartItem: addOrUpdateCartItem } = useCart();
 
   const [quantity, setQuantity] = useState(1);
+  const [size, setSize] = useState<VariantProductSizes>("one-size");
   const [colorVariants, setColorVariants] = useState<ProductVariant[]>([]);
 
   const variant = variants.find(v => v.designId === designId && v.productId === productId);
@@ -66,6 +74,16 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
     }
   }, [variant, variants, productId]);
 
+  // Initialize size based on available product sizes
+  useEffect(() => {
+    if (variant) {
+      const variantProduct = PRODUCTS_OBJ[variant.productId];
+      if (variantProduct?.sizes?.length > 0) {
+        setSize(variantProduct.sizes[0] as VariantProductSizes);
+      }
+    }
+  }, [variant]);
+
   useEffect(() => {
     if (variant) trackVariantView({ productId: variant.productId, designId: variant.designId });
   }, [variant]);
@@ -78,7 +96,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
   const handleAddToCartClicked = () => {
     if (!variant) return;
     trackVariantAddToCart({ productId: variant.productId, designId: variant.designId });
-    addOrUpdateCartItem(variant.id, quantity);
+    addOrUpdateCartItem(variant.id, quantity, size);
     openCart();
   };
 
@@ -134,6 +152,43 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
             </p>
           </div>
 
+          {/* Size Selection */}
+          {variantProduct.sizes.length > 1 && (
+            <div className="flex flex-col gap-3">
+              <div>
+                <h3 className="text-sm font-medium text-foreground">Select your size</h3>
+                <p className="text-muted-foreground text-sm">
+                  If you use a helmet from size XS to M, we recommend the small size. The measurements below are based
+                  on your head circumference.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                {variantProduct.sizes.map(sizeOption => (
+                  <label
+                    key={sizeOption}
+                    className={`
+                      flex items-center justify-center px-4 py-2 border-2 rounded-lg cursor-pointer transition-all duration-200
+                      ${
+                        size === sizeOption
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-muted-foreground/20 bg-background text-foreground hover:border-primary/50 hover:bg-primary/5"
+                      }
+                    `}>
+                    <input
+                      type="radio"
+                      name="size"
+                      value={sizeOption}
+                      checked={size === sizeOption}
+                      onChange={e => setSize(e.target.value as VariantProductSizes)}
+                      className="sr-only"
+                    />
+                    <span className="text-sm font-medium">{sizeOptionLabels[sizeOption as VariantProductSizes]}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col gap-2">
             <QuantityStepper
               quantity={quantity}
@@ -161,7 +216,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
             </div>
             <div className="flex py-2">
               <span className="font-medium text-foreground text-sm w-24">Dimensions:</span>
-              <span className="text-muted-foreground text-sm">{variantProduct.dimensions}</span>
+              <span className="text-muted-foreground text-sm">{variantProduct.dimensions[size]}</span>
             </div>
           </div>
 
