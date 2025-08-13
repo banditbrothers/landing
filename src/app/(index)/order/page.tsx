@@ -312,7 +312,7 @@ function OrderPageContent() {
       )}
 
       <InternationalOrderSuccessDialog
-        open={true}
+        open={showInternationalOrderDialog}
         onOpenChange={setShowInternationalOrderDialog}
         onContinueShopping={handleInternationalOrderDialogClose}
         email={BANDIT_EMAIL}
