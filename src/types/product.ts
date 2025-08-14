@@ -43,12 +43,13 @@ export type Product = {
   basePrice: number;
   sizes: string[];
   material: string;
-  dimensions: string;
+  dimensions: Record<string, string>;
   // Generic product images (no specific design)
   baseImages?: ImageSet; 
 };
 
 export type OrderedVariant = {
   variantId: string;
+  size: string;
   quantity: number;
 };

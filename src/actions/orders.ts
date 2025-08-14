@@ -67,11 +67,15 @@ export const createOrder = async (order: Partial<Order>) => {
     newOrder.status = "paid";
     newOrder.cash = { amount: +order.total! * 100, paymentStatus: "paid" };
   }
+  else if (newOrder.paymentMode === "manual") {
+    newOrder.status = "initiated";
+    newOrder.manual = null;
+  }
 
   await orderRef.create(newOrder);
   const orderWithId = { ...newOrder, id: orderRef.id } as Order;
 
-  if (newOrder.paymentMode === "cash") {
+  if (newOrder.paymentMode === "cash" || newOrder.paymentMode === "manual") {
     try {
       await sendDiscordOrderMessage(getDiscordOrderMessage(orderWithId));
     } catch (error) {

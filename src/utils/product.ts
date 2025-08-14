@@ -16,3 +16,12 @@ export const getProductVariantPrice = (productVariant: ProductVariant) => {
   if(!productVariant) throw new Error("Product variant is required to calculate price");
   return productVariant.price ?? PRODUCTS_OBJ[productVariant.productId].basePrice;
 };
+
+export const getSizeLabel = (size: string): string => {
+  const sizeLabels: Record<string, string> = {
+    "one-size": "One Size",
+    "small": "Small",
+    "large": "Large",
+  };
+  return sizeLabels[size] || size;
+};
