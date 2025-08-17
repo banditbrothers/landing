@@ -1,4 +1,4 @@
-import { ProductPageContents } from "@/components/pages/designs";
+import { ProductPageContents } from "@/components/pages/variant-product-page";
 import { Collections } from "@/constants/collections";
 import { DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
 import { firestore } from "@/lib/firebase-admin";

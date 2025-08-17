@@ -19,6 +19,7 @@ export const getDiscordOrderMessage = (order: Order) => {
         fields: [
           { name: "ID", value: order.id },
           { name: "Name", value: order.name },
+          { name: "Shipping Region", value: order.isInternational ? "🌍 International" : "🇮🇳 Domestic" },
           {
             name: "Payment Details",
             value: `${paymentMethod} / ₹${order.total} ${order.couponCode ? `(${order.couponCode})` : ""}`,
@@ -26,7 +27,7 @@ export const getDiscordOrderMessage = (order: Order) => {
           { name: "Address", value: getAddressString(order.address) },
           {
             name: "Products",
-            value: order.variants.map(variant => `${variant.quantity}x ${variant.variantId}`).join("\n"),
+            value: order.variants.map(variant => `${variant.quantity}x ${variant.variantId}-${variant.size}`).join("\n"),
           },
         ],
         timestamp: new Date(getDate(order.createdAt)).toISOString(),

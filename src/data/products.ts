@@ -329,7 +329,7 @@ export const PRODUCTS: Product[] = [
     basePrice: 300,
     sizes: ["one-size"],
     material: "4 Way Quick-Dri DryFit Fabric",
-    dimensions: '9.5" x 20"',
+    dimensions: { 'one-size': '9.5" (W) x 20" (L)'},
     baseImages: {
       mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/bandana/shinobi-red/mockup-1750426888985.webp"],
     },
@@ -339,9 +339,9 @@ export const PRODUCTS: Product[] = [
     name: "Balaclava",
     description: ["Stay stylish and protected with our premium balaclavas—designed for bikers and outdoor adventurers.", " Made from breathable, lightweight fabric, these versatile headwraps offer UV protection, sweat absorption, and dust resistance, making them ideal for long rides and outdoor activities.", "Wear it as a headband, face mask or helmet liner. Quick-drying and stretchable for a comfortable fit. Perfect for bikers, cyclists, hikers, and everyday casual wear."],
     basePrice: 400,
-    sizes: ["one-size"],
+    sizes: ["small", "large"],
     material: "4 Way Quick-Dri DryFit Fabric",
-    dimensions: '9.5" x 20"',
+    dimensions: { 'small': '9" (W) x 16" (L)', 'large': '10" (W) x 16" (L)'},
     baseImages: {
       mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/balaclava/out-of-words/mockup-1750364019457.webp"],
     },

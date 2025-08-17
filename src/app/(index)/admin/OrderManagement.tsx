@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/pagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EyeIcon } from "@/Icons/icons";
-import { SignatureIcon, DownloadIcon } from "lucide-react";
+import { SignatureIcon, DownloadIcon, Globe2 } from "lucide-react";
 import { getWhatsappOrderReviewLink } from "@/utils/whatsappMessageLinks";
 
 type FilterOrder =
@@ -228,7 +228,12 @@ export function OrderManagement() {
 
                     <TableCell>{order.phone}</TableCell>
 
-                    <TableCell className="max-w-xs">{getAddressString(order.address)}</TableCell>
+                    <TableCell className="max-w-xs">
+                      <div className="flex flex-row gap-2 items-center">
+                        {order.isInternational && <Globe2 className="w-4 h-4 inline-block text-blue-500" />}
+                        {getAddressString(order.address)}
+                      </div>
+                    </TableCell>
 
                     <TableCell>{formatCurrency(order.total, 2)}</TableCell>
 
