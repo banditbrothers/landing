@@ -14,7 +14,7 @@ const images = [
 
 export const HowToWearSection = () => {
   return (
-    <section id="how-to-wear" className="scroll-mt-16 py-20 bg-background">
+    <section id="how-to-wear" className="min-h-screen py-16 snap-start bg-background">
       <div className="mx-auto px-4 max-w-6xl">
         <div className="flex flex-col items-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground">How to Wear A Bandana</h2>

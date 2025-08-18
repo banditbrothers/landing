@@ -25,7 +25,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground space-y-20">
+    <div className="h-screen overflow-y-scroll snap-y snap-mandatory bg-background text-foreground">
       <HeroSection />
 
       <ProductLibrary />

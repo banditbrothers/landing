@@ -22,11 +22,17 @@ export default function NavBar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      const scrollContainer = document.querySelector(".snap-mandatory");
+      setIsScrolled(scrollContainer!.scrollTop > 10);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    setTimeout(() => {
+      const scrollContainer = document.querySelector(".snap-mandatory");
+      if (scrollContainer) {
+        scrollContainer.addEventListener("scroll", handleScroll);
+        return () => scrollContainer.removeEventListener("scroll", handleScroll);
+      }
+    }, 1000);
   }, []);
 
   const isHomePath = pathname === "/";

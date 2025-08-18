@@ -6,7 +6,7 @@ export const KnowYourProductSection = () => {
   const [expandedItem, setExpandedItem] = useState<string[]>([]);
 
   return (
-    <section id="know-your-product" className="bg-background">
+    <section id="know-your-product" className="min-h-screen py-16 snap-start bg-background">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-16">Know Your Product</h2>
 

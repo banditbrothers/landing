@@ -30,7 +30,7 @@ export const InstagramFeedSection = () => {
   }, []);
 
   return (
-    <section id="instagram-feed" className="w-full max-w-7xl mx-auto container">
+    <section id="instagram-feed" className="min-h-screen py-16 snap-start w-full max-w-7xl mx-auto container">
       <div className="flex flex-col items-center mb-12">
         <h2 className="text-3xl font-bold text-primary">Follow Our Journey</h2>
         <Link href="https://www.instagram.com/be.a.banditbrother/" target="_blank" rel="noopener noreferrer">

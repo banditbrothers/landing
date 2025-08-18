@@ -56,7 +56,7 @@ const FEATURED_REVIEWS: ReviewWithoutEmail[] = [
 
 export const TestimonialsSection = () => {
   return (
-    <section id="reviews" className="bg-background text-foreground scroll-mt-16">
+    <section id="reviews" className="min-h-screen py-16 snap-start bg-background text-foreground">
       <div className="container mx-auto px-4 mb-6">
         <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-6">
           <h2 className="text-4xl font-bold tracking-tight mb-4">Looking for reviews?</h2>

@@ -31,7 +31,7 @@ import { Button } from "@/components/ui/button";
 
 export const HeroSection = () => {
   return (
-    <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden">
+    <section id="hero" className="relative h-screen flex items-center justify-center overflow-hidden snap-start">
       <video autoPlay muted loop playsInline className="absolute z-0 w-full h-full object-cover">
         <source src="/hero-bg.mp4" type="video/mp4" />
       </video>
