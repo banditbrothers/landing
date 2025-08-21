@@ -49,7 +49,7 @@ export const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}>
-          Experience ultimate comfort and look your style with Bandit Brothers
+          Experience ultimate comfort and style with Bandit Brothers
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
