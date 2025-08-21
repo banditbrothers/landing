@@ -589,9 +589,7 @@ function OrderPageContent() {
                                 </svg>
                               </div>
                               <div className="flex-1">
-                                <h3 className="text-lg font-semibold text-foreground mb-2">
-                                  International Order - Manual Processing
-                                </h3>
+                                <h3 className="text-lg font-semibold text-foreground mb-2">International Order</h3>
                                 <p className="text-muted-foreground text-sm mb-3">
                                   Due to varying international shipping costs and customs regulations, we will handle
                                   your order manually to provide the most accurate pricing.
