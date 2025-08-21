@@ -43,7 +43,7 @@ export const getWhatsappOrderConfirmationLink = (order: Order) => {
     "May the Bandits be with you!",
   ].join("\n");
   const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/91${order.phone}?text=${encodedMessage}`;
+  return `https://wa.me/${order.phone}?text=${encodedMessage}`;
 };
 
 export const getWhatsappOrderReviewLink = (order: Order) => {
@@ -55,7 +55,7 @@ export const getWhatsappOrderReviewLink = (order: Order) => {
     `Click here to share your feedback: https://www.banditbrothers.in/order/${order.id}/review`,
   ].join("\n");
   const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/91${order.phone}?text=${encodedMessage}`;
+  return `https://wa.me/${order.phone}?text=${encodedMessage}`;
 };
 
 export const getWhatsappNeedHelpLink = (orderId: string) => {
