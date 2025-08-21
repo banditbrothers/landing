@@ -99,6 +99,13 @@ export const DESIGN_COLOR_OBJ = DESIGN_COLORS.reduce((acc, color) => {
 
 export const DESIGNS: Design[] = [
   {
+    id: "agent-skully",
+    name: "Agent Skully",
+    colors: ["white", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
     id: "gimme-some-space",
     name: "Gimme Some Space",
     colors: ["green", "purple", "black"],
@@ -343,6 +350,7 @@ export const DESIGNS: Design[] = [
     category: "abstract",
     tags: [],
   },
+
 ];
 export const DESIGNS_OBJ = DESIGNS.reduce((acc, product) => {
   const { id, ...rest } = product;
