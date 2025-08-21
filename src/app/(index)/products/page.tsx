@@ -35,8 +35,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
         {/* Product Info */}
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg line-clamp-1">{product.name}</CardTitle>
-          <CardDescription className="line-clamp-2">{product.description}</CardDescription>
+          <CardTitle className="text-lg line-clamp-1">{product.name}s</CardTitle>
         </CardHeader>
 
         <CardContent className="pb-4 pt-0">
