@@ -315,6 +315,34 @@ export const DESIGNS: Design[] = [
     category: "pattern",
     tags: [],
   },
+  {
+    id: "peak-a-boo",
+    name: "Peak A Boo",
+    colors: ["black", "white"],
+    category: "abstract",
+    tags: [],
+  },
+  {
+    id: "scrolls-of-samurai",
+    name: "Scrolls of Samurai",
+    colors: ["black", "white"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "hail-hydra",
+    name: "Hail Hydra",
+    colors: ["blue", "black"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "mess-terpiece",
+    name: "Mess-terpiece",
+    colors: ["white", "black"],
+    category: "abstract",
+    tags: [],
+  },
 ];
 export const DESIGNS_OBJ = DESIGNS.reduce((acc, product) => {
   const { id, ...rest } = product;
