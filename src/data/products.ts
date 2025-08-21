@@ -359,8 +359,7 @@ export const PRODUCTS: Product[] = [
     material: "4 Way Quick-Dri DryFit Fabric",
     dimensions: { 'one-size': '9.5" (W) x 20" (L)'},
     baseImages: {
-      // technically this is a lifestyle image
-      mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/bandana-intro-v1.jpeg"],
+      mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/bandana/shinobi-red/mockup-1750426888985.webp"],
     },
   },
   {
