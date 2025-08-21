@@ -4,19 +4,16 @@ import { ProductCarousel } from "@/components/carousels/ProductCarousel";
 
 import { ArrowRight } from "lucide-react";
 import { useVariants } from "@/hooks/useVariants";
-import { getTimestamp } from "@/utils/timestamp";
 
 export const ProductLibraryContent = () => {
   const { data: variants } = useVariants();
 
   const bestSellerVariants = variants.filter(v => v.isBestSeller);
 
-  const newArrivalsVariants = variants.filter(v => getTimestamp() - v.createdAt < 30 * 24 * 60 * 60); // 30 days
-  const last10NewArrivalsVariants = variants.sort((a, b) => b.createdAt - a.createdAt).slice(0, 10);
-
-  const unionVariants = [...newArrivalsVariants, ...last10NewArrivalsVariants].filter(
-    (variant, index, array) => array.findIndex(v => v.id === variant.id) === index
-  );
+  const last10NewArrivalsVariants = variants
+    .filter(v => v.isDiscoverable)
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .slice(0, 10);
 
   return (
     <>
@@ -31,7 +28,7 @@ export const ProductLibraryContent = () => {
             <ProductCarousel variants={bestSellerVariants} />
           </div>
         </div>
-        {unionVariants.length > 0 && (
+        {last10NewArrivalsVariants.length > 0 && (
           <div className=" mx-auto">
             <div className={`mb-4 flex justify-between items-center max-w-screen-2xl mx-auto px-6 flex-col`}>
               <h2 className="text-4xl font-bold text-center flex flex-row justify-center items-center relative">
@@ -39,7 +36,7 @@ export const ProductLibraryContent = () => {
               </h2>
             </div>
             <div className="mx-auto flex flex-col items-center gap-10">
-              <ProductCarousel variants={unionVariants} />
+              <ProductCarousel variants={last10NewArrivalsVariants} />
               <Link href="/products">
                 <Button variant="bandit-hover" className="group">
                   <span>View All Products</span>
