@@ -20,12 +20,14 @@ interface ProductVariantCardProps {
   showFavoriteButton?: boolean;
   children: React.ReactNode;
   optimizeImageQualityOnMobile?: boolean;
+  showMoreColorsBadge?: boolean;
 }
 
 export const ProductVariantCard = ({
   productVariant,
   children,
   optimizeImageQualityOnMobile = true,
+  showMoreColorsBadge = true,
   showFavoriteButton = true,
   openInNewTab = false,
 }: ProductVariantCardProps) => {
@@ -45,8 +47,8 @@ export const ProductVariantCard = ({
           </div>
         )}
         <div className="absolute top-5 left-5 z-10 flex flex-col gap-2">
-          {hasColorVariants && (
-            <Badge variant="default" className="bg-bandit-orange text-white w-fit ">
+          {hasColorVariants && showMoreColorsBadge && (
+            <Badge variant="default" className="bg-bandit-orange text-white w-fit hover:bg-bandit-orange">
               More Colors Available
             </Badge>
           )}

@@ -25,6 +25,7 @@ export type ProductVariant = {
   id: string;
   designId: Design["id"];
   productId: Product["id"];
+  createdAt: number;
   images: ImageSet;
   price?: number;
   name?: string;

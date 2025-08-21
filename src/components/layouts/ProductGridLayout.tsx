@@ -2,7 +2,7 @@ import { ProductVariantCard, VariantNameAndPriceBanner } from "../cards/VariantC
 import { Button } from "../ui/button";
 import { FilterDialog, FilterState } from "../dialogs/FilterDialog";
 import { Suspense, useState } from "react";
-import { FilterIcon, XIcon } from "lucide-react";
+import { FilterIcon, SparklesIcon, XIcon } from "lucide-react";
 import { CheckBadgeIcon, HeartIconOutline } from "../../Icons/icons";
 import useIsMobile from "@/hooks/useIsMobile";
 import { invertColor } from "@/utils/misc";
@@ -11,6 +11,7 @@ import { useFavorites } from "../stores/favorites";
 import { LoadingIcon } from "../misc/Loading";
 import { DesignCategory, DesignColor, ProductVariant } from "@/types/product";
 import { DESIGN_CATEGORIES_OBJ, DESIGN_COLOR_OBJ, DESIGNS_OBJ } from "@/data/products";
+import { getTimestamp } from "@/utils/timestamp";
 
 interface ProductVariantGridProps {
   productVariants: ProductVariant[];
@@ -41,10 +42,17 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
     setParam: setBestSellers,
   } = useParamBasedFeatures("best-sellers", { replaceRoute: true });
 
+  const {
+    value: isNewArrivalsFilterSelectedParam,
+    removeParam: removeNewArrivals,
+    setParam: setNewArrivals,
+  } = useParamBasedFeatures("new-arrivals", { replaceRoute: true });
+
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [isFavFilterSelected, setIsFavFilterSelected] = useState(false);
 
   const isBestSellerFilterSelected = !!isBestSellerFilterSelectedParam;
+  const isNewArrivalsFilterSelected = !!isNewArrivalsFilterSelectedParam;
 
   let selectedColors = [] as DesignColor[];
   if (colorsParam !== null) {
@@ -68,6 +76,11 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
   const handleToggleBestSellerFilter = () => {
     if (isBestSellerFilterSelected) removeBestSeller();
     else setBestSellers("true");
+  };
+
+  const handleToggleNewArrivalsFilter = () => {
+    if (isNewArrivalsFilterSelected) removeNewArrivals();
+    else setNewArrivals("true");
   };
 
   const removeFilter = (type: keyof FilterState, value: string) => {
@@ -106,6 +119,9 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
       );
     })
     .filter(productVariant => {
+      return isNewArrivalsFilterSelected ? getTimestamp() - productVariant.createdAt < 30 * 24 * 60 * 60 : true; // 30 days
+    })
+    .filter(productVariant => {
       return productVariant.images.mockup.length > 0;
     });
 
@@ -115,7 +131,14 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
     <>
       <div className="max-w-screen-2xl mx-auto">
         <div className={`flex ${isMobile ? "flex-col" : "flex-col"} gap-2 items-start p-4`}>
-          <div className="flex flex-row gap-2 items-center">
+          <div className="flex flex-row gap-2 items-center flex-wrap justify-center">
+            <Button
+              variant={isNewArrivalsFilterSelected ? "default" : "outline"}
+              onClick={handleToggleNewArrivalsFilter}
+              className="flex flex-row gap-2 items-center">
+              <SparklesIcon className="w-4 h-4" />
+              New Arrivals
+            </Button>
             <Button
               variant={isBestSellerFilterSelected ? "default" : "outline"}
               onClick={handleToggleBestSellerFilter}
