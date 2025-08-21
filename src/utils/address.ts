@@ -11,6 +11,7 @@ export const getAddressString = (address: Address) => {
 
   if (country) stringAddress += `, ${country.name}`;
   if (state) stringAddress += `, ${state.name}`;
+  if (address.city) stringAddress += `, ${address.city}`;
 
   stringAddress += `, ${zip}`;
   return stringAddress;

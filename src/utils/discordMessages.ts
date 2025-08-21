@@ -6,7 +6,9 @@ import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
 import { Review } from "@/types/review";
 
 export const getDiscordOrderMessage = (order: Order) => {
-  const paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
+  let paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
+  if (order.paymentMode === "manual") paymentMethod = "Manual";
+  
 
   return {
     content: `🎉 We have a new order! \nSend ${

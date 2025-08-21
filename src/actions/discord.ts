@@ -4,7 +4,7 @@ import { isProduction } from "@/utils/misc";
 import { MessageCreateOptions } from "discord.js";
 
 // order channel
-const ordersChannelId = "1331164962059587614";
+const ordersChannelId = isProduction ? "1331164962059587614" : "1408025970878713928";
 const reviewsChannelId = "1339632586602971280";
 
 export async function sendDiscordOrderMessage(data: MessageCreateOptions) {
@@ -16,10 +16,10 @@ export async function sendDiscordReviewMessage(data: MessageCreateOptions) {
 }
 
 const sendDiscordMessage = async (channelId: string, data: MessageCreateOptions) => {
-  if (!isProduction) {
-    console.info("Skipping Discord message in non-production environment");
-    return;
-  }
+  // if (!isProduction) {
+  //   console.info("Skipping Discord message in non-production environment");
+  //   return;
+  // }
 
   try {
     const response = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {

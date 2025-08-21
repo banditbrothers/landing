@@ -24,25 +24,46 @@ export const getWhatsappNeedHelpWithOrderLink = (orderDetails: Partial<Order>) =
 export const getWhatsappOrderConfirmationLink = (order: Order) => {
   const paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
 
-  const message = [
-    "Hey, we have received your order!",
-    "",
-    `*Order ID:* ${order.id}`,
-    "",
-    `*Order Total:* ${formatCurrency(order.total, 2)}`,
-    "",
-    `*Shipping Address:* ${getAddressString(order.address)}`,
-    "",
-    `*Payment Method:* ${paymentMethod}`,
-    "",
-    "Check your order details here:",
-    `https://www.banditbrothers.in/order/${order.id}`,
-    "",
-    "You should receive your order in 7-10 days.",
-    "",
-    "May the Bandits be with you!",
-  ].join("\n");
-  const encodedMessage = encodeURIComponent(message);
+  let message: string[] = [];
+  if (order.isInternational) {
+    message = [
+      "Hey, we have received your order!",
+      "",
+      `*Order ID:* ${order.id}`,
+      "",
+      `*Shipping Address:* ${getAddressString(order.address)}`,
+      "",
+      "Check your order details here:",
+      `https://www.banditbrothers.in/order/${order.id}`,
+      "",
+      "A complete breakdown of your order total (including product, and shipping cost) will be shared with you shortly, along with secure payment links and tracking details once everything is ready.",
+      "",
+      "May the Bandits be with you!",
+    ];
+  }
+  else {
+    message = [
+      "Hey, we have received your order!",
+      "",
+      `*Order ID:* ${order.id}`,
+      "",
+      `*Order Total:* ${formatCurrency(order.total, 2)}`,
+      "",
+      `*Shipping Address:* ${getAddressString(order.address)}`,
+      "",
+      `*Payment Method:* ${paymentMethod}`,
+      "",
+      "Check your order details here:",
+      `https://www.banditbrothers.in/order/${order.id}`,
+      "",
+      "You should receive your order in 7-10 days.",
+      "",
+      "May the Bandits be with you!",
+    ];
+  }
+
+  const newMessage = message.join("\n");
+  const encodedMessage = encodeURIComponent(newMessage);
   return `https://wa.me/${order.phone}?text=${encodedMessage}`;
 };
 

@@ -140,7 +140,11 @@ export default function OrderPage({ params }: OrderPageProps) {
                 <div className="flex justify-between items-center mb-6">
                   <span className="text-muted-foreground">Payment Method</span>
                   <span className="font-medium capitalize">
-                    {order.paymentMode === "rzp" ? `${order.rzp.paymentMethod} / Razorpay` : "Cash"}
+                    {order.paymentMode === "rzp"
+                      ? `${order.rzp.paymentMethod} / Razorpay`
+                      : order.paymentMode === "manual"
+                      ? "Manual"
+                      : "Cash"}
                   </span>
                 </div>
 
