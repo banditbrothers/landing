@@ -7,7 +7,7 @@ export const redactEmail = (email: string): string => {
 
 export const redactName = (name: string): string => {
   // redact all but the first and last characters of each word
-  return name
+  return name.trim()
     .split(" ")
     .map(word => {
       return `${word[0]}${"*".repeat(word.length - 2)}${word[word.length - 1]}`;
