@@ -577,14 +577,15 @@ export const PRODUCTS_OBJ = PRODUCTS.reduce((acc, product) => {
   return { ...acc, [id]: rest };
 }, {} as Record<string, Omit<(typeof PRODUCTS)[number], "id">>);
 
+
+
 const COLOR_VARIANTS = [
   ["shinobi-red", "shinobi-green", "shinobi-blue", "shinobi-orange", "shinobi-yellow"],
+  ["dragon-swagon-red", "dragon-swagon-yellow"],
   ["you-cant-see-me-dark-green", "you-cant-see-me-black", "you-cant-see-me-green", "you-cant-see-me-camel", "you-cant-see-me-blue"],
   ["bone-appetint-off-pink", "bone-appetint-sunset-red", "bone-appetint-kind-of-purple", "bone-appetint-maybe-blue", "bone-appetint-lushy-green", "bone-appetint-mellow-yellow", "bone-appetint-sky-blue", "bone-appetint-sunrise-orange", "bone-appetint-ashen-bones", "bone-appetint-pastel-black"],
   ["hue-did-this-off-pink", "hue-did-this-sunset-red", "hue-did-this-kind-of-purple", "hue-did-this-maybe-blue", "hue-did-this-lushy-green", "hue-did-this-mellow-yellow", "hue-did-this-sky-blue", "hue-did-this-sunrise-orange", "hue-did-this-ashen-bones", "hue-did-this-pastel-black"],
 ];
-
-
 
 export const getColorVariantIds = (designId: string) => {
   const colorVariants = COLOR_VARIANTS.find(colorVariants => colorVariants.includes(designId)) ?? [];
