@@ -6,19 +6,24 @@ import { ProductVariant } from "@/types/product";
 import { getProductVariantUrl } from "@/utils/share";
 import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
 import { DESIGNS_OBJ } from "@/data/products";
+import { useRouter } from "next/navigation";
 
 interface SearchProductCardProps {
   variant: ProductVariant;
 }
 
 export const SearchProductCard = ({ variant }: SearchProductCardProps) => {
+  const router = useRouter();
+
   const variantName = getProductVariantName(variant);
   const variantPrice = getProductVariantPrice(variant);
   const variantDesign = DESIGNS_OBJ[variant.designId];
 
+  const productLink = getProductVariantUrl(variant);
+
   return (
     <div key={variant.id} className=" p-4 bg-card rounded-lg relative border border-border">
-      <Link href={getProductVariantUrl(variant)}>
+      <Link href={productLink} onMouseEnter={() => router.prefetch(productLink)}>
         <div className="flex flex-col gap-4">
           <div className="relative w-full aspect-square">
             <Image

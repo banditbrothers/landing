@@ -1,10 +1,15 @@
 import { ProductVariant } from "@/types/product";
 import { getProductVariantUrl } from "@/utils/share";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export function ClickableProductBadge(props: { children: React.ReactNode; variant: ProductVariant }) {
+  const router = useRouter();
+
+  const productLink = getProductVariantUrl(props.variant);
+
   return (
-    <Link href={getProductVariantUrl(props.variant)}>
+    <Link href={productLink} onMouseEnter={() => router.prefetch(productLink)}>
       <span className="inline-flex w-fit items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20 hover:bg-bandit-orange/10 hover:text-bandit-orange hover:ring-bandit-orange/20 transition-colors">
         {props.children}
       </span>
