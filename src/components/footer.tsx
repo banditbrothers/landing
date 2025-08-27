@@ -38,7 +38,25 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href={whatsappKnowMoreLink}
+                  href="https://merchant.razorpay.com/policy/PiS6lRbqlBYCKy/refund"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary-800 transition-colors duration-300">
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://merchant.razorpay.com/policy/PiS6lRbqlBYCKy/shipping"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary-800 transition-colors duration-300">
+                  Shipping Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://merchant.razorpay.com/policy/PiS6lRbqlBYCKy/contact_us"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-primary-800 transition-colors duration-300">
