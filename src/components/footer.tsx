@@ -37,11 +37,17 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href={whatsappKnowMoreLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary-800 transition-colors duration-300">
+                <Link href="/refunds" className="hover:text-primary-800 transition-colors duration-300">
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/shipping" className="hover:text-primary-800 transition-colors duration-300">
+                  Shipping Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-primary-800 transition-colors duration-300">
                   Contact Us
                 </Link>
               </li>
