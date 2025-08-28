@@ -146,8 +146,8 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
     <>
       <div className="max-w-screen-2xl mx-auto">
         <div className={`flex ${isMobile ? "flex-col" : "flex-col"} gap-2 items-start p-4`}>
-          <div className="flex gap-2 justify-between w-full">
-            <div className="flex flex-row gap-2 items-center flex-wrap justify-center">
+          <div className="flex gap-2 flex-col-reverse md:flex-row md:justify-between w-full">
+            <div className="flex flex-row gap-2 items-center flex-wrap">
               <Button
                 variant={isColorOrCategoryFilterSelected ? "default" : "outline"}
                 onClick={() => setIsFilterDialogOpen(true)}
