@@ -46,8 +46,8 @@ export async function POST(request: Request) {
           const order = await getOrder(dbId);
           if (!order) return;
 
-          // @ts-ignore
-          order.rzp = {}
+          // @ts-expect-error - order.rzp is defined in the order type
+          order.rzp = {};
           order.paymentMode = "rzp";
           if (order.paymentMode === "rzp") order.rzp.paymentMethod = paymentMethod;
 
