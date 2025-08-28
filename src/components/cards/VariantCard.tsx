@@ -13,6 +13,7 @@ import { DESIGNS_OBJ, getColorVariantIds, PRODUCTS_OBJ } from "@/data/products";
 import { getProductVariantUrl } from "@/utils/share";
 import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
 import { Badge } from "../ui/badge";
+import { useRouter } from "next/navigation";
 
 interface ProductVariantCardProps {
   productVariant: ProductVariant;
@@ -33,8 +34,11 @@ export const ProductVariantCard = ({
 }: ProductVariantCardProps) => {
   const { isFavorite, toggleFav } = useFavorites();
   const isMobile = useIsMobile();
+  const router = useRouter();
 
   const name = getProductVariantName(productVariant);
+
+  const productLink = getProductVariantUrl(productVariant);
 
   const hasColorVariants = getColorVariantIds(productVariant.designId).length > 1;
 
@@ -59,8 +63,9 @@ export const ProductVariantCard = ({
           )} */}
         </div>
         <Link
-          href={getProductVariantUrl(productVariant)}
+          href={productLink}
           target={openInNewTab ? "_blank" : undefined}
+          onMouseEnter={() => router.prefetch(productLink)}
           className="w-full h-full">
           <div>
             <div className="flex flex-col items-center">

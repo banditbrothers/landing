@@ -7,6 +7,7 @@ import { getProductVariantUrl } from "@/utils/share";
 import { getProductVariantName } from "@/utils/product";
 import { DESIGNS_OBJ } from "@/data/products";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRouter } from "next/navigation";
 
 interface ColorVariantsProps {
   colorVariants: ProductVariant[];
@@ -14,6 +15,8 @@ interface ColorVariantsProps {
 }
 
 export const ColorVariants = ({ colorVariants, currentVariantId }: ColorVariantsProps) => {
+  const router = useRouter();
+
   const filteredVariants = colorVariants
     // .filter(variant => variant.id !== currentVariantId)
     .sort((a, b) => DESIGNS_OBJ[a.designId].name.localeCompare(DESIGNS_OBJ[b.designId].name));
@@ -35,13 +38,15 @@ export const ColorVariants = ({ colorVariants, currentVariantId }: ColorVariants
             const variantDesign = DESIGNS_OBJ[variant.designId];
 
             const variantImage = variant.images.mockup[0];
+            const variantLink = getProductVariantUrl(variant);
 
             return (
               <div key={variant.id} className="w-20 flex-shrink-0">
                 <Tooltip delayDuration={0}>
                   <TooltipTrigger asChild>
                     <Link
-                      href={getProductVariantUrl(variant)}
+                      href={variantLink}
+                      onMouseEnter={() => router.prefetch(variantLink)}
                       className="group block relative overflow-hidden rounded-xl bg-card border border-border/50 hover:border-border transition-all duration-300 hover:shadow-lg"
                       style={{
                         borderColor: variant.id === currentVariantId ? "var(--border)" : "transparent",

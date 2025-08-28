@@ -11,7 +11,7 @@ import { useFavorites } from "../stores/favorites";
 import { LoadingIcon } from "../misc/Loading";
 import { DesignCategory, DesignColor, ProductVariant } from "@/types/product";
 import { DESIGN_CATEGORIES_OBJ, DESIGN_COLOR_OBJ, DESIGNS_OBJ } from "@/data/products";
-import { getTimestamp } from "@/utils/timestamp";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 interface ProductVariantGridProps {
   productVariants: ProductVariant[];
@@ -19,6 +19,15 @@ interface ProductVariantGridProps {
 
 const isValidColor = (value: string) => DESIGN_COLOR_OBJ[value as DesignColor] !== undefined;
 const isValidCategory = (value: string) => DESIGN_CATEGORIES_OBJ[value as DesignCategory] !== undefined;
+
+type SortOption = "newest-arrivals" | "oldest-arrivals" | "name-asc" | "name-desc";
+
+const SORT_OPTIONS = [
+  { value: "newest-arrivals", label: "Newest" },
+  { value: "oldest-arrivals", label: "Oldest" },
+  { value: "name-asc", label: "Name A-Z" },
+  { value: "name-desc", label: "Name Z-A" },
+] as const;
 
 const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) => {
   const isMobile = useIsMobile();
@@ -42,17 +51,12 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
     setParam: setBestSellers,
   } = useParamBasedFeatures("best-sellers", { replaceRoute: true });
 
-  const {
-    value: isNewArrivalsFilterSelectedParam,
-    removeParam: removeNewArrivals,
-    setParam: setNewArrivals,
-  } = useParamBasedFeatures("new-arrivals", { replaceRoute: true });
+  const { value: sortByParam, setParam: setSortBy } = useParamBasedFeatures("sort", { replaceRoute: true });
 
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [isFavFilterSelected, setIsFavFilterSelected] = useState(false);
 
   const isBestSellerFilterSelected = !!isBestSellerFilterSelectedParam;
-  const isNewArrivalsFilterSelected = !!isNewArrivalsFilterSelectedParam;
 
   let selectedColors = [] as DesignColor[];
   if (colorsParam !== null) {
@@ -78,11 +82,6 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
     else setBestSellers("true");
   };
 
-  const handleToggleNewArrivalsFilter = () => {
-    if (isNewArrivalsFilterSelected) removeNewArrivals();
-    else setNewArrivals("true");
-  };
-
   const removeFilter = (type: keyof FilterState, value: string) => {
     if (type === "categories") {
       const newCategories = selectedCategories.filter(c => c !== value);
@@ -96,6 +95,9 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
       else setColors(newColors);
     }
   };
+
+  // Ensure sortByParam is a string
+  const currentSortBy = Array.isArray(sortByParam) ? sortByParam[0] : sortByParam || "newest-arrivals";
 
   const filteredDesigns = productVariants
     .filter(productVariant => {
@@ -119,10 +121,23 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
       );
     })
     .filter(productVariant => {
-      return isNewArrivalsFilterSelected ? getTimestamp() - productVariant.createdAt < 30 * 24 * 60 * 60 : true; // 30 days
-    })
-    .filter(productVariant => {
       return productVariant.images.mockup.length > 0;
+    })
+    .sort((a, b) => {
+      const sortBy = currentSortBy as SortOption;
+
+      switch (sortBy) {
+        case "newest-arrivals":
+          return b.createdAt - a.createdAt;
+        case "oldest-arrivals":
+          return a.createdAt - b.createdAt;
+        case "name-asc":
+          return DESIGNS_OBJ[a.designId].name.localeCompare(DESIGNS_OBJ[b.designId].name);
+        case "name-desc":
+          return DESIGNS_OBJ[b.designId].name.localeCompare(DESIGNS_OBJ[a.designId].name);
+        default:
+          return b.createdAt - a.createdAt;
+      }
     });
 
   const isColorOrCategoryFilterSelected = selectedColors.length > 0 || selectedCategories.length > 0;
@@ -131,35 +146,44 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
     <>
       <div className="max-w-screen-2xl mx-auto">
         <div className={`flex ${isMobile ? "flex-col" : "flex-col"} gap-2 items-start p-4`}>
-          <div className="flex flex-row gap-2 items-center flex-wrap justify-center">
-            <Button
-              variant={isNewArrivalsFilterSelected ? "default" : "outline"}
-              onClick={handleToggleNewArrivalsFilter}
-              className="flex flex-row gap-2 items-center">
-              <SparklesIcon className="w-4 h-4" />
-              New Arrivals
-            </Button>
-            <Button
-              variant={isBestSellerFilterSelected ? "default" : "outline"}
-              onClick={handleToggleBestSellerFilter}
-              className="flex flex-row gap-2 items-center">
-              <CheckBadgeIcon className="w-4 h-4" />
-              Best Sellers
-            </Button>
-            <Button
-              variant={isFavFilterSelected ? "default" : "outline"}
-              onClick={() => setIsFavFilterSelected(f => !f)}
-              className="flex flex-row gap-2 items-center">
-              <HeartIconOutline className="w-4 h-4" />
-              Favorites
-            </Button>
-            <Button
-              variant={isColorOrCategoryFilterSelected ? "default" : "outline"}
-              onClick={() => setIsFilterDialogOpen(true)}
-              className="flex flex-row gap-2 items-center">
-              <FilterIcon className="w-4 h-4" />
-              Filter
-            </Button>
+          <div className="flex gap-2 flex-col-reverse md:flex-row md:justify-between w-full">
+            <div className="flex flex-row gap-2 items-center flex-wrap">
+              <Button
+                variant={isColorOrCategoryFilterSelected ? "default" : "outline"}
+                onClick={() => setIsFilterDialogOpen(true)}
+                className="flex flex-row gap-2 items-center">
+                <FilterIcon className="w-4 h-4" />
+                Filter
+              </Button>
+              <Button
+                variant={isBestSellerFilterSelected ? "default" : "outline"}
+                onClick={handleToggleBestSellerFilter}
+                className="flex flex-row gap-2 items-center">
+                <CheckBadgeIcon className="w-4 h-4" />
+                Best Sellers
+              </Button>
+              <Button
+                variant={isFavFilterSelected ? "default" : "outline"}
+                onClick={() => setIsFavFilterSelected(f => !f)}
+                className="flex flex-row gap-2 items-center">
+                <HeartIconOutline className="w-4 h-4" />
+                Favorites
+              </Button>
+            </div>
+            <div>
+              <Select value={currentSortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-fit flex flex-row gap-2 items-center">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SORT_OPTIONS.map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-2 items-start overflow-x-auto max-w-full">
