@@ -5,6 +5,27 @@ import { getDate } from "./timestamp";
 import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
 import { Review } from "@/types/review";
 
+export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
+  return {
+    content: `🎉 ${order.name}'s international payment link paid!`,
+    embeds: [
+      {
+        title: "Payment Link Paid",
+        color: 0x00ff00,
+        fields: [
+          { name: "ID", value: order.id },
+          { name: "Name", value: order.name },
+          { name: "Address", value: getAddressString(order.address) },
+          { name: "Products", value: order.variants.map(variant => `${variant.quantity}x ${variant.variantId} - (${variant.size})`).join("\n") },
+          { name: "Total", value: `₹${order.total}` },
+          { name: "View Order", value: `[View Order](https://www.banditbrothers.in/order/${order.id})` },
+        ],
+        timestamp: new Date(getDate(order.createdAt)).toISOString(),
+      },
+    ],
+  } as MessageCreateOptions;
+}
+
 export const getDiscordOrderMessage = (order: Order) => {
   let paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
   if (order.paymentMode === "manual") paymentMethod = "Manual";
