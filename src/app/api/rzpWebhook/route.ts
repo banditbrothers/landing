@@ -1,6 +1,6 @@
 import { getOrder, updateOrder } from "@/actions/orders";
 import { sendDiscordOrderMessage } from "@/actions/discord";
-import { getDiscordOrderMessage } from "@/utils/discordMessages";
+import { getDiscordOrderMessage, getDiscordPaymentLinkPaidMessage } from "@/utils/discordMessages";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 
 export async function POST(request: Request) {
@@ -14,27 +14,49 @@ export async function POST(request: Request) {
     const data = JSON.parse(text);
 
     switch (data.event) {
-      case "order.paid": {
-        const dbId = data.payload.order.entity.notes.dbId;
-        const orderStatus = data.payload.order.entity.status;
+      case "payment.captured": {
+        const dbId = data.payload.payment.entity.notes.dbId;
+
+        if (!dbId) {
+          console.error("No dbId found in webhook data");
+          return new Response("No dbId found!", { status: 400 });
+        };
 
         const paymentId = data.payload.payment.entity.id;
         const paymentStatus = data.payload.payment.entity.status;
         const paymentMethod = data.payload.payment.entity.method;
+        const amount = data.payload.payment.entity.amount;
+        const currency = data.payload.payment.entity.currency;
+        const orderId = data.payload.payment.entity.order_id;
+        const isInternational = data.payload.payment.entity.international;
 
         const updateOrderPromise = updateOrder(dbId, {
           "rzp.paymentId": paymentId,
           "rzp.paymentStatus": paymentStatus,
           "rzp.paymentMethod": paymentMethod,
-          status: orderStatus,
+          "rzp.amount": amount,
+          "rzp.currency": currency,
+          "rzp.orderId": orderId,
+          "rzp.isInternational": isInternational,
+          paymentMode: "rzp",
+          status: "paid",
         });
 
         const sendDiscordMessagePromise = new Promise(async resolve => {
           const order = await getOrder(dbId);
           if (!order) return;
 
+          // @ts-ignore
+          order.rzp = {}
+          order.paymentMode = "rzp";
           if (order.paymentMode === "rzp") order.rzp.paymentMethod = paymentMethod;
-          await sendDiscordOrderMessage(getDiscordOrderMessage(order));
+
+          let message;
+          if (order.isInternational) message = getDiscordPaymentLinkPaidMessage(order);
+          else message = getDiscordOrderMessage(order);
+
+          if (!message) return;
+          await sendDiscordOrderMessage(message);
           resolve(true);
         });
 
@@ -53,6 +75,10 @@ export async function POST(request: Request) {
           status: "payment-failed",
         });
         break;
+      }
+
+      default: {
+        return new Response("Event not handled", { status: 200 });
       }
     }
 

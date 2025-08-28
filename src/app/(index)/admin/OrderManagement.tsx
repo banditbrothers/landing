@@ -23,8 +23,9 @@ import {
 } from "@/components/ui/pagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EyeIcon } from "@/Icons/icons";
-import { SignatureIcon, DownloadIcon, Globe2 } from "lucide-react";
+import { SignatureIcon, Globe2, LinkIcon } from "lucide-react";
 import { getWhatsappOrderReviewLink } from "@/utils/whatsappMessageLinks";
+import { InternationalOrderPaymentDialog } from "./InternationalOrderPaymentDialog";
 
 type FilterOrder =
   | {
@@ -45,6 +46,7 @@ const itemsPerPage = 10;
 export function OrderManagement() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedInternationalOrder, setSelectedInternationalOrder] = useState<Order | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [nameFilter, setNameFilter] = useState("");
@@ -220,7 +222,13 @@ export function OrderManagement() {
                   <TableRow
                     key={order.id}
                     className={`${
-                      order.status === "payment-failed" ? "bg-destructive/10 hover:bg-destructive/20" : ""
+                      order.status === "payment-failed"
+                        ? "bg-destructive/10 hover:bg-destructive/20"
+                        : order.status === "paid"
+                        ? "bg-green-500/10 hover:bg-green-500/20"
+                        : order.status === "initiated"
+                        ? "bg-yellow-500/10 hover:bg-yellow-500/20"
+                        : ""
                     }`}>
                     <TableCell>{formattedDateTimeLong(order.createdAt)}</TableCell>
 
@@ -230,7 +238,11 @@ export function OrderManagement() {
 
                     <TableCell className="max-w-xs">
                       <div className="flex flex-row gap-2 items-center">
-                        {order.isInternational && <Globe2 className="w-4 h-4 inline-block text-blue-500" />}
+                        {order.isInternational && (
+                          <div className="w-4 h-4">
+                            <Globe2 className="w-4 h-4 inline-block text-blue-500" />
+                          </div>
+                        )}
                         {getAddressString(order.address)}
                       </div>
                     </TableCell>
@@ -251,16 +263,24 @@ export function OrderManagement() {
                         <EyeIcon />
                       </Button>
 
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        disabled={!!order.reviewId}
-                        onClick={() => {
-                          const link = getWhatsappOrderReviewLink(order);
-                          window.open(link, "_blank");
-                        }}>
-                        <SignatureIcon className={`w-4 h-4 ${order.reviewId ? "text-[#00ff00]" : ""}`} />
-                      </Button>
+                      {order.status === "paid" && (
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          disabled={!!order.reviewId}
+                          onClick={() => {
+                            const link = getWhatsappOrderReviewLink(order);
+                            window.open(link, "_blank");
+                          }}>
+                          <SignatureIcon className={`w-4 h-4 ${order.reviewId ? "text-[#00ff00]" : ""}`} />
+                        </Button>
+                      )}
+
+                      {order.isInternational && order.status !== "paid" && (
+                        <Button variant="outline" size="icon" onClick={() => setSelectedInternationalOrder(order)}>
+                          <LinkIcon className="w-4 h-4" />
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -315,6 +335,14 @@ export function OrderManagement() {
           </>
         )}
       </Dialog>
+
+      {selectedInternationalOrder && (
+        <InternationalOrderPaymentDialog
+          order={selectedInternationalOrder!}
+          onClose={() => setSelectedInternationalOrder(null)}
+          onUpdate={() => {}}
+        />
+      )}
     </div>
   );
 }

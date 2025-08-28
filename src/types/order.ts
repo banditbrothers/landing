@@ -2,6 +2,8 @@ import { OrderedVariant } from "./product";
 
 export type OrderStatus = "initiated" | "paid" | "cancelled" | "admin-cancelled" | "payment-failed";
 
+export type PaymentMethod = "card" | "netbanking" | "wallet" | "emi" | "upi" | null;
+
 export type Address = {
   line1: string;
   line2?: string;
@@ -36,7 +38,8 @@ export type Order = {
         currency: string;
         paymentId: string | null;
         paymentStatus: string | null;
-        paymentMethod: "card" | "netbanking" | "wallet" | "emi" | "upi" | null;
+        isInternational: boolean;
+        paymentMethod: PaymentMethod;
       };
     }
   | {
