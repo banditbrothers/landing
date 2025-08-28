@@ -51,7 +51,6 @@ export type Order = {
     }
   | {
       paymentMode: "manual";
-      manual: null;
     }
 );
 

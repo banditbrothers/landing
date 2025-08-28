@@ -59,6 +59,7 @@ export const createOrder = async (order: Partial<Order>) => {
       orderId: rzpOrder.id,
       amount: +rzpOrder.amount,
       currency: rzpOrder.currency,
+      isInternational: order.isInternational ?? false,
       paymentId: null,
       paymentStatus: null,
       paymentMethod: null,
@@ -69,7 +70,6 @@ export const createOrder = async (order: Partial<Order>) => {
   }
   else if (newOrder.paymentMode === "manual") {
     newOrder.status = "initiated";
-    newOrder.manual = null;
   }
 
   await orderRef.create(newOrder);
