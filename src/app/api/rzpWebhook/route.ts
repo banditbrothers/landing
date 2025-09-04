@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const text = await request.text();
 
     const isValid = validateWebhookSignature(text, signature, process.env.RZP_WEBHOOK_SECRET!);
-    if (!isValid) return new Response("Invalid signature", { status: 400 });
+    if (!isValid) return new Response("Invalid signature", { status: 401 });
 
     const data = JSON.parse(text);
 
@@ -18,8 +18,8 @@ export async function POST(request: Request) {
         const dbId = data.payload.payment.entity.notes.dbId;
 
         if (!dbId) {
-          console.error("No dbId found in webhook data");
-          return new Response("No dbId found!", { status: 400 });
+          console.error("No dbId found in webhook data, skipping...", data);
+          return new Response("No dbId found!", { status: 200 });
         };
 
         const paymentId = data.payload.payment.entity.id;
