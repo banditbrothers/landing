@@ -22,7 +22,9 @@ export const SearchProductCard = ({ variant }: SearchProductCardProps) => {
   const productLink = getProductVariantUrl(variant);
 
   return (
-    <div key={variant.id} className=" p-4 bg-card rounded-lg relative border border-border">
+    <div
+      key={variant.id}
+      className="mt-2 p-4 bg-card rounded-lg relative border border-border hover:scale-105 transition-all duration-300">
       <Link href={productLink} onMouseEnter={() => router.prefetch(productLink)}>
         <div className="flex flex-col gap-4">
           <div className="relative w-full aspect-square">
