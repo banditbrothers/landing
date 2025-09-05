@@ -187,9 +187,11 @@ function OrderPageContent() {
     }));
 
     const isInternationalOrder = values.address.country !== "IN";
+    const phone = values.phone.replaceAll(" ", "");
 
     const order: Omit<Order, "id" | "status"> = {
       ...values,
+      phone,
       variants: orderedVariants,
       paymentMode: isInternationalOrder ? "manual" : paymentMode,
       total: orderTotal,
