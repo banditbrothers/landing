@@ -284,7 +284,13 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
                   </>
                 )}
               </Button>
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/webp"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
               {(!formData.designId || !formData.productId) && (
                 <p className="text-sm text-muted-foreground/80">
                   Select both product and design first to upload images

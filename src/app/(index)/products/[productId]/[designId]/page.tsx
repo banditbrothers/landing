@@ -54,17 +54,18 @@ export async function generateMetadata({ params }: VariantPageProps): Promise<Me
     }
 
     const variant = variantResult.data;
+    const name = getProductVariantName(variant) + " " + product.name + " | " + "by Bandit Brothers";
     return {
-      title: getProductVariantName(variant) + " | " + "by Bandit Brothers",
+      title: name,
       description: product.description.join(" "),
       openGraph: {
         images: [variant.images.mockup[0]],
-        title: getProductVariantName(variant),
+        title: name,
         description: product.description.join(" "),
       },
       twitter: {
         images: [variant.images.mockup[0]],
-        title: getProductVariantName(variant),
+        title: name,
         description: product.description.join(" "),
       },
     };
