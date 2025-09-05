@@ -7,11 +7,12 @@ import { createOrder as createRzpOrder } from "./payments/rzp";
 import { sendDiscordOrderMessage } from "@/actions/discord";
 import { getDiscordOrderMessage } from "@/utils/discordMessages";
 
-export const getOrders = async (): Promise<Order[]> => {
+export const getOrders = async (limit: number = 50): Promise<Order[]> => {
   const orders = await firestore()
     .collection(Collections.orders)
     .where("status", "!=", "cancelled")
     .orderBy("createdAt", "desc")
+    .limit(limit)
     .get();
   return orders.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Order[];
 };

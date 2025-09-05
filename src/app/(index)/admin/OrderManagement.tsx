@@ -42,6 +42,7 @@ type FilterOrder =
     };
 
 const itemsPerPage = 10;
+const MAX_ORDERS_LIMIT = 50;
 
 export function OrderManagement() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -56,7 +57,7 @@ export function OrderManagement() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    getOrders().then(orders => {
+    getOrders(MAX_ORDERS_LIMIT).then(orders => {
       setOrders(orders);
       setFilteredOrders(orders);
       setIsLoading(false);
@@ -200,7 +201,9 @@ export function OrderManagement() {
             </Button> */}
 
             <div className="flex items-center justify-self-end">
-              <span className="text-sm text-muted-foreground">Total Orders: {orders.length}</span>
+              <span className="text-sm text-muted-foreground">
+                Total Orders: {orders.length} (Max {MAX_ORDERS_LIMIT})
+              </span>
             </div>
           </div>
 
