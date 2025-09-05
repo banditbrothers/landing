@@ -170,7 +170,7 @@ export default function OrderPage({ params }: OrderPageProps) {
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Shipping</span>
                     <div className="flex items-center gap-2">
-                      <span>{formatCurrency(order.shipping)}</span>
+                      <span>{order.shipping === 0 ? "FREE" : formatCurrency(order.shipping)}</span>
                       {order.isInternational && order.status !== "paid" && (
                         <span className="text-xs text-muted-foreground">(TBD)</span>
                       )}

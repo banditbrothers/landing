@@ -17,7 +17,7 @@ import { InternationalOrderSuccessDialog } from "@/components/dialogs/Internatio
 import { Order, CartItem } from "@/types/order";
 import { Coupon } from "@/types/coupon";
 import { getTimestamp } from "@/utils/timestamp";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { LoadingIcon, LoadingScreen } from "@/components/misc/Loading";
 import { DEFAULT_ORDER_VALUES } from "@/constants/order";
 import { Separator } from "@/components/ui/separator";
@@ -41,6 +41,7 @@ import { OrderedVariant, ProductVariant } from "@/types/product";
 import { useVariants } from "@/hooks/useVariants";
 
 const SHIPPING_COST = 100;
+const CASH_AND_FREE_SHIPPING_COUPON_CODE = process.env.NEXT_PUBLIC_CASH_AND_FREE_SHIPPING_COUPON_CODE!;
 const BANDIT_EMAIL = "wearebanditbrothers@gmail.com";
 
 // `null` means free shipping is not applicable
@@ -65,6 +66,12 @@ const orderFormSchema = z.object({
   }),
 });
 
+const getPaymentMode = (coupon: Coupon | null, isInternational: boolean) => {
+  if (isInternational) return "manual";
+  if (!coupon) return "rzp";
+  return coupon.code === CASH_AND_FREE_SHIPPING_COUPON_CODE ? "cash" : "rzp";
+};
+
 const getSubtotal = (cart: CartItem[], variants: ProductVariant[]) => {
   if (cart.length === 0) return 0;
 
@@ -77,6 +84,7 @@ const getSubtotal = (cart: CartItem[], variants: ProductVariant[]) => {
 const getShippingCost = (cart: CartItem[], coupon: Coupon | null, variants: ProductVariant[]) => {
   if (cart.length === 0) return 0;
 
+  if (coupon?.code === CASH_AND_FREE_SHIPPING_COUPON_CODE) return 0;
   if (MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING === null) return SHIPPING_COST;
 
   const subtotal = getSubtotal(cart, variants);
@@ -108,7 +116,6 @@ function OrderPageContent() {
   const router = useRouter();
   const { data: variants } = useVariants();
 
-  const searchParams = useSearchParams();
   const { orderLoading, createOrder } = useOrderActions();
 
   const watchCountry = useWatch({ control: form.control, name: "address.country" });
@@ -174,9 +181,9 @@ function OrderPageContent() {
     }
   }, [watchCountry]);
 
-  const paymentMode = (searchParams.get("mode") ?? "rzp") as "rzp" | "cash" | "manual";
   const selectedCountry = form.watch("address.country");
-  const isInternational = selectedCountry && selectedCountry !== "IN";
+  const isInternational = !!selectedCountry && selectedCountry !== "IN";
+  const paymentMode = getPaymentMode(coupon, isInternational);
   const orderTotal = calculateTotal(cart, coupon, variants);
 
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
@@ -192,8 +199,8 @@ function OrderPageContent() {
     const order: Omit<Order, "id" | "status"> = {
       ...values,
       phone,
+      paymentMode,
       variants: orderedVariants,
-      paymentMode: isInternationalOrder ? "manual" : paymentMode,
       total: orderTotal,
       isInternational: isInternationalOrder,
       subtotal: getSubtotal(cart, variants),
@@ -296,6 +303,7 @@ function OrderPageContent() {
 
   const subtotal = getSubtotal(cart, variants);
   const shippingCost = getShippingCost(cart, coupon, variants);
+  const discountAmount = getDiscountAmount(subtotal, coupon);
   const isShippingFree = shippingCost === 0;
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -670,7 +678,7 @@ function OrderPageContent() {
                             <span>{formatCurrency(subtotal, 2)}</span>
                           </div>
 
-                          {coupon && (
+                          {coupon && discountAmount > 0 && (
                             <div className="flex justify-between items-center text-sm">
                               <span className="flex flex-col gap-1">
                                 Discount
@@ -678,7 +686,7 @@ function OrderPageContent() {
                                   Applied <span className="text-bandit-orange">{coupon.code}</span>
                                 </span>
                               </span>
-                              <span>- {formatCurrency(getDiscountAmount(subtotal, coupon), 2)}</span>
+                              <span>- {formatCurrency(discountAmount, 2)}</span>
                             </div>
                           )}
 
@@ -730,10 +738,10 @@ function OrderPageContent() {
                         orderLoading.update ||
                         (!isInternational && !!couponError)
                       }>
-                      {isInternational
+                      {paymentMode === "manual"
                         ? "Submit International Order"
                         : formIsReady
-                        ? `Pay ${formatCurrency(orderTotal, 2)}`
+                        ? `Pay ${formatCurrency(orderTotal, 2)} ${paymentMode === "cash" ? " in Cash" : ""}`
                         : "Pay Now"}
                       {(orderLoading.create || orderLoading.update) && <LoadingIcon />}
                     </Button>
