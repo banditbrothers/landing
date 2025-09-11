@@ -73,7 +73,7 @@ function getWebPFileName(originalName: string): string {
  */
 export async function processImage(
   file: File,
-  compressionOptions: Options = { maxSizeMB: 1, useWebWorker: true }
+  compressionOptions: Options = { maxSizeMB: 0.5, useWebWorker: true }
 ): Promise<File> {
   let processedFile = file;
 
@@ -94,7 +94,7 @@ export async function processImage(
 
 export async function compressImage(
   imageFile: File,
-  options: Options = { maxSizeMB: 1, useWebWorker: true }
+  options: Options = { maxSizeMB: 0.5, useWebWorker: true }
 ) {
   const compressedFile = await imageCompression(imageFile, options);
   return compressedFile;
