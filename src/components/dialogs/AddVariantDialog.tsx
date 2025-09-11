@@ -15,7 +15,7 @@ import { DESIGNS, PRODUCTS } from "@/data/products";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Upload, Loader2, Plus } from "lucide-react";
-import { compressImage } from "@/utils/image";
+import { processImage } from "@/utils/image";
 import { getTimestamp } from "@/utils/timestamp";
 
 interface AddVariantDialogProps {
@@ -133,12 +133,12 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
 
     setIsUploadingImage(true);
     try {
-      // Compress image before upload
-      const compressedFile = await compressImage(file);
+      // Check if the image is a webp and if not, convert it to webp, then compress
+      const processedFile = await processImage(file);
 
       // Generate S3 key and upload
       const key = generateImageKey(formData.designId, formData.productId);
-      const imageUrl = await uploadToS3(compressedFile, key);
+      const imageUrl = await uploadToS3(processedFile, key);
 
       // Add new image to form data
       setFormData(prev => ({
@@ -296,7 +296,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/webp"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
                 className="hidden"
                 onChange={handleImageUpload}
               />
