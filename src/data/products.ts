@@ -571,6 +571,18 @@ export const PRODUCTS: Product[] = [
       mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/balaclava/out-of-words/mockup-1750364019457.webp"],
     },
   },
+  {
+    id: "kerchief",
+    name: "Kerchief - Open Bandana",
+    description: ["Add a bold twist to your look with our versatile Kerchief styled square pocket bandanas.", "Perfect for bikers, travelers, or everyday style, these lightweight bandanas can be worn as a headwrap, neck scarf, wrist tie, or even a mask.", "Made from soft, breathable fabric, they combine comfort with vibrant prints that stand out anywhere."],
+    basePrice: 300,
+    sizes: ["one-size"],
+    material: "4 Way Quick-Dri DryFit Fabric",
+    dimensions: { 'one-size': '22" (W) x 22" (L)'},
+    baseImages: {
+      mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/balaclava/out-of-words/mockup-1750364019457.webp"],
+    },
+  },
 ];
 export const PRODUCTS_OBJ = PRODUCTS.reduce((acc, product) => {
   const { id, ...rest } = product;

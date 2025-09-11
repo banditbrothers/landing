@@ -41,7 +41,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         <CardContent className="pb-4 pt-0">
           {/* Product Details */}
           <div className="space-y-1 text-xs text-muted-foreground dark:text-muted-foreground">
-            <div className="flex items-center gap-2">
+            <div className="flex items-start gap-2">
               <span className="font-medium">Material:</span>
               <span>{product.material}</span>
             </div>
@@ -62,7 +62,7 @@ export default function ProductsPage() {
 
         <div className="flex flex-wrap justify-center gap-8">
           {PRODUCTS.map(product => (
-            <div key={product.id} className="w-full md:w-1/2 lg:w-1/3 px-4">
+            <div key={product.id} className="w-full md:w-1/2 lg:w-1/4 px-4">
               <ProductCard product={product} />
             </div>
           ))}

@@ -184,7 +184,10 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
           {/* Product and Design Selection */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="productId">Product *</Label>
+              <Label htmlFor="productId" className="flex items-center gap-1">
+                Product
+                <span className="text-red-500">*</span>
+              </Label>
               <Select
                 value={formData.productId}
                 onValueChange={value => setFormData(prev => ({ ...prev, productId: value }))}>
@@ -202,7 +205,10 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="designId">Design *</Label>
+              <Label htmlFor="designId" className="flex items-center gap-1">
+                Design
+                <span className="text-red-500">*</span>
+              </Label>
               <Select
                 value={formData.designId}
                 onValueChange={value => setFormData(prev => ({ ...prev, designId: value }))}>
@@ -242,7 +248,10 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
 
           {/* Image Upload */}
           <div className="space-y-2">
-            <Label>Mockup Images *</Label>
+            <Label className="flex items-center gap-1">
+              Mockup Images
+              <span className="text-red-500">*</span>
+            </Label>
             <div className="space-y-4">
               {/* Current Images */}
               {formData.mockupImages.length > 0 && (
