@@ -2,7 +2,7 @@ import { DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
 import { ProductVariant } from "@/types/product";
 
 export const getSKU = (productId: string, designId: string) => {
-  return `${productId.toUpperCase()}-${designId.toUpperCase().replaceAll("-", "_")}`;
+  return `${productId.toUpperCase().replaceAll("-", "_")}-${designId.toUpperCase().replaceAll("-", "_")}`;
 };
 
 export const getProductVariantName = (productVariant: ProductVariant, config: { includeProductName?: boolean } = { includeProductName: false }) => {

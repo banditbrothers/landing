@@ -12,7 +12,7 @@ import { uploadToS3, generateImageKey } from "@/utils/s3Upload";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Upload, Loader2 } from "lucide-react";
-import { compressImage } from "@/utils/image";
+import { processImage } from "@/utils/image";
 
 interface EditVariantDialogProps {
   variant: ProductVariant | null;
@@ -78,12 +78,12 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
 
     setIsUploadingImage(true);
     try {
-      // Compress image before upload
-      const compressedFile = await compressImage(file);
+      // Check if the image is a webp and if not, convert it to webp, then compress
+      const processedFile = await processImage(file);
 
       // Generate S3 key and upload
       const key = generateImageKey(variant.designId);
-      const imageUrl = await uploadToS3(compressedFile, key);
+      const imageUrl = await uploadToS3(processedFile, key);
 
       // Update variant with new image URL
       await updateVariantMockupImage(variant.id, imageUrl);

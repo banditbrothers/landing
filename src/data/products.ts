@@ -99,6 +99,99 @@ export const DESIGN_COLOR_OBJ = DESIGN_COLORS.reduce((acc, color) => {
 
 export const DESIGNS: Design[] = [
   {
+    id: "same-ol-same-ol-black",
+    name: "Same Ol' Same Ol' - Black",
+    colors: ["black", "white"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "same-ol-same-ol-yellow",
+    name: "Same Ol' Same Ol' - Yellow",
+    colors: ["yellow", "black"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "same-ol-same-ol-black-yellow",
+    name: "Same Ol' Same Ol' - Black Yellow",
+    colors: ["black", "yellow"],
+    category: "pattern",
+    tags: [],
+  },
+
+  {
+    id: "lavaing-it-off-pink",
+    name: "Lavaing It - Off Pink",
+    colors: ["black", "yellow"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "lavaing-it-sunset-red",
+    name: "Lavaing It - Sunset Red",
+    colors: ["red", "black"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "lavaing-it-kind-of-purple",
+    name: "Lavaing It - Kind of Purple",
+    colors: ["purple", "black"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "lavaing-it-maybe-blue",
+    name: "Lavaing It - Maybe Blue",
+    colors: ["blue", "black"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "lavaing-it-lushy-green",
+    name: "Lavaing It - Lushy Green",
+    colors: ["green", "black"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "lavaing-it-mellow-yellow",
+    name: "Lavaing It - Mellow Yellow",
+    colors: ["yellow", "black"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "lavaing-it-sky-blue",
+    name: "Lavaing It - Sky Blue",
+    colors: ["blue", "black"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "lavaing-it-sunrise-orange",
+    name: "Lavaing It - Sunrise Orange",
+    colors: ["orange", "black"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "lavaing-it-ashen-bones",
+    name: "Lavaing It - Ashen Bones",
+    colors: ["gray", "black"],
+    category: "pattern",
+    tags: [],
+  },
+  {
+    id: "lavaing-it-pastel-black",
+    name: "Lavaing It - Pastel Black",
+    colors: ["black", "white"],
+    category: "pattern",
+    tags: [],
+  },
+
+  {
     id: "agent-skully",
     name: "Agent Skully",
     colors: ["white", "black"],
@@ -539,7 +632,6 @@ export const DESIGNS: Design[] = [
     category: "abstract",
     tags: [],
   },
-
 ];
 export const DESIGNS_OBJ = DESIGNS.reduce((acc, product) => {
   const { id, ...rest } = product;
@@ -549,26 +641,56 @@ export const DESIGNS_OBJ = DESIGNS.reduce((acc, product) => {
 export const PRODUCTS: Product[] = [
   {
     id: "bandana",
-    name: "Bandana",
-    description: ["Stay stylish and protected with our premium bandanas—designed for bikers, runners, and outdoor adventurers.", "Made from breathable, lightweight fabric, these versatile headwraps offer UV protection, sweat absorption, and dust resistance, making them ideal for long rides and outdoor activities.", "Wear it as a headband, face mask, neck gaiter, wristband, or helmet liner. Quick-drying and stretchable for a comfortable fit. Perfect for bikers, cyclists, hikers, and everyday casual wear."],
+    name: "Tube Bandana",
+    description: [
+      "Stay stylish and protected with our premium bandanas—designed for bikers, runners, and outdoor adventurers.",
+      "Made from breathable, lightweight fabric, these versatile headwraps offer UV protection, sweat absorption, and dust resistance, making them ideal for long rides and outdoor activities.",
+      "Wear it as a headband, face mask, neck gaiter, wristband, or helmet liner. Quick-drying and stretchable for a comfortable fit. Perfect for bikers, cyclists, hikers, and everyday casual wear.",
+    ],
     basePrice: 300,
     sizes: ["one-size"],
     material: "4 Way Quick-Dri DryFit Fabric",
-    dimensions: { 'one-size': '9.5" (W) x 20" (L)'},
+    dimensions: { "one-size": '9.5" (W) x 20" (L)' },
     baseImages: {
-      mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/bandana/shinobi-red/mockup-1750426888985.webp"],
+      mockup: [
+        "https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/bandana/shinobi-red/mockup-1750426888985.webp",
+      ],
     },
   },
   {
     id: "balaclava",
     name: "Balaclava",
-    description: ["Stay stylish and protected with our premium balaclavas—designed for bikers and outdoor adventurers.", " Made from breathable, lightweight fabric, these versatile headwraps offer UV protection, sweat absorption, and dust resistance, making them ideal for long rides and outdoor activities.", "Wear it as a headband, face mask or helmet liner. Quick-drying and stretchable for a comfortable fit. Perfect for bikers, cyclists, hikers, and everyday casual wear."],
+    description: [
+      "Stay stylish and protected with our premium balaclavas—designed for bikers and outdoor adventurers.",
+      "Made from breathable, lightweight fabric, these versatile headwraps offer UV protection, sweat absorption, and dust resistance, making them ideal for long rides and outdoor activities.",
+      "Wear it as a headband, face mask or helmet liner. Quick-drying and stretchable for a comfortable fit. Perfect for bikers, cyclists, hikers, and everyday casual wear.",
+    ],
     basePrice: 400,
     sizes: ["small", "large"],
     material: "4 Way Quick-Dri DryFit Fabric",
-    dimensions: { 'small': '9" (W) x 16" (L)', 'large': '10" (W) x 16" (L)'},
+    dimensions: { small: '9" (W) x 16" (L)', large: '10" (W) x 16" (L)' },
     baseImages: {
-      mockup: ["https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/balaclava/out-of-words/mockup-1750364019457.webp"],
+      mockup: [
+        "https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/balaclava/out-of-words/mockup-1750364019457.webp",
+      ],
+    },
+  },
+  {
+    id: "square-bandana",
+    name: "Square Bandana",
+    description: [
+      "Add a bold twist to your look with our versatile Kerchief styled square pocket bandanas.",
+      "Perfect for bikers, travelers, or everyday style, these lightweight bandanas can be worn as a headwrap, neck scarf, wrist tie, or even a mask.",
+      "Made from soft, breathable fabric, they combine comfort with vibrant prints that stand out anywhere.",
+    ],
+    basePrice: 300,
+    sizes: ["one-size"],
+    material: "4 Way Quick-Dri DryFit Fabric",
+    dimensions: { "one-size": '22" (W) x 22" (L)' },
+    baseImages: {
+      mockup: [
+        "https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/balaclava/out-of-words/mockup-1750364019457.webp",
+      ],
     },
   },
 ];
@@ -577,14 +699,57 @@ export const PRODUCTS_OBJ = PRODUCTS.reduce((acc, product) => {
   return { ...acc, [id]: rest };
 }, {} as Record<string, Omit<(typeof PRODUCTS)[number], "id">>);
 
-
-
 const COLOR_VARIANTS = [
   ["shinobi-red", "shinobi-green", "shinobi-blue", "shinobi-orange", "shinobi-yellow"],
   ["dragon-swagon-red", "dragon-swagon-yellow"],
-  ["you-cant-see-me-dark-green", "you-cant-see-me-black", "you-cant-see-me-green", "you-cant-see-me-camel", "you-cant-see-me-blue"],
-  ["bone-appetint-off-pink", "bone-appetint-sunset-red", "bone-appetint-kind-of-purple", "bone-appetint-maybe-blue", "bone-appetint-lushy-green", "bone-appetint-mellow-yellow", "bone-appetint-sky-blue", "bone-appetint-sunrise-orange", "bone-appetint-ashen-bones", "bone-appetint-pastel-black"],
-  ["hue-did-this-off-pink", "hue-did-this-sunset-red", "hue-did-this-kind-of-purple", "hue-did-this-maybe-blue", "hue-did-this-lushy-green", "hue-did-this-mellow-yellow", "hue-did-this-sky-blue", "hue-did-this-sunrise-orange", "hue-did-this-ashen-bones", "hue-did-this-pastel-black"],
+  [
+    "you-cant-see-me-dark-green",
+    "you-cant-see-me-black",
+    "you-cant-see-me-green",
+    "you-cant-see-me-camel",
+    "you-cant-see-me-blue",
+  ],
+  [
+    "bone-appetint-off-pink",
+    "bone-appetint-sunset-red",
+    "bone-appetint-kind-of-purple",
+    "bone-appetint-maybe-blue",
+    "bone-appetint-lushy-green",
+    "bone-appetint-mellow-yellow",
+    "bone-appetint-sky-blue",
+    "bone-appetint-sunrise-orange",
+    "bone-appetint-ashen-bones",
+    "bone-appetint-pastel-black",
+  ],
+  [
+    "hue-did-this-off-pink",
+    "hue-did-this-sunset-red",
+    "hue-did-this-kind-of-purple",
+    "hue-did-this-maybe-blue",
+    "hue-did-this-lushy-green",
+    "hue-did-this-mellow-yellow",
+    "hue-did-this-sky-blue",
+    "hue-did-this-sunrise-orange",
+    "hue-did-this-ashen-bones",
+    "hue-did-this-pastel-black",
+  ],
+  [
+    "lavaing-it-off-pink",
+    "lavaing-it-sunset-red",
+    "lavaing-it-kind-of-purple",
+    "lavaing-it-maybe-blue",
+    "lavaing-it-lushy-green",
+    "lavaing-it-mellow-yellow",
+    "lavaing-it-sky-blue",
+    "lavaing-it-sunrise-orange",
+    "lavaing-it-ashen-bones",
+    "lavaing-it-pastel-black",
+  ],
+  [
+    "same-ol-same-ol-black",
+    "same-ol-same-ol-yellow",
+    "same-ol-same-ol-black-yellow",
+  ],
 ];
 
 export const getColorVariantIds = (designId: string) => {

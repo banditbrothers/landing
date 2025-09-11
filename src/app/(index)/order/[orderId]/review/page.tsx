@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation";
 import { getWhatsappHelpWithCreateReviewLink, getWhatsappUpdateReviewLink } from "@/utils/whatsappMessageLinks";
 import { CheckCircle, Loader2, MessageCircle } from "lucide-react";
 import { FileDropzone } from "@/components/misc/FileUploader";
-import { compressImage } from "@/utils/image";
+import { processImage } from "@/utils/image";
 import Link from "next/link";
 import { getCollectionDocumentId, signInAnonymously, storage } from "@/lib/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -125,9 +125,9 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     }
 
     setIsCompressing(true);
-    const compressedFile = await compressImage(files[0], { maxWidthOrHeight: 1920 });
+    const processedFile = await processImage(files[0], { maxWidthOrHeight: 1920 });
     setIsCompressing(false);
-    setImages([compressedFile]);
+    setImages([processedFile]);
   };
 
   if (!order) return <LoadingScreen />;

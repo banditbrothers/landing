@@ -15,7 +15,7 @@ import { DESIGNS, PRODUCTS } from "@/data/products";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Upload, Loader2, Plus } from "lucide-react";
-import { compressImage } from "@/utils/image";
+import { processImage } from "@/utils/image";
 import { getTimestamp } from "@/utils/timestamp";
 
 interface AddVariantDialogProps {
@@ -133,12 +133,12 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
 
     setIsUploadingImage(true);
     try {
-      // Compress image before upload
-      const compressedFile = await compressImage(file);
+      // Check if the image is a webp and if not, convert it to webp, then compress
+      const processedFile = await processImage(file);
 
       // Generate S3 key and upload
       const key = generateImageKey(formData.designId, formData.productId);
-      const imageUrl = await uploadToS3(compressedFile, key);
+      const imageUrl = await uploadToS3(processedFile, key);
 
       // Add new image to form data
       setFormData(prev => ({
@@ -184,7 +184,10 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
           {/* Product and Design Selection */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="productId">Product *</Label>
+              <Label htmlFor="productId" className="flex items-center gap-1">
+                Product
+                <span className="text-red-500">*</span>
+              </Label>
               <Select
                 value={formData.productId}
                 onValueChange={value => setFormData(prev => ({ ...prev, productId: value }))}>
@@ -202,7 +205,10 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="designId">Design *</Label>
+              <Label htmlFor="designId" className="flex items-center gap-1">
+                Design
+                <span className="text-red-500">*</span>
+              </Label>
               <Select
                 value={formData.designId}
                 onValueChange={value => setFormData(prev => ({ ...prev, designId: value }))}>
@@ -242,7 +248,10 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
 
           {/* Image Upload */}
           <div className="space-y-2">
-            <Label>Mockup Images *</Label>
+            <Label className="flex items-center gap-1">
+              Mockup Images
+              <span className="text-red-500">*</span>
+            </Label>
             <div className="space-y-4">
               {/* Current Images */}
               {formData.mockupImages.length > 0 && (
@@ -287,7 +296,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/webp"
+                accept="image/jpeg,image/jpg,image/png,image/webp"
                 className="hidden"
                 onChange={handleImageUpload}
               />
