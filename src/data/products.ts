@@ -689,7 +689,7 @@ export const PRODUCTS: Product[] = [
     dimensions: { "one-size": '22" (W) x 22" (L)' },
     baseImages: {
       mockup: [
-        "https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/balaclava/out-of-words/mockup-1750364019457.webp",
+        "https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/square-bandana/featured-square-bandana.jpeg",
       ],
     },
   },
