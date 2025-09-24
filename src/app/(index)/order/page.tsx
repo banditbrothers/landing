@@ -39,13 +39,11 @@ import { formatCurrency } from "@/utils/price";
 import { getProductVariantPrice } from "@/utils/product";
 import { OrderedVariant, ProductVariant } from "@/types/product";
 import { useVariants } from "@/hooks/useVariants";
+import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/data/products";
 
 const SHIPPING_COST = 100;
 const CASH_AND_FREE_SHIPPING_COUPON_CODE = process.env.NEXT_PUBLIC_CASH_AND_FREE_SHIPPING_COUPON_CODE!;
 const BANDIT_EMAIL = "wearebanditbrothers@gmail.com";
-
-// `null` means free shipping is not applicable
-const MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING: number | null = null;
 
 const countries = Country.getAllCountries();
 
@@ -707,7 +705,7 @@ function OrderPageContent() {
                                   <span className="text-muted-foreground line-through">
                                     {formatCurrency(SHIPPING_COST)}
                                   </span>
-                                  FREE
+                                  <span className="text-green-500">FREE</span>
                                 </>
                               ) : (
                                 <span>{formatCurrency(shippingCost)}</span>

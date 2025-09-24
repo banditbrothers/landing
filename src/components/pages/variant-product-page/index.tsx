@@ -30,7 +30,7 @@ import { formatCurrency } from "@/utils/price";
 import Link from "next/link";
 import { ProductVariant } from "@/types/product";
 import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
-import { DESIGNS_OBJ, getColorVariantIds, PRODUCTS_OBJ } from "@/data/products";
+import { DESIGNS_OBJ, getColorVariantIds, MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING, PRODUCTS_OBJ } from "@/data/products";
 import { useVariants } from "@/hooks/useVariants";
 import { ColorVariants } from "./SimilarVariants";
 
@@ -141,9 +141,13 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
             </span>
           </div>
 
-          <span className="flex flex-row gap-2 items-end">
+          <span className="flex flex-col gap-2 items-start">
             <p className="text-2xl/6  font-semibold text-foreground">{formatCurrency(variantPrice)}</p>
-            <p className="text-muted-foreground text-xs">(excl. shipping)</p>
+            {MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING !== null && (
+              <p className="text-muted-foreground text-xs">
+                Free Shipping on orders above {formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}
+              </p>
+            )}
           </span>
 
           <div className="prose max-w-none">
