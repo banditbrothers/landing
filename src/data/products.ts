@@ -102,6 +102,125 @@ export const DESIGN_COLOR_OBJ = DESIGN_COLORS.reduce((acc, color) => {
 
 export const DESIGNS: Design[] = [
   {
+    id: "mr-krabby",
+    name: "Mr. Krabby",
+    colors: ["white", "orange"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "sunny-side-up",
+    name: "Sunny Side Up",
+    colors: ["white", "orange"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "bloom-bloom-pow",
+    name: "Bloom Bloom Pow",
+    colors: ["white", "blue"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "cutting-edge",
+    name: "Cutting Edge",
+    colors: ["white", "green"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-cancer",
+    name: "Amongst The Stars - Cancer",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-leo",
+    name: "Amongst The Stars - Leo",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-virgo",
+    name: "Amongst The Stars - Virgo",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-libra",
+    name: "Amongst The Stars - Libra",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-scorpio",
+    name: "Amongst The Stars - Scorpio",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-sagittarius",
+    name: "Amongst The Stars - Sagittarius",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-capricorn",
+    name: "Amongst The Stars - Capricorn",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-aquarius",
+    name: "Amongst The Stars - Aquarius",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-pisces",
+    name: "Amongst The Stars - Pisces",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-aries",
+    name: "Amongst The Stars - Aries",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-taurus",
+    name: "Amongst The Stars - Taurus",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "amongst-the-stars-gemini",
+    name: "Amongst The Stars - Gemini",
+    colors: ["white", "blue", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "its-pisces",
+    name: "Its Pisces",
+    colors: ["white", "yellow", "black"],
+    category: "character",
+    tags: [],
+  },
+  {
     id: "tiger-fury-kind-of-purple",
     name: "Tiger Fury - Kind of Purple",
     colors: ["white", "purple"],
@@ -775,6 +894,7 @@ export const PRODUCTS_OBJ = PRODUCTS.reduce((acc, product) => {
 const COLOR_VARIANTS = [
   ["shinobi-red", "shinobi-green", "shinobi-blue", "shinobi-orange", "shinobi-yellow"],
   ["dragon-swagon-red", "dragon-swagon-yellow"],
+  ["amongst-the-stars-cancer", "amongst-the-stars-leo", "amongst-the-stars-virgo", "amongst-the-stars-libra", "amongst-the-stars-scorpio", "amongst-the-stars-sagittarius", "amongst-the-stars-capricorn", "amongst-the-stars-aquarius", "amongst-the-stars-pisces", "amongst-the-stars-aries", "amongst-the-stars-taurus", "amongst-the-stars-gemini"],
   [
     "you-cant-see-me-dark-green",
     "you-cant-see-me-black",
@@ -818,11 +938,7 @@ const COLOR_VARIANTS = [
     "lavaing-it-ashen-bones",
     "lavaing-it-pastel-black",
   ],
-  [
-    "same-ol-same-ol-black",
-    "same-ol-same-ol-yellow",
-    "same-ol-same-ol-black-yellow",
-  ],
+  ["same-ol-same-ol-black", "same-ol-same-ol-yellow", "same-ol-same-ol-black-yellow"],
 ];
 
 export const getColorVariantIds = (designId: string) => {
