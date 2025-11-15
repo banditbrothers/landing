@@ -85,7 +85,7 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
       const processedFile = await processImage(file);
 
       // Generate S3 key and upload
-      const key = generateImageKey(variant.designId);
+      const key = generateImageKey(variant.designId, variant.productId);
       const imageUrl = await uploadToS3(processedFile, key);
 
       // Update variant with new image URL
