@@ -79,4 +79,34 @@ export const deleteVariant = async (variantId: string) => {
     console.error("Error deleting variant:", error);
     throw new Error("Failed to delete variant");
   }
+};
+
+export const deleteVariantMockupImage = async (variantId: string, imageUrl: string) => {
+  try {
+    const variantRef = firestore().collection(Collections.variants).doc(variantId);
+    const variant = await variantRef.get();
+    
+    if (!variant.exists) {
+      throw new Error("Variant not found");
+    }
+    
+    const variantData = variant.data() as ProductVariant;
+    const updatedMockupImages = (variantData.images.mockup || []).filter(url => url !== imageUrl);
+    
+    if (updatedMockupImages.length === 0) {
+      throw new Error("Cannot delete the last image. At least one image is required.");
+    }
+    
+    const updatedImages = {
+      ...variantData.images,
+      mockup: updatedMockupImages
+    };
+    
+    await variantRef.update({ images: updatedImages });
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting variant mockup image:", error);
+    throw error instanceof Error ? error : new Error("Failed to delete variant mockup image");
+  }
 }; 

@@ -7,11 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { ProductVariant } from "@/types/product";
-import { updateVariant, updateVariantMockupImage } from "@/actions/products";
+import { updateVariant, updateVariantMockupImage, deleteVariantMockupImage } from "@/actions/products";
 import { uploadToS3, generateImageKey } from "@/utils/s3Upload";
 import { toast } from "sonner";
 import Image from "next/image";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload, Loader2, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import { processImage } from "@/utils/image";
 
 interface EditVariantDialogProps {
@@ -25,9 +25,11 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
   const [formData, setFormData] = useState<Partial<ProductVariant>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [deletingImageIndex, setDeletingImageIndex] = useState<number | null>(null);
+  const [mockupImages, setMockupImages] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize form data when variant changes
+  // Initialize form data and images when variant changes
   useEffect(() => {
     if (variant) {
       setFormData({
@@ -37,6 +39,7 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
         isBestSeller: variant.isBestSeller ?? false,
         isDiscoverable: variant.isDiscoverable ?? true,
       });
+      setMockupImages(variant.images.mockup || []);
     }
   }, [variant]);
 
@@ -88,12 +91,16 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
       // Update variant with new image URL
       await updateVariantMockupImage(variant.id, imageUrl);
 
+      // Update local state immediately
+      const updatedImages = [imageUrl, ...mockupImages];
+      setMockupImages(updatedImages);
+
       // Create updated variant object with new image
       const updatedVariant = {
         ...variant,
         images: {
           ...variant.images,
-          mockup: [imageUrl, ...variant.images.mockup],
+          mockup: updatedImages,
         },
       };
 
@@ -110,6 +117,89 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
     }
   };
 
+  const handleDeleteImage = async (imageUrl: string, index: number) => {
+    if (!variant) return;
+
+    // Prevent deleting if it's the last image
+    if (mockupImages.length <= 1) {
+      toast.error("Cannot delete the last image. At least one image is required.");
+      return;
+    }
+
+    setDeletingImageIndex(index);
+
+    // Optimistically update UI immediately
+    const updatedImages = mockupImages.filter(url => url !== imageUrl);
+    setMockupImages(updatedImages);
+
+    try {
+      await deleteVariantMockupImage(variant.id, imageUrl);
+
+      // Create updated variant object without the deleted image
+      const updatedVariant = {
+        ...variant,
+        images: {
+          ...variant.images,
+          mockup: updatedImages,
+        },
+      };
+
+      toast.success("Image deleted successfully");
+      onSave(updatedVariant);
+    } catch (error) {
+      // Revert on error
+      setMockupImages(variant.images.mockup || []);
+      const errorMessage = error instanceof Error ? error.message : "Failed to delete image";
+      toast.error(errorMessage);
+      console.error(error);
+    } finally {
+      setDeletingImageIndex(null);
+    }
+  };
+
+  const handleReorderImage = async (index: number, direction: "up" | "down") => {
+    if (!variant) return;
+
+    const newIndex = direction === "up" ? index - 1 : index + 1;
+
+    // Check bounds
+    if (newIndex < 0 || newIndex >= mockupImages.length) return;
+
+    // Create new array with swapped images
+    const updatedImages = [...mockupImages];
+    [updatedImages[index], updatedImages[newIndex]] = [updatedImages[newIndex], updatedImages[index]];
+
+    // Update UI immediately
+    setMockupImages(updatedImages);
+
+    try {
+      // Update variant with new order
+      await updateVariant(variant.id, {
+        images: {
+          ...variant.images,
+          mockup: updatedImages,
+        },
+      });
+
+      // Create updated variant object
+      const updatedVariant = {
+        ...variant,
+        images: {
+          ...variant.images,
+          mockup: updatedImages,
+        },
+      };
+
+      toast.success("Image order updated");
+      onSave(updatedVariant);
+    } catch (error) {
+      // Revert on error
+      setMockupImages(variant.images.mockup || []);
+      toast.error("Failed to reorder images");
+      console.error(error);
+    }
+  };
+
   if (!variant) return null;
 
   return (
@@ -122,11 +212,61 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Current Image */}
+          {/* Mockup Images */}
           <div className="space-y-2">
-            <Label>Current Mockup Image</Label>
-            <div className="relative w-32 h-32 rounded-lg overflow-hidden bg-gray-100">
-              <Image src={variant.images.mockup[0]} alt="Current mockup" fill className="object-cover" />
+            <Label>Mockup Images ({mockupImages.length})</Label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {mockupImages.map((imageUrl, index) => (
+                <div key={`${imageUrl}-${index}`} className="relative group">
+                  <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-gray-100 border border-border">
+                    <Image src={imageUrl} alt={`Mockup ${index + 1}`} fill className="object-cover" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
+                  </div>
+                  {/* Reorder buttons */}
+                  <div className="absolute left-2 top-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="icon"
+                      className="h-7 w-7 bg-black/60 hover:bg-black/80 text-white"
+                      onClick={() => handleReorderImage(index, "up")}
+                      disabled={index === 0}
+                      title="Move up">
+                      <ChevronUp className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="icon"
+                      className="h-7 w-7 bg-black/60 hover:bg-black/80 text-white"
+                      onClick={() => handleReorderImage(index, "down")}
+                      disabled={index === mockupImages.length - 1}
+                      title="Move down">
+                      <ChevronDown className="w-3 h-3" />
+                    </Button>
+                  </div>
+                  {/* Delete button */}
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8"
+                    onClick={() => handleDeleteImage(imageUrl, index)}
+                    disabled={deletingImageIndex === index || mockupImages.length <= 1}
+                    title={mockupImages.length <= 1 ? "At least one image is required" : "Delete image"}>
+                    {deletingImageIndex === index ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                  </Button>
+                  {mockupImages.length <= 1 && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <span className="text-white text-xs font-medium px-2 py-1 bg-destructive rounded">Required</span>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
             <div className="flex gap-2">
               <Button
