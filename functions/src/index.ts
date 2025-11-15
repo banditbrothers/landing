@@ -3,11 +3,12 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { onDocumentDeleted } from "firebase-functions/v2/firestore";
+import { onDocumentDeleted, onDocumentUpdated } from "firebase-functions/v2/firestore";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 
 import { onReviewDeleted as onReviewDeletedFunction } from "./onReviewDeleted";
 import { syncGoogleReviews as syncGoogleReviewsFunction } from "./syncGoogleReviews";
+import { onVariantUpdated as onVariantUpdatedFunction } from "./onVariantUpdated";
 
 export const onReviewDeleted = onDocumentDeleted("reviews/{reviewId}", onReviewDeletedFunction);
 
@@ -19,3 +20,5 @@ export const syncGoogleReviews = onSchedule(
   },
   syncGoogleReviewsFunction
 );
+
+export const onVariantUpdated = onDocumentUpdated("variants/{variantId}", onVariantUpdatedFunction);
