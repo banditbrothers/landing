@@ -102,6 +102,13 @@ export const DESIGN_COLOR_OBJ = DESIGN_COLORS.reduce((acc, color) => {
 
 export const DESIGNS: Design[] = [
   {
+    id: 'custom',
+    name: 'Custom',
+    colors: [],
+    category: 'abstract',
+    tags: [],
+  },
+  {
     id: "mr-krabby",
     name: "Mr. Krabby",
     colors: ["white", "orange"],
