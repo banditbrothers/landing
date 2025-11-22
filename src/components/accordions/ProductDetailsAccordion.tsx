@@ -28,24 +28,9 @@ export const ProductDetailsAccordion = () => {
                 <span className="text-muted-foreground">Quick Dry Polyester-Spandex - 140 GSM</span>
               </div>
               <div>
-                <strong>Weight</strong>
-                <br />
-                <span className="text-muted-foreground">50 grams</span>
-              </div>
-              <div>
                 <strong>Country of Origin</strong>
                 <br />
                 <span className="text-muted-foreground">India</span>
-              </div>
-              <div>
-                <strong>Sizing</strong>
-                <br />
-                <span className="text-muted-foreground">Free sizing</span>
-              </div>
-              <div>
-                <strong>Closure Type</strong>
-                <br />
-                <span className="text-muted-foreground">Pull-On</span>
               </div>
             </div>
           </AccordionContent>
