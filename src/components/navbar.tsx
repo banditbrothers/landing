@@ -45,7 +45,7 @@ export default function NavBar() {
           className={`container mx-auto p-4 gap-2 flex items-center ${
             showNavLinks ? "justify-between" : "justify-center"
           }`}>
-          {showNavLinks && !isMobile && <div className="min-w-40" />}
+          {showNavLinks && !isMobile && <div className="min-w-32" />}
           <div className="flex items-center">
             <Link
               href="/"
@@ -55,11 +55,11 @@ export default function NavBar() {
                   scrollTo("hero");
                 }
               }}>
-              <h1 className="text-2xl md:text-3xl text-bandit-orange font-calera ">BANDIT BROTHERS</h1>
+              <h1 className="text-2xl md:text-3xl text-bandit-orange font-calera whitespace-nowrap">BANDIT BROTHERS</h1>
             </Link>
           </div>
           {showNavLinks && (
-            <div className="min-w-40 flex justify-end gap-2">
+            <div className="min-w-32 flex justify-end gap-2">
               <Suspense fallback={<LoadingIcon />}>
                 <SearchButton />
               </Suspense>

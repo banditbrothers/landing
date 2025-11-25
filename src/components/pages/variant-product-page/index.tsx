@@ -11,12 +11,11 @@ import {
 } from "../../ui/breadcrumb";
 import { RecommendedProducts } from "./RecommendedProducts";
 import { FavoriteButton } from "../../misc/FavoriteButton";
-import { CategoryBadge } from "../../badges/DesignBadges";
 import { useFavorites } from "@/components/stores/favorites";
 
 import { Button } from "../../ui/button";
 import { ArrowRightIcon, ShoppingCartIcon } from "../../../Icons/icons";
-import { ShareIcon } from "lucide-react";
+import { ShareIcon, Truck } from "lucide-react";
 import { shareVariant } from "@/utils/share";
 import { ImageCarousel } from "../../carousels/ImageCarousel";
 import { toast } from "sonner";
@@ -30,20 +29,22 @@ import { formatCurrency } from "@/utils/price";
 import Link from "next/link";
 import { ProductVariant } from "@/types/product";
 import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
-import { DESIGNS_OBJ, getColorVariantIds, MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING, PRODUCTS_OBJ } from "@/data/products";
+import {
+  DESIGNS_OBJ,
+  getColorVariantIds,
+  MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING,
+  PRODUCTS_OBJ,
+  VariantProductSizes,
+} from "@/data/products";
 import { useVariants } from "@/hooks/useVariants";
 import { ColorVariants } from "./SimilarVariants";
+import { ProductSizingDialog } from "@/components/dialogs/ProductSizingDialog";
+import { PaymentBadges } from "@/components/payments/PaymentBadges";
+import { Card, CardContent } from "@/components/ui/card";
 
 type ProductPageContentsProps = {
   designId: string;
   productId: string;
-};
-
-type VariantProductSizes = "one-size" | "small" | "large";
-const sizeOptionLabels: Record<VariantProductSizes, string> = {
-  "one-size": "One Size",
-  small: "Small - 52 to 59cm",
-  large: "Large - 60 to 67cm",
 };
 
 export const ProductPageContents = ({ designId, productId }: ProductPageContentsProps) => {
@@ -55,6 +56,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
 
   const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState<VariantProductSizes>("one-size");
+  const [isProductSizingDialogOpen, setIsProductSizingDialogOpen] = useState(false);
   const [colorVariants, setColorVariants] = useState<ProductVariant[]>([]);
 
   const variant = variants.find(v => v.designId === designId && v.productId === productId);
@@ -133,38 +135,44 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
         </div>
 
         {/* Right Column - Product Details */}
-        <div className="flex flex-col gap-6 max-w-xl mx-auto">
+        <div className="flex flex-col gap-6 max-w-[42rem] w-full mx-auto">
           <div>
             <h1 className="text-3xl font-bold text-foreground mb-2">{variantName}</h1>
-            <span className="flex flex-row gap-2 items-center">
-              <CategoryBadge category={variantDesign.category} />
-            </span>
           </div>
 
           <span className="flex flex-col gap-2 items-start">
-            <p className="text-2xl/6  font-semibold text-foreground">{formatCurrency(variantPrice)}</p>
-            {MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING !== null && (
-              <p className="text-muted-foreground text-xs">
-                Free Shipping on orders above {formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}
-              </p>
-            )}
+            <p className="text-2xl/6 font-semibold text-foreground">{formatCurrency(variantPrice)}</p>
+            <span className="flex flex-col gap-1 items-start">
+              <p className="text-muted-foreground text-xs">Inclusive of all taxes.</p>
+              {MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING !== null && (
+                <Card className="w-full border-primary/20 bg-primary/5">
+                  <CardContent className="p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0">
+                        <Truck className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-foreground">
+                          Free Shipping above {formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </span>
           </span>
 
-          <div className="prose max-w-none">
-            <p className="text-muted-foreground flex flex-col gap-2">
-              {variant.description ?? variantProduct.description.map(d => <span key={d}>{d}</span>)}
-            </p>
-          </div>
-
           {/* Size Selection */}
-          {variantProduct.sizes.length > 1 && (
-            <div className="flex flex-col gap-3">
-              <div>
-                <h3 className="text-sm font-medium text-foreground">Select your size</h3>
-                <p className="text-muted-foreground text-sm">
-                  If you use a helmet from size XS to M, we recommend the small size. The measurements below are based
-                  on your head circumference.
-                </p>
+          {variantProduct.sizes.length > 0 && (
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center justify-start gap-2">
+                <h3 className="font-medium text-foreground">Size</h3>
+                <div>
+                  <Button variant="link" className="p-2" onClick={() => setIsProductSizingDialogOpen(true)}>
+                    Size Guide
+                  </Button>
+                </div>
               </div>
               <div className="flex gap-2">
                 {variantProduct.sizes.map(sizeOption => (
@@ -186,7 +194,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
                       onChange={e => setSize(e.target.value as VariantProductSizes)}
                       className="sr-only"
                     />
-                    <span className="text-sm font-medium">{sizeOptionLabels[sizeOption as VariantProductSizes]}</span>
+                    <span className="text-sm font-medium">{variantProduct.sizeLabels[sizeOption]}</span>
                   </label>
                 ))}
               </div>
@@ -205,29 +213,20 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
               </Button>
               <Button variant="outline" onClick={handleShare}>
                 <ShareIcon className="w-4 h-4" />
-                Share
               </Button>
             </div>
           </div>
 
-          <ColorVariants colorVariants={colorVariants} currentVariantId={variant.id} />
-
-          <div className=" pt-4 border-t border-muted">
-            <h2 className="text-lg font-semibold text-foreground mb-3">Product Details</h2>
-            <div className="flex py-2">
-              <span className="font-medium text-foreground text-sm w-24">Material:</span>
-              <span className="text-muted-foreground text-sm">{variantProduct.material}</span>
-            </div>
-            <div className="flex py-2">
-              <span className="font-medium text-foreground text-sm w-24">Dimensions:</span>
-              <span className="text-muted-foreground text-sm">{variantProduct.dimensions[size]}</span>
-            </div>
+          <div className="flex flex-col gap-2 justify-center items-center">
+            <span className="text-sm text-muted-foreground">100% Secure Payments</span>
+            <PaymentBadges />
           </div>
+
+          <ColorVariants colorVariants={colorVariants} currentVariantId={variant.id} />
 
           {/* Standard Product Details */}
           <div className=" pt-4 border-t border-muted">
-            <h2 className="text-lg font-semibold text-foreground mb-3">Product Specifications</h2>
-            <ProductDetailsAccordion />
+            <ProductDetailsAccordion variant={variant} selectedSize={size} />
           </div>
 
           {/* Reviews Link */}
@@ -249,6 +248,11 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
       </div>
 
       <RecommendedProducts currentVariant={variant} />
+      <ProductSizingDialog
+        open={isProductSizingDialogOpen}
+        onClose={() => setIsProductSizingDialogOpen(false)}
+        product={{ id: variant.id, ...variantProduct }}
+      />
     </div>
   );
 };
