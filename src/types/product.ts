@@ -44,6 +44,7 @@ export type Product = {
   basePrice: number;
   sizes: string[];
   material: string;
+  sizeLabels: Record<string, string>;
   dimensions: Record<string, string>;
   // Generic product images (no specific design)
   baseImages?: ImageSet; 

@@ -6,46 +6,50 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { DocumentMagnifyingGlassIcon, HandHeartIcon, TruckIcon } from "../../Icons/icons";
+import { ProductVariant } from "@/types/product";
+import { PRODUCTS_OBJ } from "@/data/products";
 
-export const ProductDetailsAccordion = () => {
+export const ProductDetailsAccordion = ({
+  variant,
+  selectedSize,
+}: {
+  variant: ProductVariant;
+  selectedSize: string;
+}) => {
+  const variantProduct = PRODUCTS_OBJ[variant.productId];
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-2xl mx-auto">
       <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="description">
+        <AccordionItem value="product-details">
           <AccordionTrigger>
             <AccordionTitle>
               <div className="flex flex-row items-center gap-2">
                 <DocumentMagnifyingGlassIcon className="w-5 h-5" />
-                <span>Technical Details</span>
+                <span>Product Details</span>
               </div>
             </AccordionTitle>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex flex-col gap-2">
-              <div>
-                <strong>Material</strong>
-                <br />
-                <span className="text-muted-foreground">Quick Dry Polyester-Spandex - 140 GSM</span>
+            <div className="flex flex-col gap-4">
+              <div className="prose max-w-none">
+                <p
+                  itemProp="description"
+                  aria-label="Product description"
+                  className="text-muted-foreground flex flex-col gap-2 text-sm">
+                  {variant.description ?? variantProduct.description.map(d => <span key={d}>{d}</span>)}
+                </p>
               </div>
-              <div>
-                <strong>Weight</strong>
-                <br />
-                <span className="text-muted-foreground">50 grams</span>
+              <div className="flex">
+                <span className="font-medium text-foreground text-sm w-36">Material:</span>
+                <span className="text-muted-foreground text-sm">{variantProduct.material}</span>
               </div>
-              <div>
-                <strong>Country of Origin</strong>
-                <br />
-                <span className="text-muted-foreground">India</span>
+              <div className="flex">
+                <span className="font-medium text-foreground text-sm w-36">Dimensions:</span>
+                <span className="text-muted-foreground text-sm">{variantProduct.dimensions[selectedSize]}</span>
               </div>
-              <div>
-                <strong>Sizing</strong>
-                <br />
-                <span className="text-muted-foreground">Free sizing</span>
-              </div>
-              <div>
-                <strong>Closure Type</strong>
-                <br />
-                <span className="text-muted-foreground">Pull-On</span>
+              <div className="flex">
+                <span className="font-medium text-foreground text-sm w-36">Country of Origin:</span>
+                <span className="text-muted-foreground text-sm">India</span>
               </div>
             </div>
           </AccordionContent>

@@ -20,7 +20,7 @@ const options: IFuseOptions<ProductVariant> = {
   threshold: 0.1,
   distance: 200, // 0.1 * 200 = 20 characters will be considered to find a match
   location: 0,
-  keys: ["design.name", "design.tags", "design.colors", "design.category", "productId"],
+  keys: ["design.cleanName", "design.tags", "design.colors", "design.category", "productId"],
 };
 
 type SearchVariant = ProductVariant & { product: Omit<Product, "id">; design: Omit<Design, "id"> };
@@ -34,7 +34,11 @@ function SearchDialogContent() {
   useEffect(() => {
     const _formatted = variants.map(v => {
       const product = PRODUCTS_OBJ[v.productId];
-      const design = DESIGNS_OBJ[v.designId];
+      const design = DESIGNS_OBJ[v.designId] as Design & { cleanName: string };
+
+      if (design && design.name) {
+        design.cleanName = design.name.replace(/[^a-zA-Z0-9 ]/g, "");
+      }
 
       return { ...v, product, design };
     });

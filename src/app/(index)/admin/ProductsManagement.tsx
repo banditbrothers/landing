@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ProductVariant } from "@/types/product";
 import { getVariantsAdmin, deleteVariant } from "@/actions/products";
 import { EditVariantDialog } from "@/components/dialogs/EditVariantDialog";
 import { AddVariantDialog } from "@/components/dialogs/AddVariantDialog";
-import { PRODUCTS_OBJ } from "@/data/products";
+import { PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
 import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
 import { formatCurrency } from "@/utils/price";
 import Image from "next/image";
@@ -21,6 +22,7 @@ export const ProductManagement = () => {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [selectedProductType, setSelectedProductType] = useState<string>("all");
 
   const loadVariants = async () => {
     setIsLoading(true);
@@ -111,6 +113,15 @@ export const ProductManagement = () => {
     URL.revokeObjectURL(url);
   };
 
+  // Get product type counts for badges
+  const productTypeCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: variants.length };
+    PRODUCTS.forEach(product => {
+      counts[product.id] = variants.filter(v => v.productId === product.id).length;
+    });
+    return counts;
+  }, [variants]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -129,7 +140,7 @@ export const ProductManagement = () => {
         <div className="flex items-center gap-3">
           <Badge variant="secondary" className="flex items-center gap-2">
             <Package className="w-4 h-4" />
-            {variants.length} Variants
+            {productTypeCounts[selectedProductType] || 0} Variants
           </Badge>
           {/* <Button
             variant="outline"
@@ -146,95 +157,125 @@ export const ProductManagement = () => {
         </div>
       </div>
 
-      <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Image</TableHead>
-              <TableHead>Variant</TableHead>
-              <TableHead>Product</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {variants.map(variant => {
-              const variantName = getProductVariantName(variant);
-              const variantPrice = getProductVariantPrice(variant);
-              const product = PRODUCTS_OBJ[variant.productId];
+      <Tabs value={selectedProductType} onValueChange={setSelectedProductType} className="w-full">
+        <TabsList className="grid w-fit grid-cols-4">
+          <TabsTrigger value="all">All ({productTypeCounts.all})</TabsTrigger>
+          {PRODUCTS.map(product => (
+            <TabsTrigger key={product.id} value={product.id}>
+              {product.name} ({productTypeCounts[product.id] || 0})
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-              return (
-                <TableRow key={variant.id}>
-                  <TableCell>
-                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
-                      {variant.images.mockup[0] && (
-                        <Image
-                          src={variant.images.mockup[0]}
-                          alt={variantName}
-                          width={64}
-                          height={64}
-                          className="object-cover w-full h-full"
-                        />
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <div className="font-medium">{variantName}</div>
-                      {variant.sku && <div className="text-sm text-muted-foreground">SKU: {variant.sku}</div>}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="font-medium">{product?.name || variant.productId}</div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="font-medium">{formatCurrency(variantPrice)}</div>
-                  </TableCell>
+        {/* Render table for each tab */}
+        {(["all", ...PRODUCTS.map(p => p.id)] as const).map(productType => {
+          const variantsToShow = productType === "all" ? variants : variants.filter(v => v.productId === productType);
 
-                  <TableCell>
-                    <div className="flex flex-row gap-1">
-                      <Badge variant={variant.isAvailable ? "default" : "secondary"}>
-                        {variant.isAvailable ? "Available" : "Unavailable"}
-                      </Badge>
-                      {variant.isBestSeller && (
-                        <Badge variant="destructive" className="text-xs">
-                          Best Seller
-                        </Badge>
-                      )}
-                      {variant.isDiscoverable === false && (
-                        <Badge variant="outline" className="text-xs">
-                          Not Discoverable
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => handleEditVariant(variant)}>
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(`/products/${variant.productId}/${variant.designId}`, "_blank")}>
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteVariant(variant)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50">
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </div>
+          return (
+            <TabsContent key={productType} value={productType} className="mt-6">
+              <div className="border rounded-lg">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Image</TableHead>
+                      <TableHead>Variant</TableHead>
+                      <TableHead>Product</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {variantsToShow.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                          No variants found for this product type.
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      variantsToShow.map(variant => {
+                        const variantName = getProductVariantName(variant);
+                        const variantPrice = getProductVariantPrice(variant);
+                        const product = PRODUCTS_OBJ[variant.productId];
+
+                        return (
+                          <TableRow key={variant.id}>
+                            <TableCell>
+                              <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
+                                {variant.images.mockup[0] && (
+                                  <Image
+                                    src={variant.images.mockup[0]}
+                                    alt={variantName}
+                                    width={64}
+                                    height={64}
+                                    className="object-cover w-full h-full"
+                                  />
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="space-y-1">
+                                <div className="font-medium">{variantName}</div>
+                                {variant.sku && <div className="text-sm text-muted-foreground">SKU: {variant.sku}</div>}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="font-medium">{product?.name || variant.productId}</div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="font-medium">{formatCurrency(variantPrice)}</div>
+                            </TableCell>
+
+                            <TableCell>
+                              <div className="flex flex-row gap-1">
+                                <Badge variant={variant.isAvailable ? "default" : "secondary"}>
+                                  {variant.isAvailable ? "Available" : "Unavailable"}
+                                </Badge>
+                                {variant.isBestSeller && (
+                                  <Badge variant="destructive" className="text-xs">
+                                    Best Seller
+                                  </Badge>
+                                )}
+                                {variant.isDiscoverable === false && (
+                                  <Badge variant="outline" className="text-xs">
+                                    Not Discoverable
+                                  </Badge>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-2">
+                                <Button variant="outline" size="sm" onClick={() => handleEditVariant(variant)}>
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() =>
+                                    window.open(`/products/${variant.productId}/${variant.designId}`, "_blank")
+                                  }>
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDeleteVariant(variant)}
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+          );
+        })}
+      </Tabs>
 
       <EditVariantDialog
         variant={selectedVariant}
