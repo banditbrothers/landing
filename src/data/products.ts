@@ -109,8 +109,22 @@ export const DESIGNS: Design[] = [
     tags: [],
   },
   {
-    id: "beach-please",
-    name: "Beach Please!",
+    id: "beach-please-sand-brown",
+    name: "Beach Please! - Sand Brown",
+    colors: ["blue", "brown", "orange"],
+    category: "abstract",
+    tags: [],
+  },
+  {
+    id: "beach-please-sunset-orange",
+    name: "Beach Please! - Sunset Orange",
+    colors: ["blue", "brown", "orange"],
+    category: "abstract",
+    tags: [],
+  },
+  {
+    id: "beach-please-ocean-cyan",
+    name: "Beach Please! - Ocean Cyan",
     colors: ["blue", "brown", "orange"],
     category: "abstract",
     tags: [],
@@ -906,6 +920,24 @@ export const PRODUCTS: Product[] = [
       ],
     },
   },
+  {
+    id: "jersey",
+    name: "Jersey",
+    description: [
+      "Add a bold twist to your look with our versatile Kerchief styled square pocket bandanas.",
+      "Perfect for bikers, travelers, or everyday style, these lightweight bandanas can be worn as a headwrap, neck scarf, wrist tie, or even a mask.",
+      "Made from soft, breathable fabric, they combine comfort with vibrant prints that stand out anywhere.",
+    ],
+    basePrice: 899,
+    sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"],
+    material: "4 Way Quick-Dri DryFit Fabric",
+    dimensions: { },
+    baseImages: {
+      mockup: [
+        "https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/square-bandana/featured-square-bandana.jpeg",
+      ],
+    },
+  },
 ];
 export const PRODUCTS_OBJ = PRODUCTS.reduce((acc, product) => {
   const { id, ...rest } = product;
@@ -916,6 +948,7 @@ const COLOR_VARIANTS = [
   ["shinobi-red", "shinobi-green", "shinobi-blue", "shinobi-orange", "shinobi-yellow"],
   ["dragon-swagon-red", "dragon-swagon-yellow"],
   ["amongst-the-stars-cancer", "amongst-the-stars-leo", "amongst-the-stars-virgo", "amongst-the-stars-libra", "amongst-the-stars-scorpio", "amongst-the-stars-sagittarius", "amongst-the-stars-capricorn", "amongst-the-stars-aquarius", "amongst-the-stars-pisces", "amongst-the-stars-aries", "amongst-the-stars-taurus", "amongst-the-stars-gemini"],
+  ["beach-please-sand-brown", "beach-please-sunset-orange", "beach-please-ocean-cyan"],
   [
     "you-cant-see-me-dark-green",
     "you-cant-see-me-black",
