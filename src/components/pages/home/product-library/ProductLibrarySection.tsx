@@ -21,7 +21,7 @@ export const ProductLibraryContent = () => {
         <div className="mx-auto">
           <div className={`mb-4 flex justify-between items-center max-w-screen-2xl mx-auto px-6 flex-col`}>
             <h2 className="text-4xl font-bold text-center flex flex-row justify-center items-center relative">
-              Our Best Sellers
+              Best Sellers
             </h2>
           </div>
           <div className="mx-auto flex flex-col items-center gap-10">
