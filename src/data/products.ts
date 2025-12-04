@@ -952,6 +952,7 @@ export const PRODUCTS_OBJ = PRODUCTS.reduce((acc, product) => {
 }, {} as Record<string, Omit<(typeof PRODUCTS)[number], "id">>);
 
 const COLOR_VARIANTS = [
+  ["ddlj-2-white", "ddlj-2-black"],
   ["shinobi-red", "shinobi-green", "shinobi-blue", "shinobi-orange", "shinobi-yellow"],
   ["dragon-swagon-red", "dragon-swagon-yellow"],
   ["amongst-the-stars-cancer", "amongst-the-stars-leo", "amongst-the-stars-virgo", "amongst-the-stars-libra", "amongst-the-stars-scorpio", "amongst-the-stars-sagittarius", "amongst-the-stars-capricorn", "amongst-the-stars-aquarius", "amongst-the-stars-pisces", "amongst-the-stars-aries", "amongst-the-stars-taurus", "amongst-the-stars-gemini"],
