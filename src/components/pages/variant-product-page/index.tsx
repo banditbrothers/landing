@@ -33,17 +33,26 @@ import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
 import { DESIGNS_OBJ, getColorVariantIds, MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING, PRODUCTS_OBJ } from "@/data/products";
 import { useVariants } from "@/hooks/useVariants";
 import { ColorVariants } from "./SimilarVariants";
+import { InfoBanner } from "@/components/misc/Banners";
 
 type ProductPageContentsProps = {
   designId: string;
   productId: string;
 };
 
-type VariantProductSizes = "one-size" | "small" | "large";
+type VariantProductSizes = "one-size" | "small" | "large" | "XS" | "S" | "M" | "L" | "XL" | "2XL" | "3XL" | "4XL";
 const sizeOptionLabels: Record<VariantProductSizes, string> = {
   "one-size": "One Size",
   small: "Small - 52 to 59cm",
   large: "Large - 60 to 67cm",
+  XS: "XS",
+  S: "S",
+  M: "M",
+  L: "L",
+  XL: "XL",
+  "2XL": "2XL",
+  "3XL": "3XL",
+  "4XL": "4XL",
 };
 
 export const ProductPageContents = ({ designId, productId }: ProductPageContentsProps) => {
@@ -156,15 +165,26 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
             </p>
           </div>
 
+          {productId === "jersey" && designId === "ddlj-2" && (
+            <div>
+              <InfoBanner>
+                Orders for this product are processed in batches on the{" "}
+                <span className="font-semibold">1st of every month</span>.
+              </InfoBanner>
+            </div>
+          )}
+
           {/* Size Selection */}
           {variantProduct.sizes.length > 1 && (
             <div className="flex flex-col gap-3">
               <div>
                 <h3 className="text-sm font-medium text-foreground">Select your size</h3>
-                <p className="text-muted-foreground text-sm">
-                  If you use a helmet from size XS to M, we recommend the small size. The measurements below are based
-                  on your head circumference.
-                </p>
+                {productId !== "jersey" && (
+                  <p className="text-muted-foreground text-sm">
+                    If you use a helmet from size XS to M, we recommend the small size. The measurements below are based
+                    on your head circumference.
+                  </p>
+                )}
               </div>
               <div className="flex gap-2">
                 {variantProduct.sizes.map(sizeOption => (
@@ -218,10 +238,12 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
               <span className="font-medium text-foreground text-sm w-24">Material:</span>
               <span className="text-muted-foreground text-sm">{variantProduct.material}</span>
             </div>
-            <div className="flex py-2">
-              <span className="font-medium text-foreground text-sm w-24">Dimensions:</span>
-              <span className="text-muted-foreground text-sm">{variantProduct.dimensions[size]}</span>
-            </div>
+            {variantProduct.dimensions[size] && (
+              <div className="flex py-2">
+                <span className="font-medium text-foreground text-sm w-24">Dimensions:</span>
+                <span className="text-muted-foreground text-sm">{variantProduct.dimensions[size]}</span>
+              </div>
+            )}
           </div>
 
           {/* Standard Product Details */}

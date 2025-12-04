@@ -130,10 +130,17 @@ export const DESIGNS: Design[] = [
     tags: [],
   },
   {
-    id: "ddlj-2",
-    name: "DDLJ 2.0",
-    colors: ["white", "black"],
-    category: "graphic",
+    id: "ddlj-2-white",
+    name: "DDLJ 2.0 - White",
+    colors: ["white"],
+    category: "character",
+    tags: [],
+  },
+  {
+    id: "ddlj-2-black",
+    name: "DDLJ 2.0 - Black",
+    colors: ["black"],
+    category: "character",
     tags: [],
   },
   {
@@ -924,9 +931,9 @@ export const PRODUCTS: Product[] = [
     id: "jersey",
     name: "Jersey",
     description: [
-      "Add a bold twist to your look with our versatile Kerchief styled square pocket bandanas.",
-      "Perfect for bikers, travelers, or everyday style, these lightweight bandanas can be worn as a headwrap, neck scarf, wrist tie, or even a mask.",
-      "Made from soft, breathable fabric, they combine comfort with vibrant prints that stand out anywhere.",
+      "Elevate your performance and style with our premium athletic jerseys designed for the modern athlete.",
+      "Perfect for training, sports, or casual wear, these lightweight jerseys feature moisture-wicking technology to keep you cool and comfortable during any activity.",
+      "Made from quick-dry DryFit fabric, they combine superior comfort with bold, eye-catching designs that make a statement on and off the field.",
     ],
     basePrice: 899,
     sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"],
@@ -934,7 +941,7 @@ export const PRODUCTS: Product[] = [
     dimensions: { },
     baseImages: {
       mockup: [
-        "https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/square-bandana/featured-square-bandana.jpeg",
+        "https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/jersey/featured-jersey-image.webp",
       ],
     },
   },
