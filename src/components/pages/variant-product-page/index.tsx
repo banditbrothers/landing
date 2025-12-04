@@ -165,7 +165,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
             </p>
           </div>
 
-          {productId === "jersey" && designId === "ddlj-2" && (
+          {productId === "jersey" && ["ddlj-2-white", "ddlj-2-black"].includes(designId) && (
             <div>
               <InfoBanner>
                 Orders for this product are processed in batches on the{" "}
@@ -186,7 +186,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
                   </p>
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {variantProduct.sizes.map(sizeOption => (
                   <label
                     key={sizeOption}

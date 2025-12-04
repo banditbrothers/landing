@@ -11,7 +11,7 @@ export const DangerBanner = ({ message }: { message: string }) => {
 
 export const InfoBanner = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex items-center gap-3 p-4 text-sm text-blue-900 bg-blue-50 border border-blue-400 rounded-lg shadow-sm">
+    <div className="flex items-center gap-3 p-4 text-sm text-blue-900 bg-blue-50 border border-blue-400 rounded-lg shadow-sm dark:text-blue-200 dark:bg-blue-950/20 dark:border-blue-800/40">
       <Info className="h-5 w-5 flex-shrink-0" />
       <p className="leading-relaxed">{children}</p>
     </div>
