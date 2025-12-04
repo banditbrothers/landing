@@ -16,16 +16,22 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 
   try {
+    const mockupImage = product.baseImages?.mockup?.[0];
+
+    if (!mockupImage) {
+      throw new Error("No mockup image found for product: " + productId);
+    }
+
     return {
       title: product.name + " | " + "by Bandit Brothers",
       description: product.description.join(" ").slice(0, 155) + "...",
       openGraph: {
-        images: [product.baseImages?.mockup[0]!],
+        images: [mockupImage],
         title: product.name + " | " + "by Bandit Brothers",
         description: product.description.join(" ").slice(0, 155) + "...",
       },
       twitter: {
-        images: [product.baseImages?.mockup[0]!],
+        images: [mockupImage],
         title: product.name + " | " + "by Bandit Brothers",
         description: product.description.join(" ").slice(0, 155) + "...",
       },
