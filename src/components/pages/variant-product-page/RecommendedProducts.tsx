@@ -29,6 +29,10 @@ export const RecommendedProducts = ({
     );
   }, [currentVariant.id, variants]);
 
+  if (recommendedVariants.slice(0, count).length === 0) {
+    return null;
+  }
+
   return (
     <div className="mt-16">
       <h2 className="text-2xl font-bold text-foreground mb-8">You Might Also Like</h2>

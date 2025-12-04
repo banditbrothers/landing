@@ -1,50 +1,49 @@
-"use client";
+import { Metadata } from "next";
+import { PRODUCTS_OBJ } from "@/data/products";
+import { ProductPageContent } from "./content";
 
-import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
-import { Button } from "@/components/ui/button";
-import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
-import { useVariants } from "@/hooks/useVariants";
-import { useState } from "react";
-import { useParams } from "next/navigation";
+type ProductPageProps = { params: Promise<{ productId: string }> };
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { productId } = await params;
 
-function ProductPageContent() {
-  const { data: variants } = useVariants();
+  const product = PRODUCTS_OBJ[productId];
 
-  const [isHowToWearDialogOpen, setIsHowToWearDialogOpen] = useState(false);
+  if (!product) {
+    return {
+      title: "Product Not Found",
+      description: "The product you are looking for does not exist.",
+    };
+  }
 
-  const { productId } = useParams();
-
-  const filteredVariants = variants?.filter(v => v.productId === productId).filter(v => v.isAvailable);
-
-  return (
-    <>
-      {productId === "bandana" && (
-        <HowToWearDialog open={isHowToWearDialogOpen} onClose={() => setIsHowToWearDialogOpen(false)} />
-      )}
-
-      <div className="container mx-auto mt-16 min-h-screen">
-        <div className="pt-16 mx-auto">
-          <div className="flex flex-col gap-4">
-            <div className=" max-w-screen-2xl mx-auto">
-              <div className="flex flex-col gap-4">
-                <span className="text-4xl w-fit font-bold">Our Mischief</span>
-                {productId === "bandana" && (
-                  <Button variant="link" onClick={() => setIsHowToWearDialogOpen(true)}>
-                    <span>How to Wear</span>
-                  </Button>
-                )}
-              </div>
-            </div>
-            <div>
-              <ProductGridLayout productVariants={filteredVariants ?? []} />
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+  try {
+    return {
+      title: product.name + " | " + "by Bandit Brothers",
+      description: product.description.join(" ").slice(0, 155) + "...",
+      openGraph: {
+        images: [product.baseImages?.mockup[0]!],
+        title: product.name + " | " + "by Bandit Brothers",
+        description: product.description.join(" ").slice(0, 155) + "...",
+      },
+      twitter: {
+        images: [product.baseImages?.mockup[0]!],
+        title: product.name + " | " + "by Bandit Brothers",
+        description: product.description.join(" ").slice(0, 155) + "...",
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching product metadata:", error);
+    // Fallback to static data if Firestore fails
+    return {
+      title: product.name + " | " + "by Bandit Brothers",
+      description: product.description.join(" ").slice(0, 155) + "...",
+    };
+  }
 }
 
 export default function ProductPage() {
-  return <ProductPageContent />;
+  return (
+    <div>
+      <ProductPageContent />
+    </div>
+  );
 }
