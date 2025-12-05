@@ -79,7 +79,11 @@ export const getWhatsappOrderReviewLink = (order: Order) => {
   return `https://wa.me/${order.phone}?text=${encodedMessage}`;
 };
 
-export const getWhatsappNeedHelpLink = (orderId: string) => {
+export const getWhatsappNeedHelpLink = () => {
+  return `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent("Hey, I need help with placing an order on Bandit Brothers")}`;
+};
+
+export const getWhatsappNeedHelpWithOrderIdLink = (orderId: string) => {
   return `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(`Hey, I need help with order ${orderId}`)}`;
 };
 

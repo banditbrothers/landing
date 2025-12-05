@@ -34,6 +34,7 @@ import { DESIGNS_OBJ, getColorVariantIds, MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING, PR
 import { useVariants } from "@/hooks/useVariants";
 import { ColorVariants } from "./SimilarVariants";
 import { InfoBanner } from "@/components/misc/Banners";
+import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
 
 type ProductPageContentsProps = {
   designId: string;
@@ -168,8 +169,15 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
           {productId === "jersey" && ["ddlj-2-white", "ddlj-2-black"].includes(designId) && (
             <div>
               <InfoBanner>
-                Orders for this product are processed in batches on the{" "}
-                <span className="font-semibold">1st of every month</span>.
+                <div className="flex flex-row justify-between items-center">
+                  <div>
+                    Orders for this product are processed in batches on the{" "}
+                    <span className="font-semibold">1st of every month</span>.
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => window.open(getWhatsappNeedHelpLink(), "_blank")}>
+                    Need Help?
+                  </Button>
+                </div>
               </InfoBanner>
             </div>
           )}

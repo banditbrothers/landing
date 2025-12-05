@@ -935,7 +935,7 @@ export const PRODUCTS: Product[] = [
       "Perfect for training, sports, or casual wear, these lightweight jerseys feature moisture-wicking technology to keep you cool and comfortable during any activity.",
       "Made from quick-dry DryFit fabric, they combine superior comfort with bold, eye-catching designs that make a statement on and off the field.",
     ],
-    basePrice: 899,
+    basePrice: 999,
     sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"],
     material: "4 Way Quick-Dri DryFit Fabric",
     dimensions: { },

@@ -13,7 +13,7 @@ import { CheckIcon, CopyIcon } from "lucide-react";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { formattedDateTimeLong } from "@/utils/timestamp";
 import { Separator } from "@/components/ui/separator";
-import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
+import { getWhatsappNeedHelpWithOrderIdLink } from "@/utils/whatsappMessageLinks";
 import { redactEmail, redactPhone, redactName } from "@/utils/redact";
 import Link from "next/link";
 import { getProductVariantUrl } from "@/utils/share";
@@ -191,7 +191,7 @@ export default function OrderPage({ params }: OrderPageProps) {
           <Button
             variant="outline"
             className="w-full py-8"
-            onClick={() => window.open(getWhatsappNeedHelpLink(order.id), "_blank")}>
+            onClick={() => window.open(getWhatsappNeedHelpWithOrderIdLink(order.id), "_blank")}>
             Need Help? Contact Us On WhatsApp
           </Button>
         </CardContent>
