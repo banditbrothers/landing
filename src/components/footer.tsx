@@ -25,7 +25,7 @@ export default function Footer() {
             </Link>
           </div>
           <nav>
-            <ul className="flex space-x-6">
+            <ul className="flex gap-6 text-sm flex-wrap justify-center">
               <li>
                 <Link href="/privacy" className="hover:text-primary-800 transition-colors duration-300">
                   Privacy Policy
