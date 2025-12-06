@@ -101,6 +101,13 @@ export const DESIGN_COLOR_OBJ = DESIGN_COLORS.reduce((acc, color) => {
 }, {} as Record<DesignColor, Omit<(typeof DESIGN_COLORS)[number], "id">>);
 
 export const DESIGNS: Design[] = [
+    {
+    id: "tri-harder",
+    name: "Tri Harder",
+    colors: ["white", "red","blue"],
+    category: "pattern",
+    tags: [],
+  },
   {
     id: "neon-of-your-business",
     name: "Neon Of Your Business",
