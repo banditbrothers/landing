@@ -36,10 +36,10 @@ import { DangerBanner } from "@/components/misc/Banners";
 import { validatePincode } from "@/lib/pincode";
 import { formatCurrency } from "@/utils/price";
 
-import { getProductVariantPrice } from "@/utils/product";
 import { OrderedVariant, ProductVariant } from "@/types/product";
 import { useVariants } from "@/hooks/useVariants";
 import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/data/products";
+import { getCartSubtotal } from "@/utils/cart";
 
 const SHIPPING_COST = 100;
 const CASH_AND_FREE_SHIPPING_COUPON_CODE = process.env.NEXT_PUBLIC_CASH_AND_FREE_SHIPPING_COUPON_CODE!;
@@ -70,23 +70,14 @@ const getPaymentMode = (coupon: Coupon | null, isInternational: boolean) => {
   return coupon.code === CASH_AND_FREE_SHIPPING_COUPON_CODE ? "cash" : "rzp";
 };
 
-const getSubtotal = (cart: CartItem[], variants: ProductVariant[]) => {
-  if (cart.length === 0) return 0;
-
-  return cart.reduce((total, item) => {
-    const variant = variants.find(v => v.id === item.variantId)!;
-    return total + getProductVariantPrice(variant) * item.quantity;
-  }, 0);
-};
-
 const getShippingCost = (cart: CartItem[], coupon: Coupon | null, variants: ProductVariant[]) => {
   if (cart.length === 0) return 0;
 
   if (coupon?.code === CASH_AND_FREE_SHIPPING_COUPON_CODE) return 0;
   if (MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING === null) return SHIPPING_COST;
 
-  const subtotal = getSubtotal(cart, variants);
-  const discount = getDiscountAmount(subtotal, coupon);
+  const subtotal = getCartSubtotal(cart, variants);
+  const discount = getDiscountAmount(cart, variants, coupon);
   const total = subtotal - discount;
 
   if (total >= MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING) return 0;
@@ -94,8 +85,8 @@ const getShippingCost = (cart: CartItem[], coupon: Coupon | null, variants: Prod
 };
 
 const calculateTotal = (cart: CartItem[], coupon: Coupon | null, variants: ProductVariant[]) => {
-  const subtotal = getSubtotal(cart, variants);
-  const discount = getDiscountAmount(subtotal, coupon);
+  const subtotal = getCartSubtotal(cart, variants);
+  const discount = getDiscountAmount(cart, variants, coupon);
   const shippingCost = getShippingCost(cart, coupon, variants);
 
   const total = subtotal - discount + shippingCost;
@@ -201,8 +192,8 @@ function OrderPageContent() {
       variants: orderedVariants,
       total: orderTotal,
       isInternational: isInternationalOrder,
-      subtotal: getSubtotal(cart, variants),
-      discount: getDiscountAmount(subtotal, coupon),
+      subtotal: getCartSubtotal(cart, variants),
+      discount: getDiscountAmount(cart, variants, coupon),
       shipping: getShippingCost(cart, coupon, variants),
       createdAt: getTimestamp(),
       couponCode: coupon?.code ?? null,
@@ -299,14 +290,14 @@ function OrderPageContent() {
 
   const formIsReady = form.formState.isValid && selectedVariantIds.length > 0 && variants?.length > 0;
 
-  const subtotal = getSubtotal(cart, variants);
+  const subtotal = getCartSubtotal(cart, variants);
   const shippingCost = getShippingCost(cart, coupon, variants);
-  const discountAmount = getDiscountAmount(subtotal, coupon);
+  const discountAmount = getDiscountAmount(cart, variants, coupon);
   const isShippingFree = shippingCost === 0;
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-  const { message: couponError } = validateCouponInCart(coupon, subtotal);
+  const { message: couponError } = validateCouponInCart(coupon, cart, variants);
 
   return (
     <>
@@ -640,7 +631,7 @@ function OrderPageContent() {
                                   </span>
                                 </span>
                                 <span className="font-medium">
-                                  - {formatCurrency(getDiscountAmount(subtotal, coupon), 2)}
+                                  - {formatCurrency(getDiscountAmount(cart, variants, coupon), 2)}
                                 </span>
                               </div>
                             )}
@@ -657,7 +648,8 @@ function OrderPageContent() {
                           <div className="flex flex-col gap-2">
                             <CouponInput
                               coupon={coupon}
-                              cartValue={subtotal}
+                              cart={cart}
+                              variants={variants}
                               onCouponApplied={handleCouponApplied}
                               onCouponRemoved={handleCouponRemoved}
                               onCouponError={handleCouponError}

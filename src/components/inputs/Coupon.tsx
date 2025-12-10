@@ -7,10 +7,13 @@ import { useCouponActions } from "@/hooks/useCouponActions";
 import { Coupon } from "@/types/coupon";
 import { CheckIcon, XMarkIcon } from "../../Icons/icons";
 import { validateCouponInCart } from "@/utils/coupon";
+import { CartItem } from "@/types/order";
+import { ProductVariant } from "@/types/product";
 
 type CouponInputProps = {
   coupon: Coupon | null;
-  cartValue: number;
+  cart: CartItem[];
+  variants: ProductVariant[];
   onCouponApplied: (coupon: Coupon) => void;
   onCouponRemoved: () => void;
   onCouponError: (error: string) => void;
@@ -18,7 +21,8 @@ type CouponInputProps = {
 
 export const CouponInput = ({
   coupon,
-  cartValue,
+  cart,
+  variants,
   onCouponApplied,
   onCouponRemoved,
   onCouponError,
@@ -34,7 +38,7 @@ export const CouponInput = ({
     if (error) return onCouponError(error);
     if (!isValid) onCouponError("Invalid coupon code");
     if (coupon && isValid) {
-      const { error, message } = validateCouponInCart(coupon, cartValue);
+      const { error, message } = validateCouponInCart(coupon, cart, variants);
       if (error) return onCouponError(message);
 
       onCouponApplied(coupon);
