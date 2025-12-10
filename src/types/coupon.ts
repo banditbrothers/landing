@@ -9,6 +9,7 @@ export type Coupon = {
   createdAt: number;
   expiresAt: number | null;
   isActive: boolean;
+  applicableVariants: string[];
 };
 
 /**

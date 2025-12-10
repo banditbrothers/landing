@@ -22,7 +22,9 @@ export const getCoupon = async (code: string) => {
   if (couponRef.empty) return null;
 
   const coupon = couponRef.docs[0];
-  return { id: coupon.id, ...coupon.data() } as Coupon;
+
+  const couponData = coupon.data();
+  return { id: coupon.id,  ...couponData, applicableVariants: couponData.applicableVariants || [] } as Coupon;
 };
 
 export const addCoupon = async (coupon: Omit<Coupon, "id">): Promise<Coupon> => {

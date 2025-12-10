@@ -15,17 +15,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getVariantsAdmin } from "@/actions/products";
+import { ProductVariant } from "@/types/product";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function CouponManagement() {
   const { addCoupon, couponLoading, updateCoupon } = useCouponActions();
 
   const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [variants, setVariants] = useState<ProductVariant[]>([]);
+  const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
   const [showDialog, setShowDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getCoupons().then(coupons => {
+    Promise.all([getCoupons(), getVariantsAdmin()]).then(([coupons, variants]) => {
       setCoupons(coupons);
+      setVariants(variants);
       setIsLoading(false);
     });
   }, []);
@@ -67,11 +73,13 @@ export function CouponManagement() {
       expiresAt: expiresAt ? Math.floor(expiresAt.getTime() / 1000) : null,
       createdAt: getTimestamp(),
       isActive: true,
+      applicableVariants: selectedVariants,
     };
 
     const newCoupon = await addCoupon(coupon);
     setCoupons(prev => [newCoupon, ...prev]);
     setShowDialog(false);
+    setSelectedVariants([]);
   };
 
   const handleCouponActiveChange = async (couponId: string, checked: boolean) => {
@@ -85,6 +93,21 @@ export function CouponManagement() {
 
   const onOpenDialog = () => {
     setShowDialog(true);
+    setSelectedVariants([]);
+  };
+
+  const toggleVariantSelection = (variantId: string) => {
+    setSelectedVariants(prev =>
+      prev.includes(variantId) ? prev.filter(id => id !== variantId) : [...prev, variantId]
+    );
+  };
+
+  const toggleAllVariants = () => {
+    if (selectedVariants.length === variants.length) {
+      setSelectedVariants([]);
+    } else {
+      setSelectedVariants(variants.map(v => v.id));
+    }
   };
 
   if (isLoading) return <LoadingScreen />;
@@ -106,6 +129,7 @@ export function CouponManagement() {
                   <TableHead>ID</TableHead>
                   <TableHead>Code</TableHead>
                   <TableHead>Discount</TableHead>
+                  <TableHead>Applicable Variants</TableHead>
                   <TableHead>Expiry </TableHead>
                   <TableHead>Active</TableHead>
                 </TableRow>
@@ -119,6 +143,13 @@ export function CouponManagement() {
                       {coupon.discountType === "fixed"
                         ? `₹${coupon.discount} off on orders above ₹${coupon.minOrderAmount}`
                         : `${coupon.discount}% off on orders above ₹${coupon.minOrderAmount}`}
+                    </TableCell>
+                    <TableCell>
+                      {coupon.applicableVariants && coupon.applicableVariants.length > 0
+                        ? `${coupon.applicableVariants.length} variant${
+                            coupon.applicableVariants.length > 1 ? "s" : ""
+                          }`
+                        : "All variants"}
                     </TableCell>
                     <TableCell>{coupon.expiresAt ? getDate(coupon.expiresAt).toLocaleString() : "Never"}</TableCell>
                     <TableCell>
@@ -192,6 +223,38 @@ export function CouponManagement() {
                 Expires At
               </Label>
               <Input id="couponExpires" type="date" className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label className="text-right pt-2">Applicable Variants</Label>
+              <div className="col-span-3 space-y-2">
+                <div className="text-sm text-muted-foreground mb-2">
+                  Leave empty to apply to all variants, or select specific variants
+                </div>
+                <div className="flex items-center space-x-2 mb-2">
+                  <Checkbox
+                    id="select-all"
+                    checked={selectedVariants.length === variants.length && variants.length > 0}
+                    onCheckedChange={toggleAllVariants}
+                  />
+                  <label htmlFor="select-all" className="text-sm font-medium cursor-pointer">
+                    Select All ({variants.length} variants)
+                  </label>
+                </div>
+                <div className="max-h-48 overflow-y-auto border rounded-md p-2">
+                  {variants.map(variant => (
+                    <div key={variant.id} className="flex items-center space-x-2 py-1">
+                      <Checkbox
+                        id={`variant-${variant.id}`}
+                        checked={selectedVariants.includes(variant.id)}
+                        onCheckedChange={() => toggleVariantSelection(variant.id)}
+                      />
+                      <label htmlFor={`variant-${variant.id}`} className="text-sm cursor-pointer flex-1 truncate">
+                        {variant.name || variant.id}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
             <DialogFooter className="mt-2">
               <div className="flex flex-row gap-2">

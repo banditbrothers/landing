@@ -9,7 +9,8 @@ const rzp = new Razorpay({
 });
 
 export const createOrder = async (amount: number, dbId: string) => {
-  const order = await rzp.orders.create({ notes: { dbId: dbId }, amount: amount * 100, currency: "INR" });
+  const formattedAmount = BigInt(Math.ceil(amount * 100)).toString();
+  const order = await rzp.orders.create({ notes: { dbId: dbId }, amount: formattedAmount, currency: "INR" });
   return order;
 };
 
