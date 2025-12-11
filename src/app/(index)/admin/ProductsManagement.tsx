@@ -85,14 +85,14 @@ export const ProductManagement = () => {
 
   const handleExportVariantImages = () => {
     // Create CSV content
-    const csvHeaders = "Name,Image URL\n";
+    const csvHeaders = "Name,Category,Image URL\n";
     const csvRows = variants
       .map(variant => {
-        const variantName = getProductVariantName(variant, { includeProductName: true });
+        const variantName = getProductVariantName(variant, { includeProductName: false });
         const imageUrl = variant.images.mockup[0] || "";
         // Escape commas and quotes in the name
         const escapedName = `"${variantName.replace(/"/g, '""')}"`;
-        return `${escapedName},${imageUrl}`;
+        return `${escapedName},${PRODUCTS_OBJ[variant.productId].name},${imageUrl}`;
       })
       .join("\n");
 
