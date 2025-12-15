@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
 
 type SizingDialogProps = {
@@ -10,9 +11,11 @@ export function SizingDialog({ open, onClose }: SizingDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>Sizing Guide for Jersey</DialogTitle>
-        </DialogHeader>
+        <VisuallyHidden>
+          <DialogHeader>
+            <DialogTitle>Sizing Guide for Jersey</DialogTitle>
+          </DialogHeader>
+        </VisuallyHidden>
 
         <div className="relative w-full h-full aspect-video max-h-[80vh]">
           <Image
