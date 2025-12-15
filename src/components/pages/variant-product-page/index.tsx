@@ -16,7 +16,7 @@ import { useFavorites } from "@/components/stores/favorites";
 
 import { Button } from "../../ui/button";
 import { ArrowRightIcon, ShoppingCartIcon } from "../../../Icons/icons";
-import { ShareIcon } from "lucide-react";
+import { InfoIcon, ShareIcon } from "lucide-react";
 import { shareVariant } from "@/utils/share";
 import { ImageCarousel } from "../../carousels/ImageCarousel";
 import { toast } from "sonner";
@@ -35,6 +35,7 @@ import { useVariants } from "@/hooks/useVariants";
 import { ColorVariants } from "./SimilarVariants";
 import { InfoBanner } from "@/components/misc/Banners";
 import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
+import { SizingDialog } from "@/components/dialogs/SizingDialog";
 
 type ProductPageContentsProps = {
   designId: string;
@@ -66,6 +67,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
   const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState<VariantProductSizes>("one-size");
   const [colorVariants, setColorVariants] = useState<ProductVariant[]>([]);
+  const [isSizingDialogOpen, setIsSizingDialogOpen] = useState(false);
 
   const variant = variants.find(v => v.designId === designId && v.productId === productId);
 
@@ -186,12 +188,23 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
           {variantProduct.sizes.length > 1 && (
             <div className="flex flex-col gap-3">
               <div>
-                <h3 className="text-sm font-medium text-foreground">Select your size</h3>
                 {productId !== "jersey" && (
-                  <p className="text-muted-foreground text-sm">
-                    If you use a helmet from size XS to M, we recommend the small size. The measurements below are based
-                    on your head circumference.
-                  </p>
+                  <>
+                    <h3 className="text-sm font-medium text-foreground">Select your size</h3>
+                    <p className="text-muted-foreground text-sm">
+                      If you use a helmet from size XS to M, we recommend the small size. The measurements below are
+                      based on your head circumference.
+                    </p>
+                  </>
+                )}
+                {productId === "jersey" && (
+                  <div className="flex flex-row items-center">
+                    <h3 className="text-sm font-medium text-foreground">Select your size</h3>
+                    <Button variant="link" size="icon" onClick={() => setIsSizingDialogOpen(true)}>
+                      <InfoIcon className="w-4 h-4" />
+                    </Button>
+                    <SizingDialog open={isSizingDialogOpen} onClose={() => setIsSizingDialogOpen(false)} />
+                  </div>
                 )}
               </div>
               <div className="flex gap-2 flex-wrap">
