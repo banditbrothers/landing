@@ -69,6 +69,14 @@ export async function POST(request: Request) {
 
         const paymentId = data.payload.payment.entity.id;
         const paymentStatus = data.payload.payment.entity.status;
+
+        const order = await getOrder(dbId);
+        if (!order) return;
+
+        if(order.status === "paid") {
+          return new Response("Order already paid, skipping...", { status: 200 });
+        }
+
         await updateOrder(dbId, {
           "rzp.paymentId": paymentId,
           "rzp.paymentStatus": paymentStatus,
