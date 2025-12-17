@@ -5785,6 +5785,10 @@ react-dropzone@^14.3.5:
     file-selector "^2.1.0"
     prop-types "^15.8.1"
 
+"react-facebook-pixel@https://github.com/jacobknighj12/react-facebook-pixel.git":
+  version "1.0.4"
+  resolved "https://github.com/jacobknighj12/react-facebook-pixel.git#21fa1b85acf075e465674407f41a9012451166ae"
+
 react-hook-form@^7.54.2:
   version "7.54.2"
   resolved "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.54.2.tgz"

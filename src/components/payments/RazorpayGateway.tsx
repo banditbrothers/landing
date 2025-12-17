@@ -61,7 +61,7 @@ export const RazorpayPaymentGateway = ({ ref, onSuccess, onCancel, onFailed }: R
       },
       handler: (response: RazorpaySuccessResponse) => {
         if (response.razorpay_payment_id) {
-          onSuccess(response.razorpay_payment_id);
+          onSuccess(order.id);
         }
       },
     };

@@ -97,7 +97,18 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
   }, [variant]);
 
   useEffect(() => {
-    if (variant) trackVariantView({ productId: variant.productId, designId: variant.designId });
+    if (variant) {
+      const variantName = getProductVariantName(variant);
+      const variantPrice = getProductVariantPrice(variant);
+
+      trackVariantView({
+        productId: variant.productId,
+        designId: variant.designId,
+        variantId: variant.id,
+        variantName,
+        price: variantPrice,
+      });
+    }
   }, [variant]);
 
   const handleShare = () => {
@@ -107,7 +118,19 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
 
   const handleAddToCartClicked = () => {
     if (!variant) return;
-    trackVariantAddToCart({ productId: variant.productId, designId: variant.designId });
+
+    const variantName = getProductVariantName(variant);
+    const variantPrice = getProductVariantPrice(variant);
+
+    trackVariantAddToCart({
+      productId: variant.productId,
+      designId: variant.designId,
+      variantId: variant.id,
+      variantName,
+      price: variantPrice,
+      quantity,
+    });
+
     addOrUpdateCartItem(variant.id, quantity, size);
     openCart();
   };

@@ -27,6 +27,7 @@ import { useOrderActions } from "@/hooks/useOrderActions";
 import { RazorpayPaymentGateway, RazorpayPaymentGatewayRef } from "@/components/payments/RazorpayGateway";
 import { updateOrder } from "@/actions/orders";
 import { identifyUser } from "@/utils/analytics";
+import { trackMetaInitiateCheckout, trackMetaAddPaymentInfo, trackMetaPurchase } from "@/utils/metaPixel";
 import { Label } from "@/components/ui/label";
 import { CheckoutProductCard } from "@/components/cards/CheckoutProductCard";
 import { useCart } from "@/components/stores/cart";
@@ -175,6 +176,21 @@ function OrderPageContent() {
   const paymentMode = getPaymentMode(coupon, isInternational);
   const orderTotal = calculateTotal(cart, coupon, variants);
 
+  // Track InitiateCheckout when page loads with cart items
+  useEffect(() => {
+    if (variants.length > 0 && cart.length > 0) {
+      const contentIds = cart.map(item => item.variantId);
+      const total = calculateTotal(cart, coupon, variants);
+
+      trackMetaInitiateCheckout({
+        contentIds,
+        value: total,
+        numItems: cart.reduce((sum, item) => sum + item.quantity, 0),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only track once when page loads
+
   const onSubmit = async (values: z.infer<typeof orderFormSchema>) => {
     const orderedVariants: OrderedVariant[] = cart.map(product => ({
       variantId: product.variantId,
@@ -203,17 +219,41 @@ function OrderPageContent() {
 
     const orderObj = await createOrder(order);
 
+    // Track AddPaymentInfo when payment is initiated
+    const contentIds = cart.map(item => item.variantId);
+    trackMetaAddPaymentInfo({
+      contentIds,
+      value: orderTotal,
+    });
+
     if (isInternationalOrder) {
       setShowInternationalOrderDialog(true);
     } else if (orderObj.paymentMode === "rzp") {
       rzpRef.current?.handlePayment(orderObj);
     } else if (orderObj.paymentMode === "cash") {
+      // Track purchase for cash orders
+      trackMetaPurchase({
+        contentIds,
+        value: orderTotal,
+        numItems: cart.reduce((sum, item) => sum + item.quantity, 0),
+        orderId: orderObj.id,
+      });
+
       toast.success("Order Placed in Cash 🎉");
       finalizeOrder();
     }
   };
 
-  const handlePaymentSuccess = async () => {
+  const handlePaymentSuccess = async (orderId: string) => {
+    // Track purchase completion
+    const contentIds = cart.map(item => item.variantId);
+    trackMetaPurchase({
+      contentIds,
+      value: orderTotal,
+      numItems: cart.reduce((sum, item) => sum + item.quantity, 0),
+      orderId,
+    });
+
     toast.success("Order Placed 🎉");
     finalizeOrder();
   };
