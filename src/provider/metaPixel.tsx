@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import ReactPixel from "react-facebook-pixel";
 import { usePathname, useSearchParams } from "next/navigation";
 
 const PIXEL_ID = "1407174127410687";
 
-export function MetaPixelProvider({ children }: { children: React.ReactNode }) {
+function MetaPixelTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -26,5 +26,16 @@ export function MetaPixelProvider({ children }: { children: React.ReactNode }) {
     ReactPixel.pageView();
   }, [pathname, searchParams]);
 
-  return <>{children}</>;
+  return null;
+}
+
+export function MetaPixelProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Suspense fallback={null}>
+        <MetaPixelTracker />
+      </Suspense>
+      {children}
+    </>
+  );
 }
