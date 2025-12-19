@@ -47,6 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${theme}`}>
       <head>
+        <meta name="facebook-domain-verification" content="bhok31r0uqvk61om2yf0l4r9l6v9bs" />
         <noscript>
           <img
             height="1"
