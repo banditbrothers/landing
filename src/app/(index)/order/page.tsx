@@ -593,7 +593,7 @@ function OrderPageContent() {
                             How did you hear about us?
                             <RequiredStar />
                           </FormLabel>
-                          <p className="text-xs text-muted-foreground mb-2">This helps us build our small brand 🧡</p>
+                          <p className="text-xs text-muted-foreground mb-2">This Helps Us Improve our Services 🧡</p>
                           <FormControl>
                             <Select onValueChange={field.onChange} value={field.value}>
                               <SelectTrigger>
