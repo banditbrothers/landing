@@ -19,7 +19,7 @@ import { Coupon } from "@/types/coupon";
 import { getTimestamp } from "@/utils/timestamp";
 import { useRouter } from "next/navigation";
 import { LoadingIcon, LoadingScreen } from "@/components/misc/Loading";
-import { DEFAULT_ORDER_VALUES } from "@/constants/order";
+import { DEFAULT_ORDER_VALUES, REFERRAL_SOURCES } from "@/constants/order";
 import { Separator } from "@/components/ui/separator";
 
 import { getWhatsappNeedHelpWithOrderLink } from "@/utils/whatsappMessageLinks";
@@ -55,6 +55,7 @@ const orderFormSchema = z.object({
   phone: z.string().regex(/^[+]?[\d\s\-\(\)]{7,20}$/, {
     message: "Enter valid phone number with country code",
   }),
+  referralSource: z.string().min(1, "Please select how you heard about us"),
   address: z.object({
     line1: z.string().min(2, "Enter valid address"),
     line2: z.string(),
@@ -109,6 +110,7 @@ function OrderPageContent() {
   const { orderLoading, createOrder } = useOrderActions();
 
   const watchCountry = useWatch({ control: form.control, name: "address.country" });
+  const watchReferralSource = useWatch({ control: form.control, name: "referralSource" });
 
   const { cart, coupon, setCoupon, updateCartItem, removeCartItem, clearCart, clearCoupon } = useCart();
 
@@ -580,6 +582,38 @@ function OrderPageContent() {
                       )}
                     />
                   </div>
+
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="referralSource"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            How did you hear about us?
+                            <RequiredStar />
+                          </FormLabel>
+                          <p className="text-xs text-muted-foreground mb-2">This Helps Us Improve our Services 🧡</p>
+                          <FormControl>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select an option" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {REFERRAL_SOURCES.map(source => (
+                                  <SelectItem key={source.id} value={source.id}>
+                                    {source.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   <div>
                     <Label>
                       Your Mischief
@@ -764,6 +798,7 @@ function OrderPageContent() {
                       className="w-full"
                       disabled={
                         !formIsReady ||
+                        !watchReferralSource ||
                         orderLoading.create ||
                         orderLoading.update ||
                         (!isInternational && !!couponError)
