@@ -4,6 +4,7 @@ import { getAddressString } from "./address";
 import { getDate } from "./timestamp";
 import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
 import { Review } from "@/types/review";
+import { getReferralSourceLabel } from "@/constants/order";
 
 export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
   return {
@@ -15,7 +16,7 @@ export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
         fields: [
           { name: "ID", value: order.id },
           { name: "Name", value: order.name },
-          { name: "Referral Source", value: order.referralSource },
+          { name: "Referral Source", value: getReferralSourceLabel(order.referralSource) },
           { name: "Address", value: getAddressString(order.address) },
           { name: "Products", value: order.variants.map(variant => `${variant.quantity}x ${variant.variantId} - (${variant.size})`).join("\n") },
           { name: "Total", value: `₹${order.total}` },
@@ -44,7 +45,7 @@ export const getDiscordOrderMessage = (order: Order) => {
           { name: "ID", value: order.id },
           { name: "Name", value: order.name },
           { name: "Phone", value: order.phone },
-          { name: "Referral Source", value: order.referralSource },
+          { name: "Referral Source", value: getReferralSourceLabel(order.referralSource) },
           { name: "Shipping Region", value: order.isInternational ? "🌍 International" : "🇮🇳 Domestic" },
           {
             name: "Payment Details",

@@ -19,7 +19,7 @@ import { Coupon } from "@/types/coupon";
 import { getTimestamp } from "@/utils/timestamp";
 import { useRouter } from "next/navigation";
 import { LoadingIcon, LoadingScreen } from "@/components/misc/Loading";
-import { DEFAULT_ORDER_VALUES } from "@/constants/order";
+import { DEFAULT_ORDER_VALUES, REFERRAL_SOURCES } from "@/constants/order";
 import { Separator } from "@/components/ui/separator";
 
 import { getWhatsappNeedHelpWithOrderLink } from "@/utils/whatsappMessageLinks";
@@ -600,13 +600,11 @@ function OrderPageContent() {
                                 <SelectValue placeholder="Select an option" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="facebook-instagram-ads">Facebook / Instagram Ads</SelectItem>
-                                <SelectItem value="instagram-posts-reels">Instagram (Posts / Reel)</SelectItem>
-                                <SelectItem value="reddit">Reddit</SelectItem>
-                                <SelectItem value="friends-family">Friends / Family</SelectItem>
-                                <SelectItem value="google-search">Google Search</SelectItem>
-                                <SelectItem value="ai-agents">AI Agents (ChatGPT / Gemini)</SelectItem>
-                                <SelectItem value="others">Others</SelectItem>
+                                {REFERRAL_SOURCES.map(source => (
+                                  <SelectItem key={source.id} value={source.id}>
+                                    {source.label}
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                           </FormControl>
