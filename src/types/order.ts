@@ -20,6 +20,7 @@ export type Order = {
   name: string;
   email: string;
   phone: string;
+  referralSource: string;
   total: number;
   subtotal: number;
   discount: number;

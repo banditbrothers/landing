@@ -6,6 +6,7 @@ export const DEFAULT_ORDER_VALUES = isProduction
       name: "",
       phone: "",
       couponCode: "",
+      referralSource: "",
       address: {
         line1: "",
         line2: "",
@@ -20,6 +21,7 @@ export const DEFAULT_ORDER_VALUES = isProduction
       name: "test",
       phone: "9876543210",
       couponCode: "",
+      referralSource: "instagram-posts-reels",
       address: {
         line1: "test",
         line2: "",

@@ -55,6 +55,7 @@ const orderFormSchema = z.object({
   phone: z.string().regex(/^[+]?[\d\s\-\(\)]{7,20}$/, {
     message: "Enter valid phone number with country code",
   }),
+  referralSource: z.string().min(1, "Please select how you heard about us"),
   address: z.object({
     line1: z.string().min(2, "Enter valid address"),
     line2: z.string(),
@@ -109,6 +110,7 @@ function OrderPageContent() {
   const { orderLoading, createOrder } = useOrderActions();
 
   const watchCountry = useWatch({ control: form.control, name: "address.country" });
+  const watchReferralSource = useWatch({ control: form.control, name: "referralSource" });
 
   const { cart, coupon, setCoupon, updateCartItem, removeCartItem, clearCart, clearCoupon } = useCart();
 
@@ -580,6 +582,40 @@ function OrderPageContent() {
                       )}
                     />
                   </div>
+
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="referralSource"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            How did you hear about us?
+                            <RequiredStar />
+                          </FormLabel>
+                          <p className="text-xs text-muted-foreground mb-2">This helps us build our small brand 🧡</p>
+                          <FormControl>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select an option" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="facebook-instagram-ads">Facebook / Instagram Ads</SelectItem>
+                                <SelectItem value="instagram-posts-reels">Instagram (Posts / Reel)</SelectItem>
+                                <SelectItem value="reddit">Reddit</SelectItem>
+                                <SelectItem value="friends-family">Friends / Family</SelectItem>
+                                <SelectItem value="google-search">Google Search</SelectItem>
+                                <SelectItem value="ai-agents">AI Agents (ChatGPT / Gemini)</SelectItem>
+                                <SelectItem value="others">Others</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   <div>
                     <Label>
                       Your Mischief
@@ -764,6 +800,7 @@ function OrderPageContent() {
                       className="w-full"
                       disabled={
                         !formIsReady ||
+                        !watchReferralSource ||
                         orderLoading.create ||
                         orderLoading.update ||
                         (!isInternational && !!couponError)
