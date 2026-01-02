@@ -45,7 +45,8 @@ export const getVariants = async () => {
 
   try {
     const variantsRef = collection(db, Collections.variants);
-    const snapshot = await getDocs(variantsRef);
+    const q = query(variantsRef, where("isAvailable", "==", true));
+    const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
