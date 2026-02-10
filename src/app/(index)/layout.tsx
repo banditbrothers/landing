@@ -5,7 +5,7 @@ import { LoadingScreen } from "@/components/misc/Loading";
 import { CartSheet } from "@/components/sheets/CartSheet";
 import { useVariants } from "@/hooks/useVariants";
 
-const LATEST_CART_VERSION = "2";
+const LATEST_CART_VERSION = "3";
 
 // Check and update cart version immediately when module loads on client
 if (typeof window !== "undefined") {
