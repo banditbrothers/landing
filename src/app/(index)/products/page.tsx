@@ -61,7 +61,7 @@ export default function ProductsPage() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-8">
-          {PRODUCTS.map(product => (
+          {PRODUCTS.filter(product => product.id !== "jersey").map(product => (
             <div key={product.id} className="w-full md:w-1/2 lg:w-1/4 px-4">
               <ProductCard product={product} />
             </div>

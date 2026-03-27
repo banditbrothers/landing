@@ -934,24 +934,24 @@ export const PRODUCTS: Product[] = [
       ],
     },
   },
-  // {
-  //   id: "jersey",
-  //   name: "Jersey",
-  //   description: [
-  //     "Elevate your performance and style with our premium athletic jerseys designed for the modern athlete.",
-  //     "Perfect for training, sports, or casual wear, these lightweight jerseys feature moisture-wicking technology to keep you cool and comfortable during any activity.",
-  //     "Made from quick-dry DryFit fabric, they combine superior comfort with bold, eye-catching designs that make a statement on and off the field.",
-  //   ],
-  //   basePrice: 899,
-  //   sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"],
-  //   material: "4 Way Quick-Dri DryFit Fabric",
-  //   dimensions: { },
-  //   baseImages: {
-  //     mockup: [
-  //       "https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/jersey/featured-jersey-image.webp",
-  //     ],
-  //   },
-  // },
+  {
+    id: "jersey",
+    name: "Jersey",
+    description: [
+      "Elevate your performance and style with our premium athletic jerseys designed for the modern athlete.",
+      "Perfect for training, sports, or casual wear, these lightweight jerseys feature moisture-wicking technology to keep you cool and comfortable during any activity.",
+      "Made from quick-dry DryFit fabric, they combine superior comfort with bold, eye-catching designs that make a statement on and off the field.",
+    ],
+    basePrice: 899,
+    sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"],
+    material: "4 Way Quick-Dri DryFit Fabric",
+    dimensions: { },
+    baseImages: {
+      mockup: [
+        "https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/jersey/featured-jersey-image.webp",
+      ],
+    },
+  },
 ];
 export const PRODUCTS_OBJ = PRODUCTS.reduce((acc, product) => {
   const { id, ...rest } = product;

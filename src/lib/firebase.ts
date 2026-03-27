@@ -41,7 +41,7 @@ export const getCollectionDocumentId = (collectionName: string) => {
 export const db = getFirestore(app);
 
 export const getVariants = async () => {
-  console.log("fetching variants");
+  // console.log("fetching variants");
 
   try {
     const variantsRef = collection(db, Collections.variants);
