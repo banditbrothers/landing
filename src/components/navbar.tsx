@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -34,7 +34,7 @@ export default function NavBar() {
 
   return (
     <>
-      <motion.header
+      <m.header
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
           !isHomePath ? "bg-background" : isScrolled ? "bg-background" : "bg-transparent"
         }`}
@@ -67,7 +67,7 @@ export default function NavBar() {
             </div>
           )}
         </div>
-      </motion.header>
+      </m.header>
     </>
   );
 }
