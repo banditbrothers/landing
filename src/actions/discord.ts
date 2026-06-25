@@ -1,21 +1,22 @@
 "use server";
 
+import "server-only"
 import { isProduction } from "@/utils/misc";
-import { MessageCreateOptions } from "discord.js";
+import type { DiscordMessage } from "@/types/discord";
 
 // order channel
 const ordersChannelId = isProduction ? "1331164962059587614" : "1408025970878713928";
 const reviewsChannelId = "1339632586602971280";
 
-export async function sendDiscordOrderMessage(data: MessageCreateOptions) {
+export async function sendDiscordOrderMessage(data: DiscordMessage) {
   return sendDiscordMessage(ordersChannelId, data);
 }
 
-export async function sendDiscordReviewMessage(data: MessageCreateOptions) {
+export async function sendDiscordReviewMessage(data: DiscordMessage) {
   return sendDiscordMessage(reviewsChannelId, data);
 }
 
-const sendDiscordMessage = async (channelId: string, data: MessageCreateOptions) => {
+const sendDiscordMessage = async (channelId: string, data: DiscordMessage) => {
   // if (!isProduction) {
   //   console.info("Skipping Discord message in non-production environment");
   //   return;

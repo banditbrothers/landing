@@ -1,5 +1,5 @@
+import type { DiscordMessage } from "@/types/discord";
 import { Order } from "@/types/order";
-import { MessageCreateOptions } from "discord.js";
 import { getAddressString } from "./address";
 import { getDate } from "./timestamp";
 import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
@@ -25,7 +25,7 @@ export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
         timestamp: new Date(getDate(order.createdAt)).toISOString(),
       },
     ],
-  } as MessageCreateOptions;
+  } satisfies DiscordMessage;
 }
 
 export const getDiscordOrderMessage = (order: Order) => {
@@ -60,7 +60,7 @@ export const getDiscordOrderMessage = (order: Order) => {
         timestamp: new Date(getDate(order.createdAt)).toISOString(),
       },
     ],
-  } as MessageCreateOptions;
+  } satisfies DiscordMessage;
 };
 
 export const getDiscordReviewMessage = (review: Review) => {
@@ -72,12 +72,12 @@ export const getDiscordReviewMessage = (review: Review) => {
         fields: [
           { name: "ID", value: review.id },
           { name: "Name", value: review.name },
-          { name: "Rating", value: review.rating },
+          { name: "Rating", value: String(review.rating) },
           { name: "Title", value: review.title },
           { name: "Comment", value: review.comment },
           { name: "Contains Images", value: review.images.length > 0 ? "Yes" : "No" },
         ],
       },
     ],
-  } as MessageCreateOptions;
+  } satisfies DiscordMessage;
 };
