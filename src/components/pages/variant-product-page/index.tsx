@@ -58,7 +58,7 @@ const sizeOptionLabels: Record<VariantProductSizes, string> = {
 };
 
 export const ProductPageContents = ({ designId, productId }: ProductPageContentsProps) => {
-  const { data: variants } = useVariants();
+  const { data: variants, isReady } = useVariants();
 
   const router = useRouter();
   const { isFavorite, toggleFav } = useFavorites();
@@ -72,11 +72,10 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
   const variant = variants.find(v => v.designId === designId && v.productId === productId);
 
   useEffect(() => {
-    if (!variant) {
-      toast.error("Oops! Looks like the variant you're looking for doesn't exist");
-      router.replace(`/products`);
-    }
-  }, [variant, router]);
+    if (!isReady || variant) return;
+    toast.error("Oops! Looks like the variant you're looking for doesn't exist");
+    router.replace(`/products`);
+  }, [isReady, variant, router]);
 
   useEffect(() => {
     if (variant && variants) {

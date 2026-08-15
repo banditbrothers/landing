@@ -18,4 +18,4 @@ Disallow: /_next/
 # Static assets are allowed by default
 # (designs/, how-to-wear/, know-your-product/ are in public folder)
 
-Sitemap: https://banditbrothers.com/sitemap.xml 
+Sitemap: https://www.banditbrothers.in/sitemap.xml

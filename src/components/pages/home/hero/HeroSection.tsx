@@ -1,8 +1,4 @@
-import { m } from "motion/react";
-import { scrollTo } from "@/utils/misc";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { HeroActions } from "./HeroActions";
 
 // const uploadVariantImages = async () => {
 //   try {
@@ -39,39 +35,12 @@ export const HeroSection = () => {
       </video>
       <div className="absolute inset-0 bg-black/50 z-10"></div>
       <div className="container mx-auto px-4 z-20 text-center">
-        <m.h1
-          className="text-5xl md:text-7xl font-bold mb-6 text-white"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}>
-          Wear Your Mischief
-        </m.h1>
-        <m.p
-          className="text-xl md:text-2xl mb-8 text-white"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}>
+        <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white">Wear Your Mischief</h1>
+        <p className="text-xl md:text-2xl mb-8 text-white">
           Experience ultimate comfort and style with Bandit Brothers
-        </m.p>
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}>
-          <div className="flex flex-row justify-center items-center gap-4">
-            <Link href="/products">
-              <Button size="lg" variant="bandit-hover" className="group">
-                Explore Products
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-            <Button size="lg" variant="outline" onClick={() => scrollTo("library-bestsellers")}>
-              Best Sellers
-            </Button>
-          </div>
-        </m.div>
+        </p>
+        <HeroActions />
       </div>
-
-      {/* <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-b from-transparent to-black" /> */}
     </section>
   );
 };

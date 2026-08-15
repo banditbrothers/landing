@@ -105,7 +105,7 @@ function OrderPageContent() {
   });
 
   const router = useRouter();
-  const { data: variants } = useVariants();
+  const { data: variants, isReady } = useVariants();
 
   const { orderLoading, createOrder } = useOrderActions();
 
@@ -340,6 +340,8 @@ function OrderPageContent() {
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const { message: couponError } = validateCouponInCart(coupon, cart, variants);
+
+  if (cart.length > 0 && !isReady) return <LoadingScreen />;
 
   return (
     <>
@@ -623,11 +625,12 @@ function OrderPageContent() {
                     <div className="flex flex-col gap-2">
                       {cart.map(item => {
                         const variant = variants.find(v => v.id === item.variantId);
+                        if (!variant) return null;
 
                         return (
                           <CheckoutProductCard
                             key={`${item.variantId}-${item.size}`}
-                            variant={variant!}
+                            variant={variant}
                             updateCartItemBy={updateCartItem}
                             removeCartItem={removeCartItem}
                             quantity={item.quantity}

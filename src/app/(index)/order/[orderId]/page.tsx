@@ -23,7 +23,7 @@ import { getProductVariantName, getProductVariantPrice, getSizeLabel } from "@/u
 type OrderPageProps = { params: Promise<{ orderId: string }> };
 
 export default function OrderPage({ params }: OrderPageProps) {
-  const { data: variants } = useVariants();
+  const { data: variants, isReady } = useVariants();
 
   const [order, setOrder] = useState<Order | null>(null);
   const { copy, isCopied } = useCopyToClipboard();
@@ -37,7 +37,7 @@ export default function OrderPage({ params }: OrderPageProps) {
     fetchOrder();
   }, [params]);
 
-  if (!order) return <LoadingScreen />;
+  if (!order || !isReady) return <LoadingScreen />;
 
   return (
     <div className="container mx-auto py-8 px-4 mt-16">
@@ -93,7 +93,8 @@ export default function OrderPage({ params }: OrderPageProps) {
             <CardContent>
               <div className="space-y-4">
                 {order.variants.map((orderVariant, index) => {
-                  const variant = variants.find(v => v.id === orderVariant.variantId)!;
+                  const variant = variants.find(v => v.id === orderVariant.variantId);
+                  if (!variant) return null;
 
                   const name = getProductVariantName(variant, { includeProductName: true });
                   const price = getProductVariantPrice(variant);

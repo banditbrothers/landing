@@ -40,7 +40,9 @@ export const ReviewCard = ({ review, containerStyle = {} }: ReviewCardProps) => 
               <div className="flex flex-wrap gap-2 items-center">
                 {review.source === "website" &&
                   review.variantIds.map(variantId => {
-                    const variant = variants.find(v => v.id === variantId)!;
+                    const variant = variants.find(v => v.id === variantId);
+                    if (!variant) return null;
+
                     const variantName = getProductVariantName(variant, { includeProductName: true });
 
                     return (

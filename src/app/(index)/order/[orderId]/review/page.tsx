@@ -48,7 +48,7 @@ type OrderPageProps = { params: Promise<{ orderId: string }> };
 export default function OrderReviewPage({ params }: OrderPageProps) {
   const router = useRouter();
 
-  const { data: variants } = useVariants();
+  const { data: variants, isReady } = useVariants();
 
   const [order, setOrder] = useState<Order | null>(null);
   const [submitStatus, setSubmitStatus] = useState<"not-submitted" | "submitting" | "submitted">("not-submitted");
@@ -132,6 +132,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
 
   if (!order) return <LoadingScreen />;
   if (submitStatus === "submitted") return <ReviewSubmitted order={order} />;
+  if (!isReady) return <LoadingScreen />;
 
   return (
     <div className="container mx-auto max-w-2xl mt-20 min-h-screen">
@@ -164,7 +165,8 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                 <AccordionContent className="p-3">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {order.variants.map(orderVariant => {
-                      const variant = variants.find(v => v.id === orderVariant.variantId)!;
+                      const variant = variants.find(v => v.id === orderVariant.variantId);
+                      if (!variant) return null;
 
                       const name = getProductVariantName(variant, { includeProductName: true });
                       const quantity = orderVariant.quantity;

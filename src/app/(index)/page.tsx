@@ -1,42 +1,37 @@
-"use client";
-
-import { useEffect } from "react";
+import type { Metadata } from "next";
 
 import { HeroSection } from "@/components/pages/home/hero/HeroSection";
-import { ProductLibrary } from "@/components/pages/home/product-library/ProductLibrarySection";
-import { KnowYourProductSection } from "@/components/pages/home/know-your-product/KnowYourProductSection";
-import { TestimonialsSection } from "@/components/pages/home/testimonials/TestimonialsSection";
-import { InstagramFeedSection } from "@/components/pages/home/instagram/InstagramFeedSection";
-import { HowToWearSection } from "@/components/pages/home/how-to-wear/HowToWearSection";
+import { LandingPageSections } from "@/components/pages/home/LandingPageSections";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
-export default function LandingPage() {
-  useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("show");
-        }
-      });
-    });
+export const metadata: Metadata = {
+  title: {
+    absolute: `${SITE_NAME} - Wear your Mischief`,
+  },
+  description: SITE_DESCRIPTION,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: `${SITE_NAME} - Wear your Mischief`,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    type: "website",
+    images: "/logo-full-socials.png",
+  },
+  twitter: {
+    title: `${SITE_NAME} - Wear your Mischief`,
+    description: SITE_DESCRIPTION,
+    card: "summary_large_image",
+    images: "/logo-full-socials.png",
+  },
+};
 
-    document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
+export default function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground space-y-20">
       <HeroSection />
-
-      <ProductLibrary />
-
-      <HowToWearSection />
-
-      <TestimonialsSection />
-
-      <KnowYourProductSection />
-
-      <InstagramFeedSection />
+      <LandingPageSections />
     </div>
   );
 }

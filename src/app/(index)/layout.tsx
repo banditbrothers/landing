@@ -1,34 +1,5 @@
-"use client";
-
-import { LazyMotion, domAnimation } from "motion/react"
-import { SearchDialog } from "@/components/dialogs/SearchDialog";
-import { LoadingScreen } from "@/components/misc/Loading";
-import { CartSheet } from "@/components/sheets/CartSheet";
-import { useVariants } from "@/hooks/useVariants";
-
-const LATEST_CART_VERSION = "3";
-
-// Check and update cart version immediately when module loads on client
-if (typeof window !== "undefined") {
-  const cartVersion = localStorage.getItem("cartVersion");
-  if (!cartVersion || cartVersion !== LATEST_CART_VERSION) {
-    localStorage.setItem("cartVersion", LATEST_CART_VERSION);
-    localStorage.removeItem("cart");
-    window.location.reload();
-  }
-}
+import { IndexClientLayout } from "./IndexClientLayout";
 
 export default function IndexLayout({ children }: { children: React.ReactNode }) {
-  const { data: variants } = useVariants();
-
-  if (!variants || variants.length === 0) return <LoadingScreen />;
-  return (
-    <>
-      <LazyMotion features={domAnimation} strict>
-        {children}
-      </LazyMotion>
-      <SearchDialog />
-      <CartSheet />
-    </>
-  );
+  return <IndexClientLayout>{children}</IndexClientLayout>;
 }

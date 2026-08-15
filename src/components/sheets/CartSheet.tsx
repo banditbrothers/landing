@@ -11,24 +11,31 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { BULK_BUY_COUPON, RUNNING_COUPON } from "@/components/typography/coupons";
 import { formatCurrency } from "@/utils/price";
 import { useVariants } from "@/hooks/useVariants";
-import { getProductVariantPrice } from "@/utils/product";
+import { getCartSubtotal } from "@/utils/cart";
+import { LoadingIcon } from "@/components/misc/Loading";
 
 export const CartSheet = () => {
   const { cart: cartItems, isCartOpen, closeCart, updateCartItem, removeCartItem } = useCart();
-  const { data: variants } = useVariants();
+  const { data: variants, isReady } = useVariants();
 
-  const subtotal = cartItems.reduce((acc, item) => {
-    const variant = variants.find(v => v.id === item.variantId);
-    return acc + getProductVariantPrice(variant!) * item.quantity;
-  }, 0);
+  const subtotal = getCartSubtotal(cartItems, variants);
 
   const CartContent = () => {
+    if (cartItems.length > 0 && !isReady) {
+      return (
+        <div className="flex h-full items-center justify-center py-4">
+          <LoadingIcon />
+        </div>
+      );
+    }
+
     return (
       <div className="flex h-full flex-col gap-4 py-4">
         <RUNNING_COUPON.CartMessageElement />
 
         {cartItems.map(item => {
-          const variant = variants.find(v => v.id === item.variantId)!;
+          const variant = variants.find(v => v.id === item.variantId);
+          if (!variant) return null;
 
           return (
             <CheckoutProductCard
@@ -81,7 +88,7 @@ export const CartSheet = () => {
           </div>
           <p className="text-muted-foreground text-xs mb-2">Coupons can be applied on the next page</p>
         </div>
-        <Button disabled={cartItems.length === 0} className="w-full" onClick={handleCheckout}>
+        <Button disabled={cartItems.length === 0 || !isReady} className="w-full" onClick={handleCheckout}>
           Checkout
         </Button>
         <Button variant="ghost" className="w-full" onClick={closeCart}>

@@ -10,6 +10,8 @@ import Footer from "@/components/footer";
 import { MetaPixelProvider } from "@/provider/metaPixel";
 
 import { TanstackQueryProvider } from "@/provider/TanstackQuery";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
@@ -23,13 +25,23 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Bandit Brothers - Wear your Mischief",
-  description: "One Stop Shop for your Bandana Needs",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} - Wear your Mischief`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
   openGraph: {
+    title: `${SITE_NAME} - Wear your Mischief`,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
     images: "/logo-full-socials.png",
     type: "website",
   },
   twitter: {
+    title: `${SITE_NAME} - Wear your Mischief`,
+    description: SITE_DESCRIPTION,
     images: "/logo-full-socials.png",
     card: "summary_large_image",
   },
@@ -47,6 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${theme}`}>
       <head>
+        <JsonLd />
         <meta name="facebook-domain-verification" content="bhok31r0uqvk61om2yf0l4r9l6v9bs" />
         <noscript>
           <img

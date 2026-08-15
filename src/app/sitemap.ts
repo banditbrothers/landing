@@ -1,10 +1,11 @@
 import { MetadataRoute } from 'next';
 import { DESIGNS, PRODUCTS } from '@/data/products';
+import { SITE_URL } from '@/lib/site';
 
 export const revalidate = 604800;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://banditbrothers.com';
+  const baseUrl = SITE_URL;
   
   const staticRoutes: MetadataRoute.Sitemap = [
     {
