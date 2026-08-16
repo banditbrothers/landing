@@ -4,7 +4,7 @@ import { LazyMotion, domAnimation } from "motion/react";
 import { SearchDialog } from "@/components/dialogs/SearchDialog";
 import { CartSheet } from "@/components/sheets/CartSheet";
 
-const LATEST_CART_VERSION = "3";
+const LATEST_CART_VERSION = "4";
 
 if (typeof window !== "undefined") {
   const cartVersion = localStorage.getItem("cartVersion");
