@@ -10,6 +10,7 @@ import Footer from "@/components/footer";
 import { MetaPixelProvider } from "@/provider/metaPixel";
 
 import { TanstackQueryProvider } from "@/provider/TanstackQuery";
+import { MotionProvider } from "@/provider/MotionProvider";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
@@ -77,9 +78,11 @@ export default function RootLayout({
             <TanstackQueryProvider>
               <Toaster theme={theme} richColors position="top-right" expand />
               <main>
-                <Navbar />
-                {children}
-                <Footer />
+                <MotionProvider>
+                  <Navbar />
+                  {children}
+                  <Footer />
+                </MotionProvider>
               </main>
             </TanstackQueryProvider>
           </CSPostHogProvider>

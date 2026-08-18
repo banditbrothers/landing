@@ -1,6 +1,5 @@
 "use client";
 
-import { LazyMotion, domAnimation } from "motion/react";
 import { SearchDialog } from "@/components/dialogs/SearchDialog";
 import { CartSheet } from "@/components/sheets/CartSheet";
 
@@ -18,9 +17,7 @@ if (typeof window !== "undefined") {
 export function IndexClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <LazyMotion features={domAnimation} strict>
-        {children}
-      </LazyMotion>
+      {children}
       <SearchDialog />
       <CartSheet />
     </>
