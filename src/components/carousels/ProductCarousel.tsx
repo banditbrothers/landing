@@ -8,9 +8,10 @@ import { ProductVariant } from "@/types/product";
 
 interface ProductCarouselProps {
   variants: ProductVariant[];
+  showMoreColorsBadge?: boolean;
 }
 
-export const ProductCarousel = ({ variants }: ProductCarouselProps) => {
+export const ProductCarousel = ({ variants, showMoreColorsBadge = false }: ProductCarouselProps) => {
   return (
     <Carousel
       opts={{ align: "center", loop: true }}
@@ -30,7 +31,10 @@ export const ProductCarousel = ({ variants }: ProductCarouselProps) => {
         {variants.map(variant => (
           <CarouselItem key={variant.id} className="basis-3/5 md:basis-1/2 lg:basis-1/4">
             <div className="scale-[0.9] w-full h-full transition-transform duration-300 hover:scale-[0.95]">
-              <ProductVariantCard productVariant={variant} showFavoriteButton={false}>
+              <ProductVariantCard
+                productVariant={variant}
+                showFavoriteButton={false}
+                showMoreColorsBadge={showMoreColorsBadge}>
                 <VariantNameAndArrowBanner productVariant={variant} />
               </ProductVariantCard>
             </div>

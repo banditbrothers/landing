@@ -10,7 +10,8 @@ import { handleMultipleParams, useParamBasedFeatures } from "@/hooks/useParamBas
 import { useFavorites } from "../stores/favorites";
 import { LoadingIcon } from "../misc/Loading";
 import { DesignCategory, DesignColor, ProductVariant } from "@/types/product";
-import { DESIGN_CATEGORIES_OBJ, DESIGN_COLOR_OBJ, DESIGNS_OBJ } from "@/data/products";
+import { DESIGN_CATEGORIES_OBJ, DESIGN_COLOR_OBJ, DESIGNS_OBJ, getColorVariantIds } from "@/data/products";
+import { sortOutOfStockLast } from "@/utils/product";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 interface ProductVariantGridProps {
@@ -99,46 +100,50 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
   // Ensure sortByParam is a string
   const currentSortBy = Array.isArray(sortByParam) ? sortByParam[0] : sortByParam || "newest-arrivals";
 
-  const filteredDesigns = productVariants
-    .filter(productVariant => {
-      return productVariant.isDiscoverable !== false;
-    })
-    .filter(productVariant => {
-      return isBestSellerFilterSelected ? productVariant.isBestSeller : true;
-    })
-    .filter(productVariant => {
-      return isFavFilterSelected ? isFavorite(productVariant.designId) : true;
-    })
-    .filter(productVariant => {
-      return (
-        selectedCategories.length === 0 || selectedCategories.includes(DESIGNS_OBJ[productVariant.designId].category)
-      );
-    })
-    .filter(productVariant => {
-      return (
-        selectedColors.length === 0 ||
-        selectedColors.some(color => DESIGNS_OBJ[productVariant.designId].colors.includes(color))
-      );
-    })
-    .filter(productVariant => {
-      return productVariant.images.mockup.length > 0;
-    })
-    .sort((a, b) => {
-      const sortBy = currentSortBy as SortOption;
+  const filteredDesigns = sortOutOfStockLast(
+    productVariants
+      .filter(productVariant => {
+        // Color variants of a design are always listed; isDiscoverable only hides other variants
+        const isColorVariant = getColorVariantIds(productVariant.designId).length > 1;
+        return isColorVariant || productVariant.isDiscoverable !== false;
+      })
+      .filter(productVariant => {
+        return isBestSellerFilterSelected ? productVariant.isBestSeller : true;
+      })
+      .filter(productVariant => {
+        return isFavFilterSelected ? isFavorite(productVariant.designId) : true;
+      })
+      .filter(productVariant => {
+        return (
+          selectedCategories.length === 0 || selectedCategories.includes(DESIGNS_OBJ[productVariant.designId].category)
+        );
+      })
+      .filter(productVariant => {
+        return (
+          selectedColors.length === 0 ||
+          selectedColors.some(color => DESIGNS_OBJ[productVariant.designId].colors.includes(color))
+        );
+      })
+      .filter(productVariant => {
+        return productVariant.images.mockup.length > 0;
+      })
+      .sort((a, b) => {
+        const sortBy = currentSortBy as SortOption;
 
-      switch (sortBy) {
-        case "newest-arrivals":
-          return b.createdAt - a.createdAt;
-        case "oldest-arrivals":
-          return a.createdAt - b.createdAt;
-        case "name-asc":
-          return DESIGNS_OBJ[a.designId].name.localeCompare(DESIGNS_OBJ[b.designId].name);
-        case "name-desc":
-          return DESIGNS_OBJ[b.designId].name.localeCompare(DESIGNS_OBJ[a.designId].name);
-        default:
-          return b.createdAt - a.createdAt;
-      }
-    });
+        switch (sortBy) {
+          case "newest-arrivals":
+            return b.createdAt - a.createdAt;
+          case "oldest-arrivals":
+            return a.createdAt - b.createdAt;
+          case "name-asc":
+            return DESIGNS_OBJ[a.designId].name.localeCompare(DESIGNS_OBJ[b.designId].name);
+          case "name-desc":
+            return DESIGNS_OBJ[b.designId].name.localeCompare(DESIGNS_OBJ[a.designId].name);
+          default:
+            return b.createdAt - a.createdAt;
+        }
+      })
+  );
 
   const isColorOrCategoryFilterSelected = selectedColors.length > 0 || selectedCategories.length > 0;
 

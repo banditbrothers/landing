@@ -9,9 +9,15 @@ import { Button } from "../ui/button";
 import { useCart } from "../stores/cart";
 import { formatCurrency } from "@/utils/price";
 import { ProductVariant } from "@/types/product";
-import { DESIGNS_OBJ, getColorVariantIds, PRODUCTS_OBJ } from "@/data/products";
+import { DESIGNS_OBJ, getColorVariantIds } from "@/data/products";
 import { getProductVariantUrl } from "@/utils/share";
-import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
+import {
+  exceedsStock,
+  getFirstInStockSize,
+  getProductVariantName,
+  getProductVariantPrice,
+  isVariantOutOfStock,
+} from "@/utils/product";
 import { Badge } from "../ui/badge";
 import { useRouter } from "next/navigation";
 
@@ -19,17 +25,17 @@ interface ProductVariantCardProps {
   productVariant: ProductVariant;
   openInNewTab?: boolean;
   showFavoriteButton?: boolean;
+  showMoreColorsBadge?: boolean;
   children: React.ReactNode;
   optimizeImageQualityOnMobile?: boolean;
-  showMoreColorsBadge?: boolean;
 }
 
 export const ProductVariantCard = ({
   productVariant,
   children,
   optimizeImageQualityOnMobile = true,
-  showMoreColorsBadge = true,
   showFavoriteButton = true,
+  showMoreColorsBadge = false,
   openInNewTab = false,
 }: ProductVariantCardProps) => {
   const { isFavorite, toggleFav } = useFavorites();
@@ -40,6 +46,7 @@ export const ProductVariantCard = ({
 
   const productLink = getProductVariantUrl(productVariant);
 
+  const isOutOfStock = isVariantOutOfStock(productVariant);
   const hasColorVariants = getColorVariantIds(productVariant.designId).length > 1;
 
   return (
@@ -51,7 +58,12 @@ export const ProductVariantCard = ({
           </div>
         )}
         <div className="absolute top-5 left-5 z-10 flex flex-col gap-2">
-          {hasColorVariants && showMoreColorsBadge && (
+          {isOutOfStock && (
+            <Badge variant="secondary" className="w-fit">
+              Out of Stock
+            </Badge>
+          )}
+          {showMoreColorsBadge && hasColorVariants && (
             <Badge variant="default" className="bg-bandit-orange text-white w-fit hover:bg-bandit-orange">
               More Colors Available
             </Badge>
@@ -90,14 +102,14 @@ export const ProductVariantCard = ({
 export const VariantNameAndPriceBanner = ({ productVariant }: { productVariant: ProductVariant }) => {
   const { updateCartItem, cart } = useCart();
 
+  // Quick-add uses the first in-stock size; undefined when every size is sold out
+  const defaultSize = getFirstInStockSize(productVariant);
+
   function handleAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     e.stopPropagation();
 
-    // Get the default size (first available size) from the product
-    const variantProduct = PRODUCTS_OBJ[productVariant.productId];
-    const defaultSize = variantProduct?.sizes?.[0] || "one-size";
-
+    if (!defaultSize) return;
     updateCartItem(productVariant.id, 1, defaultSize);
   }
 
@@ -105,9 +117,6 @@ export const VariantNameAndPriceBanner = ({ productVariant }: { productVariant: 
   const variantPrice = getProductVariantPrice(productVariant);
   const variantName = getProductVariantName(productVariant);
 
-  // Get the default size to check cart status
-  const variantProduct = PRODUCTS_OBJ[productVariant.productId];
-  const defaultSize = variantProduct?.sizes?.[0] || "one-size";
   const cartItem = cart.find(item => item.variantId === productVariant.id && item.size === defaultSize);
   return (
     <div className="flex flex-col w-full mt-4 px-1 justify-between items-start gap-6">
@@ -120,10 +129,17 @@ export const VariantNameAndPriceBanner = ({ productVariant }: { productVariant: 
           <span>
             <CategoryBadge category={variantDesign.category} />
           </span>
-          <Button type="button" variant="outline" className="w-fit" onClick={handleAddToCart}>
-            <ShoppingCartIcon className="w-4 h-4" />
-            {cartItem && cartItem.quantity}
-          </Button>
+          {defaultSize && (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-fit"
+              disabled={exceedsStock(productVariant, defaultSize, (cartItem?.quantity ?? 0) + 1)}
+              onClick={handleAddToCart}>
+              <ShoppingCartIcon className="w-4 h-4" />
+              {cartItem && cartItem.quantity}
+            </Button>
+          )}
         </div>
       </div>
     </div>

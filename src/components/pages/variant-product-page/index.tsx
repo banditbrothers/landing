@@ -16,7 +16,7 @@ import { useFavorites } from "@/components/stores/favorites";
 
 import { Button } from "../../ui/button";
 import { ArrowRightIcon, ShoppingCartIcon } from "../../../Icons/icons";
-import { InfoIcon, ShareIcon } from "lucide-react";
+import { BellIcon, InfoIcon, ShareIcon } from "lucide-react";
 import { shareVariant } from "@/utils/share";
 import { ImageCarousel } from "../../carousels/ImageCarousel";
 import { toast } from "sonner";
@@ -29,13 +29,21 @@ import { QuantityStepper } from "@/components/misc/QuantityStepper";
 import { formatCurrency } from "@/utils/price";
 import Link from "next/link";
 import { ProductVariant } from "@/types/product";
-import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
+import {
+  getFirstInStockSize,
+  getProductVariantName,
+  getProductVariantPrice,
+  getSizeStock,
+  isSizeInStock,
+  LOW_STOCK_THRESHOLD,
+} from "@/utils/product";
 import { DESIGNS_OBJ, getColorVariantIds, MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING, PRODUCTS_OBJ } from "@/data/products";
 import { useVariants } from "@/hooks/useVariants";
 import { ColorVariants } from "./SimilarVariants";
 import { InfoBanner } from "@/components/misc/Banners";
 import { getWhatsappNeedHelpLink } from "@/utils/whatsappMessageLinks";
 import { SizingDialog } from "@/components/dialogs/SizingDialog";
+import { NotifyMeDialog } from "@/components/dialogs/NotifyMeDialog";
 
 type ProductPageContentsProps = {
   designId: string;
@@ -62,12 +70,13 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
 
   const router = useRouter();
   const { isFavorite, toggleFav } = useFavorites();
-  const { openCart, updateCartItem: addOrUpdateCartItem } = useCart();
+  const { cart, openCart, updateCartItem: addOrUpdateCartItem } = useCart();
 
   const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState<VariantProductSizes>("one-size");
   const [colorVariants, setColorVariants] = useState<ProductVariant[]>([]);
   const [isSizingDialogOpen, setIsSizingDialogOpen] = useState(false);
+  const [isNotifyDialogOpen, setIsNotifyDialogOpen] = useState(false);
 
   const variant = variants.find(v => v.designId === designId && v.productId === productId);
 
@@ -85,15 +94,27 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
     }
   }, [variant, variants, productId]);
 
-  // Initialize size based on available product sizes
+  // Initialize size: first in-stock size, else the first size.
+  // Keyed on the variant id so a background refetch doesn't reset the customer's choice.
   useEffect(() => {
     if (variant) {
       const variantProduct = PRODUCTS_OBJ[variant.productId];
       if (variantProduct?.sizes?.length > 0) {
-        setSize(variantProduct.sizes[0] as VariantProductSizes);
+        setSize((getFirstInStockSize(variant) ?? variantProduct.sizes[0]) as VariantProductSizes);
       }
     }
-  }, [variant]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variant?.id]);
+
+  // Units of the selected size the customer can still add (undefined = stock not tracked)
+  const sizeStock = variant ? getSizeStock(variant, size) : undefined;
+  const quantityInCart = cart.find(item => item.variantId === variant?.id && item.size === size)?.quantity ?? 0;
+  const maxAddable = sizeStock === undefined ? undefined : Math.max(0, sizeStock - quantityInCart);
+
+  // Keep the selected quantity within what's left when size/stock changes
+  useEffect(() => {
+    if (maxAddable !== undefined && maxAddable > 0) setQuantity(q => Math.min(q, maxAddable));
+  }, [maxAddable]);
 
   useEffect(() => {
     if (variant) {
@@ -130,6 +151,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
       quantity,
     });
 
+    if (maxAddable !== undefined && quantity > maxAddable) return;
     addOrUpdateCartItem(variant.id, quantity, size);
     openCart();
   };
@@ -230,48 +252,83 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
                 )}
               </div>
               <div className="flex gap-2 flex-wrap">
-                {variantProduct.sizes.map(sizeOption => (
-                  <label
-                    key={sizeOption}
-                    className={`
+                {variantProduct.sizes.map(sizeOption => {
+                  const isSoldOut = !isSizeInStock(variant, sizeOption);
+                  return (
+                    <label
+                      key={sizeOption}
+                      className={`
                       flex items-center justify-center px-4 py-2 border-2 rounded-lg cursor-pointer transition-all duration-200
                       ${
                         size === sizeOption
                           ? "border-primary bg-primary text-primary-foreground"
                           : "border-muted-foreground/20 bg-background text-foreground hover:border-primary/50 hover:bg-primary/5"
                       }
+                      ${isSoldOut ? "opacity-60" : ""}
                     `}>
-                    <input
-                      type="radio"
-                      name="size"
-                      value={sizeOption}
-                      checked={size === sizeOption}
-                      onChange={e => setSize(e.target.value as VariantProductSizes)}
-                      className="sr-only"
-                    />
-                    <span className="text-sm font-medium">{sizeOptionLabels[sizeOption as VariantProductSizes]}</span>
-                  </label>
-                ))}
+                      <input
+                        type="radio"
+                        name="size"
+                        value={sizeOption}
+                        checked={size === sizeOption}
+                        onChange={e => setSize(e.target.value as VariantProductSizes)}
+                        className="sr-only"
+                      />
+                      <span className={`text-sm font-medium ${isSoldOut ? "line-through" : ""}`}>
+                        {sizeOptionLabels[sizeOption as VariantProductSizes]}
+                      </span>
+                      {isSoldOut && <span className="ml-2 text-xs">Sold out</span>}
+                    </label>
+                  );
+                })}
               </div>
             </div>
           )}
 
           <div className="flex flex-col gap-2">
-            <QuantityStepper
-              quantity={quantity}
-              increment={() => setQuantity(q => q + 1)}
-              decrement={() => setQuantity(q => q - 1)}
-            />
+            {sizeStock === 0 ? (
+              <p className="text-sm font-medium text-destructive">Out of stock</p>
+            ) : (
+              <>
+                {sizeStock !== undefined && sizeStock <= LOW_STOCK_THRESHOLD && (
+                  <p className="text-sm font-medium text-bandit-orange">Only {sizeStock} left!</p>
+                )}
+                {maxAddable === 0 ? (
+                  <p className="text-sm text-muted-foreground">You already have all available units in your cart.</p>
+                ) : (
+                  <QuantityStepper
+                    quantity={quantity}
+                    max={maxAddable}
+                    increment={() => setQuantity(q => q + 1)}
+                    decrement={() => setQuantity(q => q - 1)}
+                  />
+                )}
+              </>
+            )}
             <div className="flex flex-row gap-2">
-              <Button className="w-full" onClick={handleAddToCartClicked}>
-                <ShoppingCartIcon /> Add to Cart
-              </Button>
+              {sizeStock === 0 ? (
+                <Button className="w-full" onClick={() => setIsNotifyDialogOpen(true)}>
+                  <BellIcon className="w-4 h-4" /> Notify me when back in stock
+                </Button>
+              ) : (
+                <Button className="w-full" onClick={handleAddToCartClicked} disabled={maxAddable === 0}>
+                  <ShoppingCartIcon /> Add to Cart
+                </Button>
+              )}
               <Button variant="outline" onClick={handleShare}>
                 <ShareIcon className="w-4 h-4" />
                 Share
               </Button>
             </div>
           </div>
+
+          <NotifyMeDialog
+            open={isNotifyDialogOpen}
+            onOpenChange={setIsNotifyDialogOpen}
+            variantId={variant.id}
+            variantName={getProductVariantName(variant, { includeProductName: true })}
+            size={size}
+          />
 
           <ColorVariants colorVariants={colorVariants} currentVariantId={variant.id} />
 

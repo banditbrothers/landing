@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { ProductVariantCard, VariantNameAndPriceBanner } from "../../cards/VariantCard";
 import { ProductVariant } from "@/types/product";
 import { useVariants } from "@/hooks/useVariants";
+import { sortOutOfStockLast } from "@/utils/product";
 
 export const RecommendedProducts = ({
   currentVariant,
@@ -19,12 +20,14 @@ export const RecommendedProducts = ({
 
   useEffect(() => {
     setRecommendedVariants(
-      shuffleArray(
-        variants
-          .filter(v => v.id !== currentVariant.id)
-          .filter(v => v.productId === currentVariant.productId)
-          .filter(v => v.isDiscoverable)
-          .filter(v => v.isAvailable)
+      sortOutOfStockLast(
+        shuffleArray(
+          variants
+            .filter(v => v.id !== currentVariant.id)
+            .filter(v => v.productId === currentVariant.productId)
+            .filter(v => v.isDiscoverable)
+            .filter(v => v.isAvailable)
+        )
       )
     );
   }, [currentVariant.id, variants]);

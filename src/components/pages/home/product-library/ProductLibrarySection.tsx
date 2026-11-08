@@ -4,16 +4,19 @@ import { ProductCarousel } from "@/components/carousels/ProductCarousel";
 
 import { ArrowRight } from "lucide-react";
 import { useVariants } from "@/hooks/useVariants";
+import { sortOutOfStockLast } from "@/utils/product";
 
 export const ProductLibraryContent = () => {
   const { data: variants } = useVariants();
 
-  const bestSellerVariants = variants.filter(v => v.isBestSeller);
+  const bestSellerVariants = sortOutOfStockLast(variants.filter(v => v.isBestSeller));
 
-  const last10NewArrivalsVariants = variants
-    .filter(v => v.isDiscoverable)
-    .sort((a, b) => b.createdAt - a.createdAt)
-    .slice(0, 10);
+  const last10NewArrivalsVariants = sortOutOfStockLast(
+    variants
+      .filter(v => v.isDiscoverable)
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 10)
+  );
 
   return (
     <>
@@ -25,7 +28,7 @@ export const ProductLibraryContent = () => {
             </h2>
           </div>
           <div className="mx-auto flex flex-col items-center gap-10">
-            <ProductCarousel variants={bestSellerVariants} />
+            <ProductCarousel variants={bestSellerVariants} showMoreColorsBadge />
           </div>
         </div>
         {last10NewArrivalsVariants.length > 0 && (

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ProductVariant } from "@/types/product";
 import { getProductVariantUrl } from "@/utils/share";
-import { getProductVariantName } from "@/utils/product";
+import { getProductVariantName, isVariantOutOfStock } from "@/utils/product";
 import { DESIGNS_OBJ } from "@/data/products";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
@@ -39,6 +39,7 @@ export const ColorVariants = ({ colorVariants, currentVariantId }: ColorVariants
 
             const variantImage = variant.images.mockup[0];
             const variantLink = getProductVariantUrl(variant);
+            const isOutOfStock = isVariantOutOfStock(variant);
 
             return (
               <div key={variant.id} className="w-20 flex-shrink-0">
@@ -51,7 +52,7 @@ export const ColorVariants = ({ colorVariants, currentVariantId }: ColorVariants
                       style={{
                         borderColor: variant.id === currentVariantId ? "var(--border)" : "transparent",
                       }}>
-                      <div className="aspect-square relative overflow-hidden">
+                      <div className={`aspect-square relative overflow-hidden ${isOutOfStock ? "opacity-40" : ""}`}>
                         <Image
                           fill
                           src={variantImage}
@@ -64,7 +65,10 @@ export const ColorVariants = ({ colorVariants, currentVariantId }: ColorVariants
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{variantDesign.name}</p>
+                    <p>
+                      {variantDesign.name}
+                      {isOutOfStock && " (Out of stock)"}
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               </div>
