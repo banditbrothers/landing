@@ -7,6 +7,8 @@ import type { DiscordMessage } from "@/types/discord";
 // order channel
 const ordersChannelId = isProduction ? process.env.DISCORD_ORDER_CHANNEL_ID! : "1408025970878713928";
 const reviewsChannelId = process.env.DISCORD_REVIEW_CHANNEL_ID!;
+// Back-in-stock requests. Set DISCORD_STOCK_NOTIFICATIONS_CHANNEL_ID; falls back to the orders channel.
+const stockNotificationsChannelId = isProduction ? process.env.DISCORD_STOCK_NOTIFICATIONS_CHANNEL_ID! : "1408025970878713928";
 
 export async function sendDiscordOrderMessage(data: DiscordMessage) {
   return sendDiscordMessage(ordersChannelId, data);
@@ -14,6 +16,10 @@ export async function sendDiscordOrderMessage(data: DiscordMessage) {
 
 export async function sendDiscordReviewMessage(data: DiscordMessage) {
   return sendDiscordMessage(reviewsChannelId, data);
+}
+
+export async function sendDiscordStockNotificationMessage(data: DiscordMessage) {
+  return sendDiscordMessage(stockNotificationsChannelId, data);
 }
 
 const sendDiscordMessage = async (channelId: string, data: DiscordMessage) => {

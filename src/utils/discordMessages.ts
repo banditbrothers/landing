@@ -4,6 +4,8 @@ import { getAddressString } from "./address";
 import { getDate } from "./timestamp";
 import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
 import { Review } from "@/types/review";
+import { StockNotification } from "@/types/stockNotification";
+import { getSizeLabel } from "./product";
 import { getReferralSourceLabel } from "@/constants/order";
 
 export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
@@ -18,7 +20,12 @@ export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
           { name: "Name", value: order.name },
           { name: "Referral Source", value: getReferralSourceLabel(order.referralSource) },
           { name: "Address", value: getAddressString(order.address) },
-          { name: "Products", value: order.variants.map(variant => `${variant.quantity}x ${variant.variantId} - (${variant.size})`).join("\n") },
+          {
+            name: "Products",
+            value: order.variants
+              .map(variant => `${variant.quantity}x ${variant.variantId} - (${variant.size})`)
+              .join("\n"),
+          },
           { name: "Total", value: `₹${order.total}` },
           { name: "View Order", value: `[View Order](https://www.banditbrothers.in/order/${order.id})` },
         ],
@@ -26,12 +33,11 @@ export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
       },
     ],
   } satisfies DiscordMessage;
-}
+};
 
 export const getDiscordOrderMessage = (order: Order) => {
   let paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
   if (order.paymentMode === "manual") paymentMethod = "Manual";
-  
 
   return {
     content: `🎉 We have a new order! \nSend ${
@@ -54,7 +60,9 @@ export const getDiscordOrderMessage = (order: Order) => {
           { name: "Address", value: getAddressString(order.address) },
           {
             name: "Products",
-            value: order.variants.map(variant => `${variant.quantity}x ${variant.variantId} - (${variant.size})`).join("\n"),
+            value: order.variants
+              .map(variant => `${variant.quantity}x ${variant.variantId} - (${variant.size})`)
+              .join("\n"),
           },
         ],
         timestamp: new Date(getDate(order.createdAt)).toISOString(),
@@ -77,6 +85,25 @@ export const getDiscordReviewMessage = (review: Review) => {
           { name: "Comment", value: review.comment },
           { name: "Contains Images", value: review.images.length > 0 ? "Yes" : "No" },
         ],
+      },
+    ],
+  } satisfies DiscordMessage;
+};
+
+export const getDiscordStockNotificationMessage = (request: StockNotification, variantName: string) => {
+  return {
+    content: `🔔 Someone wants to know when ${variantName} (${getSizeLabel(request.size)}) is back in stock`,
+    embeds: [
+      {
+        title: "Back-in-Stock Request",
+        color: 0xfd6e00,
+        fields: [
+          { name: "Variant", value: `${variantName} (${request.variantId})` },
+          { name: "Size", value: getSizeLabel(request.size) },
+          { name: "Email", value: request.email ?? "-" },
+          { name: "Phone", value: request.phone ?? "-" },
+        ],
+        timestamp: new Date(getDate(request.createdAt)).toISOString(),
       },
     ],
   } satisfies DiscordMessage;

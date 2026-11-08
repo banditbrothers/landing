@@ -11,6 +11,7 @@ import { OrderManagement } from "./OrderManagement";
 import { CouponManagement } from "./CouponManagement";
 import { ReviewManagement } from "./ReviewManagement";
 import { ProductManagement } from "./ProductsManagement";
+import { StockNotificationsManagement } from "./StockNotificationsManagement";
 
 export default function ProtectedAdminPage() {
   const isMobile = useIsMobile();
@@ -66,6 +67,7 @@ export default function ProtectedAdminPage() {
           <TabsTrigger value="coupons">Coupons</TabsTrigger>
           <TabsTrigger value="reviews">Reviews</TabsTrigger>
           <TabsTrigger value="products">Products</TabsTrigger>
+          <TabsTrigger value="stock-requests">Stock Requests</TabsTrigger>
         </TabsList>
         <TabsContent value="orders">
           <OrderManagement />
@@ -78,6 +80,9 @@ export default function ProtectedAdminPage() {
         </TabsContent>
         <TabsContent value="products">
           <ProductManagement />
+        </TabsContent>
+        <TabsContent value="stock-requests">
+          <StockNotificationsManagement />
         </TabsContent>
       </Tabs>
     </div>
