@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductVariant } from "@/types/product";
 import { getVariantsAdmin, deleteVariant } from "@/actions/products";
 import { EditVariantDialog } from "@/components/dialogs/EditVariantDialog";
 import { AddVariantDialog } from "@/components/dialogs/AddVariantDialog";
-import { PRODUCTS_OBJ } from "@/data/products";
-import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
+import { PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { getProductVariantName, getProductVariantPrice, getSizeLabel, LOW_STOCK_THRESHOLD } from "@/utils/product";
 import { formatCurrency } from "@/utils/price";
 import Image from "next/image";
 import { Edit, Eye, Package, Trash2, Plus, Download } from "lucide-react";
@@ -21,6 +22,7 @@ export const ProductManagement = () => {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [productFilter, setProductFilter] = useState("all");
 
   const loadVariants = async () => {
     setIsLoading(true);
@@ -119,6 +121,9 @@ export const ProductManagement = () => {
     );
   }
 
+  const filteredVariants =
+    productFilter === "all" ? variants : variants.filter(v => v.productId === productFilter);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -146,6 +151,17 @@ export const ProductManagement = () => {
         </div>
       </div>
 
+      <Tabs value={productFilter} onValueChange={setProductFilter}>
+        <TabsList>
+          <TabsTrigger value="all">All ({variants.length})</TabsTrigger>
+          {PRODUCTS.map(p => (
+            <TabsTrigger key={p.id} value={p.id}>
+              {p.name} ({variants.filter(v => v.productId === p.id).length})
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
+
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
@@ -154,12 +170,13 @@ export const ProductManagement = () => {
               <TableHead>Variant</TableHead>
               <TableHead>Product</TableHead>
               <TableHead>Price</TableHead>
+              <TableHead>Stock</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {variants.map(variant => {
+            {filteredVariants.map(variant => {
               const variantName = getProductVariantName(variant);
               const variantPrice = getProductVariantPrice(variant);
               const product = PRODUCTS_OBJ[variant.productId];
@@ -190,6 +207,26 @@ export const ProductManagement = () => {
                   </TableCell>
                   <TableCell>
                     <div className="font-medium">{formatCurrency(variantPrice)}</div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col text-sm">
+                      {(product?.sizes ?? []).map(size => {
+                        const qty = variant.stock?.[size];
+                        const color =
+                          qty === undefined
+                            ? "text-muted-foreground"
+                            : qty === 0
+                              ? "text-red-500 font-medium"
+                              : qty <= LOW_STOCK_THRESHOLD
+                                ? "text-amber-500 font-medium"
+                                : "";
+                        return (
+                          <span key={size} className={color}>
+                            {getSizeLabel(size)}: {qty ?? "–"}
+                          </span>
+                        );
+                      })}
+                    </div>
                   </TableCell>
 
                   <TableCell>

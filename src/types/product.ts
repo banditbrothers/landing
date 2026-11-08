@@ -5,7 +5,7 @@ export type DesignColor = (typeof DESIGN_COLORS)[number]["id"];
 
 export type ImageSet = {
   thumbnail?: string;
-  main?: string[];  // Multiple angles of the main product
+  main?: string[]; // Multiple angles of the main product
   detail?: string[]; // Close-up details
   lifestyle?: string[]; // In-use images
   mockup: string[]; // Digital mockups
@@ -30,7 +30,8 @@ export type ProductVariant = {
   price?: number;
   name?: string;
   description?: string;
-  stockLevel?: number;
+  // size -> units in stock. Missing map or missing size = not tracked (treated as in stock)
+  stock?: Record<string, number>;
   isAvailable?: boolean;
   isDiscoverable?: boolean;
   sku?: string; // Stock keeping unit for inventory
@@ -46,7 +47,7 @@ export type Product = {
   material: string;
   dimensions: Record<string, string>;
   // Generic product images (no specific design)
-  baseImages?: ImageSet; 
+  baseImages?: ImageSet;
 };
 
 export type OrderedVariant = {

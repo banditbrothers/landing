@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { Upload, Loader2 } from "lucide-react";
 import { processImage } from "@/utils/image";
+import { PRODUCTS_OBJ } from "@/data/products";
+import { parseStockInputs, StockInputs, StockInputValues, toStockInputs } from "./StockInputs";
 
 interface EditVariantDialogProps {
   variant: ProductVariant | null;
@@ -25,6 +27,7 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
   const [formData, setFormData] = useState<Partial<ProductVariant>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [stockInputs, setStockInputs] = useState<StockInputValues>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize form data when variant changes
@@ -37,6 +40,7 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
         isBestSeller: variant.isBestSeller ?? false,
         isDiscoverable: variant.isDiscoverable ?? true,
       });
+      setStockInputs(toStockInputs(variant.stock));
     }
   }, [variant]);
 
@@ -55,6 +59,9 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
       }, {} as Partial<ProductVariant>);
 
       if (updates.price === 0) delete updates.price;
+
+      // Replaces the whole map; sizes left empty become untracked
+      updates.stock = parseStockInputs(stockInputs, PRODUCTS_OBJ[variant.productId]?.sizes ?? []);
 
       await updateVariant(variant.id, updates);
 
@@ -183,18 +190,13 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
                 placeholder="Custom price"
               />
             </div>
-
-            {/* <div className="space-y-2">
-              <Label htmlFor="stockLevel">Stock Level</Label>
-              <Input
-                id="stockLevel"
-                type="number"
-                value={formData.stockLevel || ""}
-                onChange={e => setFormData(prev => ({ ...prev, stockLevel: parseInt(e.target.value) || 0 }))}
-                placeholder="Available stock"
-              />
-            </div> */}
           </div>
+
+          <StockInputs
+            sizes={PRODUCTS_OBJ[variant.productId]?.sizes ?? []}
+            value={stockInputs}
+            onChange={setStockInputs}
+          />
 
           {/* <div className="space-y-2">
             <Label htmlFor="description">Description</Label>

@@ -11,7 +11,8 @@ import { ProductVariant } from "@/types/product";
 import { createVariant } from "@/actions/products";
 import { uploadToS3, generateImageKey } from "@/utils/s3Upload";
 import { getSKU } from "@/utils/product";
-import { DESIGNS, PRODUCTS } from "@/data/products";
+import { DESIGNS, PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { parseStockInputs, StockInputs, StockInputValues } from "./StockInputs";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Upload, Loader2, Plus } from "lucide-react";
@@ -52,6 +53,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [stockInputs, setStockInputs] = useState<StockInputValues>({});
 
   const checkVariantExists = (productId: string, designId: string): boolean => {
     return existingVariants.some(variant => variant.productId === productId && variant.designId === designId);
@@ -87,6 +89,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
         isAvailable: formData.isAvailable,
         isBestSeller: formData.isBestSeller,
         isDiscoverable: formData.isDiscoverable,
+        stock: parseStockInputs(stockInputs, PRODUCTS_OBJ[formData.productId]?.sizes ?? []),
         images: {
           mockup: formData.mockupImages,
           detail: [],
@@ -121,6 +124,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
       isDiscoverable: true,
       mockupImages: [],
     });
+    setStockInputs({});
     onClose();
   };
 
@@ -342,6 +346,14 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
               rows={3}
             />
           </div> */}
+
+          {formData.productId && (
+            <StockInputs
+              sizes={PRODUCTS_OBJ[formData.productId]?.sizes ?? []}
+              value={stockInputs}
+              onChange={setStockInputs}
+            />
+          )}
 
           {/* Switches */}
           <div className="space-y-4 p-4 bg-muted/30 rounded-lg border">
