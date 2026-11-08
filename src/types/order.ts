@@ -30,6 +30,7 @@ export type Order = {
   isInternational: boolean;
   variants: OrderedVariant[];
   status: OrderStatus;
+  stockDeducted?: boolean;
 } & (
   | {
       paymentMode: "rzp";

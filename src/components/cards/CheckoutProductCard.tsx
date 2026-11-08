@@ -7,7 +7,7 @@ import { useCart } from "../stores/cart";
 import { formatCurrency } from "@/utils/price";
 import { ProductVariant } from "@/types/product";
 import { getProductVariantUrl } from "@/utils/share";
-import { getProductVariantName, getProductVariantPrice, getSizeLabel } from "@/utils/product";
+import { getProductVariantName, getProductVariantPrice, getSizeLabel, getSizeStock } from "@/utils/product";
 
 interface CheckoutProductCardProps {
   variant: ProductVariant;
@@ -28,6 +28,7 @@ export const CheckoutProductCard = ({
 
   const name = getProductVariantName(variant);
   const price = getProductVariantPrice(variant);
+  const stock = getSizeStock(variant, size);
 
   return (
     <div key={variant.id} className="flex gap-4 p-4 bg-card rounded-lg relative border border-border">
@@ -53,9 +54,15 @@ export const CheckoutProductCard = ({
         <h3 className="font-semibold text-sm sm:text-base pr-3">{name}</h3>
         <p className="text-muted-foreground text-xs">Size: {getSizeLabel(size)}</p>
         <p className="text-muted-foreground text-sm">{formatCurrency(price)}</p>
+        {stock !== undefined && quantity > stock && (
+          <p className="text-destructive text-xs font-medium mt-1">
+            {stock === 0 ? "Out of stock, please remove it" : `Only ${stock} left, please reduce the quantity`}
+          </p>
+        )}
         <div className="flex items-center gap-2 mt-2 justify-end">
           <QuantityStepper
             quantity={quantity}
+            max={stock}
             increment={() => updateCartItemBy(variant.id, 1, size)}
             decrement={() => updateCartItemBy(variant.id, -1, size)}
           />

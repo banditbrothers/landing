@@ -13,12 +13,17 @@ import { formatCurrency } from "@/utils/price";
 import { useVariants } from "@/hooks/useVariants";
 import { getCartSubtotal } from "@/utils/cart";
 import { LoadingIcon } from "@/components/misc/Loading";
+import { exceedsStock } from "@/utils/product";
 
 export const CartSheet = () => {
   const { cart: cartItems, isCartOpen, closeCart, updateCartItem, removeCartItem } = useCart();
   const { data: variants, isReady } = useVariants();
 
   const subtotal = getCartSubtotal(cartItems, variants);
+  const hasStockIssue = cartItems.some(item => {
+    const variant = variants.find(v => v.id === item.variantId);
+    return !!variant && exceedsStock(variant, item.size, item.quantity);
+  });
 
   const CartContent = () => {
     if (cartItems.length > 0 && !isReady) {
@@ -88,7 +93,10 @@ export const CartSheet = () => {
           </div>
           <p className="text-muted-foreground text-xs mb-2">Coupons can be applied on the next page</p>
         </div>
-        <Button disabled={cartItems.length === 0 || !isReady} className="w-full" onClick={handleCheckout}>
+        <Button
+          disabled={cartItems.length === 0 || !isReady || hasStockIssue}
+          className="w-full"
+          onClick={handleCheckout}>
           Checkout
         </Button>
         <Button variant="ghost" className="w-full" onClick={closeCart}>

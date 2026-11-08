@@ -30,6 +30,7 @@ import { identifyUser } from "@/utils/analytics";
 import { trackMetaInitiateCheckout, trackMetaAddPaymentInfo, trackMetaPurchase } from "@/utils/metaPixel";
 import { Label } from "@/components/ui/label";
 import { CheckoutProductCard } from "@/components/cards/CheckoutProductCard";
+import { exceedsStock } from "@/utils/product";
 import { useCart } from "@/components/stores/cart";
 import { CouponInput } from "@/components/inputs/Coupon";
 import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
@@ -177,6 +178,10 @@ function OrderPageContent() {
   const isInternational = !!selectedCountry && selectedCountry !== "IN";
   const paymentMode = getPaymentMode(coupon, isInternational);
   const orderTotal = calculateTotal(cart, coupon, variants);
+  const hasStockIssue = cart.some(item => {
+    const variant = variants.find(v => v.id === item.variantId);
+    return !!variant && exceedsStock(variant, item.size, item.quantity);
+  });
 
   // Track InitiateCheckout when page loads with cart items
   useEffect(() => {
@@ -220,6 +225,10 @@ function OrderPageContent() {
     identifyUser(order.email, { name: order.name, email: order.email });
 
     const orderObj = await createOrder(order);
+    if ("error" in orderObj) {
+      toast.error(orderObj.error);
+      return;
+    }
 
     // Track AddPaymentInfo when payment is initiated
     const contentIds = cart.map(item => item.variantId);
@@ -804,13 +813,14 @@ function OrderPageContent() {
                         !watchReferralSource ||
                         orderLoading.create ||
                         orderLoading.update ||
+                        hasStockIssue ||
                         (!isInternational && !!couponError)
                       }>
                       {paymentMode === "manual"
                         ? "Submit International Order"
                         : formIsReady
-                        ? `Pay ${formatCurrency(orderTotal, 2)} ${paymentMode === "cash" ? " in Cash" : ""}`
-                        : "Pay Now"}
+                          ? `Pay ${formatCurrency(orderTotal, 2)} ${paymentMode === "cash" ? " in Cash" : ""}`
+                          : "Pay Now"}
                       {(orderLoading.create || orderLoading.update) && <LoadingIcon />}
                     </Button>
                   </div>

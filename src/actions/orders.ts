@@ -6,6 +6,7 @@ import { Order } from "@/types/order";
 import { createOrder as createRzpOrder } from "./payments/rzp";
 import { sendDiscordOrderMessage } from "@/actions/discord";
 import { getDiscordOrderMessage } from "@/utils/discordMessages";
+import { deductStockForOrder, getStockIssues } from "./stock";
 
 export const getOrders = async (limit: number = 50): Promise<Order[]> => {
   const orders = await firestore()
@@ -23,20 +24,20 @@ export const getUserDetailsFromOrders = async (): Promise<{ name: string; phone:
     .where("status", "!=", "cancelled")
     .orderBy("createdAt", "desc")
     .get();
-  
+
   // Extract unique user details based on phone number to avoid duplicates
   const userDetailsMap = new Map<string, { name: string; phone: string }>();
-  
+
   orders.docs.forEach(doc => {
     const order = doc.data() as Order;
     if (!userDetailsMap.has(order.phone)) {
       userDetailsMap.set(order.phone, {
         name: order.name,
-        phone: order.phone
+        phone: order.phone,
       });
     }
   });
-  
+
   return Array.from(userDetailsMap.values());
 };
 
@@ -47,7 +48,12 @@ export const getOrder = async (id: string) => {
   return { id: order.id, ...order.data() } as Order;
 };
 
-export const createOrder = async (order: Partial<Order>) => {
+export const createOrder = async (order: Partial<Order>): Promise<Order | { error: string }> => {
+  // Server-side stock check; the client's variant cache can be stale.
+  // Returned (not thrown) because Next.js hides thrown error messages in production.
+  const stockIssues = await getStockIssues(order.variants ?? []);
+  if (stockIssues.length) return { error: `${stockIssues.join(", ")}. Please update your cart.` };
+
   const orderRef = firestore().collection(Collections.orders).doc();
   const dbId = orderRef.id;
 
@@ -68,13 +74,20 @@ export const createOrder = async (order: Partial<Order>) => {
   } else if (newOrder.paymentMode === "cash") {
     newOrder.status = "paid";
     newOrder.cash = { amount: +order.total! * 100, paymentStatus: "paid" };
-  }
-  else if (newOrder.paymentMode === "manual") {
+  } else if (newOrder.paymentMode === "manual") {
     newOrder.status = "initiated";
   }
 
   await orderRef.create(newOrder);
   const orderWithId = { ...newOrder, id: orderRef.id } as Order;
+
+  if (newOrder.paymentMode === "cash") {
+    try {
+      await deductStockForOrder(orderRef.id);
+    } catch (error) {
+      console.error("Error deducting stock:", error);
+    }
+  }
 
   if (newOrder.paymentMode === "cash" || newOrder.paymentMode === "manual") {
     try {

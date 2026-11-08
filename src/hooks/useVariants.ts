@@ -5,7 +5,9 @@ export const useVariants = () => {
   const query = useQuery({
     queryKey: ["variants"],
     queryFn: getVariants,
-    staleTime: 1000 * 60 * 60 * 24, // 24 hours
+    // Short, because variants carry live stock: refetches on mount/focus once older than this
+    staleTime: 1000 * 60 * 15, // 15 minutes
+    refetchOnWindowFocus: true, // global default is off; stock should catch up when a customer returns to the tab
     initialData: [],
     initialDataUpdatedAt: 0,
     experimental_prefetchInRender: true,

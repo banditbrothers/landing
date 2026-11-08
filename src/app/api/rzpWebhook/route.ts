@@ -1,5 +1,6 @@
 import { getOrder, updateOrder } from "@/actions/orders";
 import { sendDiscordOrderMessage } from "@/actions/discord";
+import { deductStockForOrder } from "@/actions/stock";
 import { getDiscordOrderMessage, getDiscordPaymentLinkPaidMessage } from "@/utils/discordMessages";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
         if (!dbId) {
           console.error("No dbId found in webhook data, skipping...", data);
           return new Response("No dbId found!", { status: 200 });
-        };
+        }
 
         const paymentId = data.payload.payment.entity.id;
         const paymentStatus = data.payload.payment.entity.status;
@@ -60,7 +61,12 @@ export async function POST(request: Request) {
           resolve(true);
         });
 
-        await Promise.allSettled([updateOrderPromise, sendDiscordMessagePromise]);
+        // Idempotent: guarded by order.stockDeducted, so webhook retries don't double-deduct
+        const deductStockPromise = deductStockForOrder(dbId).catch(error =>
+          console.error("Error deducting stock for order", dbId, error)
+        );
+
+        await Promise.allSettled([updateOrderPromise, sendDiscordMessagePromise, deductStockPromise]);
         break;
       }
 
@@ -73,7 +79,7 @@ export async function POST(request: Request) {
         const order = await getOrder(dbId);
         if (!order) return;
 
-        if(order.status === "paid") {
+        if (order.status === "paid") {
           return new Response("Order already paid, skipping...", { status: 200 });
         }
 
