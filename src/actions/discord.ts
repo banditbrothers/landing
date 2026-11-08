@@ -1,12 +1,12 @@
 "use server";
 
-import "server-only"
+import "server-only";
 import { isProduction } from "@/utils/misc";
 import type { DiscordMessage } from "@/types/discord";
 
 // order channel
-const ordersChannelId = isProduction ? "1331164962059587614" : "1408025970878713928";
-const reviewsChannelId = "1339632586602971280";
+const ordersChannelId = isProduction ? process.env.DISCORD_ORDER_CHANNEL_ID! : "1408025970878713928";
+const reviewsChannelId = process.env.DISCORD_REVIEW_CHANNEL_ID!;
 
 export async function sendDiscordOrderMessage(data: DiscordMessage) {
   return sendDiscordMessage(ordersChannelId, data);
@@ -39,4 +39,4 @@ const sendDiscordMessage = async (channelId: string, data: DiscordMessage) => {
   } catch (error) {
     console.error("Error sending message:", error);
   }
-}
+};
