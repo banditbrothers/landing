@@ -1,6 +1,7 @@
 import { ProductPageContents } from "@/components/pages/variant-product-page";
 import { DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
 import { getCatalog } from "@/lib/catalog";
+import { pageMetadata, truncate } from "@/lib/site";
 import { getProductVariantName, getSKU } from "@/utils/product";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -18,53 +19,22 @@ export const revalidate = 86400; // 24 hours
 
 export async function generateMetadata({ params }: VariantPageProps): Promise<Metadata> {
   const { productId, designId } = await params;
-  const sku = getSKU(productId, designId);
-
   const product = PRODUCTS_OBJ[productId];
   const design = DESIGNS_OBJ[designId];
+  if (!product || !design) return { title: "Product Not Found" };
 
-  if (!product || !design) {
-    return {
-      title: "Product Not Found",
-      description: "The product you are looking for does not exist.",
-    };
-  }
+  // Catalog failure: still describe the page from static data, just without the variant's image/name override
+  const catalog = await getCatalog();
+  const variant = catalog?.find(v => v.id === getSKU(productId, designId));
+  if (catalog && !variant) return { title: "Product Not Found" };
 
-  try {
-    const catalog = await getCatalog();
-    if (!catalog) throw new Error("Catalog unavailable");
-    const variant = catalog.find(v => v.id === sku);
-
-    if (!variant) {
-      return {
-        title: "Product Not Found",
-        description: "The product you are looking for does not exist.",
-      };
-    }
-
-    const name = getProductVariantName(variant) + " " + product.name + " | " + "by Bandit Brothers";
-    return {
-      title: name,
-      description: product.description.join(" "),
-      openGraph: {
-        images: [variant.images.mockup[0]],
-        title: name,
-        description: product.description.join(" "),
-      },
-      twitter: {
-        images: [variant.images.mockup[0]],
-        title: name,
-        description: product.description.join(" "),
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching variant metadata:", error);
-    // Fallback to static data if Firestore fails
-    return {
-      title: design.name + " | " + "by Bandit Brothers",
-      description: product.description.join(" "),
-    };
-  }
+  const name = `${variant ? getProductVariantName(variant) : design.name} ${product.name}`;
+  return pageMetadata({
+    title: name,
+    description: truncate(`${name} by Bandit Brothers. ${product.description.join(" ")}`),
+    path: `/products/${productId}/${designId}`,
+    image: null, // opengraph-image.tsx
+  });
 }
 
 export default async function VariantPage({ params }: VariantPageProps) {

@@ -35,7 +35,6 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${SITE_NAME} - Wear your Mischief`,
     description: SITE_DESCRIPTION,
-    url: SITE_URL,
     siteName: SITE_NAME,
     images: "/logo-full-socials.png",
     type: "website",

@@ -5,6 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { formatCurrency } from "@/utils/price";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata({
+  title: "Shop All Products",
+  description:
+    "Shop tube bandanas, balaclavas and square bandanas by Bandit Brothers. Breathable, UV-protective headwear in bold designs, made in India.",
+  path: "/products",
+});
 
 const ProductCard = ({ product }: { product: Product }) => {
   return (

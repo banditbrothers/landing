@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} - Wear your Mischief`,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
+    siteName: SITE_NAME,
     type: "website",
     images: "/logo-full-socials.png",
   },

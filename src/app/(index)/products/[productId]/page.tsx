@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { PRODUCTS_OBJ } from "@/data/products";
 import { ProductPageContent } from "./content";
+import { pageMetadata, truncate } from "@/lib/site";
 
 // No generateStaticParams on purpose: the grid reads filters via useSearchParams, which a prerendered page
 // can only render client-side (HTML would be a spinner). Rendered per request instead; catalog comes from the server cache.
@@ -8,45 +9,15 @@ import { ProductPageContent } from "./content";
 type ProductPageProps = { params: Promise<{ productId: string }> };
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { productId } = await params;
-
   const product = PRODUCTS_OBJ[productId];
+  if (!product) return { title: "Product Not Found" };
 
-  if (!product) {
-    return {
-      title: "Product Not Found",
-      description: "The product you are looking for does not exist.",
-    };
-  }
-
-  try {
-    const mockupImage = product.baseImages?.mockup?.[0];
-
-    if (!mockupImage) {
-      throw new Error("No mockup image found for product: " + productId);
-    }
-
-    return {
-      title: product.name + " | " + "by Bandit Brothers",
-      description: product.description.join(" ").slice(0, 155) + "...",
-      openGraph: {
-        images: [mockupImage],
-        title: product.name + " | " + "by Bandit Brothers",
-        description: product.description.join(" ").slice(0, 155) + "...",
-      },
-      twitter: {
-        images: [mockupImage],
-        title: product.name + " | " + "by Bandit Brothers",
-        description: product.description.join(" ").slice(0, 155) + "...",
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching product metadata:", error);
-    // Fallback to static data if Firestore fails
-    return {
-      title: product.name + " | " + "by Bandit Brothers",
-      description: product.description.join(" ").slice(0, 155) + "...",
-    };
-  }
+  return pageMetadata({
+    title: `${product.name}s`,
+    description: truncate(`Shop ${product.name.toLowerCase()}s by Bandit Brothers. ${product.description.join(" ")}`),
+    path: `/products/${productId}`,
+    image: null, // opengraph-image.tsx
+  });
 }
 
 export default function ProductPage() {
