@@ -2,6 +2,7 @@
 
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase-admin";
+import { revalidateCatalog } from "@/lib/catalog";
 import { ProductVariant } from "@/types/product";
 
 export const getVariantsAdmin = async (): Promise<ProductVariant[]> => {
@@ -21,6 +22,7 @@ export const createVariant = async (variantId: string, variantData: Omit<Product
       .collection(Collections.variants)
       .doc(variantId)
       .set(variantData);
+    revalidateCatalog();
     
     return { id: variantId, ...variantData };
   } catch (error) {
@@ -35,6 +37,7 @@ export const updateVariant = async (variantId: string, updates: Partial<ProductV
       .collection(Collections.variants)
       .doc(variantId)
       .update(updates);
+    revalidateCatalog();
     
     return { success: true };
   } catch (error) {
@@ -59,6 +62,7 @@ export const updateVariantMockupImage = async (variantId: string, newImageUrl: s
     };
     
     await variantRef.update({ images: updatedImages });
+    revalidateCatalog();
     
     return { success: true };
   } catch (error) {
@@ -73,6 +77,7 @@ export const deleteVariant = async (variantId: string) => {
       .collection(Collections.variants)
       .doc(variantId)
       .delete();
+    revalidateCatalog();
     
     return { success: true };
   } catch (error) {

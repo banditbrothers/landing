@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { FavoriteButton } from "../misc/FavoriteButton";
 import { CategoryBadge } from "../badges/DesignBadges";

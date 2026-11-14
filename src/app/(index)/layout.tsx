@@ -1,5 +1,13 @@
+import { getCatalog } from "@/lib/catalog";
+import { ServerVariantsProvider } from "@/hooks/useVariants";
 import { IndexClientLayout } from "./IndexClientLayout";
 
-export default function IndexLayout({ children }: { children: React.ReactNode }) {
-  return <IndexClientLayout>{children}</IndexClientLayout>;
+export default async function IndexLayout({ children }: { children: React.ReactNode }) {
+  const variants = await getCatalog();
+
+  return (
+    <ServerVariantsProvider variants={variants}>
+      <IndexClientLayout>{children}</IndexClientLayout>
+    </ServerVariantsProvider>
+  );
 }

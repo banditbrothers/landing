@@ -2,6 +2,7 @@ import "server-only";
 // Deliberately NOT "use server": these must not be callable as public POST endpoints.
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase-admin";
+import { revalidateCatalog } from "@/lib/catalog";
 import { Order } from "@/types/order";
 import { OrderedVariant, ProductVariant } from "@/types/product";
 import { isProduction } from "@/utils/misc";
@@ -68,4 +69,5 @@ export const deductStockForOrder = async (orderId: string) => {
 
     tx.update(orderRef, { stockDeducted: true });
   });
+  revalidateCatalog();
 };

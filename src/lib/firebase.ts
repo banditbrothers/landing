@@ -2,9 +2,7 @@ import { initializeApp, getApp, getApps } from "firebase/app";
 
 import { getAuth, signInAnonymously as signInAnonymouslyFirebase } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { getFirestore, collection, doc, getDocs, query, where } from "firebase/firestore";
-import { Collections } from "@/constants/collections";
-import { ProductVariant } from "@/types/product";
+import { getFirestore, collection, doc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -39,34 +37,3 @@ export const getCollectionDocumentId = (collectionName: string) => {
 };
 
 export const db = getFirestore(app);
-
-export const getVariants = async () => {
-  // console.log("fetching variants");
-
-  try {
-    const variantsRef = collection(db, Collections.variants);
-    const q = query(variantsRef, where("isAvailable", "==", true));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    })) as ProductVariant[];
-  } catch (error) {
-    console.error("Error fetching variants:", error);
-    return [] as ProductVariant[];
-  }
-};
-
-export const getVariant = async (variantId: string) => {
-  try {
-    const variantsRef = collection(db, Collections.variants);
-    const q = query(variantsRef, where("id", "==", variantId));
-
-    const snapshot = await getDocs(q);
-    if (snapshot.empty) return null;
-    return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as ProductVariant;
-  } catch (error) {
-    console.error("Error fetching variant:", error);
-    return null;
-  }
-};
