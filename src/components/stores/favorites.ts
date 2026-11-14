@@ -1,12 +1,12 @@
-import { Design } from "@/types/product";
+import { ProductVariant } from "@/types/product";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { shared } from "use-broadcast-ts";
 
 type FavoritesState = {
-  favorites: Design["id"][];
-  toggleFav: (designId: Design["id"]) => void;
-  isFavorite: (designId: Design["id"]) => boolean;
+  favorites: ProductVariant["id"][];
+  toggleFav: (variantId: ProductVariant["id"]) => void;
+  isFavorite: (variantId: ProductVariant["id"]) => boolean;
 };
 
 export const useFavorites = create<FavoritesState>()(
@@ -15,18 +15,18 @@ export const useFavorites = create<FavoritesState>()(
       (set, get) => ({
         favorites: [],
 
-        toggleFav: (designId: Design["id"]) => {
+        toggleFav: (variantId: ProductVariant["id"]) => {
           set(state => {
-            const isFavorite = state.favorites.includes(designId);
+            const isFavorite = state.favorites.includes(variantId);
             if (isFavorite) {
-              return { favorites: state.favorites.filter(id => id !== designId) };
+              return { favorites: state.favorites.filter(id => id !== variantId) };
             }
-            return { favorites: [...state.favorites, designId] };
+            return { favorites: [...state.favorites, variantId] };
           });
         },
 
-        isFavorite: (designId: Design["id"]) => {
-          return get().favorites.includes(designId);
+        isFavorite: (variantId: ProductVariant["id"]) => {
+          return get().favorites.includes(variantId);
         },
       }),
       { name: "favorites", storage: createJSONStorage(() => localStorage) }

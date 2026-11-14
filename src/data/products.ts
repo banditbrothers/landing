@@ -101,6 +101,13 @@ export const DESIGN_COLOR_OBJ = DESIGN_COLORS.reduce((acc, color) => {
 }, {} as Record<DesignColor, Omit<(typeof DESIGN_COLORS)[number], "id">>);
 
 export const DESIGNS: Design[] = [
+  {
+    id: "custom",
+    name: "Custom",
+    colors: [],
+    category: "abstract",
+    tags: [],
+  },
     {
     id: "tri-harder",
     name: "Tri Harder",
@@ -890,6 +897,7 @@ export const PRODUCTS: Product[] = [
     ],
     basePrice: 350,
     sizes: ["one-size"],
+    sizeLabels: { "one-size": "One Size" },
     material: "4 Way Quick-Dri DryFit Fabric",
     dimensions: { "one-size": '9.5" (W) x 20" (L)' },
     baseImages: {
@@ -902,14 +910,15 @@ export const PRODUCTS: Product[] = [
     id: "balaclava",
     name: "Balaclava",
     description: [
-      "Stay stylish and protected with our premium balaclavas—designed for bikers and outdoor adventurers.",
+      "Stay stylish and protected with our premium balaclavas — designed for bikers and outdoor adventurers.",
       "Made from breathable, lightweight fabric, these versatile headwraps offer UV protection, sweat absorption, and dust resistance, making them ideal for long rides and outdoor activities.",
       "Wear it as a headband, face mask or helmet liner. Quick-drying and stretchable for a comfortable fit. Perfect for bikers, cyclists, hikers, and everyday casual wear.",
     ],
     basePrice: 450,
     sizes: ["small", "large"],
+    sizeLabels: { small: "Small - 52 to 59cm", large: "Large - 60 to 67cm" },
     material: "4 Way Quick-Dri DryFit Fabric",
-    dimensions: { small: '9" (W) x 16" (L)', large: '10" (W) x 16" (L)' },
+    dimensions: { small: '9" (W) x 16" (L)', large: '10.5" (W) x 16" (L)' },
     baseImages: {
       mockup: [
         "https://bandit-brothers-s3-storage.s3.ap-south-1.amazonaws.com/balaclava/out-of-words/mockup-1750364019457.webp",
@@ -926,6 +935,7 @@ export const PRODUCTS: Product[] = [
     ],
     basePrice: 350,
     sizes: ["one-size"],
+    sizeLabels: { "one-size": "One Size" },
     material: "4 Way Quick-Dri DryFit Fabric",
     dimensions: { "one-size": '22" (W) x 22" (L)' },
     baseImages: {

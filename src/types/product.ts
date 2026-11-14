@@ -44,6 +44,8 @@ export type Product = {
   description: string[];
   basePrice: number;
   sizes: string[];
+  // Display label per size on the product page; falls back to the size key
+  sizeLabels?: Record<string, string>;
   material: string;
   dimensions: Record<string, string>;
   // Generic product images (no specific design)

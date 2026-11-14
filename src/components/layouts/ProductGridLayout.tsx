@@ -111,7 +111,7 @@ const ProductGridLayoutContent = ({ productVariants }: ProductVariantGridProps) 
         return isBestSellerFilterSelected ? productVariant.isBestSeller : true;
       })
       .filter(productVariant => {
-        return isFavFilterSelected ? isFavorite(productVariant.designId) : true;
+        return isFavFilterSelected ? isFavorite(productVariant.id) : true;
       })
       .filter(productVariant => {
         return (

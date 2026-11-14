@@ -15,12 +15,21 @@ import { Design, Product, ProductVariant } from "@/types/product";
 import { useVariants } from "@/hooks/useVariants";
 import { DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
 
+const stripPunctuation = (s: string) => s.replace(/[^a-zA-Z0-9 ]/g, "");
+
 const options: IFuseOptions<ProductVariant> = {
   includeScore: true,
   threshold: 0.1,
   distance: 200, // 0.1 * 200 = 20 characters will be considered to find a match
   location: 0,
-  keys: ["design.name", "design.tags", "design.colors", "design.category", "productId"],
+  keys: [
+    // Strip punctuation so "Mr Krabby" finds "Mr. Krabby"
+    { name: "design.name", getFn: v => stripPunctuation((v as SearchVariant).design?.name ?? "") },
+    "design.tags",
+    "design.colors",
+    "design.category",
+    "productId",
+  ],
 };
 
 type SearchVariant = ProductVariant & { product: Omit<Product, "id">; design: Omit<Design, "id"> };
@@ -55,7 +64,7 @@ function SearchDialogContent() {
 
   const FuseVariants = new Fuse(formattedVariants, options);
   const filteredVariants =
-    query === "" ? formattedVariants : FuseVariants.search(query ?? "").map(result => result.item);
+    query === "" ? formattedVariants : FuseVariants.search(stripPunctuation(query ?? "")).map(result => result.item);
 
   return (
     <Dialog open={query !== null} onOpenChange={handleOpenChange}>

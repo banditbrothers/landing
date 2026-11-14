@@ -50,21 +50,6 @@ type ProductPageContentsProps = {
   productId: string;
 };
 
-type VariantProductSizes = "one-size" | "small" | "large" | "XS" | "S" | "M" | "L" | "XL" | "2XL" | "3XL" | "4XL";
-const sizeOptionLabels: Record<VariantProductSizes, string> = {
-  "one-size": "One Size",
-  small: "Small - 52 to 59cm",
-  large: "Large - 60 to 67cm",
-  XS: "XS",
-  S: "S",
-  M: "M",
-  L: "L",
-  XL: "XL",
-  "2XL": "2XL",
-  "3XL": "3XL",
-  "4XL": "4XL",
-};
-
 export const ProductPageContents = ({ designId, productId }: ProductPageContentsProps) => {
   const { data: variants, isReady } = useVariants();
 
@@ -73,7 +58,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
   const { cart, openCart, updateCartItem: addOrUpdateCartItem } = useCart();
 
   const [quantity, setQuantity] = useState(1);
-  const [size, setSize] = useState<VariantProductSizes>("one-size");
+  const [size, setSize] = useState("one-size");
   const [colorVariants, setColorVariants] = useState<ProductVariant[]>([]);
   const [isSizingDialogOpen, setIsSizingDialogOpen] = useState(false);
   const [isNotifyDialogOpen, setIsNotifyDialogOpen] = useState(false);
@@ -100,7 +85,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
     if (variant) {
       const variantProduct = PRODUCTS_OBJ[variant.productId];
       if (variantProduct?.sizes?.length > 0) {
-        setSize((getFirstInStockSize(variant) ?? variantProduct.sizes[0]) as VariantProductSizes);
+        setSize(getFirstInStockSize(variant) ?? variantProduct.sizes[0]);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -181,7 +166,7 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
       {/* Product Layout Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Column - Image */}
-        <div className="relative aspect-square">
+        <div className="relative aspect-square md:sticky md:top-24 md:self-start">
           <ImageCarousel images={carouselImages} alt={variantName} indicatorType="dot" />
           <div className="absolute top-2 right-2 z-10">
             <FavoriteButton selected={isFavorite(variant.id)} toggle={() => toggleFav(variant.id)} />
@@ -271,11 +256,11 @@ export const ProductPageContents = ({ designId, productId }: ProductPageContents
                         name="size"
                         value={sizeOption}
                         checked={size === sizeOption}
-                        onChange={e => setSize(e.target.value as VariantProductSizes)}
+                        onChange={e => setSize(e.target.value)}
                         className="sr-only"
                       />
                       <span className={`text-sm font-medium ${isSoldOut ? "line-through" : ""}`}>
-                        {sizeOptionLabels[sizeOption as VariantProductSizes]}
+                        {variantProduct.sizeLabels?.[sizeOption] ?? sizeOption}
                       </span>
                       {isSoldOut && <span className="ml-2 text-xs">Sold out</span>}
                     </label>
