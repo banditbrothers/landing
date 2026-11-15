@@ -5,7 +5,13 @@ export const SITE_NAME = "Bandit Brothers";
 export const SITE_DESCRIPTION =
   "Bandit Brothers — premium bandanas and headwear. Wear your mischief. Shop bold designs, best sellers, and comfortable everyday style. Made in India.";
 
-export const DEFAULT_OG_IMAGE = "/logo-full-socials.png";
+// Built by scripts/generate-og-image.mjs
+export const DEFAULT_OG_IMAGE = {
+  url: "/og-default.jpg",
+  width: 1200,
+  height: 630,
+  alt: "Bandit Brothers — Wear your Mischief. Bandanas, balaclavas and jerseys.",
+};
 
 /** Cuts at a word boundary so search snippets don't end mid-word. */
 export const truncate = (text: string, max = 160) =>
@@ -25,7 +31,7 @@ export const pageMetadata = ({
   description: string;
   path: string;
   /** null = the route has an opengraph-image.tsx; Next adds og:image itself and Twitter falls back to it */
-  image?: string | null;
+  image?: string | typeof DEFAULT_OG_IMAGE | null;
 }): Metadata => {
   const fullTitle = `${title} | ${SITE_NAME}`; // og/twitter titles don't get the layout's title template
   return {

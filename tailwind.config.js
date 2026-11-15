@@ -67,6 +67,9 @@ export const theme = {
       "valentine-pink": "#FF69B4",
     },
     keyframes: {
+      marquee: {
+        to: { transform: "translateX(-50%)" },
+      },
       "accordion-down": {
         from: {
           height: "0",
@@ -85,6 +88,7 @@ export const theme = {
       },
     },
     animation: {
+      marquee: "marquee 40s linear infinite",
       "accordion-down": "accordion-down 0.2s ease-out",
       "accordion-up": "accordion-up 0.2s ease-out",
     },

@@ -12,7 +12,7 @@ import { MetaPixelProvider } from "@/provider/metaPixel";
 import { TanstackQueryProvider } from "@/provider/TanstackQuery";
 import { MotionProvider } from "@/provider/MotionProvider";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
@@ -36,13 +36,13 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} - Wear your Mischief`,
     description: SITE_DESCRIPTION,
     siteName: SITE_NAME,
-    images: "/logo-full-socials.png",
+    images: DEFAULT_OG_IMAGE,
     type: "website",
   },
   twitter: {
     title: `${SITE_NAME} - Wear your Mischief`,
     description: SITE_DESCRIPTION,
-    images: "/logo-full-socials.png",
+    images: DEFAULT_OG_IMAGE,
     card: "summary_large_image",
   },
   other: {

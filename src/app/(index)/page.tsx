@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { HeroSection } from "@/components/pages/home/hero/HeroSection";
 import { LandingPageSections } from "@/components/pages/home/LandingPageSections";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: {
@@ -18,19 +18,19 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: SITE_NAME,
     type: "website",
-    images: "/logo-full-socials.png",
+    images: DEFAULT_OG_IMAGE,
   },
   twitter: {
     title: `${SITE_NAME} - Wear your Mischief`,
     description: SITE_DESCRIPTION,
     card: "summary_large_image",
-    images: "/logo-full-socials.png",
+    images: DEFAULT_OG_IMAGE,
   },
 };
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background text-foreground space-y-20">
+    <div className="min-h-screen bg-background text-foreground">
       <HeroSection />
       <LandingPageSections />
     </div>

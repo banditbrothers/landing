@@ -1,8 +1,14 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { ReviewCard } from "@/components/cards/ReviewCard";
 import { ReviewWithoutEmail } from "@/types/review";
+import { StarRating } from "@/components/misc/StarRating";
+import { ClickableProductBadge } from "@/components/badges/ClickableProductBadges";
+import { useVariants } from "@/hooks/useVariants";
+import { getProductVariantName } from "@/utils/product";
+import { Reveal, SectionHead } from "@/components/misc/Reveal";
 
 const FEATURED_REVIEWS: ReviewWithoutEmail[] = [
   {
@@ -54,30 +60,61 @@ const FEATURED_REVIEWS: ReviewWithoutEmail[] = [
   },
 ];
 
-export const TestimonialsSection = () => {
-  return (
-    <section id="reviews" className="bg-background text-foreground scroll-mt-16">
-      <div className="container mx-auto px-4 mb-6">
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-6">
-          <h2 className="text-4xl font-bold tracking-tight mb-4">Looking for reviews?</h2>
-          <p className="text-muted-foreground mb-6">Hear It From Our Fellow Bandits</p>
-        </div>
-        <div className="flex flex-col md:flex-row gap-2">
-          {FEATURED_REVIEWS.map(review => (
-            <span className="flex-1" key={review.id}>
-              <ReviewCard review={review} containerStyle={{ minHeight: 720 }} />
-            </span>
-          ))}
-        </div>
+const titleCase = (name: string) =>
+  name
+    .split(" ")
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
 
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto mt-10">
-          <Link href="/reviews">
-            <Button variant="bandit-hover" className="group">
-              View All Reviews
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </Link>
-        </div>
+export const TestimonialsSection = () => {
+  const { data: variants } = useVariants();
+
+  return (
+    <section id="reviews" className="scroll-mt-20 max-w-screen-2xl mx-auto px-4 md:px-8">
+      <SectionHead kicker="Word on the street" title={<>Bandits <span className="text-bandit-orange">talk</span></>}>
+        <Link
+          href="/reviews"
+          className="group inline-flex items-center gap-2 text-sm text-muted-foreground border-b border-border pb-0.5 hover:text-foreground hover:border-bandit-orange w-fit">
+          Read all reviews
+          <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+        </Link>
+      </SectionHead>
+
+      <div className="grid md:grid-cols-3 gap-4 md:gap-5">
+        {FEATURED_REVIEWS.map((review, i) => (
+          <Reveal key={review.id} delay={i * 0.1} className={i === 1 ? "md:mt-12" : ""}>
+            <figure className="group h-full flex flex-col rounded-3xl bg-card border border-border overflow-hidden transition hover:-translate-y-1 hover:border-bandit-orange/60">
+              {review.images[0] && (
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={review.images[0]}
+                    alt={review.title}
+                    fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </div>
+              )}
+              <div className="p-6 flex flex-col gap-3 flex-1">
+                <StarRating value={review.rating} />
+                <h3 className="font-calera uppercase text-2xl leading-tight">&ldquo;{review.title}&rdquo;</h3>
+                <blockquote className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">{review.comment}</blockquote>
+                <figcaption className="mt-auto pt-4 border-t border-border flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-sm font-medium">{titleCase(review.name)}</span>
+                  {review.source === "website" &&
+                    review.variantIds.map(id => {
+                      const variant = variants.find(v => v.id === id);
+                      return variant ? (
+                        <ClickableProductBadge variant={variant} key={id}>
+                          {getProductVariantName(variant)}
+                        </ClickableProductBadge>
+                      ) : null;
+                    })}
+                </figcaption>
+              </div>
+            </figure>
+          </Reveal>
+        ))}
       </div>
     </section>
   );
