@@ -77,7 +77,7 @@ All timestamps are **unix seconds** (`utils/timestamp.ts` `getTimestamp()`), not
 **Checkout** (`app/(index)/checkout/page.tsx`):
 1. react-hook-form + zod form (name, email, phone, address, referral source). Indian pincodes are checked against the selected state via api.postalpincode.in (`lib/pincode.ts`); if that API is down the check is skipped.
 2. Totals are computed **in the browser**: subtotal (`utils/cart.ts`) − coupon discount (`utils/coupon.ts`) + shipping (₹100, free when total ≥ `MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING` = ₹700).
-3. Payment mode: international (country ≠ IN) → `manual`; coupon code == `NEXT_PUBLIC_CASH_AND_FREE_SHIPPING_COUPON_CODE` → `cash` (also free shipping); else `rzp`.
+3. Payment mode: international (country ≠ IN) → `manual`; coupon with `cashAndFreeShipping` (set server-side by `getCoupon` when the code == `CASH_AND_FREE_SHIPPING_COUPON_CODE`) → `cash` (also free shipping); else `rzp`. `createOrder` decides this again on the server.
 4. `createOrder` server action writes the order. For `rzp` it also creates a Razorpay order with `notes.dbId = <firestore id>`. For `cash`/`manual` it posts to Discord immediately.
 5. `rzp`: Razorpay Checkout modal (`components/payments/RazorpayGateway.tsx`). Dismiss → order set `cancelled`. Success → cart cleared, redirect home. The **webhook**, not the client, marks the order `paid`.
 6. `manual` (international): customer sees a dialog; admin later sets real shipping and sends a Razorpay payment link (see admin).
