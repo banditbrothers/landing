@@ -39,9 +39,11 @@ export const InstagramFeedSection = () => {
       <SectionHead
         kicker="Follow the gang"
         title={
-          <>
-            @be.a.<span className="text-bandit-orange">bandit</span>brother
-          </>
+          <span className="max-md:text-[0.85em]">
+            @be.a.
+            <wbr />
+            <span className="text-bandit-orange">bandit</span>brother
+          </span>
         }>
         <Link
           href={IG_URL}
