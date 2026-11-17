@@ -55,28 +55,44 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
 
     setIsLoading(true);
     try {
-      // Filter out undefined values
-      const updates = Object.entries(formData).reduce((acc, [key, value]) => {
-        if (value !== undefined && value !== "") {
-          // @ts-expect-error - this is a hack to get the type to work
-          acc[key] = value;
-        }
-        return acc;
-      }, {} as Partial<ProductVariant>);
+      // Write only the sizes edited here: rewriting the whole map would undo stock that orders
+      // deducted while this dialog was open. A size left empty becomes untracked (null deletes it).
+      const newStock = parseStockInputs(stockInputs, PRODUCTS_OBJ[variant.productId]?.sizes ?? []);
+      const stock = { ...variant.stock };
+      const stockChanges: Record<`stock.${string}`, number | null> = {};
+      for (const size of PRODUCTS_OBJ[variant.productId]?.sizes ?? []) {
+        const qty = newStock[size] ?? null;
+        if (qty === (variant.stock?.[size] ?? null)) continue;
+        stockChanges[`stock.${size}`] = qty;
+        if (qty === null) delete stock[size];
+        else stock[size] = qty;
+      }
+      const imagesChanged = mockupImages.join() !== (variant.images.mockup ?? []).join();
 
-
-      // Replaces the whole map; sizes left empty become untracked
-      updates.stock = parseStockInputs(stockInputs, PRODUCTS_OBJ[variant.productId]?.sizes ?? []);
-      updates.images = { ...variant.images, mockup: mockupImages };
-
+      const isAvailable = formData.isAvailable ?? true;
+      const isBestSeller = formData.isBestSeller ?? false;
       // Empty/0 clears the override so the product's base price applies
-      const price = updates.price || null;
+      const price = formData.price || null;
       // Empty clears it so the product's description applies
       const description = formData.description?.trim() || null;
-      await updateVariant(variant.id, { ...updates, price, description });
+      await updateVariant(variant.id, {
+        isAvailable,
+        isBestSeller,
+        price,
+        description,
+        ...stockChanges,
+        ...(imagesChanged && { "images.mockup": mockupImages }),
+      });
 
-      // Create updated variant object to pass to parent
-      const updatedVariant = { ...variant, ...updates, price: price ?? undefined, description: description ?? undefined };
+      const updatedVariant: ProductVariant = {
+        ...variant,
+        isAvailable,
+        isBestSeller,
+        stock,
+        images: { ...variant.images, mockup: mockupImages },
+        price: price ?? undefined,
+        description: description ?? undefined,
+      };
 
       toast.success("Variant updated successfully");
       onSave(updatedVariant);

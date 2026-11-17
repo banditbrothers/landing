@@ -26,6 +26,7 @@ import { EyeIcon } from "@/Icons/icons";
 import { SignatureIcon, Globe2, LinkIcon } from "lucide-react";
 import { getWhatsappOrderReviewLink } from "@/utils/whatsappMessageLinks";
 import { InternationalOrderPaymentDialog } from "./InternationalOrderPaymentDialog";
+import { toast } from "sonner";
 
 type FilterOrder =
   | {
@@ -56,11 +57,16 @@ export function OrderManagement() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    getOrders(MAX_ORDERS_LIMIT).then(orders => {
-      setOrders(orders);
-      setFilteredOrders(orders);
-      setIsLoading(false);
-    });
+    getOrders(MAX_ORDERS_LIMIT)
+      .then(orders => {
+        setOrders(orders);
+        setFilteredOrders(orders);
+      })
+      .catch(error => {
+        console.error("Error loading orders:", error);
+        toast.error("Failed to load orders. Reload the page; you may need to log in again.");
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   const showDialog = (order: Order) => {
@@ -98,12 +104,14 @@ export function OrderManagement() {
       filtered = filtered.filter(order => order.phone.includes(_phone));
     }
 
-    if (_date && _date.from && _date.to) {
-      filtered = filtered.filter(
-        order =>
-          getDate(order.createdAt).getTime() >= _date.from!.getTime() &&
-          getDate(order.createdAt).getTime() <= _date.to!.getTime()
-      );
+    if (_date?.from) {
+      // The picker gives midnight at the start of each day; include all of the last day (or just `from`)
+      const from = _date.from.getTime();
+      const to = new Date(_date.to ?? _date.from).setHours(23, 59, 59, 999);
+      filtered = filtered.filter(order => {
+        const t = getDate(order.createdAt).getTime();
+        return t >= from && t <= to;
+      });
     }
 
     setFilteredOrders(filtered);
@@ -297,7 +305,11 @@ export function OrderManagement() {
         <InternationalOrderPaymentDialog
           order={selectedInternationalOrder!}
           onClose={() => setSelectedInternationalOrder(null)}
-          onUpdate={() => {}}
+          onUpdate={updated => {
+            const replace = (list: Order[]) => list.map(o => (o.id === updated.id ? updated : o));
+            setOrders(replace);
+            setFilteredOrders(replace);
+          }}
         />
       )}
     </div>

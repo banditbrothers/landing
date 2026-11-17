@@ -94,7 +94,7 @@ All timestamps are **unix seconds** (`utils/timestamp.ts` `getTimestamp()`), not
 
 `app/(index)/admin/page.tsx`, client component, desktop only. Login: `adminLogin` (`actions/admin.ts`) checks `ADMIN_PASSWORD` on the server and sets a signed httpOnly `admin_session` cookie (30 days, `lib/admin-auth.ts`). Every admin-only action starts with `await requireAdmin()`. Four tabs, each fetching through server actions with local `useState` (no TanStack):
 
-- **Orders** (`OrderManagement.tsx`): latest 50 non-cancelled orders, filter by name/phone/date client-side, 10 per page. Order details dialog, WhatsApp review-request link, and for international orders `InternationalOrderPaymentDialog`: edit subtotal/shipping/discount → `updateOrder` → `createPaymentLinkForInternationalOrder` (Razorpay payment link, copied to clipboard). The webhook marks it paid when the customer pays.
+- **Orders** (`OrderManagement.tsx`): latest 50 non-cancelled orders, filter by name/phone/date client-side, 10 per page. Order details dialog, WhatsApp review-request link, and for international orders `InternationalOrderPaymentDialog`: edit subtotal/shipping/discount → `createPaymentLinkForInternationalOrder` (one server call: saves the amounts, cancels the previous link stored in `order.paymentLink`, creates a new Razorpay link for the new total, copied to clipboard). The webhook marks it paid when the customer pays.
 - **Coupons** (`CouponManagement.tsx`): create (code uppercased, expiry = end of day IST, optional variant restriction), toggle `isActive`.
 - **Reviews** (`ReviewManagement.tsx`): latest 10 reviews, approve/reject.
 - **Products** (`ProductsManagement.tsx` + `components/dialogs/AddVariantDialog.tsx`, `EditVariantDialog.tsx`): create/edit/delete variants. Image upload: browser converts to WebP + compresses (`utils/image.ts`), uploads through the admin-only `uploadToS3` server action (`utils/s3Upload.ts`, key `{productId}/{designId}/mockup-{ms}.webp`), new URL is appended to `images.mockup`. Both dialogs reorder/remove images via `MockupImageGrid.tsx` (first = cover); nothing is written until Save.
@@ -103,7 +103,7 @@ All timestamps are **unix seconds** (`utils/timestamp.ts` `getTimestamp()`), not
 
 All in `src/actions/`, marked `"use server"`, using the admin SDK (bypasses Firestore rules):
 
-- `orders.ts`: getOrders, getOrder, createOrder, cancelOrder, updateOrder; `admin.ts`: adminLogin, checkAdminSession
+- `orders.ts`: getOrders, getOrder, createOrder, cancelOrder; `admin.ts`: adminLogin, checkAdminSession
 - `coupons.ts`: validateCoupon, getCoupon, getCoupons, addCoupon, updateCoupon
 - `reviews.ts`: createReview, getReviewsAdmin, updateReview (public approved reviews come from `lib/reviews.ts`)
 - `products.ts`: getVariantsAdmin, createVariant, updateVariant, deleteVariant

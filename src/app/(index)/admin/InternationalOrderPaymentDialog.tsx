@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Order } from "@/types/order";
-import { updateOrder } from "@/actions/orders";
 import { createPaymentLinkForInternationalOrder } from "@/actions/payments/rzp";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { toast } from "sonner";
@@ -51,20 +50,14 @@ export const InternationalOrderPaymentDialog = ({ onClose, order, onUpdate }: In
 
     setIsLoading(true);
     try {
-      // Update the order in Firebase
-      const updateData = {
-        subtotal: formData.subtotal,
-        shipping: formData.shipping,
-        discount: formData.discount,
-        total: newTotal,
-      };
-
-      await updateOrder(order.id, updateData);
-
-      // Create payment link using the new total
-      const paymentLink = await createPaymentLinkForInternationalOrder(order, newTotal);
-
-      onUpdate({ ...order, ...updateData });
+      // Saves the amounts and creates the link in one server call (any earlier link is cancelled)
+      const result = await createPaymentLinkForInternationalOrder(order.id, formData);
+      if ("error" in result) {
+        toast.error(result.error);
+        return;
+      }
+      onUpdate(result.order);
+      const paymentLink = result.order.paymentLink!.url;
 
       // The link is created by now; if the clipboard refuses, show it so it isn't lost.
       await copy(paymentLink).then(

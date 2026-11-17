@@ -36,6 +36,8 @@ export type Order = {
   // Lines that were paid for after stock hit 0 (set by deductStockForOrder)
   oversold?: OversoldLine[];
   reviewRequestSentAt?: number;
+  // International orders: the latest Razorpay payment link sent by admin (older ones are cancelled)
+  paymentLink?: { id: string; url: string };
 } & (
   | {
       paymentMode: "rzp";

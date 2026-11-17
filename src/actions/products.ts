@@ -7,6 +7,8 @@ import { FieldValue } from "firebase-admin/firestore";
 import { revalidateCatalog } from "@/lib/catalog";
 import { ProductVariant } from "@/types/product";
 
+const GRPC_ALREADY_EXISTS = 6;
+
 export const getVariantsAdmin = async (): Promise<ProductVariant[]> => {
   await requireAdmin();
   const variants = await firestore().collection(Collections.variants).get();
@@ -29,25 +31,30 @@ export const getVariantsByIds = async (ids: string[]): Promise<ProductVariant[]>
 export const createVariant = async (
   variantId: string,
   variantData: Omit<ProductVariant, "id">
-): Promise<ProductVariant> => {
+): Promise<ProductVariant | { error: string }> => {
   await requireAdmin();
   try {
-    await firestore().collection(Collections.variants).doc(variantId).set(variantData);
+    // create(), not set(): never overwrite a variant the admin's (possibly stale) list didn't show
+    await firestore().collection(Collections.variants).doc(variantId).create(variantData);
     revalidateCatalog();
 
     return { id: variantId, ...variantData };
   } catch (error) {
+    if ((error as { code?: number }).code === GRPC_ALREADY_EXISTS) return { error: `${variantId} already exists` };
     console.error("Error creating variant:", error);
     throw new Error("Failed to create variant");
   }
 };
 
-// null removes a field: price falls back to the product's basePrice, description to the product's copy
+// null removes a field: price falls back to the product's basePrice, description to the product's copy,
+// a "stock.<size>" key to untracked. Dotted keys update one field of a map and leave the rest alone.
 export const updateVariant = async (
   variantId: string,
   updates: Omit<Partial<ProductVariant>, "price" | "description"> & {
     price?: number | null;
     description?: string | null;
+    "images.mockup"?: string[];
+    [size: `stock.${string}`]: number | null;
   }
 ) => {
   await requireAdmin();

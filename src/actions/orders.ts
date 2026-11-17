@@ -168,9 +168,3 @@ export const cancelOrder = async (orderId: string) => {
     if (order?.status === "initiated" && order.paymentMode === "rzp") tx.update(ref, { status: "cancelled" });
   });
 };
-
-export const updateOrder = async (orderId: string, order: object) => {
-  await requireAdmin();
-  await firestore().collection(Collections.orders).doc(orderId).update(order);
-  return true;
-};

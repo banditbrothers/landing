@@ -44,7 +44,7 @@ export const StockNotificationsManagement = () => {
     )
       return;
     try {
-      await Promise.all(ids.map(id => updateStockNotificationStatus(id, "notified")));
+      await updateStockNotificationStatus(ids, "notified");
       setRequests(prev => prev.map(r => (ids.includes(r.id) ? { ...r, status: "notified" } : r)));
     } catch (error) {
       console.error(error);

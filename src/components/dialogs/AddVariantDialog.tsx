@@ -97,6 +97,10 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
       };
 
       const createdVariant = await createVariant(sku, newVariant);
+      if ("error" in createdVariant) {
+        toast.error(createdVariant.error);
+        return;
+      }
 
       toast.success("Variant created successfully!");
       onSave(createdVariant);

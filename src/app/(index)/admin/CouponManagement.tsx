@@ -29,11 +29,16 @@ export function CouponManagement() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([getCoupons(), getVariantsAdmin()]).then(([coupons, variants]) => {
-      setCoupons(coupons);
-      setVariants(variants);
-      setIsLoading(false);
-    });
+    Promise.all([getCoupons(), getVariantsAdmin()])
+      .then(([coupons, variants]) => {
+        setCoupons(coupons);
+        setVariants(variants);
+      })
+      .catch(error => {
+        console.error("Error loading coupons:", error);
+        toast.error("Failed to load coupons. Reload the page; you may need to log in again.");
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   const handleAddCoupon = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -73,7 +78,8 @@ export function CouponManagement() {
       expiresAt: expiresAt ? Math.floor(expiresAt.getTime() / 1000) : null,
       createdAt: getTimestamp(),
       isActive: true,
-      applicableVariants: selectedVariants,
+      // Every variant ticked = all variants ([]), so variants added later are covered too
+      applicableVariants: selectedVariants.length === variants.length ? [] : selectedVariants,
     };
 
     const newCoupon = await addCoupon(coupon);

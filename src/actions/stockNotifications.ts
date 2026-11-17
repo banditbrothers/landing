@@ -60,18 +60,25 @@ export const createStockNotification = async (
   return { success: true };
 };
 
+// Every pending request (however old), plus the latest `limit` of any status for the "Show all" history
 export const getStockNotifications = async (limit: number = 200): Promise<StockNotification[]> => {
   await requireAdmin();
-  const snap = await firestore()
-    .collection(Collections.stockNotifications)
-    .orderBy("createdAt", "desc")
-    .limit(limit)
-    .get();
-  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as StockNotification[];
+  const col = firestore().collection(Collections.stockNotifications);
+  // Pending is sorted here, not in the query, so it needs no composite index
+  const [pending, recent] = await Promise.all([
+    col.where("status", "==", "pending").get(),
+    col.orderBy("createdAt", "desc").limit(limit).get(),
+  ]);
+  const byId = new Map([...pending.docs, ...recent.docs].map(doc => [doc.id, { id: doc.id, ...doc.data() }]));
+  return ([...byId.values()] as StockNotification[]).sort((a, b) => b.createdAt - a.createdAt);
 };
 
-export const updateStockNotificationStatus = async (id: string, status: StockNotificationStatus) => {
+// One batched write, so a "Mark all notified" either marks every request or none
+export const updateStockNotificationStatus = async (ids: string[], status: StockNotificationStatus) => {
   await requireAdmin();
-  await firestore().collection(Collections.stockNotifications).doc(id).update({ status });
+  if (ids.length > 500) throw new Error("Too many requests at once");
+  const batch = firestore().batch();
+  for (const id of ids) batch.update(firestore().collection(Collections.stockNotifications).doc(id), { status });
+  await batch.commit();
   return true;
 };

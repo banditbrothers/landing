@@ -28,10 +28,13 @@ export function ReviewManagement() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getReviewsAdmin().then(reviews => {
-      setReviews(reviews);
-      setIsLoading(false);
-    });
+    getReviewsAdmin()
+      .then(setReviews)
+      .catch(error => {
+        console.error("Error loading reviews:", error);
+        toast.error("Failed to load reviews. Reload the page; you may need to log in again.");
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   const handleStatusChange = async (reviewId: string, status: ReviewStatus) => {

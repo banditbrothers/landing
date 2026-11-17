@@ -69,7 +69,9 @@ export const ProductManagement = () => {
   const handleDeleteVariant = async (variant: ProductVariant) => {
     if (
       !confirm(
-        `Are you sure you want to delete the variant "${getProductVariantName(variant)}"? This action cannot be undone.`
+        `Permanently delete "${getProductVariantName(variant)}"? This cannot be undone.\n\n` +
+          `Past orders and reviews of this variant will lose its name and image. To just hide it from the shop, ` +
+          `cancel and switch off "Is Available" in Edit instead.`
       )
     ) {
       return;
