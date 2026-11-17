@@ -8,13 +8,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "firebasestorage.googleapis.com",
       },
+      // Instagram CDN host depends on the server's region (e.g. scontent-iad3-1.cdninstagram.com on Vercel)
       {
         protocol: "https",
-        hostname: "scontent.cdninstagram.com",
+        hostname: "**.cdninstagram.com",
       },
       {
         protocol: "https",
-        hostname: "instagram.fbom6-1.fna.fbcdn.net",
+        hostname: "**.fbcdn.net",
       },
       {
         protocol: "https",
