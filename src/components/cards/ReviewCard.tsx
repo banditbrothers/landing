@@ -1,77 +1,158 @@
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+import { Check } from "lucide-react";
 import { ReviewWithoutEmail } from "@/types/review";
 import { StarRating } from "../misc/StarRating";
-import { Skeleton } from "@/components/ui/skeleton";
-import { CSSProperties, useState } from "react";
-import { ClickableProductBadge } from "../badges/ClickableProductBadges";
 import { useVariants } from "@/hooks/useVariants";
+import { PRODUCTS_OBJ } from "@/data/products";
 import { getProductVariantName } from "@/utils/product";
+import { getProductVariantUrl } from "@/utils/share";
+
+const words = (name: string) =>
+  name
+    .trim()
+    .split(/\s+/)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+
+// "Abbas Merchant" → "Abbas M.": keeps full customer names off a public page
+export const shortName = (name: string) => {
+  const w = words(name);
+  return w.length > 1 ? `${w[0]} ${w[w.length - 1][0]}.` : w[0];
+};
+
+const initials = (name: string) => {
+  const w = words(name);
+  return (w[0][0] + (w.length > 1 ? w[w.length - 1][0] : "")).toUpperCase();
+};
+
+const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
+  ["year", 31536000],
+  ["month", 2592000],
+  ["week", 604800],
+  ["day", 86400],
+];
+const timeAgo = (seconds: number) => {
+  const diff = Date.now() / 1000 - seconds;
+  const [unit, size] = UNITS.find(([, s]) => diff >= s) ?? ["day", 86400];
+  return rtf.format(-Math.floor(diff / size), unit);
+};
+
+const GEAR_SHORT: Record<string, string> = { "square-bandana": "Square" };
 
 interface ReviewCardProps {
   review: ReviewWithoutEmail;
-  containerStyle?: CSSProperties;
+  /** Orange pull-quote treatment for short, photo-less reviews */
+  loud?: boolean;
+  priority?: boolean;
+  /** Highlights this variant in the "bought" chips */
+  currentVariantId?: string;
 }
 
-export const ReviewCard = ({ review, containerStyle = {} }: ReviewCardProps) => {
+export const ReviewCard = ({ review, loud = false, priority = false, currentVariantId }: ReviewCardProps) => {
   const { data: variants } = useVariants();
-
-  const userName = review.name
-    .split(" ")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-
-  const [isLoading, setIsLoading] = useState(true);
+  const bought =
+    review.source === "website" ? review.variantIds.map(id => variants.find(v => v.id === id)).filter(v => !!v) : [];
+  const photo = review.images[0];
 
   return (
-    <div
-      className="relative p-8 rounded-xl bg-card shadow-md hover:shadow-xl transition-all duration-300"
-      style={containerStyle}>
-      <div className="flex flex-col gap-8">
-        <div className="flex-1">
-          <div className="flex flex-col gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <h6 className="text-sm font-medium text-muted-foreground">{userName}</h6>
-                <StarRating value={review.rating} />
-              </div>
-              <h3 className="text-xl font-semibold tracking-tight text-card-foreground">{review.title}</h3>
-            </div>
-            <div className="flex flex-col items-start gap-4">
-              <div className="flex flex-wrap gap-2 items-center">
-                {review.source === "website" &&
-                  review.variantIds.map(variantId => {
-                    const variant = variants.find(v => v.id === variantId);
-                    if (!variant) return null;
-
-                    const variantName = getProductVariantName(variant, { includeProductName: true });
-
-                    return (
-                      <ClickableProductBadge variant={variant} key={variantId}>
-                        {variantName}
-                      </ClickableProductBadge>
-                    );
-                  })}
-              </div>
-            </div>
-            <p className="text-sm leading-relaxed text-muted-foreground/90">{review.comment}</p>
-          </div>
+    <article
+      id={`r-${review.id}`}
+      className={`scroll-mt-28 rounded-2xl border overflow-hidden transition hover:-translate-y-0.5 ${
+        loud ? "bg-bandit-orange border-bandit-orange text-[#160900]" : "bg-card border-border hover:border-zinc-600"
+      }`}>
+      {photo && (
+        <div className="relative aspect-[4/5] bg-secondary">
+          <Skeleton className="absolute inset-0 rounded-none" />
+          <Image
+            fill
+            src={photo}
+            alt={`${shortName(review.name)}'s photo`}
+            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+            priority={priority}
+            className="object-cover"
+          />
         </div>
+      )}
 
-        {review.images.length > 0 && (
-          <div className="relative w-full h-96 rounded-lg overflow-hidden">
-            {isLoading && <Skeleton className="absolute inset-0 w-full h-full" aria-hidden="true" />}
-            <Image
-              fill
-              priority
-              quality={50}
-              src={review.images[0]}
-              alt="Review Image"
-              className="object-contain"
-              onLoad={() => setIsLoading(false)}
-            />
+      <div className={loud ? "px-6 pt-7 pb-5" : "p-5 md:p-6"}>
+        {loud && <span className="block font-calera text-[90px] leading-[0.5] h-8">“</span>}
+        <div className="flex items-center justify-between gap-3">
+          <StarRating
+            value={review.rating}
+            className={`[&_svg]:w-[15px] [&_svg]:h-[15px] ${loud ? "[&_.fill-bandit-orange]:fill-[#160900] [&_.fill-bandit-orange]:text-[#160900]" : ""}`}
+          />
+          {/* Server-rendered pages can be up to a day old, so "6 days ago" may become "last week" on the client */}
+          <small suppressHydrationWarning className={`text-xs ${loud ? "text-[#160900]/70" : "text-muted-foreground"}`}>
+            {timeAgo(review.createdAt)}
+          </small>
+        </div>
+        <h3
+          className={
+            loud
+              ? "font-calera uppercase text-[46px] leading-[0.92] mt-1"
+              : "text-xl md:text-[21px] font-bold leading-tight tracking-tight mt-3"
+          }>
+          {review.title.trim()}
+        </h3>
+        <p className={`text-[15px] leading-relaxed mt-2.5 ${loud ? "text-[#160900]/80" : "text-zinc-300"}`}>
+          {review.comment}
+        </p>
+
+        {bought.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-4">
+            {bought.map(v => (
+              <Link
+                key={v.id}
+                href={getProductVariantUrl(v)}
+                aria-current={v.id === currentVariantId ? "page" : undefined}
+                className={`inline-flex items-center gap-2 max-w-full min-h-9 py-[3px] pl-[3px] pr-3.5 rounded-[18px] text-[13px] transition-colors aria-[current]:ring-1 aria-[current]:ring-bandit-orange ${
+                  loud
+                    ? "bg-[#160900]/[.12] hover:bg-[#160900] hover:text-bandit-orange"
+                    : "bg-secondary hover:bg-bandit-orange/10 hover:text-bandit-orange"
+                }`}>
+                {v.images.mockup[0] && (
+                  <Image
+                    src={v.images.mockup[0]}
+                    alt=""
+                    width={30}
+                    height={30}
+                    className="w-[30px] h-[30px] shrink-0 rounded-full object-cover"
+                  />
+                )}
+                {/* One text run so long names wrap as a sentence instead of splitting into two columns */}
+                <span className="leading-snug">
+                  {getProductVariantName(v)}{" "}
+                  <span className="whitespace-nowrap opacity-55">
+                    · {GEAR_SHORT[v.productId] ?? PRODUCTS_OBJ[v.productId]?.name}
+                  </span>
+                </span>
+              </Link>
+            ))}
           </div>
         )}
+
+        <div
+          className={`flex items-center gap-2.5 mt-4 pt-4 border-t border-dashed text-sm ${loud ? "border-[#160900]/25" : "border-border"}`}>
+          <span
+            className={`grid place-items-center w-[34px] h-[34px] rounded-full text-[13px] font-bold ${
+              loud ? "bg-[#160900] text-bandit-orange" : "bg-bandit-orange text-[#160900]"
+            }`}>
+            {initials(review.name)}
+          </span>
+          {shortName(review.name)}
+          {review.source === "website" && (
+            <span
+              className={`ml-auto inline-flex items-center gap-1 text-[11px] tracking-[0.1em] uppercase ${
+                loud ? "text-[#160900]/70" : "text-muted-foreground"
+              }`}>
+              <Check className={`w-3.5 h-3.5 ${loud ? "" : "text-bandit-orange"}`} strokeWidth={2.4} />
+              Verified buyer
+            </span>
+          )}
+        </div>
       </div>
-    </div>
+    </article>
   );
 };

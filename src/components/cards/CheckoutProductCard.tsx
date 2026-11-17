@@ -1,6 +1,7 @@
 import { XMarkIcon } from "../../Icons/icons";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { QuantityStepper } from "../misc/QuantityStepper";
 import { useCart } from "../stores/cart";
@@ -41,6 +42,7 @@ export const CheckoutProductCard = ({
         <XMarkIcon className="w-4 h-4" />
       </Button>
       <div className="w-20 h-20 sm:w-24 sm:h-24 relative">
+        <Skeleton className="absolute inset-0 rounded-md" />
         <Link href={getProductVariantUrl(variant)} onClick={closeCart}>
           <Image
             fill

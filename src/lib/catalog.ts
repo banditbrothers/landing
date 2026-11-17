@@ -3,6 +3,7 @@ import { unstable_cache, revalidateTag } from "next/cache";
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase-admin";
 import { ProductVariant } from "@/types/product";
+import { isProductActive } from "@/data/products";
 
 const CATALOG_TAG = "variants";
 
@@ -17,10 +18,11 @@ const getCachedCatalog = unstable_cache(
   { revalidate: 3600, tags: [CATALOG_TAG] }
 );
 
-/** All available variants, cached on the server. null if Firestore failed. */
+/** All available variants of active products, cached on the server. null if Firestore failed. */
 export const getCatalog = async (): Promise<ProductVariant[] | null> => {
   try {
-    return await getCachedCatalog();
+    // Filtered outside the cache: the data cache can outlive a deploy, so flipping Product.isActive still applies at once
+    return (await getCachedCatalog()).filter(v => isProductActive(v.productId));
   } catch (error) {
     console.error("Error fetching catalog:", error);
     return null;

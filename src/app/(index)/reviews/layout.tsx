@@ -6,6 +6,7 @@ export const metadata = pageMetadata({
   description:
     "Real reviews and photos from Bandit Brothers customers. See what riders, runners and everyday bandits say about our bandanas and balaclavas.",
   path: "/reviews",
+  image: null, // opengraph-image.tsx
 });
 
 export default function ReviewsLayout({ children }: { children: React.ReactNode }) {

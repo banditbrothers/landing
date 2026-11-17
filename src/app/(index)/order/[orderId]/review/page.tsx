@@ -1,26 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LoadingScreen } from "@/components/misc/Loading";
 import { getOrder } from "@/actions/orders";
+import { getVariantsByIds } from "@/actions/products";
+import { ProductVariant } from "@/types/product";
 import { Order } from "@/types/order";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import * as z from "zod";
 import Image from "next/image";
 import { StarRatingInput } from "@/components/misc/StarRating";
 import { Textarea } from "@/components/ui/textarea";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Review } from "@/types/review";
-import { getTimestamp } from "@/utils/timestamp";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { getWhatsappHelpWithCreateReviewLink, getWhatsappUpdateReviewLink } from "@/utils/whatsappMessageLinks";
-import { CheckCircle, Loader2, MessageCircle } from "lucide-react";
+import { ArrowRightIcon, ArrowUpRightIcon, Loader2, MessageCircleIcon } from "lucide-react";
 import { FileDropzone } from "@/components/misc/FileUploader";
 import { processImage } from "@/utils/image";
 import Link from "next/link";
@@ -28,11 +26,10 @@ import { getCollectionDocumentId, signInAnonymously, storage } from "@/lib/fireb
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Collections } from "@/constants/collections";
 import { createReview } from "@/actions/reviews";
-import { getDiscordReviewMessage } from "@/utils/discordMessages";
-import { sendDiscordReviewMessage } from "@/actions/discord";
-import { useVariants } from "@/hooks/useVariants";
 import { getProductVariantName, getSizeLabel } from "@/utils/product";
 import { getProductVariantUrl } from "@/utils/share";
+import { Sticker } from "@/components/cards/ShopCard";
+import { track } from "@/utils/analytics";
 
 signInAnonymously();
 
@@ -43,12 +40,49 @@ const reviewSchema = z.object({
   rating: z.number().min(1, "Oops! You forgot to rate us 5 stars!").max(5),
 });
 
+// Only 4 and 5 read as good; 1-3 are all some flavour of letdown
+const VERDICTS = ["Pick a rating", "Total miss", "Disappointed", "Not quite there", "Good enough", "Legendary"];
+
+const Kicker = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-3">{children}</p>
+);
+
+const Panel = ({ className = "", children }: { className?: string; children: React.ReactNode }) => (
+  <div className={`rounded-[22px] border border-border bg-card ${className}`}>{children}</div>
+);
+
+const PageHeader = ({ order, head, accent, copy }: { order: Order; head: string; accent: string; copy: string }) => (
+  <>
+    <nav className="text-[13px] text-muted-foreground flex gap-2 pt-4" aria-label="Breadcrumb">
+      <Link href="/" className="hover:text-foreground">
+        Home
+      </Link>
+      <span className="opacity-50">/</span>
+      <Link href={`/order/${order.id}`} className="hover:text-foreground">
+        Order {order.id}
+      </Link>
+      <span className="opacity-50">/</span>
+      <span className="text-foreground">Review</span>
+    </nav>
+    <div className="pt-8 md:pt-12">
+      <Kicker>
+        Order <span className="normal-case tracking-normal font-mono">{order.id}</span> · Review
+      </Kicker>
+      <h1 className="font-calera uppercase leading-[0.9] text-[17vw] md:text-[clamp(4.5rem,9vw,8rem)]">
+        {head} <span className="text-bandit-orange">{accent}</span>.
+      </h1>
+      <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md mt-5">{copy}</p>
+    </div>
+  </>
+);
+
 type OrderPageProps = { params: Promise<{ orderId: string }> };
 
 export default function OrderReviewPage({ params }: OrderPageProps) {
   const router = useRouter();
 
-  const { data: variants, isReady } = useVariants();
+  // Looked up by id, not from the catalog, so items that are no longer sold still render
+  const [variants, setVariants] = useState<ProductVariant[]>();
 
   const [order, setOrder] = useState<Order | null>(null);
   const [submitStatus, setSubmitStatus] = useState<"not-submitted" | "submitting" | "submitted">("not-submitted");
@@ -60,16 +94,20 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     mode: "onTouched",
     defaultValues: { name: "", title: "", comment: "", rating: 0 },
   });
+  const rating = useWatch({ control: form.control, name: "rating" });
+  const commentLength = useWatch({ control: form.control, name: "comment" }).length;
+  const previewUrl = useMemo(() => images[0] && URL.createObjectURL(images[0]), [images]);
 
   useEffect(() => {
     const fetchOrder = async () => {
       const orderId = (await params).orderId;
       const order = await getOrder(orderId);
       if (!order) {
-        toast.error("Invalid Order ID... Please contact us to resolve this issue");
+        toast.error("We couldn't find that order", { description: "Message us and we'll sort it out." });
         router.push("/");
         return;
       }
+      setVariants(await getVariantsByIds(order.variants.map(v => v.variantId)).catch(() => []));
       setSubmitStatus(order.reviewId ? "submitted" : "not-submitted");
       setOrder(order);
     };
@@ -89,38 +127,37 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     }
 
     setSubmitStatus("submitting");
-    const reviewId = getCollectionDocumentId(Collections.reviews);
+    try {
+      const reviewId = getCollectionDocumentId(Collections.reviews);
 
-    const imageUrls = [];
-    if (images.length > 0) {
-      const imageExtension = images[0].name.split(".").pop();
-      const storageRef = ref(storage, `${Collections.reviews}/${reviewId}/0.${imageExtension}`);
-      const uploadTask = await uploadBytes(storageRef, images[0]);
-      imageUrls.push(await getDownloadURL(uploadTask.ref));
+      const imageUrls = [];
+      if (images.length > 0) {
+        const imageExtension = images[0].name.split(".").pop();
+        const storageRef = ref(storage, `${Collections.reviews}/${reviewId}/0.${imageExtension}`);
+        const uploadTask = await uploadBytes(storageRef, images[0]);
+        imageUrls.push(await getDownloadURL(uploadTask.ref));
+      }
+
+      const result = await createReview(reviewId, { ...data, orderId: order.id, images: imageUrls });
+      if ("error" in result) throw new Error(result.error);
+
+      track("review_submitted", { order_id: order.id, rating: data.rating, has_photo: imageUrls.length > 0 });
+      toast.success("Review sent", { description: "Thanks for taking the time to tell us." });
+      setOrder({ ...order, reviewId }); // the submitted screen links to this review
+      setSubmitStatus("submitted");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      console.error("[OrderReviewPage] Error submitting review", error);
+      toast.error(
+        error instanceof Error && error.message ? error.message : "Couldn't submit your review. Please try again."
+      );
+      setSubmitStatus("not-submitted");
     }
-
-    const review: Omit<Extract<Review, { source: "website" }>, "id"> = {
-      ...data,
-      status: "pending",
-      email: order.email,
-      source: "website",
-      orderId: order.id,
-      createdAt: getTimestamp(),
-      variantIds: order.variants.map(variant => variant.variantId),
-      images: imageUrls,
-    };
-
-    await createReview(reviewId, review);
-    await sendDiscordReviewMessage(getDiscordReviewMessage({ ...review, id: reviewId }));
-
-    toast.success("Review submitted successfully");
-    setSubmitStatus("submitted");
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleOnImageSelect = async (files: File[]) => {
     if (files.length === 0) {
-      toast.error("Oops, this file is not supported");
+      toast.error("That file won't upload", { description: "Use a JPG, PNG or WebP photo." });
       return;
     }
 
@@ -132,228 +169,232 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
 
   if (!order) return <LoadingScreen />;
   if (submitStatus === "submitted") return <ReviewSubmitted order={order} />;
-  if (!isReady) return <LoadingScreen />;
+  if (!variants) return <LoadingScreen />;
+
+  const items = order.variants.flatMap(orderVariant => {
+    const variant = variants.find(v => v.id === orderVariant.variantId);
+    if (!variant) return [];
+    return [{ ...orderVariant, variant, name: getProductVariantName(variant, { includeProductName: true }) }];
+  });
+  const itemCount = order.variants.reduce((n, v) => n + v.quantity, 0);
 
   return (
-    <div className="container mx-auto max-w-2xl mt-20 min-h-screen">
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-2xl">Leave Us A Review</CardTitle>
+    <div className="max-w-screen-xl mx-auto px-4 md:px-8 pt-20 md:pt-24 pb-20 min-h-screen">
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-10 md:pb-12">
+        <div>
+          <PageHeader
+            order={order}
+            head="Rate the"
+            accent="loot"
+            copy="Stars, a few honest words and a photo of you wearing it. Takes a minute."
+          />
+        </div>
+        <a
+          href={getWhatsappHelpWithCreateReviewLink(order.id)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground md:pb-3">
+          Need help? Message us
+        </a>
+      </header>
+
+      {/* Mobile: the haul as a thumbnail strip above the form */}
+      <div className="lg:hidden flex items-center gap-2 overflow-x-auto pb-6">
+        {items.map(item => (
+          <Image
+            key={`${item.variantId}-${item.size}`}
+            width={56}
+            height={56}
+            quality={40}
+            alt={item.name}
+            src={item.variant.images.mockup[0]}
+            className="w-14 h-14 shrink-0 rounded-[14px] object-cover bg-secondary"
+          />
+        ))}
+        <p className="text-xs text-muted-foreground ml-1 shrink-0">
+          {itemCount} {itemCount === 1 ? "item" : "items"}
+        </p>
+      </div>
+
+      <div className="grid lg:grid-cols-[1.5fr_1fr] gap-8 lg:gap-10 border-t border-border pt-10">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10 min-w-0">
+            <FormField
+              control={form.control}
+              name="rating"
+              render={({ field }) => (
+                <FormItem className="space-y-0">
+                  <Kicker>01 · Your verdict</Kicker>
+                  <Panel className="p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <FormControl>
+                      <StarRatingInput
+                        value={field.value}
+                        onChange={field.onChange}
+                        className="w-9 h-9 md:w-11 md:h-11"
+                      />
+                    </FormControl>
+                    <div className="sm:text-right">
+                      <p
+                        className={`font-calera uppercase text-4xl leading-none ${rating ? "" : "text-muted-foreground"}`}>
+                        {VERDICTS[rating]}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Posting as <span className="text-foreground">{order.name}</span>
+                      </p>
+                    </div>
+                  </Panel>
+                  <FormMessage className="mt-2" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem className="space-y-0">
+                  <Kicker>02 · The headline</Kicker>
+                  <FormControl>
+                    <Input className="h-12 rounded-xl text-base" placeholder="How was your loot?" {...field} />
+                  </FormControl>
+                  <FormMessage className="mt-2" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="comment"
+              render={({ field }) => (
+                <FormItem className="space-y-0">
+                  <Kicker>03 · The story</Kicker>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Bandits don't hesitate! Unload your loot experience"
+                      className="min-h-[140px] rounded-xl text-base"
+                      {...field}
+                    />
+                  </FormControl>
+                  <div className="flex justify-between gap-4 mt-2 text-xs text-muted-foreground">
+                    <FormMessage />
+                    <span className="ml-auto">{commentLength}</span>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <section>
+              <Kicker>
+                04 · Show it off <span className="normal-case tracking-normal">(optional)</span>
+              </Kicker>
+              {previewUrl ? (
+                <div className="relative w-full h-72 rounded-[22px] overflow-hidden bg-secondary">
+                  <Image fill src={previewUrl} alt="Review image preview" className="object-contain" />
+                  <button
+                    type="button"
+                    className="absolute top-3 right-3 bg-black/60 backdrop-blur text-white text-xs px-3 py-1.5 rounded-full hover:bg-black/80"
+                    onClick={() => setImages([])}>
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <FileDropzone loading={isCompressing} onDrop={handleOnImageSelect} />
+              )}
+              <p className="text-xs text-muted-foreground mt-2">Photos with the gear on get featured on the site.</p>
+            </section>
+
             <Button
-              variant="link"
-              className="px-0"
-              onClick={() =>
-                window.open(getWhatsappHelpWithCreateReviewLink(order.id), "_blank", "noreferrer noopener")
-              }>
-              Need Help?
+              type="submit"
+              disabled={submitStatus === "submitting"}
+              className="w-full h-auto rounded-full bg-bandit-orange text-black hover:bg-bandit-orange/90 py-4 text-base text-wrap">
+              {submitStatus === "submitting" ? (
+                <>
+                  Submitting... This may take a while <Loader2 className="w-4 h-4 animate-spin" />
+                </>
+              ) : (
+                <>
+                  Submit review <ArrowRightIcon className="w-4 h-4" />
+                </>
+              )}
             </Button>
+          </form>
+        </Form>
+
+        <aside className="hidden lg:block space-y-4 lg:sticky lg:top-[calc(var(--nav-h)+2rem)] lg:transition-[top] lg:duration-300 self-start">
+          <Kicker>
+            What you&apos;re reviewing · {itemCount} {itemCount === 1 ? "item" : "items"}
+          </Kicker>
+          <Panel className="px-5 divide-y divide-border">
+            {items.map(({ variant, name, size, quantity, variantId }) => (
+              <Link
+                key={`${variantId}-${size}`}
+                href={getProductVariantUrl(variant)}
+                target="_blank"
+                className="flex items-center gap-4 py-4 group">
+                <Image
+                  width={64}
+                  height={64}
+                  quality={40}
+                  alt={name}
+                  src={variant.images.mockup[0]}
+                  className="w-16 h-16 shrink-0 rounded-[14px] object-cover bg-secondary"
+                />
+                <div className="min-w-0">
+                  <p className="font-medium truncate group-hover:text-bandit-orange">{name}</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">
+                    {[size && getSizeLabel(size), `Qty ${quantity}`].filter(Boolean).join(" · ")}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </Panel>
+          <div className="rounded-[22px] p-5 bg-bandit-orange text-black">
+            <p className="font-calera uppercase text-3xl leading-[0.9]">Your word counts.</p>
+            <p className="text-sm mt-1.5">We read every single one. It helps the next bandit pick their loot.</p>
           </div>
-          <CardDescription>We value your feedback and would love to hear about your experience.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center gap-2 w-full">
-            {/* Products Review Section */}
-            <Accordion type="single" collapsible className="w-full mb-8 rounded-lg bg-bandit-orange/10 ">
-              <AccordionItem value="products" className="border-none">
-                <AccordionTrigger className="px-6 py-3">
-                  <div>
-                    <h3 className="text-lg font-semibold">Your Mischief</h3>
-                    <p className="text-sm text-muted-foreground">Click to view your products</p>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="p-3">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {order.variants.map(orderVariant => {
-                      const variant = variants.find(v => v.id === orderVariant.variantId);
-                      if (!variant) return null;
-
-                      const name = getProductVariantName(variant, { includeProductName: true });
-                      const quantity = orderVariant.quantity;
-                      const size = orderVariant.size;
-
-                      return (
-                        <Link href={getProductVariantUrl(variant)} target="_blank" key={variant.id}>
-                          <Card key={variant.id} className="">
-                            <CardContent className="flex flex-col items-start gap-4 p-4">
-                              <div className="relative w-full h-48 md:h-32">
-                                <Image
-                                  fill
-                                  alt={name}
-                                  quality={40}
-                                  src={variant.images.mockup[0]}
-                                  className="object-cover rounded-md"
-                                />
-                              </div>
-                              <div>
-                                <h3 className="font-medium">{name}</h3>
-                                <p className="text-sm text-muted-foreground">Quantity: {quantity}</p>
-                                <p className="text-sm text-muted-foreground">Size: {getSizeLabel(size)}</p>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            {/* Review Form */}
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle>Write Your Review</CardTitle>
-                <CardDescription>Share your experience with these products</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <FormField
-                      disabled
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Your Name</FormLabel>
-                          <FormControl>
-                            <Input autoComplete="off" placeholder="Enter your name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="rating"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Rating</FormLabel>
-                          <FormControl>
-                            <StarRatingInput value={field.value} onChange={field.onChange} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Review Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="How was your loot?" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="comment"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Your Review</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Bandits don't hesitate! Unload your loot experience"
-                              className="min-h-[120px]"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {!images.length && (
-                      <FormItem>
-                        <FormLabel>Upload Image</FormLabel>
-                        <FormControl>
-                          <FileDropzone loading={isCompressing} onDrop={handleOnImageSelect} />
-                        </FormControl>
-                        <FormDescription>We will use this image to showcase your review</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                    {images.length > 0 && (
-                      <div className="relative w-full h-64">
-                        <Image
-                          fill
-                          src={URL.createObjectURL(images[0])}
-                          alt="Review image preview"
-                          className="object-contain rounded-lg"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          className="absolute top-2 right-2"
-                          onClick={() => setImages([])}>
-                          Remove
-                        </Button>
-                      </div>
-                    )}
-                  </form>
-                </Form>
-              </CardContent>
-              <CardFooter>
-                <Button
-                  type="submit"
-                  className="w-full text-wrap"
-                  disabled={submitStatus === "submitting"}
-                  onClick={form.handleSubmit(onSubmit)}>
-                  {submitStatus === "submitting" ? "Submitting... This may take a while" : "Submit Review"}
-                  {submitStatus === "submitting" && <Loader2 className="w-4 h-4 animate-spin" />}
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
-        </CardContent>
-      </Card>
+        </aside>
+      </div>
     </div>
   );
 }
 
-const ReviewSubmitted = ({ order }: { order: Order }) => {
-  const router = useRouter();
-  return (
-    <div className="container mx-auto max-w-2xl mt-20 min-h-screen px-4">
-      <Card className="border-0 shadow-lg">
-        <CardHeader className="text-center pb-2">
-          <div className="mb-2">
-            <CheckCircle className="w-16 h-16 text-primary mx-auto" />
-          </div>
-          <CardTitle className="text-3xl font-semibold text-foreground">Review Submitted</CardTitle>
-          <p className="text-muted-foreground mt-2">Thank you for taking the time to share your feedback!</p>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center gap-6 px-6 py-8">
-          <div className="text-center">
-            <p className="text-card-foreground font-medium mb-3">Need to update your review?</p>
-            <Button
-              variant="outline"
-              className="hover:bg-accent transition-colors"
-              onClick={() => {
-                const link = getWhatsappUpdateReviewLink(order.reviewId!, order.id);
-                window.open(link, "_blank");
-              }}>
-              <MessageCircle className="w-4 h-4" />
-              Contact Us
-            </Button>
-          </div>
-          <div className="w-full pt-4 border-t border-border">
-            <Button
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-colors"
-              onClick={() => router.push("/")}>
-              Return to Homepage
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+const ReviewSubmitted = ({ order }: { order: Order }) => (
+  <div className="max-w-screen-xl mx-auto px-4 md:px-8 pt-20 md:pt-24 pb-20 min-h-screen">
+    <div className="grid lg:grid-cols-[1.5fr_1fr] gap-8 lg:gap-10 items-end">
+      <div>
+        <PageHeader
+          order={order}
+          head="Review"
+          accent="received"
+          copy="Thanks for backing the gang. Your words help the next bandit pick their loot."
+        />
+        <div className="flex flex-wrap gap-3 mt-8">
+          <Link
+            href="/shop"
+            className="inline-flex items-center gap-1.5 rounded-full bg-bandit-orange text-black text-sm font-medium px-5 py-2.5 hover:bg-bandit-orange/90">
+            Back to the shop <ArrowRightIcon className="w-4 h-4" />
+          </Link>
+          <Link
+            href={`/order/${order.id}`}
+            className="rounded-full border border-border text-sm px-5 py-2.5 hover:border-muted-foreground">
+            View order
+          </Link>
+        </div>
+      </div>
+      <div className="space-y-4">
+        <div className="lg:text-right">
+          <Sticker tone="light">Thanks, bandit</Sticker>
+        </div>
+        <a
+          href={getWhatsappUpdateReviewLink(order.reviewId!, order.id)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 rounded-[22px] border border-border bg-card px-5 py-4 text-sm hover:border-muted-foreground transition-colors">
+          <MessageCircleIcon className="w-5 h-5 text-bandit-orange" />
+          <span className="flex-1">Want to change something? Message us on WhatsApp</span>
+          <ArrowUpRightIcon className="w-4 h-4 text-muted-foreground" />
+        </a>
+      </div>
     </div>
-  );
-};
+  </div>
+);

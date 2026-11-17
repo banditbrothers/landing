@@ -26,21 +26,19 @@ type RazorpaySuccessResponse = {
 };
 
 export type RazorpayPaymentGatewayRef = {
-  handlePayment: (order: Order) => void;
+  handlePayment: (order: Order) => boolean; // false = modal didn't open
 };
 
 export const RazorpayPaymentGateway = ({ ref, onSuccess, onCancel, onFailed }: RazorpayPaymentGatewayProps) => {
-  useImperativeHandle(ref, () => ({ handlePayment }));
-
   const handlePayment = (order: Order) => {
     if (typeof window.Razorpay === "undefined") {
-      toast.warning("RazorPay failed to load. Please refresh the page");
-      return;
+      toast.warning("Payment window didn't load", { description: "Refresh the page and try again. Your bag is saved." });
+      return false;
     }
 
     if (order.paymentMode !== "rzp") {
       console.error("Order is not in rzp mode");
-      return;
+      return false;
     }
 
     const options = {
@@ -69,7 +67,10 @@ export const RazorpayPaymentGateway = ({ ref, onSuccess, onCancel, onFailed }: R
     const rzp = new window.Razorpay(options);
     rzp.on("payment.failed", onFailed);
     rzp.open(options);
+    return true;
   };
+
+  useImperativeHandle(ref, () => ({ handlePayment }));
 
   return (
     <>

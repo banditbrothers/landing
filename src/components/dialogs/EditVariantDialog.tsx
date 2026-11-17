@@ -5,13 +5,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { ProductVariant } from "@/types/product";
-import { updateVariant, updateVariantMockupImage } from "@/actions/products";
-import { uploadToS3, generateImageKey } from "@/utils/s3Upload";
+import { updateVariant } from "@/actions/products";
+import { uploadToS3 } from "@/utils/s3Upload";
 import { toast } from "sonner";
-import Image from "next/image";
 import { Upload, Loader2 } from "lucide-react";
+import { MockupImageGrid } from "./MockupImageGrid";
 import { processImage } from "@/utils/image";
 import { PRODUCTS_OBJ } from "@/data/products";
 import { parseStockInputs, StockInputs, StockInputValues, toStockInputs } from "./StockInputs";
@@ -28,24 +29,29 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [stockInputs, setStockInputs] = useState<StockInputValues>({});
+  const [mockupImages, setMockupImages] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize form data when variant changes
   useEffect(() => {
     if (variant) {
       setFormData({
-        // description: variant.description || "",
+        description: variant.description || "",
         price: variant.price || 0,
         isAvailable: variant.isAvailable ?? true,
         isBestSeller: variant.isBestSeller ?? false,
-        isDiscoverable: variant.isDiscoverable ?? true,
       });
       setStockInputs(toStockInputs(variant.stock));
+      setMockupImages(variant.images.mockup ?? []);
     }
-  }, [variant]);
+  }, [variant, isOpen]);
 
   const handleSave = async () => {
     if (!variant) return;
+    if (mockupImages.length === 0) {
+      toast.error("Keep at least one mockup image");
+      return;
+    }
 
     setIsLoading(true);
     try {
@@ -58,15 +64,19 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
         return acc;
       }, {} as Partial<ProductVariant>);
 
-      if (updates.price === 0) delete updates.price;
 
       // Replaces the whole map; sizes left empty become untracked
       updates.stock = parseStockInputs(stockInputs, PRODUCTS_OBJ[variant.productId]?.sizes ?? []);
+      updates.images = { ...variant.images, mockup: mockupImages };
 
-      await updateVariant(variant.id, updates);
+      // Empty/0 clears the override so the product's base price applies
+      const price = updates.price || null;
+      // Empty clears it so the product's description applies
+      const description = formData.description?.trim() || null;
+      await updateVariant(variant.id, { ...updates, price, description });
 
       // Create updated variant object to pass to parent
-      const updatedVariant = { ...variant, ...updates };
+      const updatedVariant = { ...variant, ...updates, price: price ?? undefined, description: description ?? undefined };
 
       toast.success("Variant updated successfully");
       onSave(updatedVariant);
@@ -89,23 +99,11 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
       const processedFile = await processImage(file);
 
       // Generate S3 key and upload
-      const key = generateImageKey(variant.designId);
-      const imageUrl = await uploadToS3(processedFile, key);
+      const imageUrl = await uploadToS3(processedFile, variant.productId, variant.designId);
 
-      // Update variant with new image URL
-      await updateVariantMockupImage(variant.id, imageUrl);
-
-      // Create updated variant object with new image
-      const updatedVariant = {
-        ...variant,
-        images: {
-          ...variant.images,
-          mockup: [imageUrl, ...variant.images.mockup],
-        },
-      };
-
-      toast.success("Image uploaded successfully");
-      onSave(updatedVariant);
+      // Saved to the variant on "Save Changes"
+      setMockupImages(prev => [...prev, imageUrl]);
+      toast.success("Image uploaded. Save to apply.");
     } catch (error) {
       toast.error("Failed to upload image");
       console.error(error);
@@ -129,12 +127,11 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Current Image */}
+          {/* Mockup Images */}
           <div className="space-y-2">
-            <Label>Current Mockup Image</Label>
-            <div className="relative w-32 h-32 rounded-lg overflow-hidden bg-gray-100">
-              <Image src={variant.images.mockup[0]} alt="Current mockup" fill className="object-cover" />
-            </div>
+            <Label>Mockup Images</Label>
+            <p className="text-sm text-muted-foreground">Drag or use the arrows to reorder. The first image is the cover.</p>
+            <MockupImageGrid images={mockupImages} onChange={setMockupImages} />
             <div className="flex gap-2">
               <Button
                 type="button"
@@ -198,16 +195,16 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
             onChange={setStockInputs}
           />
 
-          {/* <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description (shown on the product page and in Google)</Label>
             <Textarea
               id="description"
               value={formData.description || ""}
               onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Variant description"
+              placeholder="1–3 sentences unique to this design. Leave empty to show only the product's description."
               rows={3}
             />
-          </div> */}
+          </div>
 
           {/* Switches */}
           <div className="space-y-4">
@@ -230,17 +227,6 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
                 id="isBestSeller"
                 checked={formData.isBestSeller ?? false}
                 onCheckedChange={checked => setFormData(prev => ({ ...prev, isBestSeller: checked }))}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="isDiscoverable" className="text-sm font-medium">
-                Is Discoverable
-              </Label>
-              <Switch
-                id="isDiscoverable"
-                checked={formData.isDiscoverable ?? true}
-                onCheckedChange={checked => setFormData(prev => ({ ...prev, isDiscoverable: checked }))}
               />
             </div>
           </div>

@@ -4,10 +4,6 @@ import { formatCurrency } from "./price";
 
 const whatsappPhoneNumber = "917977884773";
 
-export const whatsappKnowMoreLink = `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(
-  "Hey, I would like to know more about your products"
-)}`;
-
 export const getWhatsappNeedHelpWithOrderLink = (orderDetails: Partial<Order>) => {
   let message = `Hey, I need help with my order ${orderDetails.id ? `\n\`ID: ${orderDetails.id}\`` : ""}`;
 

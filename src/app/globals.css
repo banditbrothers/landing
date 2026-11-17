@@ -37,6 +37,7 @@ a {
 
 @layer base {
   :root {
+    --nav-h: 104px; /* navbar.tsx sets this live: 64px row + 40px category row when shown */
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 98%;

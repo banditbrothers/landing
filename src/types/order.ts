@@ -13,6 +13,8 @@ export type Address = {
   zip: string;
 };
 
+export type OversoldLine = { variantId: string; size: string; short: number };
+
 export type Order = {
   id: string;
   reviewId?: string;
@@ -31,6 +33,9 @@ export type Order = {
   variants: OrderedVariant[];
   status: OrderStatus;
   stockDeducted?: boolean;
+  // Lines that were paid for after stock hit 0 (set by deductStockForOrder)
+  oversold?: OversoldLine[];
+  reviewRequestSentAt?: number;
 } & (
   | {
       paymentMode: "rzp";

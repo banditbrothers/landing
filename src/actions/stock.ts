@@ -3,10 +3,12 @@ import "server-only";
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase-admin";
 import { revalidateCatalog } from "@/lib/catalog";
-import { Order } from "@/types/order";
+import { Order, OversoldLine } from "@/types/order";
+import { sendDiscordOrderMessage } from "./discord";
 import { OrderedVariant, ProductVariant } from "@/types/product";
 import { isProduction } from "@/utils/misc";
 import { getProductVariantName, getSizeLabel } from "@/utils/product";
+import { isProductActive } from "@/data/products";
 
 /** Returns a customer-facing message for every ordered item that exceeds tracked stock (empty = all good). */
 export const getStockIssues = async (items: OrderedVariant[]): Promise<string[]> => {
@@ -27,12 +29,17 @@ export const getStockIssues = async (items: OrderedVariant[]): Promise<string[]>
   const issues: string[] = [];
   for (const item of totals.values()) {
     const variant = variants.get(item.variantId);
-    const stock = variant?.stock?.[item.size];
-    if (!variant || stock === undefined || stock >= item.quantity) continue;
+    // Missing/unavailable variants are hidden from the cart UI and priced at 0, so they must never be ordered
+    if (!variant?.productId || variant.isAvailable === false || !isProductActive(variant.productId)) {
+      issues.push("An item in your cart is no longer available");
+      continue;
+    }
+    const stock = variant.stock?.[item.size];
+    if (stock === undefined || stock >= item.quantity) continue;
     const name = `${getProductVariantName(variant)} (${getSizeLabel(item.size)})`;
     issues.push(stock <= 0 ? `${name} is out of stock` : `Only ${stock} left of ${name}`);
   }
-  return issues;
+  return [...new Set(issues)];
 };
 
 /** Deducts ordered quantities from tracked stock exactly once per order. */
@@ -42,8 +49,12 @@ export const deductStockForOrder = async (orderId: string) => {
 
   const db = firestore();
   const orderRef = db.collection(Collections.orders).doc(orderId);
+  // Stock is only checked (not held) at checkout, so two buyers can both pay for the last unit. Record and alert.
+  // ponytail: detect-and-alert only; reserve stock at order creation if limited drops make this common.
+  let oversold: OversoldLine[] = [];
 
   await db.runTransaction(async tx => {
+    oversold = []; // transactions can retry
     const orderSnap = await tx.get(orderRef);
     if (!orderSnap.exists) return;
     const order = orderSnap.data() as Order;
@@ -62,12 +73,24 @@ export const deductStockForOrder = async (orderId: string) => {
       for (const item of order.variants.filter(v => v.variantId === snap.id)) {
         const current = updates[`stock.${item.size}`] ?? stock[item.size];
         if (current === undefined) continue; // size not tracked
+        if (current < item.quantity) {
+          const last = oversold.find(o => o.variantId === snap.id && o.size === item.size);
+          if (last) last.short += item.quantity - Math.max(0, current);
+          else oversold.push({ variantId: snap.id, size: item.size, short: item.quantity - Math.max(0, current) });
+        }
         updates[`stock.${item.size}`] = Math.max(0, current - item.quantity);
       }
       if (Object.keys(updates).length) tx.update(snap.ref, updates);
     }
 
-    tx.update(orderRef, { stockDeducted: true });
+    tx.update(orderRef, { stockDeducted: true, ...(oversold.length && { oversold }) });
   });
   revalidateCatalog();
+
+  if (oversold.length) {
+    const lines = oversold.map(o => `• ${o.variantId} (${getSizeLabel(o.size)}): short by ${o.short}`).join("\n");
+    await sendDiscordOrderMessage({
+      content: `⚠️ **Oversold** order \`${orderId}\` was paid but stock ran out:\n${lines}\nRefund or offer a swap.`,
+    });
+  }
 };

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
+import posthog from "posthog-js";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { hash } from "@/utils/misc";
+import { adminLogin, checkAdminSession } from "@/actions/admin";
 import useIsMobile from "@/hooks/useIsMobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -21,33 +22,27 @@ export default function ProtectedAdminPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useLayoutEffect(() => {
-    const storedHash = localStorage.getItem("ADMIN_PASSWORD_HASH");
-    if (storedHash) checkAdmin(storedHash);
-    setIsLoading(false);
+  useEffect(() => {
+    checkAdminSession()
+      .then(setIsAdmin)
+      .finally(() => setIsLoading(false));
   }, []);
+
+  // Keep the team's own browsing out of analytics (persists for this browser)
+  useEffect(() => {
+    if (isAdmin) posthog.opt_out_capturing();
+  }, [isAdmin]);
 
   useEffect(() => {
     if (error) setTimeout(() => setError(""), 3000);
   }, [error]);
 
-  const checkAdmin = async (hashedPassword: string) => {
-    const adminHash = process.env.NEXT_PUBLIC_ADMIN_PASSWORD_HASH;
-
-    if (hashedPassword === adminHash) {
-      localStorage.setItem("ADMIN_PASSWORD_HASH", adminHash);
-      setIsAdmin(true);
-    } else {
-      setError("Invalid password");
-      setPassword("");
-    }
-  };
-
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const hashedPassword = hash(password).toString();
-    checkAdmin(hashedPassword);
+    if (await adminLogin(password)) return setIsAdmin(true);
+    setError("Invalid password");
+    setPassword("");
   };
 
   if (isLoading) return null;

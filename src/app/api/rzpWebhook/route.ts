@@ -1,8 +1,40 @@
-import { getOrder, updateOrder } from "@/actions/orders";
+import { getOrder } from "@/actions/orders";
+import { Collections } from "@/constants/collections";
+import { firestore } from "@/lib/firebase-admin";
 import { sendDiscordOrderMessage } from "@/actions/discord";
 import { deductStockForOrder } from "@/actions/stock";
+import { sendWhatsappOrderConfirmation } from "@/actions/whatsapp";
 import { getDiscordOrderMessage, getDiscordPaymentLinkPaidMessage } from "@/utils/discordMessages";
+import { Order } from "@/types/order";
+import { isProduction } from "@/utils/misc";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
+
+// Server-side so revenue is counted even if the customer closes the tab after paying.
+// distinct_id = email, matching identifyUser() at checkout.
+const captureOrderPaid = (order: Order, payment: { id: string; method: string }) =>
+  isProduction &&
+  fetch(`${process.env.NEXT_PUBLIC_POSTHOG_HOST}/i/v0/e/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      api_key: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+      event: "order_paid",
+      distinct_id: order.email,
+      properties: {
+        order_id: order.id,
+        revenue: order.total,
+        currency: "INR",
+        payment_id: payment.id,
+        payment_method: payment.method,
+        is_international: !!order.isInternational,
+        coupon_code: order.couponCode,
+        num_items: order.variants.reduce((sum, v) => sum + v.quantity, 0),
+      },
+    }),
+  }).catch(error => console.error("PostHog order_paid capture failed", order.id, error));
+
+// updateOrder is admin-only; the webhook is authenticated by its signature instead
+const updateOrder = (id: string, data: object) => firestore().collection(Collections.orders).doc(id).update(data);
 
 export async function POST(request: Request) {
   try {
@@ -13,94 +45,63 @@ export async function POST(request: Request) {
     if (!isValid) return new Response("Invalid signature", { status: 401 });
 
     const data = JSON.parse(text);
+    if (data.event !== "payment.captured" && data.event !== "payment.failed") {
+      return new Response("Event not handled", { status: 200 });
+    }
 
-    switch (data.event) {
-      case "payment.captured": {
-        const dbId = data.payload.payment.entity.notes.dbId;
+    const payment = data.payload.payment.entity;
+    const dbId = payment.notes?.dbId;
+    const order = dbId ? await getOrder(dbId) : null;
+    if (!order) {
+      console.error("Webhook: no order for dbId, skipping...", dbId);
+      return new Response("Order not found", { status: 200 });
+    }
 
-        if (!dbId) {
-          console.error("No dbId found in webhook data, skipping...", data);
-          return new Response("No dbId found!", { status: 200 });
-        }
+    if (data.event === "payment.failed") {
+      if (order.status === "paid") return new Response("Order already paid, skipping...", { status: 200 });
+      await updateOrder(dbId, {
+        "rzp.paymentId": payment.id,
+        "rzp.paymentStatus": payment.status,
+        status: "payment-failed",
+      });
+      return new Response("Success!", { status: 200 });
+    }
 
-        const paymentId = data.payload.payment.entity.id;
-        const paymentStatus = data.payload.payment.entity.status;
-        const paymentMethod = data.payload.payment.entity.method;
-        const amount = data.payload.payment.entity.amount;
-        const currency = data.payload.payment.entity.currency;
-        const orderId = data.payload.payment.entity.order_id;
-        const isInternational = data.payload.payment.entity.international;
+    // payment.captured. A payment for less than the order total (e.g. one tagged with another order's id) never marks it paid.
+    if (payment.amount < Math.round(order.total * 100)) {
+      console.error("Webhook: payment below order total, not marking paid", dbId, payment.id, payment.amount);
+      return new Response("Amount mismatch", { status: 200 });
+    }
 
-        const updateOrderPromise = updateOrder(dbId, {
-          "rzp.paymentId": paymentId,
-          "rzp.paymentStatus": paymentStatus,
-          "rzp.paymentMethod": paymentMethod,
-          "rzp.amount": amount,
-          "rzp.currency": currency,
-          "rzp.orderId": orderId,
-          "rzp.isInternational": isInternational,
-          paymentMode: "rzp",
-          status: "paid",
-        });
+    // Razorpay retries webhooks, so only the first one notifies.
+    const alreadyPaid = order.status === "paid";
+    const rzp = {
+      orderId: payment.order_id,
+      amount: payment.amount,
+      currency: payment.currency,
+      paymentId: payment.id,
+      paymentStatus: payment.status,
+      paymentMethod: payment.method,
+      isInternational: payment.international,
+    };
+    await updateOrder(dbId, { rzp, paymentMode: "rzp", status: "paid" });
 
-        const sendDiscordMessagePromise = new Promise(async resolve => {
-          const order = await getOrder(dbId);
-          if (!order) return;
+    // Idempotent: guarded by order.stockDeducted, so webhook retries don't double-deduct
+    await deductStockForOrder(dbId).catch(error => console.error("Error deducting stock for order", dbId, error));
 
-          // @ts-expect-error - order.rzp is defined in the order type
-          order.rzp = {};
-          order.paymentMode = "rzp";
-          if (order.paymentMode === "rzp") order.rzp.paymentMethod = paymentMethod;
-
-          let message;
-          if (order.isInternational) message = getDiscordPaymentLinkPaidMessage(order);
-          else message = getDiscordOrderMessage(order);
-
-          if (!message) return;
-          await sendDiscordOrderMessage(message);
-          resolve(true);
-        });
-
-        // Idempotent: guarded by order.stockDeducted, so webhook retries don't double-deduct
-        const deductStockPromise = deductStockForOrder(dbId).catch(error =>
-          console.error("Error deducting stock for order", dbId, error)
-        );
-
-        await Promise.allSettled([updateOrderPromise, sendDiscordMessagePromise, deductStockPromise]);
-        break;
-      }
-
-      case "payment.failed": {
-        const dbId = data.payload.payment.entity.notes.dbId;
-
-        const paymentId = data.payload.payment.entity.id;
-        const paymentStatus = data.payload.payment.entity.status;
-
-        const order = await getOrder(dbId);
-        if (!order) return;
-
-        if (order.status === "paid") {
-          return new Response("Order already paid, skipping...", { status: 200 });
-        }
-
-        await updateOrder(dbId, {
-          "rzp.paymentId": paymentId,
-          "rzp.paymentStatus": paymentStatus,
-          status: "payment-failed",
-        });
-        break;
-      }
-
-      default: {
-        return new Response("Event not handled", { status: 200 });
-      }
+    if (!alreadyPaid) {
+      const paidOrder = { ...order, paymentMode: "rzp" as const, rzp, status: "paid" as const };
+      const message = order.isInternational
+        ? getDiscordPaymentLinkPaidMessage(paidOrder)
+        : getDiscordOrderMessage(paidOrder);
+      await sendDiscordOrderMessage(message);
+      await sendWhatsappOrderConfirmation(paidOrder);
+      await captureOrderPaid(paidOrder, payment);
     }
 
     return new Response("Success!", { status: 200 });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return new Response(`Webhook error: ${error.message}`, {
-      status: 400,
-    });
+    return new Response(`Webhook error: ${error.message}`, { status: 400 });
   }
 }

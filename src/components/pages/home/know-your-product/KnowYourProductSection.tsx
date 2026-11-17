@@ -1,17 +1,26 @@
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 import { knowYourProduct } from "@/data/know-your-product";
 import { Reveal, SectionHead } from "@/components/misc/Reveal";
 
 export const KnowYourProductSection = () => {
   return (
     <section id="know-your-product" className="max-w-screen-2xl mx-auto px-4 md:px-8">
-      <SectionHead kicker="Know your product" title={<>Built <span className="text-bandit-orange">different</span></>} />
+      <SectionHead
+        kicker="Know your product"
+        title={
+          <>
+            Built <span className="text-bandit-orange">different</span>
+          </>
+        }
+      />
 
       <div className="grid md:grid-cols-3 gap-4 md:gap-5">
         {knowYourProduct.map((item, i) => (
           <Reveal key={item.id} delay={i * 0.1}>
             <article className="group h-full rounded-3xl border border-border bg-card overflow-hidden transition hover:border-bandit-orange/60">
               <div className="relative aspect-[4/3] overflow-hidden">
+                <Skeleton className="absolute inset-0 rounded-none" />
                 <Image
                   src={item.image}
                   alt={item.title}

@@ -2,11 +2,12 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 
 import { useVariants } from "@/hooks/useVariants";
-import { PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { ACTIVE_PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
 import { ProductVariant } from "@/types/product";
 import { formatCurrency } from "@/utils/price";
 import { getProductVariantUrl } from "@/utils/share";
@@ -17,6 +18,7 @@ import {
   sortOutOfStockLast,
 } from "@/utils/product";
 import { Reveal, SectionHead } from "@/components/misc/Reveal";
+import { SOLD_OUT_IMAGE, SoldOutStamp } from "@/components/cards/ShopCard";
 
 const GEAR_COPY: Record<string, string> = {
   bandana: "The OG. 12+ ways to wear it.",
@@ -24,14 +26,22 @@ const GEAR_COPY: Record<string, string> = {
   "square-bandana": "Kerchief-style, pocket-ready.",
 };
 
-// Bento of product types (jersey hidden, same as /products)
+// Bento of product types
 export const ShopByGear = () => {
-  const gear = PRODUCTS.filter(p => p.id !== "jersey");
+  const gear = ACTIVE_PRODUCTS;
 
   return (
     <section id="gear" className="scroll-mt-20 max-w-screen-2xl mx-auto px-4 md:px-8">
-      <SectionHead kicker="Shop by gear" title={<>Pick your <span className="text-bandit-orange">poison</span></>}>
-        <Link href="/products" className="text-sm text-muted-foreground border-b border-border pb-0.5 hover:text-foreground hover:border-bandit-orange w-fit">
+      <SectionHead
+        kicker="Shop by gear"
+        title={
+          <>
+            Pick your <span className="text-bandit-orange">poison</span>
+          </>
+        }>
+        <Link
+          href="/shop"
+          className="text-sm text-muted-foreground border-b border-border pb-0.5 hover:text-foreground hover:border-bandit-orange w-fit">
           View everything →
         </Link>
       </SectionHead>
@@ -45,12 +55,13 @@ export const ShopByGear = () => {
               i === 0
                 ? "col-span-2 md:row-span-2 h-[380px] md:h-auto"
                 : i === 1
-                ? "col-span-2 h-[240px] md:h-auto"
-                : "col-span-1 md:col-span-2 h-[220px] md:h-auto"
+                  ? "col-span-2 h-[240px] md:h-auto"
+                  : "col-span-1 md:col-span-2 h-[220px] md:h-auto"
             }>
             <Link
-              href={`/products/${product.id}`}
+              href={`/shop/${product.id}`}
               className="group relative isolate block h-full rounded-2xl overflow-hidden bg-card">
+              <Skeleton className="absolute inset-0 -z-10 rounded-none" />
               {product.baseImages?.mockup?.[0] && (
                 <Image
                   fill
@@ -94,6 +105,7 @@ const VariantTile = ({ variant, rank }: { variant: ProductVariant; rank?: number
   return (
     <Link href={getProductVariantUrl(variant)} className="group block">
       <div className="relative aspect-square rounded-2xl overflow-hidden bg-card">
+        <Skeleton className="absolute inset-0 rounded-none" />
         {image && (
           <Image
             fill
@@ -101,17 +113,11 @@ const VariantTile = ({ variant, rank }: { variant: ProductVariant; rank?: number
             alt={getProductVariantName(variant, { includeProductName: true })}
             sizes="(min-width: 1024px) 25vw, 70vw"
             className={`object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06] ${
-              soldOut ? "grayscale brightness-50" : ""
+              soldOut ? SOLD_OUT_IMAGE : ""
             }`}
           />
         )}
-        {soldOut && (
-          <span className="absolute inset-0 grid place-items-center">
-            <span className="font-calera text-3xl text-bandit-orange border-[3px] border-bandit-orange rounded-lg px-4 pt-1 -rotate-12">
-              Sold out
-            </span>
-          </span>
-        )}
+        {soldOut && <SoldOutStamp className="text-2xl md:text-3xl" />}
         <span className="absolute top-3 right-3 grid place-items-center w-9 h-9 rounded-full bg-black/50 backdrop-blur text-white opacity-0 translate-y-1 transition group-hover:opacity-100 group-hover:translate-y-0">
           <ArrowUpRight className="w-4 h-4" />
         </span>
@@ -135,9 +141,10 @@ const VariantTile = ({ variant, rank }: { variant: ProductVariant; rank?: number
 };
 
 // Native scroll-snap rail; arrow buttons on desktop
-const Rail = ({ variants, ranked = false }: { variants: ProductVariant[]; ranked?: boolean }) => {
+export const Rail = ({ variants, ranked = false }: { variants: ProductVariant[]; ranked?: boolean }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const scroll = (dir: 1 | -1) => ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: "smooth" });
+  const scroll = (dir: 1 | -1) =>
+    ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: "smooth" });
 
   return (
     <div className="relative">
@@ -169,12 +176,7 @@ export const ProductLibrary = () => {
   const { data: variants } = useVariants();
 
   const bestSellers = sortOutOfStockLast(variants.filter(v => v.isBestSeller));
-  const newArrivals = sortOutOfStockLast(
-    variants
-      .filter(v => v.isDiscoverable)
-      .sort((a, b) => b.createdAt - a.createdAt)
-      .slice(0, 10)
-  );
+  const newArrivals = sortOutOfStockLast([...variants].sort((a, b) => b.createdAt - a.createdAt).slice(0, 10));
 
   return (
     <>
@@ -188,7 +190,14 @@ export const ProductLibrary = () => {
       {newArrivals.length > 0 && (
         <section id="library-new" className="max-w-screen-2xl mx-auto">
           <div className="px-4 md:px-8">
-            <SectionHead kicker="Fresh off the press" title={<>New <span className="text-bandit-orange">drops</span></>} />
+            <SectionHead
+              kicker="Fresh off the press"
+              title={
+                <>
+                  New <span className="text-bandit-orange">drops</span>
+                </>
+              }
+            />
           </div>
           <Rail variants={newArrivals} />
         </section>

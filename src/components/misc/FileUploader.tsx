@@ -1,6 +1,6 @@
 import React from "react";
 import { DropzoneProps, useDropzone } from "react-dropzone";
-import { Loader2, UploadCloud } from "lucide-react";
+import { CameraIcon, Loader2 } from "lucide-react";
 
 export function FileDropzone({ loading, onDrop }: DropzoneProps & { loading: boolean }) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -15,21 +15,17 @@ export function FileDropzone({ loading, onDrop }: DropzoneProps & { loading: boo
   return (
     <div
       {...getRootProps()}
-      className="border-2 border-dashed rounded-lg p-6 hover:border-primary/50 transition-colors cursor-pointer flex flex-col items-center justify-center gap-2">
+      className={`rounded-[22px] border-2 border-dashed bg-card min-h-[200px] p-8 transition-colors cursor-pointer flex flex-col items-center justify-center gap-2 text-center hover:border-bandit-orange ${
+        isDragActive ? "border-bandit-orange" : "border-border"
+      }`}>
       <input {...getInputProps()} disabled={loading} />
       {loading ? (
-        <Loader2 className="w-10 h-10 text-muted-foreground animate-spin" />
+        <Loader2 className="w-9 h-9 text-bandit-orange animate-spin" />
       ) : (
-        <UploadCloud className="w-10 h-10 text-muted-foreground" />
+        <CameraIcon strokeWidth={1.6} className="w-9 h-9 text-bandit-orange" />
       )}
-      {isDragActive ? (
-        <p className="text-sm text-muted-foreground text-center">Drop your image here</p>
-      ) : (
-        <div className="text-center">
-          <p className="text-sm text-muted-foreground">Drag and drop an image, or click to browse</p>
-          <p className="text-xs text-muted-foreground mt-1">Supports: JPG, PNG, WEBP</p>
-        </div>
-      )}
+      <p className="text-sm font-medium">{isDragActive ? "Drop it here" : "Drop a photo or tap to upload"}</p>
+      <p className="text-xs text-muted-foreground">JPG, PNG, WEBP</p>
     </div>
   );
 }

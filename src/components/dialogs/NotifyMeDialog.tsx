@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createStockNotification } from "@/actions/stockNotifications";
 import { getSizeLabel } from "@/utils/product";
+import { track } from "@/utils/analytics";
 
 // Remembered on this device so later "Notify me" requests are pre-filled
 const CONTACT_STORAGE_KEY = "notify-me-contact";
@@ -55,7 +56,7 @@ export const NotifyMeDialog = ({ open, onOpenChange, variantId, variantName, siz
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() && !phone.trim()) {
-      toast.error("Please enter your email or phone number");
+      toast.error("Add an email or phone number");
       return;
     }
 
@@ -66,6 +67,7 @@ export const NotifyMeDialog = ({ open, onOpenChange, variantId, variantName, siz
         toast.error(result.error);
       } else {
         setIsSubmitted(true);
+        track("stock_notification_requested", { variant_id: variantId, size });
         try {
           localStorage.setItem(CONTACT_STORAGE_KEY, JSON.stringify({ email: email.trim(), phone: phone.trim() }));
         } catch {
@@ -73,7 +75,7 @@ export const NotifyMeDialog = ({ open, onOpenChange, variantId, variantName, siz
         }
       }
     } catch {
-      toast.error("Something went wrong, please try again");
+      toast.error("Couldn't save that", { description: "Try again in a moment." });
     } finally {
       setIsSubmitting(false);
     }
@@ -99,11 +101,10 @@ export const NotifyMeDialog = ({ open, onOpenChange, variantId, variantName, siz
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <DialogHeader>
-              <DialogTitle>Notify me when it&apos;s back</DialogTitle>
+              <DialogTitle>Request a restock</DialogTitle>
               <DialogDescription>
-                {variantName}
-                {sizeText} is out of stock. Leave your email or phone number and we&apos;ll let you know when it&apos;s
-                available.
+                Request a restock and we&apos;ll prioritise it for you. Leave your email or phone number and we&apos;ll
+                let you know when it&apos;s back.
               </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-2">
@@ -130,7 +131,7 @@ export const NotifyMeDialog = ({ open, onOpenChange, variantId, variantName, siz
             </div>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Notify Me
+              Request restock
             </Button>
           </form>
         )}

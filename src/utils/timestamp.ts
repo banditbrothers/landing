@@ -13,13 +13,3 @@ export const formattedDateTimeLong = (timestamp: number) => {
     year: "numeric",
   });
 };
-
-export const formatDateShort = (timestamp: number) => {
-  const date = getDate(timestamp);
-  return date.toLocaleDateString("en-IN", {
-    weekday: "short",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-};

@@ -23,7 +23,7 @@ export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
           {
             name: "Products",
             value: order.variants
-              .map(variant => `${variant.quantity}x ${variant.variantId} - (${variant.size})`)
+              .map(variant => `${variant.quantity}x ${variant.variantId} - (${getSizeLabel(variant.size)})`)
               .join("\n"),
           },
           { name: "Total", value: `₹${order.total}` },
@@ -61,7 +61,7 @@ export const getDiscordOrderMessage = (order: Order) => {
           {
             name: "Products",
             value: order.variants
-              .map(variant => `${variant.quantity}x ${variant.variantId} - (${variant.size})`)
+              .map(variant => `${variant.quantity}x ${variant.variantId} - (${getSizeLabel(variant.size)})`)
               .join("\n"),
           },
         ],

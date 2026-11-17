@@ -88,7 +88,7 @@ const CouponText = ({ code, ...rest }: CouponTextProps) => {
 
   const handleCopy = () => {
     copy(code);
-    toast.success("Coupon code copied to clipboard");
+    toast.success(`${code} copied`, { description: "Paste it at checkout." });
   };
 
   return (

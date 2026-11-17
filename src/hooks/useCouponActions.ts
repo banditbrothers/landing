@@ -1,6 +1,4 @@
-import { validateCoupon } from "@/actions/coupons";
-import { addCoupon } from "@/actions/coupons";
-import { updateCoupon } from "@/actions/coupons";
+import { addCoupon, updateCoupon, validateCoupon } from "@/actions/coupons";
 import { useState } from "react";
 
 export const useCouponActions = () => {
@@ -12,8 +10,6 @@ export const useCouponActions = () => {
     setValidatingCoupon(true);
     try {
       return await validateCoupon(...rest);
-    } catch (error) {
-      throw error;
     } finally {
       setValidatingCoupon(false);
     }
@@ -23,8 +19,6 @@ export const useCouponActions = () => {
     setAddingCoupon(true);
     try {
       return await addCoupon(...rest);
-    } catch (error) {
-      throw error;
     } finally {
       setAddingCoupon(false);
     }
@@ -34,8 +28,6 @@ export const useCouponActions = () => {
     setUpdatingCoupon(true);
     try {
       return await updateCoupon(...rest);
-    } catch (error) {
-      throw error;
     } finally {
       setUpdatingCoupon(false);
     }

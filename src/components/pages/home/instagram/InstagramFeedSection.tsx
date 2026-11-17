@@ -2,6 +2,7 @@
 
 import { getInstagramFeed } from "@/lib/instagram";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MessageCircleIcon } from "lucide-react";
@@ -31,11 +32,17 @@ export const InstagramFeedSection = () => {
       .catch(() => setFeed([]));
   }, []);
 
-  if (!feed.length) return null;
+  // if (!feed.length) return null;
 
   return (
     <section id="instagram-feed" className="max-w-screen-2xl mx-auto px-4 md:px-8">
-      <SectionHead kicker="Follow the gang" title={<>@be.a.<span className="text-bandit-orange">bandit</span>brother</>}>
+      <SectionHead
+        kicker="Follow the gang"
+        title={
+          <>
+            @be.a.<span className="text-bandit-orange">bandit</span>brother
+          </>
+        }>
         <Link
           href={IG_URL}
           target="_blank"
@@ -54,6 +61,7 @@ export const InstagramFeedSection = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="relative block aspect-[3/4] group overflow-hidden rounded-2xl bg-card">
+              <Skeleton className="absolute inset-0 rounded-none" />
               <Image
                 fill
                 src={post.media_type === "VIDEO" ? post.thumbnail_url : post.media_url}

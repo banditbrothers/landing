@@ -63,6 +63,7 @@ export const theme = {
         5: "hsl(var(--chart-5))",
       },
       "bandit-orange": "#fd6e00",
+      "bandit-red": "#9C0006",
       "bandit-white": "#ffffff",
       "valentine-pink": "#FF69B4",
     },

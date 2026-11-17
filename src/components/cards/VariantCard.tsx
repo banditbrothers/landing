@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 import { FavoriteButton } from "../misc/FavoriteButton";
 import { CategoryBadge } from "../badges/DesignBadges";
-import { ArrowRightCircleIcon, ShoppingCartIcon } from "../../Icons/icons";
+import { ShoppingCartIcon } from "../../Icons/icons";
 import { useFavorites } from "@/components/stores/favorites";
 import useIsMobile from "@/hooks/useIsMobile";
 import Link from "next/link";
@@ -79,6 +80,7 @@ export const ProductVariantCard = ({
           <div>
             <div className="flex flex-col items-center">
               <div className="relative w-full aspect-square">
+                <Skeleton className="absolute inset-0 rounded-xl" />
                 <Image
                   fill
                   src={productVariant.images.mockup[0]}
@@ -153,15 +155,6 @@ export const VariantNameAndPriceBanner = ({ productVariant }: { productVariant: 
           )}
         </div>
       </div>
-    </div>
-  );
-};
-
-export const VariantNameAndArrowBanner = ({ productVariant }: { productVariant: ProductVariant }) => {
-  return (
-    <div className="flex flex-row w-full mt-4 px-1 justify-between">
-      <h3 className="text-xl font-semibold self-center">{getProductVariantName(productVariant)}</h3>
-      <ArrowRightCircleIcon className="w-8 h-8 text-bandit-orange" />
     </div>
   );
 };

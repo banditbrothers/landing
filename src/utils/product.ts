@@ -1,4 +1,4 @@
-import { DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
+import { DESIGNS_OBJ, PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
 import { ProductVariant } from "@/types/product";
 
 export const getSKU = (productId: string, designId: string) => {
@@ -21,13 +21,12 @@ export const getProductVariantPrice = (productVariant: ProductVariant) => {
   return productVariant.price ?? PRODUCTS_OBJ[productVariant.productId].basePrice;
 };
 
-export const getSizeLabel = (size: string): string => {
-  const sizeLabels: Record<string, string> = {
-    "one-size": "One Size",
-    small: "Small",
-    large: "Large",
-  };
-  return sizeLabels[size] || size;
+// Short label from the catalog's sizeLabels ("Small - 52 to 59cm" -> "Small"); jersey sizes are already labels.
+// Older orders have no size at all.
+export const getSizeLabel = (size?: string): string => {
+  if (!size) return "No size";
+  const label = PRODUCTS.find(p => p.sizeLabels?.[size])?.sizeLabels?.[size];
+  return label?.split(" - ")[0] ?? size;
 };
 
 export const LOW_STOCK_THRESHOLD = 3;

@@ -22,12 +22,39 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // PostHog reverse proxy: events go to our own domain so ad blockers don't drop them.
+  // Path is deliberately not "posthog"/"ingest" (blocklists match those).
+  async rewrites() {
+    return [
+      { source: "/bb-r/static/:path*", destination: "https://us-assets.i.posthog.com/static/:path*" },
+      { source: "/bb-r/array/:path*", destination: "https://us-assets.i.posthog.com/array/:path*" },
+      { source: "/bb-r/:path*", destination: "https://us.i.posthog.com/:path*" },
+    ];
+  },
+  // PostHog endpoints end in a slash (/e/, /decide/); don't let Next redirect them
+  skipTrailingSlashRedirect: true,
   async redirects() {
     return [
       {
-        source: "/designs/:path*",
-        destination: "/products",
+        source: "/order",
+        destination: "/checkout",
         permanent: true,
+      },
+      {
+        source: "/designs/:path*",
+        destination: "/shop",
+        permanent: true,
+      },
+      {
+        source: "/products/:path*",
+        destination: "/shop/:path*",
+        permanent: true,
+      },
+      // WhatsApp template buttons only allow the variable at the end of the URL
+      {
+        source: "/review/:orderId",
+        destination: "/order/:orderId/review",
+        permanent: false,
       },
     ];
   },

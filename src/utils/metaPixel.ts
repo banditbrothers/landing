@@ -91,16 +91,3 @@ export const trackMetaPurchase = (params: {
     ...(params.orderId && { order_id: params.orderId }),
   });
 };
-
-// Track search
-export const trackMetaSearch = (searchQuery: string) => {
-  ReactPixel.track("Search", {
-    search_string: searchQuery,
-  });
-};
-
-// Track custom events (optional)
-export const trackMetaCustomEvent = (eventName: string, params?: Record<string, any>) => {
-  ReactPixel.trackCustom(eventName, params);
-};
-

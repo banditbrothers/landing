@@ -75,7 +75,7 @@ export default function RootLayout({
         <MetaPixelProvider>
           <CSPostHogProvider>
             <TanstackQueryProvider>
-              <Toaster theme={theme} richColors position="top-right" expand />
+              <Toaster />
               <main>
                 <MotionProvider>
                   <Navbar />

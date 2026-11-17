@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { m } from "motion/react";
 import { ArrowRight } from "lucide-react";
@@ -9,7 +10,7 @@ import { Reveal, SectionHead } from "@/components/misc/Reveal";
 const MUGSHOTS = [1, 2, 3, 4, 5].map(n => `/how-to-wear/mugshot-${n}.webp`);
 const TILTS = [-7, 4, -3, 6, -5];
 
-const WAYS = [
+export const WAYS = [
   "Neck gaiter",
   "Face mask",
   "Headband",
@@ -28,7 +29,13 @@ export const HowToWearSection = () => {
   return (
     <section id="how-to-wear" className="scroll-mt-20 overflow-hidden">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-8">
-        <SectionHead kicker="The lineup" title={<>Caught <span className="text-bandit-orange whitespace-nowrap">red-handed</span></>}>
+        <SectionHead
+          kicker="The lineup"
+          title={
+            <>
+              Caught <span className="text-bandit-orange whitespace-nowrap">red-handed</span>
+            </>
+          }>
           <p className="text-muted-foreground max-w-sm md:text-right">
             Our usual suspects, booked for wearing the same bandana way too many ways.
           </p>
@@ -49,9 +56,18 @@ export const HowToWearSection = () => {
             transition={{ type: "spring", stiffness: 120, damping: 16, delay: i * 0.07 }}>
             <div className="bg-white p-2 pb-8 rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
               <div className="relative aspect-square">
-                <Image src={src} alt="Bandit Brothers lineup" fill sizes="(min-width: 768px) 22vw, 62vw" className="object-cover" />
+                <Skeleton className="absolute inset-0 rounded-none" />
+                <Image
+                  src={src}
+                  alt="Bandit Brothers lineup"
+                  fill
+                  sizes="(min-width: 768px) 22vw, 62vw"
+                  className="object-cover"
+                />
               </div>
-              <p className="font-calera text-black text-lg text-center mt-2 uppercase">Suspect #{String(i + 1).padStart(3, "0")}</p>
+              <p className="font-calera text-black text-lg text-center mt-2 uppercase">
+                Suspect #{String(i + 1).padStart(3, "0")}
+              </p>
             </div>
           </m.div>
         ))}
@@ -60,7 +76,14 @@ export const HowToWearSection = () => {
       <div className="max-w-screen-2xl mx-auto px-4 md:px-8 mt-12 md:mt-16 grid md:grid-cols-[1fr_1.2fr] gap-8 md:gap-14 items-center">
         <Reveal>
           <div className="relative aspect-square rounded-3xl overflow-hidden">
-            <Image src="/how-to-wear.webp" alt="How to wear your bandana" fill sizes="(min-width: 768px) 45vw, 100vw" className="object-cover" />
+            <Skeleton className="absolute inset-0 rounded-none" />
+            <Image
+              src="/how-to-wear.webp"
+              alt="How to wear your bandana"
+              fill
+              sizes="(min-width: 768px) 45vw, 100vw"
+              className="object-cover"
+            />
           </div>
         </Reveal>
         <div>
@@ -90,7 +113,7 @@ export const HowToWearSection = () => {
           </ol>
           <Reveal delay={0.2}>
             <Link
-              href="/products/bandana"
+              href="/shop/bandana"
               className="group mt-8 inline-flex items-center gap-2 h-12 px-6 rounded-full bg-foreground text-background font-semibold transition hover:bg-bandit-orange hover:text-black">
               Get a bandana
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

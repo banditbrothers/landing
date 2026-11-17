@@ -1,66 +1,27 @@
-import { MetadataRoute } from 'next';
-import { DESIGNS, PRODUCTS } from '@/data/products';
-import { SITE_URL } from '@/lib/site';
+import { MetadataRoute } from "next";
+import { ACTIVE_PRODUCTS } from "@/data/products";
+import { getCatalog } from "@/lib/catalog";
+import { SITE_URL } from "@/lib/site";
 
-export const revalidate = 604800;
+export const revalidate = 86400;
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = SITE_URL;
-  
-  const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/products`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/reviews`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/terms`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
+const route = (path: string, priority: number, changeFrequency: "weekly" | "yearly" = "weekly") => ({
+  url: `${SITE_URL}${path}`,
+  lastModified: new Date(),
+  changeFrequency,
+  priority,
+});
+
+// Only variants that exist: every other product x design pair is a 404
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const catalog = (await getCatalog()) ?? [];
+
+  return [
+    route("", 1),
+    route("/shop", 0.9),
+    route("/reviews", 0.7),
+    ...["/contact", "/shipping", "/refunds", "/privacy", "/terms"].map(path => route(path, 0.3, "yearly")),
+    ...ACTIVE_PRODUCTS.map(product => route(`/shop/${product.id}`, 0.8)),
+    ...catalog.map(v => route(`/shop/${v.productId}/${v.designId}`, 0.7)),
   ];
-
-  // Generate product pages
-  const productRoutes: MetadataRoute.Sitemap = PRODUCTS.map((product) => ({
-    url: `${baseUrl}/products/${product.id}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }));
-
-  // Generate design pages for each product
-  const designRoutes: MetadataRoute.Sitemap = [];
-  
-  PRODUCTS.forEach((product) => {
-    DESIGNS.forEach((design) => {
-      designRoutes.push({
-        url: `${baseUrl}/products/${product.id}/${design.id}`,
-        lastModified: new Date(),
-        changeFrequency: 'weekly' as const,
-        priority: 0.7,
-      });
-    });
-  });
-
-  return [...staticRoutes, ...productRoutes, ...designRoutes];
-} 
+}

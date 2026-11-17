@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/lib/admin-auth";
 import { z } from "zod";
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase-admin";
@@ -60,6 +61,7 @@ export const createStockNotification = async (
 };
 
 export const getStockNotifications = async (limit: number = 200): Promise<StockNotification[]> => {
+  await requireAdmin();
   const snap = await firestore()
     .collection(Collections.stockNotifications)
     .orderBy("createdAt", "desc")
@@ -69,6 +71,7 @@ export const getStockNotifications = async (limit: number = 200): Promise<StockN
 };
 
 export const updateStockNotificationStatus = async (id: string, status: StockNotificationStatus) => {
+  await requireAdmin();
   await firestore().collection(Collections.stockNotifications).doc(id).update({ status });
   return true;
 };

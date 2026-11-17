@@ -1,4 +1,5 @@
-"use server";
+import "server-only";
+// Not "use server": that would turn this module's exports into public endpoints.
 
 import * as admin from "firebase-admin";
 

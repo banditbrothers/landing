@@ -7,6 +7,7 @@ export function JsonLd() {
     name: SITE_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/logo-full-socials.png`,
+    sameAs: ["https://www.instagram.com/be.a.banditbrother/"],
     email: "wearebanditbrothers@gmail.com",
     contactPoint: {
       "@type": "ContactPoint",
@@ -23,10 +24,24 @@ export function JsonLd() {
     description: SITE_DESCRIPTION,
   };
 
-  return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(website) }} />
-    </>
-  );
+  return <LdScript data={[organization, website]} />;
 }
+
+// Escapes "<" so text from reviews/Firestore can't close the script tag
+export const LdScript = ({ data }: { data: object }) => (
+  <script
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
+  />
+);
+
+export const breadcrumbLd = (crumbs: [name: string, path: string][]) => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: crumbs.map(([name, path], i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name,
+    item: `${SITE_URL}${path}`,
+  })),
+});

@@ -48,28 +48,3 @@ export const useParamBasedFeatures = <T extends string | string[] | null>(
 
   return { value: value as T | string | null, removeParam, setParam };
 };
-
-export const handleMultipleParams = ({
-  params,
-  config = { replaceRoute: false },
-}: {
-  params: Record<string, string | string[]>;
-  config: { replaceRoute?: boolean };
-}) => {
-  const currentUrl = new URL(window.location.href);
-  const nextSearchParams = new URLSearchParams(currentUrl.searchParams.toString());
-
-  Object.entries(params).forEach(([key, value]) => {
-    let paramValue = "";
-    if (Array.isArray(value)) paramValue = value.join(",");
-    else paramValue = value;
-
-    if (paramValue === "") nextSearchParams.delete(key);
-    else nextSearchParams.set(key, paramValue);
-  });
-
-  const url = `${currentUrl.pathname}?${nextSearchParams}`;
-
-  if (config.replaceRoute) window.history.replaceState({}, "", url);
-  else window.history.pushState({}, "", url);
-};

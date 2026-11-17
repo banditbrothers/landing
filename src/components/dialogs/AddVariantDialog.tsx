@@ -9,12 +9,12 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductVariant } from "@/types/product";
 import { createVariant } from "@/actions/products";
-import { uploadToS3, generateImageKey } from "@/utils/s3Upload";
+import { uploadToS3 } from "@/utils/s3Upload";
 import { getSKU } from "@/utils/product";
 import { DESIGNS, PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
 import { parseStockInputs, StockInputs, StockInputValues } from "./StockInputs";
 import { toast } from "sonner";
-import Image from "next/image";
+import { MockupImageGrid } from "./MockupImageGrid";
 import { Upload, Loader2, Plus } from "lucide-react";
 import { processImage } from "@/utils/image";
 import { getTimestamp } from "@/utils/timestamp";
@@ -34,7 +34,6 @@ interface FormData {
   price?: number;
   isAvailable: boolean;
   isBestSeller: boolean;
-  isDiscoverable: boolean;
   mockupImages: string[];
 }
 
@@ -47,7 +46,6 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
     price: undefined,
     isAvailable: true,
     isBestSeller: false,
-    isDiscoverable: true,
     mockupImages: [],
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -88,7 +86,6 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
         price: formData.price || undefined,
         isAvailable: formData.isAvailable,
         isBestSeller: formData.isBestSeller,
-        isDiscoverable: formData.isDiscoverable,
         stock: parseStockInputs(stockInputs, PRODUCTS_OBJ[formData.productId]?.sizes ?? []),
         images: {
           mockup: formData.mockupImages,
@@ -121,7 +118,6 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
       price: undefined,
       isAvailable: true,
       isBestSeller: false,
-      isDiscoverable: true,
       mockupImages: [],
     });
     setStockInputs({});
@@ -141,8 +137,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
       const processedFile = await processImage(file);
 
       // Generate S3 key and upload
-      const key = generateImageKey(formData.designId, formData.productId);
-      const imageUrl = await uploadToS3(processedFile, key);
+      const imageUrl = await uploadToS3(processedFile, formData.productId, formData.designId);
 
       // Add new image to form data
       setFormData(prev => ({
@@ -160,13 +155,6 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
         fileInputRef.current.value = "";
       }
     }
-  };
-
-  const removeImage = (indexToRemove: number) => {
-    setFormData(prev => ({
-      ...prev,
-      mockupImages: prev.mockupImages.filter((_, index) => index !== indexToRemove),
-    }));
   };
 
   const currentVariantExists =
@@ -257,26 +245,10 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
               <span className="text-red-500">*</span>
             </Label>
             <div className="space-y-4">
-              {/* Current Images */}
-              {formData.mockupImages.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {formData.mockupImages.map((imageUrl, index) => (
-                    <div key={index} className="relative group">
-                      <div className="relative w-full h-32 rounded-lg overflow-hidden bg-muted border">
-                        <Image src={imageUrl} alt={`Mockup ${index + 1}`} fill className="object-cover" />
-                      </div>
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="absolute top-2 right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
-                        onClick={() => removeImage(index)}>
-                        ×
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <MockupImageGrid
+                images={formData.mockupImages}
+                onChange={mockupImages => setFormData(prev => ({ ...prev, mockupImages }))}
+              />
 
               {/* Upload Button */}
               <Button
@@ -376,17 +348,6 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
                 id="isBestSeller"
                 checked={formData.isBestSeller}
                 onCheckedChange={checked => setFormData(prev => ({ ...prev, isBestSeller: checked }))}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="isDiscoverable" className="text-sm font-medium text-foreground">
-                Is Discoverable
-              </Label>
-              <Switch
-                id="isDiscoverable"
-                checked={formData.isDiscoverable}
-                onCheckedChange={checked => setFormData(prev => ({ ...prev, isDiscoverable: checked }))}
               />
             </div>
           </div>

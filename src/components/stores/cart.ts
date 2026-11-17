@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { shared } from "use-broadcast-ts";
 import { Coupon } from "@/types/coupon";
+import { track } from "@/utils/analytics";
 
 type CartState = {
   cart: {
@@ -31,9 +32,13 @@ export const useCart = create<CartState>()(
         isCartOpen: false,
 
         closeCart: () => set({ isCartOpen: false }),
-        openCart: () => set({ isCartOpen: true }),
+        openCart: () => {
+          track("cart_viewed");
+          set({ isCartOpen: true });
+        },
 
         updateCartItem: (id, quantity = 1, size = "one-size") => {
+          if (quantity < 0) track("cart_item_removed", { variant_id: id, size, quantity: -quantity });
           set(state => {
             const itemExists = state.cart.find(item => item.variantId === id && item.size === size);
             if (itemExists) {
@@ -53,14 +58,17 @@ export const useCart = create<CartState>()(
           });
         },
 
-        removeCartItem: (id, size) => set(state => ({
+        removeCartItem: (id, size) => {
+          track("cart_item_removed", { variant_id: id, size, removed_line: true });
+          set(state => ({
           cart: state.cart.filter(item => {
             if (size) {
               return !(item.variantId === id && item.size === size);
             }
             return item.variantId !== id;
           })
-        })),
+          }));
+        },
         clearCart: () => set({ cart: [] }),
 
         setCoupon: coupon => set({ coupon }),

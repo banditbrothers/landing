@@ -31,7 +31,7 @@ export const InternationalOrderPaymentDialog = ({ onClose, order, onUpdate }: In
     discount: order.discount,
   });
   const [isLoading, setIsLoading] = useState(false);
-  const { isCopied, copy } = useCopyToClipboard(3000);
+  const { copy } = useCopyToClipboard(3000);
 
   const calculateTotal = () => {
     return formData.subtotal + formData.shipping - formData.discount;
@@ -64,15 +64,13 @@ export const InternationalOrderPaymentDialog = ({ onClose, order, onUpdate }: In
       // Create payment link using the new total
       const paymentLink = await createPaymentLinkForInternationalOrder(order, newTotal);
 
-      // Copy payment link to clipboard
-      copy(paymentLink);
+      onUpdate({ ...order, ...updateData });
 
-      // Update the local order object
-      const updatedOrder = { ...order, ...updateData };
-      onUpdate(updatedOrder);
-
-      // Show persistent toast with payment link
-      toast.success("Payment link copied!");
+      // The link is created by now; if the clipboard refuses, show it so it isn't lost.
+      await copy(paymentLink).then(
+        () => toast.success("Payment link copied!"),
+        () => toast.info(`Payment link: ${paymentLink}`, { duration: Infinity })
+      );
 
       onClose();
     } catch (error) {

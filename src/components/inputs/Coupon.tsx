@@ -5,10 +5,11 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useCouponActions } from "@/hooks/useCouponActions";
 import { Coupon } from "@/types/coupon";
-import { CheckIcon, XMarkIcon } from "../../Icons/icons";
+import { CheckIcon } from "../../Icons/icons";
 import { validateCouponInCart } from "@/utils/coupon";
 import { CartItem } from "@/types/order";
 import { ProductVariant } from "@/types/product";
+import { track } from "@/utils/analytics";
 
 type CouponInputProps = {
   coupon: Coupon | null;
@@ -34,13 +35,19 @@ export const CouponInput = ({
   const handleValidateCoupon = async () => {
     if (couponCodeInput.length === 0) return;
 
-    const { error, isValid, coupon } = await validateCoupon(couponCodeInput.trim());
-    if (error) return onCouponError(error);
-    if (!isValid) onCouponError("Invalid coupon code");
+    const code = couponCodeInput.trim().toUpperCase();
+    const rejected = (reason: string) => {
+      track("coupon_rejected", { coupon_code: code, reason });
+      onCouponError(reason);
+    };
+    const { error, isValid, coupon } = await validateCoupon(code);
+    if (error) return rejected(error);
+    if (!isValid) rejected("Invalid coupon code");
     if (coupon && isValid) {
       const { error, message } = validateCouponInCart(coupon, cart, variants);
-      if (error) return onCouponError(message);
+      if (error) return rejected(message);
 
+      track("coupon_applied", { coupon_code: coupon.code, discount_type: coupon.discountType });
       onCouponApplied(coupon);
     }
 
@@ -56,7 +63,8 @@ export const CouponInput = ({
       {!coupon ? (
         <>
           <Input
-            placeholder="Enter coupon code"
+            placeholder="CODE"
+            className="h-11 rounded-xl bg-background uppercase md:text-base"
             disabled={!!coupon}
             value={couponCodeInput}
             onChange={e => setCouponCodeInput(e.target.value)}
@@ -71,25 +79,24 @@ export const CouponInput = ({
             disabled={isButtonDisabled}
             onClick={handleValidateCoupon}
             type="button"
-            className="min-w-20"
+            className="min-w-20 h-11 rounded-xl"
             variant="secondary">
             {!!coupon ? "Remove" : couponLoading.validating ? <LoadingIcon /> : "Apply"}
           </Button>
         </>
       ) : (
-        <div className="flex-1 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-3 rounded-lg border border-green-200 dark:border-green-800 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="bg-green-500/10 dark:bg-green-500/20 p-1.5 rounded-md">
-              <CheckIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-green-700 dark:text-green-300">Coupon Applied 🎉</p>
-              <p className="text-xs text-green-600 dark:text-green-400">{coupon.code}</p>
-            </div>
-          </div>
-          <Button variant="ghost" className="p-1 hover:bg-transparent" onClick={onCouponRemoved}>
-            <XMarkIcon className="h-5 w-5 text-muted-foreground" />
-          </Button>
+        <div className="flex-1 px-3 py-2.5 rounded-xl border border-dashed border-bandit-orange/60 bg-bandit-orange/10 flex items-center justify-between gap-3 text-sm">
+          <span className="flex items-center gap-2">
+            <CheckIcon className="h-4 w-4 text-bandit-orange" />
+            <span className="font-mono font-bold text-bandit-orange">{coupon.code}</span>
+            <span className="text-muted-foreground">applied</span>
+          </span>
+          <button
+            type="button"
+            className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+            onClick={onCouponRemoved}>
+            Remove
+          </button>
         </div>
       )}
     </div>

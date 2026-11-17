@@ -8,11 +8,7 @@ import { getCartSubtotal } from "./cart";
 /**
  * Calculates the subtotal for items that are applicable for the coupon
  */
-const getApplicableSubtotal = (
-  cart: CartItem[],
-  variants: ProductVariant[],
-  coupon: Coupon
-): number => {
+const getApplicableSubtotal = (cart: CartItem[], variants: ProductVariant[], coupon: Coupon): number => {
   // If no applicableVariants specified or empty array, apply to all items
   if (!coupon.applicableVariants || coupon.applicableVariants.length === 0) {
     return getCartSubtotal(cart, variants);
@@ -21,10 +17,10 @@ const getApplicableSubtotal = (
   // Only include items with variants in the applicableVariants list
   return cart.reduce((total, item) => {
     if (!coupon.applicableVariants.includes(item.variantId)) return total;
-    
+
     const variant = variants.find(v => v.id === item.variantId);
     if (!variant) return total;
-    
+
     return total + getProductVariantPrice(variant) * item.quantity;
   }, 0);
 };
@@ -38,9 +34,7 @@ export const validateCouponInCart = (
 
   // Check if coupon is applicable to at least one item in cart
   if (coupon.applicableVariants && coupon.applicableVariants.length > 0) {
-    const hasApplicableVariant = cart.some(item =>
-      coupon.applicableVariants.includes(item.variantId)
-    );
+    const hasApplicableVariant = cart.some(item => coupon.applicableVariants.includes(item.variantId));
 
     if (!hasApplicableVariant) {
       return {
@@ -57,22 +51,18 @@ export const validateCouponInCart = (
       error: true,
       message: `Minimum Order Amount for applicable items should be more than ${formatCurrency(coupon.minOrderAmount)} to apply this coupon`,
     };
-  
+
   return { error: false, message: null };
 };
 
-export const getDiscountAmount = (
-  cart: CartItem[],
-  variants: ProductVariant[],
-  coupon: Coupon | null
-) => {
+export const getDiscountAmount = (cart: CartItem[], variants: ProductVariant[], coupon: Coupon | null) => {
   if (!coupon) return 0;
 
   const applicableSubtotal = getApplicableSubtotal(cart, variants, coupon);
 
   if (coupon.discountType === "fixed") return coupon.discount;
-  else if (coupon.discountType === "percentage") 
-    return (applicableSubtotal * coupon.discount) / 100;
+  // Rounded to paise so the order total matches what Razorpay charges
+  else if (coupon.discountType === "percentage") return Math.round(applicableSubtotal * coupon.discount) / 100;
 
   return 0;
 };

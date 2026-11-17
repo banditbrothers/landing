@@ -1,6 +1,5 @@
-"use server";
-
 import "server-only";
+// Deliberately NOT "use server": a server action here would let anyone post to our channels.
 import { isProduction } from "@/utils/misc";
 import type { DiscordMessage } from "@/types/discord";
 
@@ -8,7 +7,8 @@ import type { DiscordMessage } from "@/types/discord";
 const ordersChannelId = isProduction ? process.env.DISCORD_ORDER_CHANNEL_ID! : "1408025970878713928";
 const reviewsChannelId = process.env.DISCORD_REVIEW_CHANNEL_ID!;
 // Back-in-stock requests. Set DISCORD_STOCK_NOTIFICATIONS_CHANNEL_ID; falls back to the orders channel.
-const stockNotificationsChannelId = isProduction ? process.env.DISCORD_STOCK_NOTIFICATIONS_CHANNEL_ID! : "1408025970878713928";
+const stockNotificationsChannelId =
+  (isProduction && process.env.DISCORD_STOCK_NOTIFICATIONS_CHANNEL_ID) || ordersChannelId;
 
 export async function sendDiscordOrderMessage(data: DiscordMessage) {
   return sendDiscordMessage(ordersChannelId, data);

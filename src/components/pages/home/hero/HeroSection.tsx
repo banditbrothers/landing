@@ -60,7 +60,7 @@ export const HeroSection = () => {
           </p>
           <div className="flex gap-3">
             <Link
-              href="/products"
+              href="/shop"
               className="group inline-flex items-center gap-2 h-12 md:h-14 px-6 md:px-7 rounded-full bg-bandit-orange text-black font-semibold transition hover:brightness-110 hover:-translate-y-0.5">
               Shop now
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -80,10 +80,17 @@ export const HeroSection = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 1.3 }}>
         <div className="max-w-screen-2xl mx-auto px-4 md:px-8 h-12 flex items-center justify-between text-[11px] md:text-xs tracking-[0.18em] uppercase text-white/70">
-          <span>{MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING ? `Free shipping ₹${MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING}+` : "Ships across India"}</span>
+          <span>
+            {MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING
+              ? `Free shipping ₹${MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING}+`
+              : "Ships across India"}
+          </span>
           <span className="hidden md:inline">4-way Quick-Dri fabric</span>
           <span className="hidden sm:inline">Prints that never fade</span>
-          <button onClick={() => scrollTo("gear")} className="flex items-center gap-2 hover:text-white" aria-label="Scroll down">
+          <button
+            onClick={() => scrollTo("gear")}
+            className="flex items-center gap-2 hover:text-white"
+            aria-label="Scroll down">
             Scroll <ArrowDown className="h-3.5 w-3.5 animate-bounce" />
           </button>
         </div>

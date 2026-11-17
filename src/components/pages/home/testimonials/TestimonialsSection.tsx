@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ReviewWithoutEmail } from "@/types/review";
@@ -71,7 +72,13 @@ export const TestimonialsSection = () => {
 
   return (
     <section id="reviews" className="scroll-mt-20 max-w-screen-2xl mx-auto px-4 md:px-8">
-      <SectionHead kicker="Word on the street" title={<>Bandits <span className="text-bandit-orange">talk</span></>}>
+      <SectionHead
+        kicker="Word on the street"
+        title={
+          <>
+            Bandits <span className="text-bandit-orange">talk</span>
+          </>
+        }>
         <Link
           href="/reviews"
           className="group inline-flex items-center gap-2 text-sm text-muted-foreground border-b border-border pb-0.5 hover:text-foreground hover:border-bandit-orange w-fit">
@@ -86,6 +93,7 @@ export const TestimonialsSection = () => {
             <figure className="group h-full flex flex-col rounded-3xl bg-card border border-border overflow-hidden transition hover:-translate-y-1 hover:border-bandit-orange/60">
               {review.images[0] && (
                 <div className="relative aspect-[4/3] overflow-hidden">
+                  <Skeleton className="absolute inset-0 rounded-none" />
                   <Image
                     src={review.images[0]}
                     alt={review.title}
@@ -98,7 +106,9 @@ export const TestimonialsSection = () => {
               <div className="p-6 flex flex-col gap-3 flex-1">
                 <StarRating value={review.rating} />
                 <h3 className="font-calera uppercase text-2xl leading-tight">&ldquo;{review.title}&rdquo;</h3>
-                <blockquote className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">{review.comment}</blockquote>
+                <blockquote className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
+                  {review.comment}
+                </blockquote>
                 <figcaption className="mt-auto pt-4 border-t border-border flex flex-wrap items-center justify-between gap-2">
                   <span className="text-sm font-medium">{titleCase(review.name)}</span>
                   {review.source === "website" &&

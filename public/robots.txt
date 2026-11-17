@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Allow: /products/
+Allow: /shop/
 Allow: /reviews/
 Allow: /privacy/
 Allow: /terms/
@@ -8,12 +8,13 @@ Allow: /terms/
 # Block sensitive/admin routes
 Disallow: /admin/
 Disallow: /order/
+Disallow: /checkout
+Disallow: /mockups/
 
 # Block API endpoints
 Disallow: /api/
 
-# Block Next.js internals
-Disallow: /_next/
+# /_next/ must stay crawlable: Google needs its JS/CSS to render pages
 
 # Static assets are allowed by default
 # (designs/, how-to-wear/, know-your-product/ are in public folder)

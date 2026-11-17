@@ -9,14 +9,11 @@ export const useCopyToClipboard = (timeout = 2000) => {
     }
   }, [isCopied, timeout]);
 
-  const copy = (text: string) => {
-    copyToClipboard(text);
+  // Rejects if the browser refuses (e.g. the page lost focus); callers that care can await it.
+  const copy = async (text: string) => {
+    await navigator.clipboard.writeText(text);
     setIsCopied(true);
   };
 
   return { isCopied, copy };
-};
-
-export const copyToClipboard = (text: string) => {
-  navigator.clipboard.writeText(text);
 };

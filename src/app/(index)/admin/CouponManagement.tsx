@@ -77,6 +77,10 @@ export function CouponManagement() {
     };
 
     const newCoupon = await addCoupon(coupon);
+    if ("error" in newCoupon) {
+      toast.error(newCoupon.error);
+      return;
+    }
     setCoupons(prev => [newCoupon, ...prev]);
     setShowDialog(false);
     setSelectedVariants([]);
@@ -175,19 +179,19 @@ export function CouponManagement() {
           </DialogHeader>
           <form className="grid gap-4" onSubmit={handleAddCoupon}>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="code" className="text-right">
+              <Label htmlFor="couponCode" className="text-right">
                 Code
               </Label>
               <Input id="couponCode" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
+              <Label htmlFor="couponName" className="text-right">
                 Name
               </Label>
               <Input id="couponName" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
+              <Label htmlFor="couponDescription" className="text-right">
                 Description
               </Label>
               <Input id="couponDescription" className="col-span-3" />
@@ -207,19 +211,19 @@ export function CouponManagement() {
               </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="discount" className="text-right">
+              <Label htmlFor="couponDiscount" className="text-right">
                 Discount
               </Label>
               <Input id="couponDiscount" type="number" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="minAmount" className="text-right">
+              <Label htmlFor="couponMinAmount" className="text-right">
                 Min Amount
               </Label>
               <Input id="couponMinAmount" type="number" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="expires" className="text-right">
+              <Label htmlFor="couponExpires" className="text-right">
                 Expires At
               </Label>
               <Input id="couponExpires" type="date" className="col-span-3" />

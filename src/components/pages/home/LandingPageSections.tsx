@@ -11,7 +11,14 @@ import { HowToWearSection } from "@/components/pages/home/how-to-wear/HowToWearS
 import { Reveal } from "@/components/misc/Reveal";
 import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/data/products";
 
-const TICKER = ["Wear your mischief", "Quick-Dri DryFit", "Made in India", "Ride loud", "Prints that never fade", "Be a bandit brother"];
+const TICKER = [
+  "Wear your mischief",
+  "Quick-Dri DryFit",
+  "Made in India",
+  "Ride loud",
+  "Prints that never fade",
+  "Be a bandit brother",
+];
 
 // Two crossed, tilted strips scrolling in opposite directions
 const Ticker = () => (
@@ -20,7 +27,9 @@ const Ticker = () => (
       { cls: "bg-card text-muted-foreground -rotate-2", dir: "reverse" },
       { cls: "bg-bandit-orange text-black rotate-2", dir: "normal" },
     ].map(({ cls, dir }) => (
-      <div key={dir} className={`absolute top-1/2 -translate-y-1/2 -inset-x-8 py-3 overflow-hidden whitespace-nowrap ${cls}`}>
+      <div
+        key={dir}
+        className={`absolute top-1/2 -translate-y-1/2 -inset-x-8 py-3 overflow-hidden whitespace-nowrap ${cls}`}>
         <div className="inline-flex animate-marquee motion-reduce:animate-none" style={{ animationDirection: dir }}>
           {[0, 1].map(k => (
             <span key={k} className="flex">
@@ -80,7 +89,7 @@ const FinalCta = () => (
           <span className="text-bandit-orange">brother</span>
         </h2>
         <Link
-          href="/products"
+          href="/shop"
           className="group mt-10 inline-flex items-center gap-2 h-14 px-8 rounded-full bg-bandit-orange text-black font-semibold transition hover:brightness-110 hover:-translate-y-0.5">
           Gear up
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

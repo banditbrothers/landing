@@ -7,10 +7,10 @@ This script compresses all images in your AWS S3 bucket that are larger than 550
 1. Make sure you have a `.env.local` file in the project root with your AWS credentials:
 
    ```
-   NEXT_PUBLIC_AWS_REGION=your-region
-   NEXT_PUBLIC_AWS_ACCESS_KEY_ID=your-access-key
-   NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY=your-secret-key
-   NEXT_PUBLIC_AWS_S3_BUCKET=your-bucket-name
+   S3_REGION=your-region
+   S3_ACCESS_KEY_ID=your-access-key
+   S3_SECRET_ACCESS_KEY=your-secret-key
+   S3_BUCKET=your-bucket-name
    ```
 
 2. All required dependencies should already be installed via the main project's package.json
