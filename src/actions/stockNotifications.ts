@@ -1,5 +1,6 @@
 "use server";
 
+import { createHash } from "crypto";
 import { requireAdmin } from "@/lib/admin-auth";
 import { z } from "zod";
 import { Collections } from "@/constants/collections";
@@ -36,13 +37,23 @@ export const createStockNotification = async (
   if (!variantSnap.exists) return { error: "Product not found" };
   const variant = { id: variantSnap.id, ...variantSnap.data() } as ProductVariant;
 
-  const ref = firestore().collection(Collections.stockNotifications).doc();
+  const normalizedEmail = email ? email.toLowerCase() : null;
+  const normalizedPhone = phone ? phone.replace(/[\s-]/g, "") : null;
+  // Same variant + size + contact always maps to the same doc, so repeat submits don't pile up or re-ping Discord
+  const docId = createHash("sha256")
+    .update([variantId, size, normalizedEmail, normalizedPhone].join("|"))
+    .digest("hex");
+  const ref = firestore().collection(Collections.stockNotifications).doc(docId);
+  const existing = await ref.get();
+  if (existing.exists && existing.data()?.status === "pending") return { success: true };
+
+  // New, or already notified once (restocked then sold out again): (re)open as pending
   const request: StockNotification = {
     id: ref.id,
     variantId,
     size,
-    email: email || null,
-    phone: phone ? phone.replace(/[\s-]/g, "") : null,
+    email: normalizedEmail,
+    phone: normalizedPhone,
     createdAt: getTimestamp(),
     status: "pending",
   };
