@@ -34,7 +34,9 @@ export const HeroSection = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease }}>
           <span className="h-px w-10 bg-bandit-orange" />
-          Bandanas · Balaclavas · Made in India
+          <span>
+            Bandanas · Balaclavas · <span className="whitespace-nowrap">Made in India</span>
+          </span>
         </m.p>
 
         <h1 className="font-calera uppercase text-white leading-[0.85] text-[clamp(4.5rem,17vw,13rem)]">

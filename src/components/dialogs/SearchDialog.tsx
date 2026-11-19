@@ -1,14 +1,12 @@
 "use client";
 
 import Fuse, { IFuseOptions } from "fuse.js";
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useRef, useState } from "react";
 import { ArrowRight, CornerDownLeft } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import VisuallyHidden from "../ui/visually-hidden";
 import { SearchIcon, XMarkIcon } from "../../Icons/icons";
 import { LoadingIcon } from "../misc/Loading";
@@ -32,6 +30,34 @@ import { Kicker } from "@/components/typography/Kicker";
 const URL_SYNC_DEBOUNCE_MS = 300;
 // Only track the term once typing has paused this long
 const SEARCH_TRACK_DELAY_MS = 1500;
+
+const SEARCH_PARAM = "q";
+// Opening pushes a history entry flagged searchOpen, so the phone's back button closes search instead of leaving
+// the page. Native history calls: Next syncs useSearchParams with them and keeps the flag (router.replace drops it).
+const SEARCH_HISTORY_KEY = "searchOpen";
+
+const urlWithQuery = (query: string | null) => {
+  const url = new URL(window.location.href);
+  if (query === null) url.searchParams.delete(SEARCH_PARAM);
+  else url.searchParams.set(SEARCH_PARAM, query);
+  return url;
+};
+const isSearchOpen = () => new URLSearchParams(window.location.search).has(SEARCH_PARAM);
+const openedHere = () => !!window.history.state?.[SEARCH_HISTORY_KEY];
+
+export const openSearch = () => window.history.pushState({ [SEARCH_HISTORY_KEY]: true }, "", urlWithQuery(""));
+
+const setSearchQuery = (query: string) => {
+  // A debounced write can land after back has already closed search
+  if (!isSearchOpen()) return;
+  window.history.replaceState({ [SEARCH_HISTORY_KEY]: openedHere() }, "", urlWithQuery(query));
+};
+
+const closeSearch = () => {
+  if (openedHere()) window.history.back();
+  // Arrived with ?q= (shared link, reload): there is no entry of ours to go back over
+  else window.history.replaceState(null, "", urlWithQuery(null));
+};
 
 const stripPunctuation = (s: string) => s.replace(/[^a-zA-Z0-9 ]/g, "");
 const design = (v: ProductVariant) => DESIGNS_OBJ[v.designId];
@@ -65,8 +91,7 @@ const ResultRow = ({ variant, active, onHover }: { variant: ProductVariant; acti
       }}
       className={`flex items-center gap-3 rounded-xl p-2 pr-3 transition-colors ${active ? "bg-secondary" : ""}`}>
       <span className="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden bg-card">
-        <Skeleton className="absolute inset-0 rounded-none" />
-        <Image
+        <SkeletonImage
           fill
           src={variant.images.mockup[0]}
           alt={name}
@@ -93,8 +118,8 @@ const ResultRow = ({ variant, active, onHover }: { variant: ProductVariant; acti
 function SearchDialogContent() {
   const router = useRouter();
   const { data: variants } = useVariants();
-  const { value: query, setParam, removeParam } = useParamBasedFeatures<string>("q", { replaceRoute: true });
-  const [text, setText] = useState(Array.isArray(query) ? query.join(",") : (query ?? ""));
+  const query = useSearchParams().get(SEARCH_PARAM);
+  const [text, setText] = useState(query ?? "");
   const [active, setActive] = useState(0);
   // Dialog stays mounted; forget the last term once it closes (incl. via a result link)
   if (query === null && text) setText("");
@@ -114,7 +139,7 @@ function SearchDialogContent() {
     setText(value);
     setActive(0);
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setParam(value), URL_SYNC_DEBOUNCE_MS);
+    timerRef.current = setTimeout(() => setSearchQuery(value), URL_SYNC_DEBOUNCE_MS);
     // Only the term they settle on, not every keystroke
     if (trackRef.current) clearTimeout(trackRef.current);
     const settled = stripPunctuation(value).trim();
@@ -127,7 +152,7 @@ function SearchDialogContent() {
 
   const close = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
-    removeParam();
+    closeSearch();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

@@ -12,7 +12,7 @@ import { Button } from "./ui/button";
 import { ShoppingBagIcon, SearchIcon } from "../Icons/icons";
 import { openCart, useCart, useCartHydrated } from "@/components/stores/cart";
 import { LoadingIcon } from "./misc/Loading";
-import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
+import { openSearch } from "@/components/dialogs/SearchDialog";
 import { ACTIVE_PRODUCTS } from "@/data/products";
 import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/constants/shipping";
 import { ProductVariant } from "@/types/product";
@@ -212,10 +212,8 @@ const CartButton = () => {
 };
 
 const SearchButton = () => {
-  const { setParam } = useParamBasedFeatures("q", { replaceRoute: true });
-
   return (
-    <Button variant="outline" className="px-3" onClick={() => setParam("")} aria-label="Search">
+    <Button variant="outline" className="px-3" onClick={openSearch} aria-label="Search">
       <SearchIcon className="w-4 h-4" />
     </Button>
   );
