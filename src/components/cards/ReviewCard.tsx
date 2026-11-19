@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { ReviewWithoutEmail } from "@/types/review";
@@ -65,8 +64,7 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
       }`}>
       {photo && (
         <div className="relative aspect-[4/5] bg-secondary">
-          <Skeleton className="absolute inset-0 rounded-none" />
-          <Image
+          <SkeletonImage
             fill
             src={photo}
             alt={`${shortName(review.name)}'s photo`}
@@ -117,8 +115,7 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
                 }`}>
                 {v.images.mockup[0] && (
                   <span className="relative w-[30px] h-[30px] shrink-0 rounded-full overflow-hidden">
-                    <Skeleton className="absolute inset-0 rounded-none" />
-                    <Image
+                    <SkeletonImage
                       src={v.images.mockup[0]}
                       alt=""
                       width={30}

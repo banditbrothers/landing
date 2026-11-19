@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { QuantityStepper } from "../misc/QuantityStepper";
 import { closeCartForNavigation } from "../stores/cart";
@@ -36,8 +35,8 @@ export const CheckoutProductCard = ({
         replace
         onClick={closeCartForNavigation}
         className="w-[72px] h-[72px] sm:w-20 sm:h-20 relative shrink-0">
-        <Skeleton className="absolute inset-0 rounded-lg" />
-        <Image
+        <SkeletonImage
+          skeletonClassName="rounded-lg"
           fill
           sizes="80px"
           src={variant.images.mockup[0]}

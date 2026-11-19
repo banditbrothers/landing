@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import { knowYourProduct } from "@/data/know-your-product";
 import { Reveal, SectionHead } from "@/components/misc/Reveal";
 
@@ -20,8 +19,7 @@ export const KnowYourProductSection = () => {
           <Reveal key={item.id} delay={i * 0.1}>
             <article className="group h-full rounded-3xl border border-border bg-card overflow-hidden transition hover:border-bandit-orange/60">
               <div className="relative aspect-[4/3] overflow-hidden">
-                <Skeleton className="absolute inset-0 rounded-none" />
-                <Image
+                <SkeletonImage
                   src={item.image}
                   alt={item.title}
                   fill

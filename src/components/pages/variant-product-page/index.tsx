@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { BellIcon, ShareIcon } from "lucide-react";
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import { Breadcrumb } from "@/components/misc/Breadcrumb";
 import { FavoriteButton } from "@/components/misc/FavoriteButton";
 import { LoadingScreen } from "@/components/misc/Loading";
@@ -358,8 +357,7 @@ export const ProductPageContents = ({
       {/* Mobile sticky buy bar */}
       <div className="md:hidden fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 px-4 py-3 bg-background/95 backdrop-blur border-t border-border">
         <div className="relative w-11 h-11 rounded-lg overflow-hidden shrink-0">
-          <Skeleton className="absolute inset-0 rounded-none" />
-          <Image fill src={variant.images.mockup[0]} alt="" sizes="44px" className="object-cover" />
+          <SkeletonImage fill src={variant.images.mockup[0]} alt="" sizes="44px" className="object-cover" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="font-semibold text-sm truncate">{name}</div>

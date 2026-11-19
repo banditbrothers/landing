@@ -2,8 +2,7 @@
 
 import { FavoriteButton } from "@/components/misc/FavoriteButton";
 import { useState } from "react";
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useCart } from "@/components/stores/cart";
@@ -66,19 +65,16 @@ export const ShopCard = ({
   return (
     <Link href={href} className="group block">
       <div className="relative aspect-square rounded-2xl overflow-hidden bg-card">
-        <Skeleton className="absolute inset-0 rounded-none" />
-        {variant.images.mockup[0] && (
-          <Image
-            fill
-            src={variant.images.mockup[0]}
-            alt={getProductVariantName(variant, { includeProductName: true })}
-            sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 50vw"
-            priority={priority}
-            className={`object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06] ${
-              soldOut ? SOLD_OUT_IMAGE : ""
-            }`}
-          />
-        )}
+        <SkeletonImage
+          fill
+          src={variant.images.mockup[0]}
+          alt={getProductVariantName(variant, { includeProductName: true })}
+          sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 50vw"
+          priority={priority}
+          className={`object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06] ${
+            soldOut ? SOLD_OUT_IMAGE : ""
+          }`}
+        />
 
         <div className="absolute top-3 left-3 z-[2] flex flex-col items-start gap-1.5">
           {variant.isBestSeller && <Sticker>Most wanted</Sticker>}

@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { ShareIcon } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import { Sticker } from "@/components/misc/Stickers";
 import { ProductVariant } from "@/types/product";
 import { getProductVariantName, isNewDrop } from "@/utils/product";
@@ -37,8 +36,7 @@ export const Gallery = ({ variant, soldOut }: { variant: ProductVariant; soldOut
             className={`relative shrink-0 w-16 md:w-full aspect-square rounded-lg overflow-hidden border-2 transition ${
               i === imageIndex ? "border-bandit-orange opacity-100" : "border-transparent opacity-60 hover:opacity-100"
             }`}>
-            <Skeleton className="absolute inset-0 rounded-none" />
-            <Image fill src={src} alt="" sizes="84px" className="object-cover" />
+            <SkeletonImage fill src={src} alt="" sizes="84px" className="object-cover" />
           </button>
         ))}
       </div>
@@ -50,8 +48,7 @@ export const Gallery = ({ variant, soldOut }: { variant: ProductVariant; soldOut
           className="flex h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {images.map((src, i) => (
             <div key={src} className="relative w-full h-full shrink-0 snap-center">
-              <Skeleton className="absolute inset-0 rounded-none" />
-              <Image
+              <SkeletonImage
                 fill
                 src={src}
                 alt={i === 0 ? getProductVariantName(variant, { includeProductName: true }) : ""}

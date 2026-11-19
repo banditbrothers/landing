@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import { useVariants } from "@/hooks/useVariants";
 import { DESIGNS_OBJ, getColorVariantIds } from "@/data/designs";
 import { ProductVariant } from "@/types/product";
@@ -41,8 +40,13 @@ export const ColourPicker = ({ variant, className }: { variant: ProductVariant; 
             className={`relative w-[62px] aspect-square rounded-lg overflow-hidden border-2 transition hover:-translate-y-0.5 ${
               c.id === variant.id ? "border-bandit-orange" : "border-transparent"
             } ${isVariantOutOfStock(c) ? "opacity-40" : ""}`}>
-            <Skeleton className="absolute inset-0 rounded-none" />
-            <Image fill src={c.images.mockup[0]} alt={getProductVariantName(c)} sizes="62px" className="object-cover" />
+            <SkeletonImage
+              fill
+              src={c.images.mockup[0]}
+              alt={getProductVariantName(c)}
+              sizes="62px"
+              className="object-cover"
+            />
           </Link>
         ))}
       </div>

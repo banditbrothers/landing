@@ -7,8 +7,7 @@ import { getVariantsByIds } from "@/actions/products";
 import { ProductVariant } from "@/types/product";
 import { Order, OrderStatus } from "@/types/order";
 import { formatCurrency } from "@/utils/price";
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon, ArrowUpRightIcon, CheckIcon, CopyIcon, MessageCircleIcon } from "lucide-react";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
@@ -199,8 +198,7 @@ export default function OrderPage({ params }: OrderPageProps) {
                         href={routes.variant(variant)}
                         target="_blank"
                         className="relative shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-[14px] overflow-hidden">
-                        <Skeleton className="absolute inset-0 rounded-none" />
-                        <Image
+                        <SkeletonImage
                           width={80}
                           height={80}
                           className="relative w-full h-full object-cover"

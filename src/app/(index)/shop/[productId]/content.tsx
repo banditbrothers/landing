@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
@@ -115,8 +114,7 @@ export function ProductPageContent() {
           {...(helper.open ? { type: "button" as const, onClick: () => setDialog(helper.open) } : {})}
           className="grid grid-cols-[96px_1fr] md:grid-cols-[120px_1fr] gap-4 items-center p-3.5 rounded-2xl border border-border bg-card text-left transition-colors hover:border-bandit-orange">
           <div className="relative aspect-square rounded-xl overflow-hidden bg-secondary">
-            <Skeleton className="absolute inset-0 rounded-none" />
-            {helper.image && <Image fill src={helper.image} alt="" sizes="120px" className="object-cover" />}
+            <SkeletonImage fill src={helper.image} alt="" sizes="120px" className="object-cover" />
           </div>
           <div>
             <Sticker>{helper.tag}</Sticker>

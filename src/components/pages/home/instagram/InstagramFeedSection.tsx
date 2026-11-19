@@ -2,7 +2,7 @@
 
 import { getInstagramFeed } from "@/lib/instagram";
 import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { CONTACT } from "@/lib/site";
 import { useEffect, useState } from "react";
@@ -62,8 +62,7 @@ export const InstagramFeedSection = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="relative block aspect-[3/4] group overflow-hidden rounded-2xl bg-card">
-              <Skeleton className="absolute inset-0 rounded-none" />
-              <Image
+              <SkeletonImage
                 fill
                 src={post.media_type === "VIDEO" ? post.thumbnail_url : post.media_url}
                 alt={post.caption ?? "Instagram post"}

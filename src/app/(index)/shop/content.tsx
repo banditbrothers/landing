@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ShopCard } from "@/components/cards/ShopCard";
@@ -196,8 +195,7 @@ export function CollectionContent() {
                   key={v.id}
                   href={routes.variant(v)}
                   className="relative aspect-square rounded-2xl overflow-hidden group">
-                  <Skeleton className="absolute inset-0 rounded-none" />
-                  <Image
+                  <SkeletonImage
                     fill
                     src={v.images.mockup[0]}
                     alt={getProductVariantName(v, { includeProductName: true })}

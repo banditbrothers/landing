@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 
@@ -64,16 +63,14 @@ export const ShopByGear = () => {
             <Link
               href={routes.product(product.id)}
               className="group relative isolate block h-full rounded-2xl overflow-hidden bg-card">
-              <Skeleton className="absolute inset-0 -z-10 rounded-none" />
-              {product.baseImages?.mockup?.[0] && (
-                <Image
-                  fill
-                  src={product.baseImages.mockup[0]}
-                  alt={product.name}
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  className="object-cover -z-10 transition-transform duration-700 ease-out group-hover:scale-105"
-                />
-              )}
+              <SkeletonImage
+                skeletonClassName="-z-10"
+                fill
+                src={product.baseImages?.mockup?.[0]}
+                alt={product.name}
+                sizes="(min-width: 768px) 50vw, 100vw"
+                className="object-cover -z-10 transition-transform duration-700 ease-out group-hover:scale-105"
+              />
               <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent from-30% to-black/85" />
               <span className="absolute top-4 left-5 text-xs tracking-[0.18em] text-white/80">0{i + 1}</span>
               <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-3">
@@ -119,18 +116,15 @@ const VariantTile = ({
   return (
     <Link href={routes.variant(variant)} className="group block">
       <div className="relative aspect-square rounded-2xl overflow-hidden bg-card">
-        <Skeleton className="absolute inset-0 rounded-none" />
-        {image && (
-          <Image
-            fill
-            src={image}
-            alt={getProductVariantName(variant, { includeProductName: true })}
-            sizes="(min-width: 1024px) 25vw, 70vw"
-            className={`object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06] ${
-              soldOut ? SOLD_OUT_IMAGE : ""
-            }`}
-          />
-        )}
+        <SkeletonImage
+          fill
+          src={image}
+          alt={getProductVariantName(variant, { includeProductName: true })}
+          sizes="(min-width: 1024px) 25vw, 70vw"
+          className={`object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06] ${
+            soldOut ? SOLD_OUT_IMAGE : ""
+          }`}
+        />
         {soldOut && <SoldOutStamp className="text-2xl md:text-3xl" />}
         <span className="absolute top-3 right-3 grid place-items-center w-9 h-9 rounded-full bg-black/50 backdrop-blur text-white opacity-0 translate-y-1 transition group-hover:opacity-100 group-hover:translate-y-0">
           <ArrowUpRight className="w-4 h-4" />

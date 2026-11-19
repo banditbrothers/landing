@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import { ShopCard } from "@/components/cards/ShopCard";
 import { ReviewCard } from "@/components/cards/ReviewCard";
 import { Scorecard } from "@/components/misc/Scorecard";
@@ -162,16 +161,13 @@ export const RelatedSections = ({
 };
 
 const WearItYourWay = () => {
-  const [loaded, setLoaded] = useState(false);
   return (
     <section className="py-12 md:py-16">
       <SectionHead kicker="One tube, many looks" title="Wear it your way" />
       <div className="grid md:grid-cols-[1fr_2.4fr] gap-3.5">
         <div className="relative aspect-square md:aspect-auto rounded-2xl overflow-hidden bg-black">
-          {!loaded && <Skeleton className="absolute inset-0 rounded-none" />}
-          <Image
+          <SkeletonImage
             fill
-            onLoad={() => setLoaded(true)}
             src="/how-to-wear.webp"
             alt="How to wear your bandana"
             sizes="(min-width: 768px) 30vw, 100vw"

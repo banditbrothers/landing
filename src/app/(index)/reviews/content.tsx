@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
 import { ReviewCard, shortName } from "@/components/cards/ReviewCard";
@@ -136,8 +135,7 @@ export default function ReviewsContent({ rating, reviews }: { rating: RatingSumm
                     "right-0 top-16 rotate-[10deg]",
                   ][i]
                 }`}>
-                <Skeleton className="absolute inset-0 rounded-none" />
-                <Image fill src={r.images[0]} alt="" sizes="200px" className="object-cover" />
+                <SkeletonImage fill src={r.images[0]} alt="" sizes="200px" className="object-cover" />
               </div>
             ))}
           </div>
@@ -172,8 +170,7 @@ const PhotoStrip = ({ photos }: { photos: Review[] }) => {
                 i % 2 ? "rotate-2 translate-y-2.5" : "-rotate-[2.5deg]"
               }`}>
               <div className="relative aspect-[4/5] rounded-sm overflow-hidden bg-zinc-300">
-                <Skeleton className="absolute inset-0 rounded-none" />
-                <Image
+                <SkeletonImage
                   fill
                   src={r.images[0]}
                   alt={`${shortName(r.name)}'s photo`}

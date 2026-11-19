@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { m } from "motion/react";
 import { ArrowRight } from "lucide-react";
@@ -56,8 +55,7 @@ export const HowToWearSection = () => {
             transition={{ type: "spring", stiffness: 120, damping: 16, delay: i * 0.07 }}>
             <div className="bg-white p-2 pb-8 rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
               <div className="relative aspect-square">
-                <Skeleton className="absolute inset-0 rounded-none" />
-                <Image
+                <SkeletonImage
                   src={src}
                   alt="Bandit Brothers lineup"
                   fill
@@ -76,8 +74,7 @@ export const HowToWearSection = () => {
       <div className="max-w-screen-2xl mx-auto px-4 md:px-8 mt-12 md:mt-16 grid md:grid-cols-[1fr_1.2fr] gap-8 md:gap-14 items-center">
         <Reveal>
           <div className="relative aspect-square rounded-3xl overflow-hidden">
-            <Skeleton className="absolute inset-0 rounded-none" />
-            <Image
+            <SkeletonImage
               src="/how-to-wear.webp"
               alt="How to wear your bandana"
               fill

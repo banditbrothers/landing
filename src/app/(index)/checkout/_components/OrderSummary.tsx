@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ChevronDownIcon, LockIcon, XIcon } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import { Panel, Row } from "@/components/misc/Panel";
 import { Kicker } from "@/components/typography/Kicker";
 import { CouponInput } from "@/components/inputs/Coupon";
@@ -231,8 +230,7 @@ const ReceiptItem = ({
       <Link
         href={routes.variant(variant)}
         className="relative shrink-0 w-[68px] h-[68px] rounded-[14px] overflow-hidden">
-        <Skeleton className="absolute inset-0 rounded-none" />
-        <Image
+        <SkeletonImage
           width={68}
           height={68}
           src={variant.images.mockup[0]}

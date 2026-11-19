@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ReviewWithoutEmail } from "@/types/review";
@@ -93,8 +92,7 @@ export const TestimonialsSection = () => {
             <figure className="group h-full flex flex-col rounded-3xl bg-card border border-border overflow-hidden transition hover:-translate-y-1 hover:border-bandit-orange/60">
               {review.images[0] && (
                 <div className="relative aspect-[4/3] overflow-hidden">
-                  <Skeleton className="absolute inset-0 rounded-none" />
-                  <Image
+                  <SkeletonImage
                     src={review.images[0]}
                     alt={review.title}
                     fill
