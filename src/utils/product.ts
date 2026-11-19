@@ -74,6 +74,9 @@ export const getUnitsLeft = (variant: ProductVariant) => {
 
 export const isNewDrop = (variant: ProductVariant) => getTimestamp() - variant.createdAt < NEW_DROP_SECONDS;
 
+// Colour families share a "Name - Shade" naming; a folded card shows just the design name
+export const getFamilyName = (variant: ProductVariant) => getProductVariantName(variant).split(" - ")[0];
+
 // Colour variants of one design share a `family` key
 export const familyOf = (designId: string) => DESIGNS_OBJ[designId]?.family ?? designId;
 

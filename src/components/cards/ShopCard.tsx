@@ -9,11 +9,11 @@ import { toast } from "sonner";
 import { useCart } from "@/components/stores/cart";
 import { ProductVariant } from "@/types/product";
 import { PRODUCTS_OBJ } from "@/data/products";
-import { DESIGNS_OBJ } from "@/data/designs";
 import { formatCurrency } from "@/utils/price";
 import { routes } from "@/utils/routes";
 import {
   exceedsStock,
+  getFamilyName,
   getProductVariantName,
   getProductVariantPrice,
   getUnitsLeft,
@@ -24,7 +24,7 @@ import {
 } from "@/utils/product";
 import { useAddToCart } from "@/hooks/useAddToCart";
 import { SOLD_OUT_IMAGE, SoldOutStamp, Sticker } from "@/components/misc/Stickers";
-import { Swatch } from "@/components/misc/Swatch";
+import { FamilySwatches } from "@/components/misc/FamilySwatches";
 
 type ShopCardProps = {
   variant: ProductVariant;
@@ -46,16 +46,12 @@ export const ShopCard = ({
   const { cart } = useCart();
   const addToCart = useAddToCart();
 
-  const colourways = family.length;
-  // Swatches only work as a picker when each member looks different (zodiac signs share one palette)
-  const swatchPicker = new Set(family.map(v => DESIGNS_OBJ[v.designId].swatch.join())).size === colourways;
   const product = PRODUCTS_OBJ[variant.productId];
   const soldOut = isVariantOutOfStock(variant);
   const unitsLeft = getUnitsLeft(variant);
   const price = getProductVariantPrice(variant);
   const name = getProductVariantName(variant);
-  // Colour families share a "Name - Shade" naming; the folded card shows just the design name
-  const title = showGearName ? product.name : colourways > 1 ? name.split(" - ")[0] : name;
+  const title = showGearName ? product.name : family.length > 1 ? getFamilyName(variant) : name;
   const href = routes.variant(variant);
 
   const inCart = (size: string) => cart.find(i => i.variantId === variant.id && i.size === size)?.quantity ?? 0;
@@ -131,33 +127,8 @@ export const ShopCard = ({
         <div className="md:col-span-2 flex items-center gap-2 text-xs md:text-[13px] text-muted-foreground">
           {showGearName ? (
             <span className="truncate">{name}</span>
-          ) : colourways > 1 && !swatchPicker ? (
-            <span>{colourways} options</span>
           ) : (
-            colourways > 1 && (
-              <span className="flex flex-wrap gap-1">
-                {family.map(v => (
-                  <button
-                    key={v.id}
-                    type="button"
-                    title={getProductVariantName(v)}
-                    aria-label={`Show ${getProductVariantName(v)}`}
-                    aria-pressed={v.id === variant.id}
-                    onClick={e => {
-                      e.preventDefault();
-                      setActiveId(v.id);
-                    }}
-                    className={`rounded-full p-[2px] ring-1 transition ${
-                      v.id === variant.id ? "ring-bandit-orange" : "ring-transparent hover:ring-white/40"
-                    }`}>
-                    <Swatch
-                      colors={DESIGNS_OBJ[v.designId].swatch}
-                      className="w-3.5 h-3.5 rounded-full border border-white/25"
-                    />
-                  </button>
-                ))}
-              </span>
-            )
+            <FamilySwatches family={family} activeId={variant.id} onPick={setActiveId} />
           )}
         </div>
       </div>

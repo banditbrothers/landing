@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
@@ -12,6 +12,8 @@ import { ProductVariant } from "@/types/product";
 import { formatCurrency } from "@/utils/price";
 import { routes } from "@/utils/routes";
 import {
+  familyOf,
+  getFamilyName,
   getProductVariantName,
   getProductVariantPrice,
   isVariantOutOfStock,
@@ -19,6 +21,7 @@ import {
 } from "@/utils/product";
 import { Reveal, SectionHead } from "@/components/misc/Reveal";
 import { SOLD_OUT_IMAGE, SoldOutStamp } from "@/components/misc/Stickers";
+import { FamilySwatches } from "@/components/misc/FamilySwatches";
 
 const GEAR_COPY: Record<string, string> = {
   bandana: "The OG. 12+ ways to wear it.",
@@ -98,7 +101,18 @@ export const ShopByGear = () => {
   );
 };
 
-const VariantTile = ({ variant, rank }: { variant: ProductVariant; rank?: number }) => {
+const VariantTile = ({
+  variant: initial,
+  family = [initial],
+  rank,
+}: {
+  variant: ProductVariant;
+  /** Colour variants folded into this tile (includes `variant`); their swatches switch the tile */
+  family?: ProductVariant[];
+  rank?: number;
+}) => {
+  const [activeId, setActiveId] = useState(initial.id);
+  const variant = family.find(v => v.id === activeId) ?? initial;
   const soldOut = isVariantOutOfStock(variant);
   const image = variant.images?.mockup?.[0];
 
@@ -129,8 +143,13 @@ const VariantTile = ({ variant, rank }: { variant: ProductVariant; rank?: number
       </div>
       <div className="pt-3 px-0.5 flex justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="font-semibold truncate">{getProductVariantName(variant)}</h3>
+          <h3 className="font-semibold truncate">
+            {family.length > 1 ? getFamilyName(variant) : getProductVariantName(variant)}
+          </h3>
           <p className="text-sm text-muted-foreground">{PRODUCTS_OBJ[variant.productId]?.name}</p>
+          <div className="mt-1.5 text-[13px] text-muted-foreground">
+            <FamilySwatches family={family} activeId={variant.id} onPick={setActiveId} />
+          </div>
         </div>
         <span className="font-semibold">{formatCurrency(getProductVariantPrice(variant))}</span>
       </div>
@@ -139,7 +158,16 @@ const VariantTile = ({ variant, rank }: { variant: ProductVariant; rank?: number
 };
 
 // Native scroll-snap rail; arrow buttons on desktop
-export const Rail = ({ variants, ranked = false }: { variants: ProductVariant[]; ranked?: boolean }) => {
+export const Rail = ({
+  variants,
+  families,
+  ranked = false,
+}: {
+  variants: ProductVariant[];
+  /** Colour variants per tile, keyed by the tile's variant id */
+  families?: Map<string, ProductVariant[]>;
+  ranked?: boolean;
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const scroll = (dir: 1 | -1) =>
     ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: "smooth" });
@@ -151,7 +179,7 @@ export const Rail = ({ variants, ranked = false }: { variants: ProductVariant[];
         className="grid grid-flow-col auto-cols-[68%] sm:auto-cols-[40%] lg:auto-cols-[calc((100%-3*1.25rem)/4.3)] gap-4 lg:gap-5 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-px-4 md:scroll-px-8 px-4 md:px-8 pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {variants.map((v, i) => (
           <Reveal key={v.id} delay={Math.min(i, 5) * 0.06} className="snap-start">
-            <VariantTile variant={v} rank={ranked && i < 9 ? i + 1 : undefined} />
+            <VariantTile variant={v} family={families?.get(v.id)} rank={ranked && i < 9 ? i + 1 : undefined} />
           </Reveal>
         ))}
       </div>
@@ -174,7 +202,13 @@ export const ProductLibrary = () => {
   const { data: variants } = useVariants();
 
   const bestSellers = sortOutOfStockLast(variants.filter(v => v.isBestSeller));
-  const newArrivals = sortOutOfStockLast([...variants].sort((a, b) => b.createdAt - a.createdAt).slice(0, 10));
+  // Newest in-stock shade of each design per gear type stands for its family; the rest become swatches
+  const inStock = variants.filter(v => !isVariantOutOfStock(v)).sort((a, b) => b.createdAt - a.createdAt);
+  const familyKey = (v: ProductVariant) => `${v.productId}/${familyOf(v.designId)}`;
+  const newArrivals = inStock
+    .filter((v, i) => inStock.findIndex(x => familyKey(x) === familyKey(v)) === i)
+    .slice(0, 10);
+  const newFamilies = new Map(newArrivals.map(v => [v.id, inStock.filter(x => familyKey(x) === familyKey(v))]));
 
   return (
     <>
@@ -197,7 +231,7 @@ export const ProductLibrary = () => {
               }
             />
           </div>
-          <Rail variants={newArrivals} />
+          <Rail variants={newArrivals} families={newFamilies} />
         </section>
       )}
     </>
