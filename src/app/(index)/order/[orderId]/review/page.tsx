@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { LoadingScreen } from "@/components/misc/Loading";
+import { LoadingIcon, LoadingScreen } from "@/components/misc/Loading";
 import { getOrder } from "@/actions/orders";
 import { getVariantsByIds } from "@/actions/products";
 import { ProductVariant } from "@/types/product";
@@ -14,17 +14,18 @@ import { useForm, useWatch } from "react-hook-form";
 import * as z from "zod";
 import { reviewFieldsSchema } from "@/schemas";
 import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import { StarRatingInput } from "@/components/misc/StarRating";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { getWhatsappHelpWithCreateReviewLink, getWhatsappUpdateReviewLink } from "@/utils/whatsappMessageLinks";
-import { ArrowRightIcon, ArrowUpRightIcon, Loader2, MessageCircleIcon } from "lucide-react";
+import { ArrowRightIcon, ArrowUpRightIcon, MessageCircleIcon } from "lucide-react";
 import { FileDropzone } from "@/components/misc/FileUploader";
 import { processImage } from "@/utils/image";
 import Link from "next/link";
-import { getCollectionDocumentId, signInAnonymously, storage } from "@/lib/firebase";
+import { signInAnonymously, storage } from "@/lib/firebase";
+import { generateReviewId } from "@/utils/id";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Collections } from "@/constants/collections";
 import { createReview } from "@/actions/reviews";
@@ -106,7 +107,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
 
     setSubmitStatus("submitting");
     try {
-      const reviewId = getCollectionDocumentId(Collections.reviews);
+      const reviewId = generateReviewId();
 
       const imageUrls = [];
       if (images.length > 0) {
@@ -182,8 +183,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
           <span
             key={`${item.variantId}-${item.size}`}
             className="relative w-14 h-14 shrink-0 rounded-[14px] overflow-hidden">
-            <Skeleton className="absolute inset-0 rounded-none" />
-            <Image
+            <SkeletonImage
               width={56}
               height={56}
               quality={40}
@@ -291,7 +291,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
               className="w-full h-auto rounded-full bg-bandit-orange text-black hover:bg-bandit-orange/90 py-4 text-base text-wrap">
               {submitStatus === "submitting" ? (
                 <>
-                  Submitting... This may take a while <Loader2 className="w-4 h-4 animate-spin" />
+                  Submitting... This may take a while <LoadingIcon className="w-4 h-4" />
                 </>
               ) : (
                 <>
@@ -314,8 +314,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
                 target="_blank"
                 className="flex items-center gap-4 py-4 group">
                 <span className="relative w-16 h-16 shrink-0 rounded-[14px] overflow-hidden">
-                  <Skeleton className="absolute inset-0 rounded-none" />
-                  <Image
+                  <SkeletonImage
                     width={64}
                     height={64}
                     quality={40}

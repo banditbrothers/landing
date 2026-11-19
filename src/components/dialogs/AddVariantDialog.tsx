@@ -15,7 +15,8 @@ import { DESIGNS } from "@/data/designs";
 import { parseStockInputs, StockInputs, StockInputValues } from "./StockInputs";
 import { toast } from "sonner";
 import { MockupImageGrid, MockupUploadButton } from "./MockupImageGrid";
-import { Loader2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
+import { LoadingIcon } from "@/components/misc/Loading";
 import { getTimestamp } from "@/utils/timestamp";
 
 interface AddVariantDialogProps {
@@ -321,7 +322,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
               className="min-w-[120px]">
               {isLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <LoadingIcon className="w-4 h-4 mr-2" />
                   Creating...
                 </>
               ) : (

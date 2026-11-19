@@ -3,7 +3,7 @@ import { Order } from "@/types/order";
 import { getAddressString } from "./address";
 import { getDate } from "./timestamp";
 import { SITE_URL } from "@/lib/site";
-import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
+import { waLink } from "./whatsappMessageLinks";
 import { Review } from "@/types/review";
 import { StockNotification } from "@/types/stockNotification";
 import { getSizeLabel } from "./product";
@@ -42,9 +42,7 @@ export const getDiscordOrderMessage = (order: Order) => {
   const paymentMethod = getPaymentMethodLabel(order);
 
   return {
-    content: `🎉 We have a new order! \nSend ${
-      order.name
-    } their order info + shipping details by clicking [here](${getWhatsappOrderConfirmationLink(order)})`,
+    content: `🎉 We have a new order! \n[WhatsApp ${order.name}](${waLink(order.phone)})`,
     embeds: [
       {
         title: "Order Details",

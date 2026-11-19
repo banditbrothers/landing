@@ -43,10 +43,13 @@ export const createReview = async (
     variantIds: order.variants.map(variant => variant.variantId),
   };
 
-  await Promise.all([
-    firestore().collection(Collections.reviews).doc(id).set(review),
-    orderRef.update({ reviewId: id }),
-  ]);
+  // The id comes from the browser: create() refuses to overwrite an existing review
+  try {
+    await firestore().collection(Collections.reviews).doc(id).create(review);
+  } catch {
+    return { error: "Couldn't submit your review. Please try again." };
+  }
+  await orderRef.update({ reviewId: id });
   await sendDiscordReviewMessage(getDiscordReviewMessage({ ...review, id }));
   return { success: true };
 };

@@ -10,7 +10,6 @@ import { getDiscordOrderMessage } from "@/utils/discordMessages";
 import { deductStockForOrder, getStockIssues } from "./stock";
 import { validateCoupon } from "./coupons";
 import { sendWhatsappOrderConfirmation } from "./whatsapp";
-import { customAlphabet } from "nanoid";
 import { OrderInput, orderInputSchema } from "@/schemas";
 import { Coupon } from "@/types/coupon";
 import { getVariantsByIds } from "./products";
@@ -19,9 +18,8 @@ import { toPaise } from "@/utils/price";
 import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
 import { getProductVariantPrice } from "@/utils/product";
 import { getTimestamp } from "@/utils/timestamp";
+import { generateOrderId } from "@/utils/id";
 
-// 8 chars over 31 symbols (no 0/O/1/I/L, easy to read out) ≈ 8.5e11 ids
-const generateOrderId = customAlphabet("23456789ABCDEFGHJKMNPQRSTUVWXYZ", 8);
 const GRPC_ALREADY_EXISTS = 6;
 
 export const getOrders = async (limit: number = 50): Promise<Order[]> => {

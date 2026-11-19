@@ -4,7 +4,8 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Loader2, Upload } from "lucide-react";
+import { ChevronLeft, ChevronRight, Upload } from "lucide-react";
+import { LoadingIcon } from "@/components/misc/Loading";
 import { processImage } from "@/utils/image";
 import { uploadToS3 } from "@/utils/s3Upload";
 
@@ -128,7 +129,7 @@ export const MockupUploadButton = ({
         className={className}>
         {isUploading ? (
           <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            <LoadingIcon className="w-4 h-4 mr-2" />
             Uploading...
           </>
         ) : (

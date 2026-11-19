@@ -1,6 +1,7 @@
 import React from "react";
 import { DropzoneProps, useDropzone } from "react-dropzone";
-import { CameraIcon, Loader2 } from "lucide-react";
+import { CameraIcon } from "lucide-react";
+import { LoadingIcon } from "@/components/misc/Loading";
 
 export function FileDropzone({ loading, onDrop }: DropzoneProps & { loading: boolean }) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -20,7 +21,7 @@ export function FileDropzone({ loading, onDrop }: DropzoneProps & { loading: boo
       }`}>
       <input {...getInputProps()} disabled={loading} />
       {loading ? (
-        <Loader2 className="w-9 h-9 text-bandit-orange animate-spin" />
+        <LoadingIcon className="w-9 h-9 text-bandit-orange" />
       ) : (
         <CameraIcon strokeWidth={1.6} className="w-9 h-9 text-bandit-orange" />
       )}

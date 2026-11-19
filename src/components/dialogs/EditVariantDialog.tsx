@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { ProductVariant } from "@/types/product";
 import { updateVariant } from "@/actions/products";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { LoadingIcon } from "@/components/misc/Loading";
 import { MockupImageGrid, MockupUploadButton } from "./MockupImageGrid";
 import { PRODUCTS_OBJ } from "@/data/products";
 import { parseStockInputs, StockInputs, StockInputValues, toStockInputs } from "./StockInputs";
@@ -213,7 +213,7 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
             <Button type="button" onClick={handleSave} disabled={isLoading || isUploadingImage}>
               {isLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <LoadingIcon className="w-4 h-4 mr-2" />
                   Saving...
                 </>
               ) : (

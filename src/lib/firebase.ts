@@ -2,7 +2,7 @@ import { initializeApp, getApp, getApps } from "firebase/app";
 
 import { getAuth, signInAnonymously as signInAnonymouslyFirebase } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { getFirestore, collection, doc } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -27,13 +27,6 @@ export const signInAnonymously = async () => {
   } catch (error) {
     console.error("error", error);
   }
-};
-
-export const getCollectionDocumentId = (collectionName: string) => {
-  const db = getFirestore(app);
-  const collectionRef = collection(db, collectionName);
-  const newDocRef = doc(collectionRef);
-  return newDocRef.id;
 };
 
 export const db = getFirestore(app);

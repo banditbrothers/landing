@@ -9,7 +9,7 @@ import { Order } from "@/types/order";
 import { createPaymentLinkForInternationalOrder } from "@/actions/payments/rzp";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { LoadingIcon } from "@/components/misc/Loading";
 import { formatCurrency } from "@/utils/price";
 
 interface InternationalOrderPaymentDialogProps {
@@ -162,7 +162,7 @@ export const InternationalOrderPaymentDialog = ({ onClose, order, onUpdate }: In
               className="min-w-[120px]">
               {isLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <LoadingIcon className="w-4 h-4 mr-2" />
                   Updating...
                 </>
               ) : (
