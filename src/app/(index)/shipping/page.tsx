@@ -1,8 +1,8 @@
 import { Globe, Truck } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Sticker } from "@/components/cards/ShopCard";
+import { Sticker } from "@/components/misc/Stickers";
 import { InfoPageLayout, IconBox, SectionTitle, card, displayTitle } from "@/components/layouts/InfoPageLayout";
-import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING as FREE_OVER, SHIPPING_COST } from "@/data/products";
+import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING as FREE_OVER, SHIPPING_COST } from "@/constants/shipping";
 import { pageMetadata } from "@/lib/site";
 import { formatCurrency } from "@/utils/price";
 

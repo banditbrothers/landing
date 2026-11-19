@@ -1,15 +1,18 @@
 import Link from "next/link";
 import { Instagram, Mail, MessageCircle } from "lucide-react";
 import BackToTopButton from "@/components/BackToTopButton";
-import { CONTACT } from "@/components/layouts/InfoPageLayout";
-import { ACTIVE_PRODUCTS, MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/data/products";
+import { CONTACT } from "@/lib/site";
+import { ACTIVE_PRODUCTS } from "@/data/products";
+import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/constants/shipping";
+import { formatCurrency } from "@/utils/price";
+import { routes } from "@/utils/routes";
 
 const COLUMNS = [
   {
     title: "Shop",
     links: [
       { label: "All products", href: "/shop" },
-      ...ACTIVE_PRODUCTS.map(p => ({ label: p.name, href: `/shop/${p.id}` })),
+      ...ACTIVE_PRODUCTS.map(p => ({ label: p.name, href: routes.product(p.id) })),
     ],
   },
   {
@@ -37,10 +40,25 @@ const SOCIALS = [
   { label: "Email", href: `mailto:${CONTACT.email}`, icon: Mail },
 ];
 
+function Tape({ text, className }: { text: string; className: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`absolute -inset-x-[5%] h-10 md:h-12 flex items-center gap-6 md:gap-7 whitespace-nowrap font-calera uppercase text-lg md:text-[22px] ${className}`}>
+      {Array.from({ length: 20 }, (_, i) => (
+        <span key={i} className="flex items-center gap-6 md:gap-7">
+          {text}
+          <span className="font-sans text-xs">✕</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export default function Footer() {
   return (
     <footer className="border-t border-border bg-background">
-      <div className="max-w-screen-2xl mx-auto px-4 md:px-8 pt-14 md:pt-20 pb-8">
+      <div className="max-w-screen-2xl mx-auto px-4 md:px-8 pt-14 md:pt-20">
         <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div className="col-span-2 md:col-span-1 max-w-sm">
             <p className="font-calera uppercase leading-[0.9] text-4xl md:text-5xl">
@@ -50,7 +68,9 @@ export default function Footer() {
             </p>
             <p className="mt-5 text-sm text-muted-foreground leading-relaxed">
               Bandanas and balaclavas for riders and everyone else.
-              {MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING && <> Free shipping over ₹{MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING}.</>}
+              {MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING && (
+                <> Free shipping over {formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}.</>
+              )}
             </p>
             <div className="mt-6 flex gap-2">
               {SOCIALS.map(({ label, href, icon: Icon }) => (
@@ -86,16 +106,15 @@ export default function Footer() {
             </nav>
           ))}
         </div>
+      </div>
 
-        <div className="mt-16 md:mt-24 flex items-center gap-4">
-          <span className="h-px flex-1 border-t border-dashed border-border" />
-          <p className="text-sm md:text-base italic tracking-wide text-muted-foreground whitespace-nowrap">
-            Bandit&apos;s Hideout Ends Here
-          </p>
-          <BackToTopButton />
-          <span className="h-px flex-1 border-t border-dashed border-border" />
-        </div>
+      <div className="relative mt-16 md:mt-24 h-28 md:h-32 grid place-items-center overflow-hidden">
+        <Tape text="Hideout closed" className="bg-bandit-red text-white rotate-[1.8deg]" />
+        <Tape text="Bandit's hideout ends here" className="bg-bandit-orange text-black -rotate-[2.2deg]" />
+        <BackToTopButton />
+      </div>
 
+      <div className="max-w-screen-2xl mx-auto px-4 md:px-8 pb-8">
         <div className="mt-10 flex flex-col md:flex-row gap-2 justify-between text-xs text-muted-foreground">
           <span>© {new Date().getFullYear()} Bandit Brothers. All rights reserved.</span>
           <span>{CONTACT.instagramHandle}</span>

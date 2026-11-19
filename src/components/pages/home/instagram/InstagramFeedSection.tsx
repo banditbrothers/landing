@@ -4,6 +4,7 @@ import { getInstagramFeed } from "@/lib/instagram";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { CONTACT } from "@/lib/site";
 import { useEffect, useState } from "react";
 import { MessageCircleIcon } from "lucide-react";
 import { HeartIconSolid, InstagramIcon } from "@/Icons/icons";
@@ -20,8 +21,6 @@ type InstagramPost = {
   like_count: number;
   thumbnail_url: string;
 };
-
-const IG_URL = "https://www.instagram.com/be.a.banditbrother/";
 
 export const InstagramFeedSection = () => {
   const [feed, setFeed] = useState<InstagramPost[]>([]);
@@ -46,7 +45,7 @@ export const InstagramFeedSection = () => {
           </span>
         }>
         <Link
-          href={IG_URL}
+          href={CONTACT.instagram}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 h-11 px-5 rounded-full border border-border text-sm hover:border-bandit-orange w-fit">

@@ -8,16 +8,25 @@ import { ProductVariant } from "@/types/product";
 import { Order, OrderStatus } from "@/types/order";
 import { formatCurrency } from "@/utils/price";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon, ArrowUpRightIcon, CheckIcon, CopyIcon, MessageCircleIcon } from "lucide-react";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
-import { formattedDateTimeLong } from "@/utils/timestamp";
 import { getWhatsappNeedHelpWithOrderIdLink } from "@/utils/whatsappMessageLinks";
 import { redactEmail, redactPhone, redactName } from "@/utils/redact";
 import Link from "next/link";
-import { getProductVariantUrl } from "@/utils/share";
+import { routes } from "@/utils/routes";
 import { getProductVariantName, getProductVariantPrice, getSizeLabel } from "@/utils/product";
-import { Sticker } from "@/components/cards/ShopCard";
+import { Sticker } from "@/components/misc/Stickers";
+import { formattedDateTimeLong, getTimestamp, SECONDS_PER_HOUR } from "@/utils/timestamp";
+import { Kicker } from "@/components/typography/Kicker";
+import { Breadcrumb } from "@/components/misc/Breadcrumb";
+import { OrderHeading } from "./OrderHeading";
+import { Panel, Row } from "@/components/misc/Panel";
+
+// While a fresh Razorpay order waits on the webhook, re-fetch it this often, this many times (~30s)
+const PAYMENT_POLL_MS = 3000;
+const PAYMENT_POLL_TRIES = 10;
 
 type OrderPageProps = { params: Promise<{ orderId: string }> };
 
@@ -62,21 +71,6 @@ const STATUS: Record<
   },
 };
 
-const Kicker = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-3">{children}</p>
-);
-
-const Panel = ({ className = "", children }: { className?: string; children: React.ReactNode }) => (
-  <div className={`rounded-[22px] border border-border bg-card ${className}`}>{children}</div>
-);
-
-const Row = ({ label, children }: { label: React.ReactNode; children: React.ReactNode }) => (
-  <div className="flex justify-between items-center gap-4 py-1.5 text-sm">
-    <span className="text-muted-foreground flex items-center gap-2">{label}</span>
-    <span>{children}</span>
-  </div>
-);
-
 export default function OrderPage({ params }: OrderPageProps) {
   // Looked up by id, not from the catalog, so items that are no longer sold still render
   const [variants, setVariants] = useState<ProductVariant[]>();
@@ -97,13 +91,13 @@ export default function OrderPage({ params }: OrderPageProps) {
       if (cancelled) return;
       setOrder(order);
 
-      // Re-check for ~30s while a fresh Razorpay order is still waiting on the webhook
+      // Re-check (PAYMENT_POLL_TRIES × PAYMENT_POLL_MS) while a fresh Razorpay order is still waiting on the webhook
       const isFresh = (o: Order | null) =>
-        o?.status === "initiated" && o.paymentMode === "rzp" && Date.now() / 1000 - o.createdAt < 60 * 60;
+        o?.status === "initiated" && o.paymentMode === "rzp" && getTimestamp() - o.createdAt < SECONDS_PER_HOUR;
       if (!isFresh(order)) return;
       setConfirming(true);
-      for (let i = 0; i < 10 && isFresh(order); i++) {
-        await new Promise(r => setTimeout(r, 3000));
+      for (let i = 0; i < PAYMENT_POLL_TRIES && isFresh(order); i++) {
+        await new Promise(r => setTimeout(r, PAYMENT_POLL_MS));
         if (cancelled) return;
         order = await getOrder(orderId);
         setOrder(order);
@@ -148,13 +142,7 @@ export default function OrderPage({ params }: OrderPageProps) {
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 md:px-8 pt-20 md:pt-24 pb-20 min-h-screen">
-      <nav className="text-[13px] text-muted-foreground flex gap-2 pt-4" aria-label="Breadcrumb">
-        <Link href="/" className="hover:text-foreground">
-          Home
-        </Link>
-        <span className="opacity-50">/</span>
-        <span className="text-foreground">Order {order.id}</span>
-      </nav>
+      <Breadcrumb items={[{ label: `Order ${order.id}` }]} />
 
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-8 md:pt-12 pb-10 md:pb-12">
         <div>
@@ -170,12 +158,7 @@ export default function OrderPage({ params }: OrderPageProps) {
               </button>
             </span>
           </Kicker>
-          <h1 className="font-calera uppercase leading-[0.9] text-[17vw] md:text-[clamp(4.5rem,9vw,8rem)]">
-            {status.head} <span className="text-bandit-orange">{status.accent}</span>.
-          </h1>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md mt-5">
-            {statusCopy}
-          </p>
+          <OrderHeading head={status.head} accent={status.accent} copy={statusCopy} />
           <p className="text-sm text-muted-foreground mt-2">Placed {formattedDateTimeLong(order.createdAt)}</p>
         </div>
         <div className="md:pb-3">
@@ -212,11 +195,15 @@ export default function OrderPage({ params }: OrderPageProps) {
                   <div key={key} className="flex items-center gap-4 py-4">
                     {/* No longer in the catalog: still listed so the items add up to the subtotal */}
                     {variant ? (
-                      <Link href={getProductVariantUrl(variant)} target="_blank" className="shrink-0">
+                      <Link
+                        href={routes.variant(variant)}
+                        target="_blank"
+                        className="relative shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-[14px] overflow-hidden">
+                        <Skeleton className="absolute inset-0 rounded-none" />
                         <Image
                           width={80}
                           height={80}
-                          className="w-16 h-16 md:w-20 md:h-20 rounded-[14px] object-cover bg-secondary"
+                          className="relative w-full h-full object-cover"
                           alt={name}
                           src={variant.images.mockup[0]}
                         />
@@ -295,7 +282,7 @@ export default function OrderPage({ params }: OrderPageProps) {
               <p className="font-calera uppercase text-3xl leading-[0.9]">Got it? Rate it.</p>
               <p className="text-sm mt-1.5 mb-4">Drop a photo and a few words. Takes a minute.</p>
               <Link
-                href={`/order/${order.id}/review`}
+                href={routes.orderReview(order.id)}
                 className="inline-flex items-center gap-1.5 bg-black text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-black/80">
                 Write a review <ArrowRightIcon className="w-4 h-4" />
               </Link>

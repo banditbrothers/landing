@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,14 +9,13 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductVariant } from "@/types/product";
 import { createVariant } from "@/actions/products";
-import { uploadToS3 } from "@/utils/s3Upload";
 import { getSKU } from "@/utils/product";
-import { DESIGNS, PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { DESIGNS } from "@/data/designs";
 import { parseStockInputs, StockInputs, StockInputValues } from "./StockInputs";
 import { toast } from "sonner";
-import { MockupImageGrid } from "./MockupImageGrid";
-import { Upload, Loader2, Plus } from "lucide-react";
-import { processImage } from "@/utils/image";
+import { MockupImageGrid, MockupUploadButton } from "./MockupImageGrid";
+import { Loader2, Plus } from "lucide-react";
 import { getTimestamp } from "@/utils/timestamp";
 
 interface AddVariantDialogProps {
@@ -50,7 +49,6 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [stockInputs, setStockInputs] = useState<StockInputValues>({});
 
   const checkVariantExists = (productId: string, designId: string): boolean => {
@@ -126,39 +124,6 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
     });
     setStockInputs({});
     onClose();
-  };
-
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !formData.designId || !formData.productId) {
-      toast.error("Please select both product and design first");
-      return;
-    }
-
-    setIsUploadingImage(true);
-    try {
-      // Check if the image is a webp and if not, convert it to webp, then compress
-      const processedFile = await processImage(file);
-
-      // Generate S3 key and upload
-      const imageUrl = await uploadToS3(processedFile, formData.productId, formData.designId);
-
-      // Add new image to form data
-      setFormData(prev => ({
-        ...prev,
-        mockupImages: [...prev.mockupImages, imageUrl],
-      }));
-
-      toast.success("Image uploaded successfully");
-    } catch (error) {
-      toast.error("Failed to upload image");
-      console.error(error);
-    } finally {
-      setIsUploadingImage(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
   };
 
   const currentVariantExists =
@@ -254,31 +219,12 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
                 onChange={mockupImages => setFormData(prev => ({ ...prev, mockupImages }))}
               />
 
-              {/* Upload Button */}
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploadingImage || !formData.designId || !formData.productId}
-                className="w-full border-dashed border-2 h-12 bg-muted/50 hover:bg-muted/80 transition-colors">
-                {isUploadingImage ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Mockup Image
-                  </>
-                )}
-              </Button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/jpg,image/png,image/webp"
-                className="hidden"
-                onChange={handleImageUpload}
+              <MockupUploadButton
+                productId={formData.productId}
+                designId={formData.designId}
+                onUploaded={url => setFormData(prev => ({ ...prev, mockupImages: [...prev.mockupImages, url] }))}
+                onUploadingChange={setIsUploadingImage}
+                className="w-full border-dashed border-2 h-12 bg-muted/50 hover:bg-muted/80 transition-colors"
               />
               {(!formData.designId || !formData.productId) && (
                 <p className="text-sm text-muted-foreground/80">

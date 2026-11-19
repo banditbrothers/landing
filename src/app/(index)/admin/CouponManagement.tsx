@@ -1,11 +1,9 @@
-import { useEffect } from "react";
-
 import { useCouponActions } from "@/hooks/useCouponActions";
 import { Coupon } from "@/types/coupon";
 import { useState } from "react";
 import { getCoupons } from "@/actions/coupons";
 import { toast } from "sonner";
-import { getDate, getTimestamp } from "@/utils/timestamp";
+import { formattedDateTimeLong, getTimestamp, toTimestamp } from "@/utils/timestamp";
 import { Button } from "@/components/ui/button";
 import { LoadingIcon, LoadingScreen } from "@/components/misc/Loading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +16,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getVariantsAdmin } from "@/actions/products";
 import { ProductVariant } from "@/types/product";
 import { Checkbox } from "@/components/ui/checkbox";
+import { formatCurrency } from "@/utils/price";
+import { useAdminLoad } from "./adminHooks";
 
 export function CouponManagement() {
   const { addCoupon, couponLoading, updateCoupon } = useCouponActions();
@@ -26,20 +26,14 @@ export function CouponManagement() {
   const [variants, setVariants] = useState<ProductVariant[]>([]);
   const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
   const [showDialog, setShowDialog] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    Promise.all([getCoupons(), getVariantsAdmin()])
-      .then(([coupons, variants]) => {
-        setCoupons(coupons);
-        setVariants(variants);
-      })
-      .catch(error => {
-        console.error("Error loading coupons:", error);
-        toast.error("Failed to load coupons. Reload the page; you may need to log in again.");
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+  const isLoading = useAdminLoad(
+    () => Promise.all([getCoupons(), getVariantsAdmin()]),
+    ([coupons, variants]) => {
+      setCoupons(coupons);
+      setVariants(variants);
+    },
+    "coupons"
+  );
 
   const handleAddCoupon = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,7 +69,7 @@ export function CouponManagement() {
       discountType: couponType as "fixed" | "percentage",
       discount: Number(couponDiscount),
       minOrderAmount: Number(couponMinAmount),
-      expiresAt: expiresAt ? Math.floor(expiresAt.getTime() / 1000) : null,
+      expiresAt: expiresAt ? toTimestamp(expiresAt) : null,
       createdAt: getTimestamp(),
       isActive: true,
       // Every variant ticked = all variants ([]), so variants added later are covered too
@@ -151,8 +145,8 @@ export function CouponManagement() {
                     <TableCell className="font-medium">{coupon.code}</TableCell>
                     <TableCell>
                       {coupon.discountType === "fixed"
-                        ? `₹${coupon.discount} off on orders above ₹${coupon.minOrderAmount}`
-                        : `${coupon.discount}% off on orders above ₹${coupon.minOrderAmount}`}
+                        ? `${formatCurrency(coupon.discount)} off on orders above ${formatCurrency(coupon.minOrderAmount)}`
+                        : `${coupon.discount}% off on orders above ${formatCurrency(coupon.minOrderAmount)}`}
                     </TableCell>
                     <TableCell>
                       {coupon.applicableVariants && coupon.applicableVariants.length > 0
@@ -161,7 +155,7 @@ export function CouponManagement() {
                           }`
                         : "All variants"}
                     </TableCell>
-                    <TableCell>{coupon.expiresAt ? getDate(coupon.expiresAt).toLocaleString() : "Never"}</TableCell>
+                    <TableCell>{coupon.expiresAt ? formattedDateTimeLong(coupon.expiresAt) : "Never"}</TableCell>
                     <TableCell>
                       <Switch
                         id={`coupon-${coupon.id}-active`}

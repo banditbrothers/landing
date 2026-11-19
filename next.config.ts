@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   images: {
     minimumCacheTTL: 2678400,
+    // Few widths so the same image resolves to the same /_next/image URL across pages (browser cache hits)
+    deviceSizes: [640, 1080, 1920],
+    imageSizes: [128, 256],
     remotePatterns: [
       {
         protocol: "https",

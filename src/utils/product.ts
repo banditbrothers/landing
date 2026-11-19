@@ -1,4 +1,6 @@
-import { DESIGNS_OBJ, PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { DESIGNS_OBJ } from "@/data/designs";
+import { getTimestamp, SECONDS_PER_DAY } from "@/utils/timestamp";
 import { ProductVariant } from "@/types/product";
 
 export const getSKU = (productId: string, designId: string) => {
@@ -58,4 +60,28 @@ export const sortOutOfStockLast = (variants: ProductVariant[]) => {
 export const exceedsStock = (variant: ProductVariant, size: string, quantity: number) => {
   const stock = getSizeStock(variant, size);
   return stock !== undefined && quantity > stock;
+};
+
+const NEW_DROP_SECONDS = 30 * SECONDS_PER_DAY;
+
+// Units left across tracked sizes; undefined when nothing is tracked
+export const getUnitsLeft = (variant: ProductVariant) => {
+  const tracked = (PRODUCTS_OBJ[variant.productId]?.sizes ?? [])
+    .map(s => getSizeStock(variant, s))
+    .filter((n): n is number => n !== undefined);
+  return tracked.length ? tracked.reduce((a, b) => a + b, 0) : undefined;
+};
+
+export const isNewDrop = (variant: ProductVariant) => getTimestamp() - variant.createdAt < NEW_DROP_SECONDS;
+
+// Colour variants of one design share a `family` key
+export const familyOf = (designId: string) => DESIGNS_OBJ[designId]?.family ?? designId;
+
+export const isListed = (v: ProductVariant) => v.isAvailable !== false && v.images.mockup.length > 0;
+
+/** Colour-family key -> its variants, in input order */
+export const groupByFamily = (variants: ProductVariant[]) => {
+  const map = new Map<string, ProductVariant[]>();
+  variants.forEach(v => map.set(familyOf(v.designId), [...(map.get(familyOf(v.designId)) ?? []), v]));
+  return map;
 };

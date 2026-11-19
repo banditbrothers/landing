@@ -10,13 +10,16 @@ import { scrollTo } from "@/utils/misc";
 
 import { Button } from "./ui/button";
 import { ShoppingBagIcon, SearchIcon } from "../Icons/icons";
-import { useCart } from "@/components/stores/cart";
+import { useCart, useCartHydrated } from "@/components/stores/cart";
 import { LoadingIcon } from "./misc/Loading";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
-import { ACTIVE_PRODUCTS, MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/data/products";
+import { ACTIVE_PRODUCTS } from "@/data/products";
+import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/constants/shipping";
 import { ProductVariant } from "@/types/product";
-import { getFreeShippingAmount } from "@/utils/cart";
+import { getCartItemCount, getFreeShippingProgress } from "@/utils/cart";
 import { formatCurrency } from "@/utils/price";
+import { routes } from "@/utils/routes";
+import { VARIANTS_QUERY_KEY } from "@/hooks/useVariants";
 
 // Keep in sync with the h-16 / h-10 rows below; pages read --nav-h for sticky offsets
 const ROW_1 = 64;
@@ -24,7 +27,7 @@ const ROW_2 = 40;
 
 const LINKS = [
   { href: "/shop", label: "Shop all" },
-  ...ACTIVE_PRODUCTS.map(p => ({ href: `/shop/${p.id}`, label: `${p.name}s` })),
+  ...ACTIVE_PRODUCTS.map(p => ({ href: routes.product(p.id), label: `${p.name}s` })),
   { href: "/reviews", label: "Reviews" },
 ];
 
@@ -63,7 +66,7 @@ export default function NavBar() {
   return (
     <>
       <m.header
-        className={`fixed top-0 w-full z-50 transition-colors duration-300 border-b ${
+        className={`fixed top-0 inset-x-0 right-scroll-bar-position z-50 transition-colors duration-300 border-b ${
           isSolid ? "bg-background border-border" : "bg-transparent border-transparent"
         }`}
         initial={{ y: isHomePath ? -100 : 0 }}
@@ -78,7 +81,9 @@ export default function NavBar() {
                 scrollTo("hero");
               }
             }}>
-            <span className="text-[22px] sm:text-2xl md:text-3xl text-bandit-orange font-calera whitespace-nowrap">BANDIT BROTHERS</span>
+            <span className="text-[22px] sm:text-2xl md:text-3xl text-bandit-orange font-calera whitespace-nowrap">
+              BANDIT BROTHERS
+            </span>
           </Link>
           {showActions && (
             <div className="flex gap-1.5 md:gap-2">
@@ -100,7 +105,7 @@ export default function NavBar() {
             <div className="max-w-screen-2xl mx-auto px-4 md:px-8 h-10 flex items-center justify-between gap-6">
               <nav
                 aria-label="Shop"
-                className="flex gap-5 md:gap-6 h-full items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                className="flex gap-5 md:gap-6 h-full items-center overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {LINKS.map(({ href, label }) => {
                   // "/shop" itself would prefix-match every category
                   const isActive = pathname === href || (href !== "/shop" && pathname.startsWith(`${href}/`));
@@ -130,13 +135,18 @@ export default function NavBar() {
 }
 
 // The navbar lives in the root layout, outside the (index) ServerVariantsProvider. Calling useVariants() here would
-// create the ["variants"] query first, with no server data, and the (index) pages would lose their server-rendered
+// create the variants query first, with no server data, and the (index) pages would lose their server-rendered
 // catalog. So this only reads whatever the cache already holds.
 const useCachedVariants = () => {
   const queryClient = useQueryClient();
   return useSyncExternalStore(
-    onChange => queryClient.getQueryCache().subscribe(onChange),
-    () => queryClient.getQueryData<ProductVariant[]>(["variants"]),
+    // Variants events only, and deferred: the cache notifies synchronously, even while another component renders
+    // (a new useQuery observer mounting), and an immediate onChange would re-render this mid-render
+    onChange =>
+      queryClient.getQueryCache().subscribe(e => {
+        if (e.query.queryKey[0] === VARIANTS_QUERY_KEY[0]) queueMicrotask(onChange);
+      }),
+    () => queryClient.getQueryData<ProductVariant[]>(VARIANTS_QUERY_KEY),
     () => undefined
   );
 };
@@ -145,25 +155,27 @@ const FreeShippingMeter = () => {
   const cart = useCart(state => state.cart);
   const coupon = useCart(state => state.coupon);
   const variants = useCachedVariants();
+  const cartHydrated = useCartHydrated();
 
   if (MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING === null) return null;
 
-  const className = "hidden lg:flex items-center gap-2 shrink-0 text-xs tracking-[0.08em] uppercase text-muted-foreground";
+  const className =
+    "hidden lg:flex items-center gap-2 shrink-0 text-xs tracking-[0.08em] uppercase text-muted-foreground";
 
-  if (!cart.length || !variants?.length) {
+  if (!cartHydrated || !cart.length || !variants?.length) {
     return (
       <span className={className}>
-        <b className="font-medium text-bandit-orange">Free shipping</b> over {formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}
+        <b className="font-medium text-bandit-orange">Free shipping</b> over{" "}
+        {formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}
       </span>
     );
   }
 
-  const total = getFreeShippingAmount(cart, variants, coupon);
-  const left = MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING - total;
+  const { left, pct, unlocked } = getFreeShippingProgress(cart, variants, coupon)!;
 
   return (
     <span className={className}>
-      {left > 0 ? (
+      {!unlocked ? (
         <>
           {formatCurrency(left)} away from <b className="font-medium text-bandit-orange">free shipping</b>
         </>
@@ -171,10 +183,7 @@ const FreeShippingMeter = () => {
         <b className="font-medium text-bandit-orange">Free shipping unlocked</b>
       )}
       <span className="w-24 h-1 rounded-full bg-secondary overflow-hidden">
-        <span
-          className="block h-full bg-bandit-orange transition-[width] duration-500"
-          style={{ width: `${Math.min(100, (total / MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING) * 100)}%` }}
-        />
+        <span className="block h-full bg-bandit-orange transition-[width] duration-500" style={{ width: `${pct}%` }} />
       </span>
     </span>
   );
@@ -183,13 +192,19 @@ const FreeShippingMeter = () => {
 const CartButton = () => {
   const cartItems = useCart(state => state.cart);
   const { openCart } = useCart();
+  // The server can't see the cart (localStorage), so count 0 until it loads instead of mismatching the server HTML
+  const cartHydrated = useCartHydrated();
 
-  const totalCartItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const totalCartItems = cartHydrated ? getCartItemCount(cartItems) : 0;
   return (
-    <Button variant="outline" className="px-3 gap-1.5" onClick={openCart} aria-label={`Open cart, ${totalCartItems} items`}>
+    <Button
+      variant="outline"
+      className="px-3 gap-1.5"
+      onClick={openCart}
+      aria-label={cartHydrated ? `Open cart, ${totalCartItems} items` : "Open cart"}>
       <ShoppingBagIcon className="w-4 h-4" />
       {totalCartItems > 0 && (
-        <span className="text-[11px] font-bold leading-none bg-bandit-orange text-black px-1.5 py-0.5 rounded -rotate-6 shadow-[0_2px_0_rgba(0,0,0,.35)]">
+        <span className="animate-in fade-in zoom-in-50 duration-300 text-[11px] font-bold leading-none bg-bandit-orange text-black px-1.5 py-0.5 rounded -rotate-6 shadow-[0_2px_0_rgba(0,0,0,.35)]">
           {totalCartItems}
         </span>
       )}

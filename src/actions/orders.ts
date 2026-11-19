@@ -11,10 +11,11 @@ import { deductStockForOrder, getStockIssues } from "./stock";
 import { validateCoupon } from "./coupons";
 import { sendWhatsappOrderConfirmation } from "./whatsapp";
 import { customAlphabet } from "nanoid";
-import { z } from "zod";
+import { OrderInput, orderInputSchema } from "@/schemas";
 import { Coupon } from "@/types/coupon";
 import { getVariantsByIds } from "./products";
-import { getCartSubtotal, getOrderTotal, getShippingCost } from "@/utils/cart";
+import { getCartSubtotal, getOrderTotal, getPaymentMode, getShippingCost } from "@/utils/cart";
+import { toPaise } from "@/utils/price";
 import { getDiscountAmount, validateCouponInCart } from "@/utils/coupon";
 import { getProductVariantPrice } from "@/utils/product";
 import { getTimestamp } from "@/utils/timestamp";
@@ -40,29 +41,6 @@ export const getOrder = async (id: string) => {
   if (!order.exists) return null;
   return { id: order.id, ...order.data() } as Order;
 };
-
-const orderInputSchema = z.object({
-  name: z.string().trim().min(2).max(100),
-  email: z.string().trim().email().max(200),
-  phone: z.string().regex(/^[+]?[\d\s\-()]{7,20}$/),
-  referralSource: z.string().max(100),
-  couponCode: z.string().max(50).nullable(),
-  address: z.object({
-    line1: z.string().trim().min(2).max(300),
-    line2: z.string().max(300).optional(),
-    country: z.string().min(2).max(3),
-    state: z.string().min(1).max(100),
-    city: z.string().trim().min(2).max(100),
-    zip: z.string().trim().min(3).max(10),
-  }),
-  variants: z
-    .array(
-      z.object({ variantId: z.string().min(1), size: z.string().min(1), quantity: z.number().int().min(1).max(50) })
-    )
-    .min(1)
-    .max(50),
-});
-export type OrderInput = z.input<typeof orderInputSchema>;
 
 // Public endpoint: the browser sends only who/where/what. Prices, discount, shipping, total, payment mode and
 // status are all worked out here, so a tampered request can't change what gets charged or skip payment.
@@ -90,7 +68,7 @@ export const createOrder = async (input: OrderInput): Promise<Order | { error: s
   if (couponIssue.error) return { error: couponIssue.message };
 
   const isInternational = customer.address.country !== "IN";
-  const paymentMode = isInternational ? "manual" : coupon?.cashAndFreeShipping ? "cash" : "rzp";
+  const paymentMode = getPaymentMode(coupon, isInternational);
   const total = getOrderTotal(items, variants, coupon);
   if (paymentMode === "rzp" && total < 1) return { error: "Order total is too low to pay online" };
 
@@ -109,7 +87,7 @@ export const createOrder = async (input: OrderInput): Promise<Order | { error: s
     paymentMode,
     status: paymentMode === "cash" ? "paid" : "initiated",
     createdAt: getTimestamp(),
-    ...(paymentMode === "cash" && { cash: { amount: Math.round(total * 100), paymentStatus: "paid" } }),
+    ...(paymentMode === "cash" && { cash: { amount: toPaise(total), paymentStatus: "paid" } }),
   } as Omit<Order, "id">;
 
   // The short id is the Firestore doc id. create() rejects a taken id, so retry with a fresh one.

@@ -10,7 +10,7 @@ import { useVariants } from "@/hooks/useVariants";
 import { ACTIVE_PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
 import { ProductVariant } from "@/types/product";
 import { formatCurrency } from "@/utils/price";
-import { getProductVariantUrl } from "@/utils/share";
+import { routes } from "@/utils/routes";
 import {
   getProductVariantName,
   getProductVariantPrice,
@@ -18,7 +18,7 @@ import {
   sortOutOfStockLast,
 } from "@/utils/product";
 import { Reveal, SectionHead } from "@/components/misc/Reveal";
-import { SOLD_OUT_IMAGE, SoldOutStamp } from "@/components/cards/ShopCard";
+import { SOLD_OUT_IMAGE, SoldOutStamp } from "@/components/misc/Stickers";
 
 const GEAR_COPY: Record<string, string> = {
   bandana: "The OG. 12+ ways to wear it.",
@@ -59,7 +59,7 @@ export const ShopByGear = () => {
                   : "col-span-1 md:col-span-2 h-[220px] md:h-auto"
             }>
             <Link
-              href={`/shop/${product.id}`}
+              href={routes.product(product.id)}
               className="group relative isolate block h-full rounded-2xl overflow-hidden bg-card">
               <Skeleton className="absolute inset-0 -z-10 rounded-none" />
               {product.baseImages?.mockup?.[0] && (
@@ -103,7 +103,7 @@ const VariantTile = ({ variant, rank }: { variant: ProductVariant; rank?: number
   const image = variant.images?.mockup?.[0];
 
   return (
-    <Link href={getProductVariantUrl(variant)} className="group block">
+    <Link href={routes.variant(variant)} className="group block">
       <div className="relative aspect-square rounded-2xl overflow-hidden bg-card">
         <Skeleton className="absolute inset-0 rounded-none" />
         {image && (
@@ -122,9 +122,7 @@ const VariantTile = ({ variant, rank }: { variant: ProductVariant; rank?: number
           <ArrowUpRight className="w-4 h-4" />
         </span>
         {rank && (
-          <span
-            className="absolute -left-1 -bottom-4 font-calera text-[7rem] leading-none text-transparent pointer-events-none"
-            style={{ WebkitTextStroke: "1.5px #fd6e00" }}>
+          <span className="absolute -left-1 -bottom-4 font-calera text-[7rem] leading-none text-transparent pointer-events-none [-webkit-text-stroke:1.5px_theme(colors.bandit-orange)]">
             {rank}
           </span>
         )}
@@ -150,7 +148,7 @@ export const Rail = ({ variants, ranked = false }: { variants: ProductVariant[];
     <div className="relative">
       <div
         ref={ref}
-        className="grid grid-flow-col auto-cols-[68%] sm:auto-cols-[40%] lg:auto-cols-[calc((100%-3*1.25rem)/4.3)] gap-4 lg:gap-5 overflow-x-auto snap-x snap-mandatory scroll-px-4 md:scroll-px-8 px-4 md:px-8 pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        className="grid grid-flow-col auto-cols-[68%] sm:auto-cols-[40%] lg:auto-cols-[calc((100%-3*1.25rem)/4.3)] gap-4 lg:gap-5 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-px-4 md:scroll-px-8 px-4 md:px-8 pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {variants.map((v, i) => (
           <Reveal key={v.id} delay={Math.min(i, 5) * 0.06} className="snap-start">
             <VariantTile variant={v} rank={ranked && i < 9 ? i + 1 : undefined} />

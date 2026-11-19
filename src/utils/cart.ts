@@ -1,9 +1,9 @@
-import { CartItem } from "@/types/order";
+import { CartItem, Order } from "@/types/order";
 import { ProductVariant } from "@/types/product";
-import { getProductVariantPrice } from "./product";
+import { exceedsStock, getProductVariantPrice } from "./product";
 import { getDiscountAmount } from "./coupon";
 import { Coupon } from "@/types/coupon";
-import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING, SHIPPING_COST } from "@/data/products";
+import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING, SHIPPING_COST } from "@/constants/shipping";
 
 export const getCartSubtotal = (cart: CartItem[], variants: ProductVariant[]) => {
   if (cart.length === 0) return 0;
@@ -35,3 +35,33 @@ export const getOrderTotal = (cart: CartItem[], variants: ProductVariant[], coup
       getDiscountAmount(cart, variants, coupon) +
       getShippingCost(cart, variants, coupon)
   );
+
+export const getCartItemCount = (cart: CartItem[]) => cart.reduce((count, item) => count + item.quantity, 0);
+
+export const cartHasStockIssue = (cart: CartItem[], variants: ProductVariant[]) =>
+  cart.some(item => {
+    const variant = variants.find(v => v.id === item.variantId);
+    return !!variant && exceedsStock(variant, item.size, item.quantity);
+  });
+
+/** Every free-shipping meter reads this. null = free shipping is switched off. `extra` = an amount about to be added. */
+export const getFreeShippingProgress = (
+  cart: CartItem[],
+  variants: ProductVariant[],
+  coupon: Coupon | null,
+  extra = 0
+) => {
+  if (MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING === null) return null;
+  const amount = getFreeShippingAmount(cart, variants, coupon) + extra;
+  return {
+    left: Math.max(0, MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING - amount),
+    pct: Math.min(100, (amount / MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING) * 100),
+    unlocked: amount >= MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING,
+  };
+};
+
+// Shared by checkout (the pay button) and createOrder (what's actually used)
+export const getPaymentMode = (coupon: Coupon | null, isInternational: boolean): Order["paymentMode"] => {
+  if (isInternational) return "manual";
+  return coupon?.cashAndFreeShipping ? "cash" : "rzp";
+};

@@ -5,17 +5,24 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchCatalog } from "@/actions/catalog";
 import { ProductVariant } from "@/types/product";
 
+export const VARIANTS_QUERY_KEY = ["variants"];
+
 // Catalog rendered by the server into the page (src/app/(index)/layout.tsx). null = server fetch failed.
 const ServerVariantsContext = createContext<ProductVariant[] | null>(null);
 
-export const ServerVariantsProvider = ({ variants, children }: { variants: ProductVariant[] | null; children: ReactNode }) =>
-  createElement(ServerVariantsContext, { value: variants }, children);
+export const ServerVariantsProvider = ({
+  variants,
+  children,
+}: {
+  variants: ProductVariant[] | null;
+  children: ReactNode;
+}) => createElement(ServerVariantsContext, { value: variants }, children);
 
 export const useVariants = () => {
   const serverVariants = useContext(ServerVariantsContext);
 
   const query = useQuery({
-    queryKey: ["variants"],
+    queryKey: VARIANTS_QUERY_KEY,
     queryFn: fetchCatalog,
     // Variants carry live stock: refetches on mount/focus once older than this
     staleTime: 1000 * 60 * 15, // 15 minutes

@@ -10,6 +10,7 @@ import { createPaymentLinkForInternationalOrder } from "@/actions/payments/rzp";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { formatCurrency } from "@/utils/price";
 
 interface InternationalOrderPaymentDialogProps {
   onClose: () => void;
@@ -144,7 +145,7 @@ export const InternationalOrderPaymentDialog = ({ onClose, order, onUpdate }: In
           <div className="p-4 bg-muted/30 rounded-lg border">
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium text-foreground">Total:</span>
-              <span className="text-lg font-bold text-foreground">₹{calculateTotal().toFixed(2)}</span>
+              <span className="text-lg font-bold text-foreground">{formatCurrency(calculateTotal(), 2)}</span>
             </div>
             <div className="text-xs text-muted-foreground mt-1">Subtotal + Shipping - Discount</div>
           </div>

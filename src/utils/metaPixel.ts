@@ -1,6 +1,7 @@
 "use client";
 
 import ReactPixel from "react-facebook-pixel";
+import { CURRENCY } from "@/utils/price";
 
 // Track product view
 export const trackMetaViewContent = (params: {
@@ -19,7 +20,7 @@ export const trackMetaViewContent = (params: {
     design_id: params.designId,
     content_type: params.contentType,
     value: params.value,
-    currency: params.currency || "INR",
+    currency: params.currency || CURRENCY,
   });
 };
 
@@ -40,7 +41,7 @@ export const trackMetaAddToCart = (params: {
     content_name: params.contentName,
     content_type: "product",
     value: params.value,
-    currency: params.currency || "INR",
+    currency: params.currency || CURRENCY,
     num_items: params.quantity,
   });
 };
@@ -55,22 +56,18 @@ export const trackMetaInitiateCheckout = (params: {
   ReactPixel.track("InitiateCheckout", {
     content_ids: params.contentIds,
     value: params.value,
-    currency: params.currency || "INR",
+    currency: params.currency || CURRENCY,
     num_items: params.numItems,
   });
 };
 
 // Track payment info added (when payment is initiated)
-export const trackMetaAddPaymentInfo = (params: {
-  contentIds: string[];
-  value: number;
-  currency?: string;
-}) => {
+export const trackMetaAddPaymentInfo = (params: { contentIds: string[]; value: number; currency?: string }) => {
   ReactPixel.track("AddPaymentInfo", {
     content_ids: params.contentIds,
     content_type: "product",
     value: params.value,
-    currency: params.currency || "INR",
+    currency: params.currency || CURRENCY,
   });
 };
 
@@ -86,7 +83,7 @@ export const trackMetaPurchase = (params: {
     content_ids: params.contentIds,
     content_type: "product",
     value: params.value,
-    currency: params.currency || "INR",
+    currency: params.currency || CURRENCY,
     num_items: params.numItems,
     ...(params.orderId && { order_id: params.orderId }),
   });

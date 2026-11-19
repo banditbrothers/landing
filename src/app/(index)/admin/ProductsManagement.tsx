@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -15,30 +15,17 @@ import { formatCurrency } from "@/utils/price";
 import Image from "next/image";
 import { Edit, Eye, Package, Trash2, Plus } from "lucide-react";
 import { LoadingIcon } from "@/components/misc/Loading";
+import { useAdminLoad } from "./adminHooks";
+import { routes } from "@/utils/routes";
 
 export const ProductManagement = () => {
   const [variants, setVariants] = useState<ProductVariant[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [productFilter, setProductFilter] = useState("all");
 
-  const loadVariants = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getVariantsAdmin();
-      setVariants(data);
-    } catch (error) {
-      console.error("Error loading variants:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadVariants();
-  }, []);
+  const isLoading = useAdminLoad(getVariantsAdmin, setVariants, "products");
 
   const handleEditVariant = (variant: ProductVariant) => {
     setSelectedVariant(variant);
@@ -214,7 +201,7 @@ export const ProductManagement = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => window.open(`/shop/${variant.productId}/${variant.designId}`, "_blank")}>
+                        onClick={() => window.open(routes.variant(variant), "_blank")}>
                         <Eye className="w-4 h-4" />
                       </Button>
                       <Button

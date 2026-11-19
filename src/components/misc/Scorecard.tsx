@@ -1,6 +1,6 @@
 "use client";
 
-import { Sticker } from "@/components/cards/ShopCard";
+import { Sticker } from "@/components/misc/Stickers";
 import { Reveal } from "@/components/misc/Reveal";
 import { StarRating } from "@/components/misc/StarRating";
 import type { RatingSummary } from "@/lib/reviews";
@@ -24,7 +24,10 @@ export const Scorecard = ({ rating }: { rating: RatingSummary }) => (
         <div key={i} className="grid grid-cols-[28px_1fr_34px] gap-2.5 items-center text-[13px] text-muted-foreground">
           <span>{5 - i}★</span>
           <i className="h-2 rounded-full bg-secondary overflow-hidden">
-            <i className="block h-full rounded-full bg-bandit-orange" style={{ width: `${(n / rating.count) * 100}%` }} />
+            <i
+              className="block h-full rounded-full bg-bandit-orange"
+              style={{ width: `${(n / rating.count) * 100}%` }}
+            />
           </i>
           <span className="text-right">{n}</span>
         </div>

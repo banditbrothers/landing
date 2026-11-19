@@ -1,12 +1,6 @@
 import Link from "next/link";
-
-export const CONTACT = {
-  phone: "+91 79778 84773",
-  whatsapp: "https://wa.me/917977884773",
-  email: "wearebanditbrothers@gmail.com",
-  instagram: "https://www.instagram.com/be.a.banditbrother/",
-  instagramHandle: "@be.a.banditbrother",
-};
+import { CONTACT } from "@/lib/site";
+import { Kicker } from "@/components/typography/Kicker";
 
 export const card = "relative rounded-2xl border border-border bg-card p-6 md:p-7";
 export const displayTitle = "font-calera uppercase leading-[0.9]";
@@ -19,7 +13,8 @@ export const SectionTitle = ({ children, aside }: { children: React.ReactNode; a
 );
 
 export const IconBox = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div className={`grid place-items-center w-11 h-11 rounded-xl bg-bandit-orange/10 text-bandit-orange [&_svg]:w-[22px] [&_svg]:h-[22px] ${className}`}>
+  <div
+    className={`grid place-items-center w-11 h-11 rounded-xl bg-bandit-orange/10 text-bandit-orange [&_svg]:w-[22px] [&_svg]:h-[22px] ${className}`}>
     {children}
   </div>
 );
@@ -40,7 +35,9 @@ export function InfoPageLayout({
   return (
     <div className="max-w-screen-2xl mx-auto px-4 md:px-8 pt-20 md:pt-24 pb-16 min-h-screen">
       <nav className="text-[13px] text-muted-foreground flex gap-2 pt-4 relative z-10" aria-label="Breadcrumb">
-        <Link href="/" className="hover:text-foreground">Home</Link>
+        <Link href="/" className="hover:text-foreground">
+          Home
+        </Link>
         <span className="opacity-50">/</span>
         <span className="text-foreground">{crumb}</span>
       </nav>
@@ -60,7 +57,7 @@ export function InfoPageLayout({
 
       <section className="mt-16 md:mt-20 rounded-3xl border border-border bg-card p-7 md:px-12 md:py-10 flex flex-wrap items-center justify-between gap-8">
         <div>
-          <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground">Still stuck?</p>
+          <Kicker className="mb-0">Still stuck?</Kicker>
           <h2 className={`${displayTitle} text-5xl md:text-7xl mt-3`}>
             We&apos;ve got
             <br />

@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Upload } from "lucide-react";
+import { processImage } from "@/utils/image";
+import { uploadToS3 } from "@/utils/s3Upload";
 
 const move = (arr: string[], from: number, to: number) => {
   const next = [...arr];
@@ -74,5 +77,74 @@ export const MockupImageGrid = ({ images, onChange }: { images: string[]; onChan
         </div>
       ))}
     </div>
+  );
+};
+
+/** Converts the picked image to WebP, compresses it, uploads it to S3 and hands back the URL. Nothing is saved to the variant until the dialog's Save. */
+export const MockupUploadButton = ({
+  productId,
+  designId,
+  onUploaded,
+  onUploadingChange,
+  className,
+}: {
+  productId?: string;
+  designId?: string;
+  onUploaded: (url: string) => void;
+  onUploadingChange: (uploading: boolean) => void;
+  className?: string;
+}) => {
+  const [isUploading, setIsUploading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const setUploading = (uploading: boolean) => {
+    setIsUploading(uploading);
+    onUploadingChange(uploading);
+  };
+
+  const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !productId || !designId) return;
+    setUploading(true);
+    try {
+      onUploaded(await uploadToS3(await processImage(file), productId, designId));
+      toast.success("Image uploaded. Save to apply.");
+    } catch (error) {
+      toast.error("Failed to upload image");
+      console.error(error);
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  };
+
+  return (
+    <>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={() => inputRef.current?.click()}
+        disabled={isUploading || !productId || !designId}
+        className={className}>
+        {isUploading ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Uploading...
+          </>
+        ) : (
+          <>
+            <Upload className="w-4 h-4 mr-2" />
+            Upload image
+          </>
+        )}
+      </Button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        className="hidden"
+        onChange={handleChange}
+      />
+    </>
   );
 };

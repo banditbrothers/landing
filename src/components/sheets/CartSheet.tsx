@@ -10,19 +10,17 @@ import { useRouter } from "next/navigation";
 import { RUNNING_COUPON } from "@/components/typography/coupons";
 import { formatCurrency } from "@/utils/price";
 import { useVariants } from "@/hooks/useVariants";
-import { getCartSubtotal } from "@/utils/cart";
+import { cartHasStockIssue, getCartSubtotal, getFreeShippingProgress } from "@/utils/cart";
 import { LoadingIcon } from "@/components/misc/Loading";
-import { exceedsStock } from "@/utils/product";
+import { ArrowRight, Truck } from "lucide-react";
 
 export const CartSheet = () => {
-  const { cart: cartItems, isCartOpen, closeCart, updateCartItem, removeCartItem } = useCart();
+  const { cart: cartItems, coupon, isCartOpen, closeCart, updateCartItem, removeCartItem } = useCart();
   const { data: variants, isReady } = useVariants();
 
   const subtotal = getCartSubtotal(cartItems, variants);
-  const hasStockIssue = cartItems.some(item => {
-    const variant = variants.find(v => v.id === item.variantId);
-    return !!variant && exceedsStock(variant, item.size, item.quantity);
-  });
+  const hasStockIssue = cartHasStockIssue(cartItems, variants);
+  const freeShipping = getFreeShippingProgress(cartItems, variants, coupon);
 
   const router = useRouter();
 
@@ -37,7 +35,28 @@ export const CartSheet = () => {
         <LoadingIcon />
       </div>
     ) : (
-      <div className="flex h-full flex-col gap-4 py-4">
+      <div className="flex h-full flex-col py-4">
+        {cartItems.length > 0 && freeShipping && (
+          <div className="text-xs mb-3">
+            <p className="flex items-center gap-1.5">
+              <Truck className="w-4 h-4 text-bandit-orange" />
+              {freeShipping.unlocked ? (
+                "Free shipping unlocked"
+              ) : (
+                <span>
+                  <span className="text-bandit-orange">{formatCurrency(freeShipping.left)}</span> away from free
+                  shipping
+                </span>
+              )}
+            </p>
+            <div className="h-1 bg-secondary rounded-full mt-2 overflow-hidden">
+              <div
+                className="h-full bg-bandit-orange transition-[width] duration-500"
+                style={{ width: `${freeShipping.pct}%` }}
+              />
+            </div>
+          </div>
+        )}
         <RUNNING_COUPON.CartMessageElement />
 
         {cartItems.map(item => {
@@ -81,28 +100,35 @@ export const CartSheet = () => {
       <div className="w-full text-sm">
         <div className="flex justify-between items-baseline mb-1">
           <span className="text-muted-foreground text-xs uppercase tracking-[0.12em]">Subtotal</span>
-          <span className="font-calera text-2xl">{formatCurrency(subtotal, 2)}</span>
+          <span className="font-calera text-2xl">{formatCurrency(subtotal)}</span>
         </div>
-        <p className="text-muted-foreground text-xs mb-2">Coupons can be applied on the next page</p>
+        <p className="text-muted-foreground text-xs mb-2">Shipping and coupons at checkout</p>
       </div>
       <Button
         disabled={cartItems.length === 0 || !isReady || hasStockIssue}
-        className="w-full"
+        className="w-full h-12 rounded-xl bg-bandit-orange text-black text-base hover:bg-bandit-orange hover:brightness-110"
         onClick={handleCheckout}>
-        Checkout
+        Checkout <ArrowRight className="w-4 h-4" />
       </Button>
-      <Button variant="ghost" className="w-full" onClick={closeCart}>
-        Continue Shopping
+      <Button variant="ghost" className="w-full text-muted-foreground" onClick={closeCart}>
+        Continue shopping
       </Button>
     </div>
   );
 
   return (
     <Sheet open={isCartOpen} onOpenChange={closeCart}>
-      <SheetContent>
+      <SheetContent className="w-full sm:max-w-[420px] p-4 sm:p-6">
         <div className="h-full flex flex-col">
           <SheetHeader>
-            <SheetTitle className="font-calera text-4xl font-normal leading-none">CART</SheetTitle>
+            <SheetTitle className="font-calera text-3xl sm:text-4xl font-normal leading-none text-left">
+              YOUR LOOT
+              {cartItems.length > 0 && (
+                <span className="text-bandit-orange text-lg align-middle ml-2">
+                  ({cartItems.reduce((n, i) => n + i.quantity, 0)})
+                </span>
+              )}
+            </SheetTitle>
           </SheetHeader>
           <div className="flex-1 overflow-y-auto">{cartContent}</div>
           {cartFooter}

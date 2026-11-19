@@ -4,16 +4,19 @@ import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { ShopCard, Sticker } from "@/components/cards/ShopCard";
-import { familyOf, groupByFamily, isListed } from "@/components/layouts/ProductGridLayout";
+import { ShopCard } from "@/components/cards/ShopCard";
+import { Sticker } from "@/components/misc/Stickers";
+import { familyOf, groupByFamily, isListed } from "@/utils/product";
 import { Reveal } from "@/components/misc/Reveal";
 import { FitTitle } from "@/components/typography/FitTitle";
 import { useVariants } from "@/hooks/useVariants";
-import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING, PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/constants/shipping";
 import { ProductVariant } from "@/types/product";
 import { formatCurrency } from "@/utils/price";
 import { getProductVariantName, isVariantOutOfStock } from "@/utils/product";
-import { getProductVariantUrl } from "@/utils/share";
+import { routes } from "@/utils/routes";
+import { Kicker } from "@/components/typography/Kicker";
 
 const AISLE_SIZE = 7; // + one "see all" tile = two rows of four
 
@@ -67,7 +70,7 @@ export function CollectionContent() {
 
       <header className="grid md:grid-cols-[1.4fr_1fr] gap-6 md:gap-10 items-end pt-8 md:pt-12 pb-8">
         <div>
-          <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-3">The whole loot</p>
+          <Kicker>The whole loot</Kicker>
           <h1 className="font-calera uppercase leading-[0.9] text-[17vw] md:text-[clamp(4.5rem,10vw,10rem)]">
             Every piece <br className="hidden md:block" />
             of <span className="text-bandit-orange">gear</span>.
@@ -94,7 +97,7 @@ export function CollectionContent() {
 
       {/* Jump bar: one chip per gear type, scales with PRODUCTS */}
       <div className="sticky top-[var(--nav-h)] transition-[top] duration-300 z-30 -mx-4 md:-mx-8 px-4 md:px-8 py-3 bg-background/90 backdrop-blur-md border-y border-border">
-        <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex gap-2 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {aisles.map(({ product, designs }, i) => (
             <a
               key={product.id}
@@ -138,21 +141,21 @@ export function CollectionContent() {
                 <span className="px-3 py-1.5 rounded-full bg-secondary">{designs} designs</span>
               </div>
               <Link
-                href={`/shop/${product.id}`}
+                href={routes.product(product.id)}
                 className="mt-6 inline-flex items-center gap-2.5 h-12 px-6 rounded-xl bg-bandit-orange text-black font-semibold transition hover:brightness-110 hover:-translate-y-px">
                 Shop all {product.name.toLowerCase()}s <ArrowRight className="w-4 h-4" />
               </Link>
             </Reveal>
 
             {/* Swipe rail on mobile, 4-up grid from md */}
-            <div className="flex md:grid md:grid-cols-4 gap-3 md:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-px-4 md:scroll-px-0 -mx-4 px-4 md:mx-0 md:px-0 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex md:grid md:grid-cols-4 gap-3 md:gap-5 overflow-x-auto overflow-y-hidden md:overflow-visible snap-x snap-mandatory scroll-px-4 md:scroll-px-0 -mx-4 px-4 md:mx-0 md:px-0 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {picks.slice(0, AISLE_SIZE).map(v => (
                 <div key={v.id} className="w-[46%] sm:w-[31%] md:w-auto shrink-0 snap-start">
                   <ShopCard variant={v} family={families.get(familyOf(v.designId))} />
                 </div>
               ))}
               <Link
-                href={`/shop/${product.id}`}
+                href={routes.product(product.id)}
                 className="w-[46%] sm:w-[31%] md:w-auto shrink-0 snap-start aspect-square rounded-2xl border border-dashed border-border grid place-items-center text-center p-4 transition-colors hover:border-bandit-orange hover:bg-bandit-orange/5 group">
                 <span>
                   <span className="block font-calera text-5xl md:text-6xl text-bandit-orange">
@@ -172,7 +175,7 @@ export function CollectionContent() {
         <Reveal className="my-12 md:my-16">
           <div className="grid lg:grid-cols-[1fr_1.3fr] gap-8 lg:gap-10 items-center p-6 md:p-10 rounded-3xl border border-border bg-card bg-[radial-gradient(120%_140%_at_0%_0%,rgba(253,110,0,.14),transparent_55%)]">
             <div>
-              <p className="text-xs tracking-[0.18em] uppercase text-bandit-orange mb-3">Same design, full kit</p>
+              <Kicker className="text-bandit-orange">Same design, full kit</Kicker>
               <h2 className="font-calera uppercase leading-[0.9] text-[clamp(2.75rem,5vw,4.5rem)]">
                 Match the whole gang
               </h2>
@@ -182,7 +185,7 @@ export function CollectionContent() {
                   `The full set usually clears ${formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}, so shipping's on us.`}
               </p>
               <Link
-                href={getProductVariantUrl(kit[0])}
+                href={routes.variant(kit[0])}
                 className="inline-flex items-center gap-2.5 h-12 px-6 rounded-xl bg-bandit-orange text-black font-semibold transition hover:brightness-110">
                 Shop {getProductVariantName(kit[0])} <ArrowRight className="w-4 h-4" />
               </Link>
@@ -191,7 +194,7 @@ export function CollectionContent() {
               {kit.slice(0, 3).map(v => (
                 <Link
                   key={v.id}
-                  href={getProductVariantUrl(v)}
+                  href={routes.variant(v)}
                   className="relative aspect-square rounded-2xl overflow-hidden group">
                   <Skeleton className="absolute inset-0 rounded-none" />
                   <Image

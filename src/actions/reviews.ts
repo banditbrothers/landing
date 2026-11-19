@@ -10,13 +10,10 @@ import { getTimestamp } from "@/utils/timestamp";
 import { getDiscordReviewMessage } from "@/utils/discordMessages";
 import { sendDiscordReviewMessage } from "./discord";
 import { z } from "zod";
+import { reviewFieldsSchema } from "@/schemas";
 
-const reviewInputSchema = z.object({
+const reviewInputSchema = reviewFieldsSchema.extend({
   orderId: z.string().min(1),
-  name: z.string().trim().min(2).max(100),
-  title: z.string().trim().min(3).max(200),
-  comment: z.string().trim().min(10).max(5000),
-  rating: z.number().int().min(1).max(5),
   // Only a photo this page uploaded to our Firebase Storage
   images: z.array(z.string().startsWith("https://firebasestorage.googleapis.com/")).max(1),
 });

@@ -5,6 +5,17 @@ export const SITE_NAME = "Bandit Brothers";
 export const SITE_DESCRIPTION =
   "Bandit Brothers — premium bandanas and headwear. Wear your mischief. Shop bold designs, best sellers, and comfortable everyday style. Made in India.";
 
+const WHATSAPP_NUMBER = "917977884773";
+export const CONTACT = {
+  phone: "+91 79778 84773",
+  phoneIntl: "+91-7977884773",
+  whatsappNumber: WHATSAPP_NUMBER,
+  whatsapp: `https://wa.me/${WHATSAPP_NUMBER}`,
+  email: "hello@banditbrothers.in",
+  instagram: "https://www.instagram.com/be.a.banditbrother/",
+  instagramHandle: "@be.a.banditbrother",
+};
+
 // Built by scripts/generate-og-image.mjs
 export const DEFAULT_OG_IMAGE = {
   url: "/og-default.jpg",

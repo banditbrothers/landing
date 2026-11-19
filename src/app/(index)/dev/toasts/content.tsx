@@ -2,7 +2,7 @@
 
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { useAddToCart } from "@/components/cards/ShopCard";
+import { useAddToCart } from "@/hooks/useAddToCart";
 import { useVariants } from "@/hooks/useVariants";
 import { PRODUCTS_OBJ } from "@/data/products";
 
@@ -21,8 +21,14 @@ const BASICS: Demo[] = [
 ];
 
 const SHAPES: Demo[] = [
-  ["Title + description", () => toast.success("Review sent", { description: "Thanks for taking the time to tell us." })],
-  ["With action", () => toast.error("Couldn't save that", { action: { label: "Retry", onClick: () => toast.success("Retried") } })],
+  [
+    "Title + description",
+    () => toast.success("Review sent", { description: "Thanks for taking the time to tell us." }),
+  ],
+  [
+    "With action",
+    () => toast.error("Couldn't save that", { action: { label: "Retry", onClick: () => toast.success("Retried") } }),
+  ],
   ["With cancel", () => toast("Remove from bag?", { cancel: { label: "Undo", onClick: () => {} } })],
   [
     "Long text",
@@ -32,7 +38,10 @@ const SHAPES: Demo[] = [
         { description: "Copy it and send it on WhatsApp. This line is long on purpose to check wrapping on phones." }
       ),
   ],
-  ["Stays until dismissed", () => toast.info("Sticky toast", { duration: Infinity, action: { label: "Close", onClick: () => {} } })],
+  [
+    "Stays until dismissed",
+    () => toast.info("Sticky toast", { duration: Infinity, action: { label: "Close", onClick: () => {} } }),
+  ],
   [
     "Promise → success",
     () => toast.promise(wait(1500), { loading: "Placing order…", success: "Order's in", error: "Failed" }),
@@ -40,7 +49,11 @@ const SHAPES: Demo[] = [
   [
     "Promise → error",
     () =>
-      toast.promise(wait(1500, true), { loading: "Placing order…", success: "Order's in", error: "Payment didn't go through" }),
+      toast.promise(wait(1500, true), {
+        loading: "Placing order…",
+        success: "Order's in",
+        error: "Payment didn't go through",
+      }),
   ],
   [
     "Burst of 4 (stacking)",
@@ -56,18 +69,30 @@ const SHAPES: Demo[] = [
 // The exact customer-facing messages the storefront sends
 const STOREFRONT: Demo[] = [
   ["Order placed", () => toast.success("Order's in", { description: "We'll get it packed and on its way." })],
-  ["Payment failed", () => toast.error("Payment didn't go through", { description: "Try again, or pick another payment method." })],
+  [
+    "Payment failed",
+    () => toast.error("Payment didn't go through", { description: "Try again, or pick another payment method." }),
+  ],
   [
     "Razorpay didn't load",
-    () => toast.warning("Payment window didn't load", { description: "Refresh the page and try again. Your bag is saved." }),
+    () =>
+      toast.warning("Payment window didn't load", {
+        description: "Refresh the page and try again. Your bag is saved.",
+      }),
   ],
   ["Coupon copied", () => toast.success("BANDIT15 copied", { description: "Paste it at checkout." })],
   ["Coupon error", () => toast.error("SUMMER10: Coupon has expired")],
   ["Out of stock", () => toast.error("That's all we have in stock")],
   ["Review sent", () => toast.success("Review sent", { description: "Thanks for taking the time to tell us." })],
   ["Bad upload", () => toast.error("That file won't upload", { description: "Use a JPG, PNG or WebP photo." })],
-  ["Order not found", () => toast.error("We couldn't find that order", { description: "Message us and we'll sort it out." })],
-  ["Missing product", () => toast.error("That product isn't around anymore", { description: "Here's everything that is." })],
+  [
+    "Order not found",
+    () => toast.error("We couldn't find that order", { description: "Message us and we'll sort it out." }),
+  ],
+  [
+    "Missing product",
+    () => toast.error("That product isn't around anymore", { description: "Here's everything that is." }),
+  ],
   ["Restock: no contact", () => toast.error("Add an email or phone number")],
   ["Restock: save failed", () => toast.error("Couldn't save that", { description: "Try again in a moment." })],
 ];

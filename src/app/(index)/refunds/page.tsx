@@ -1,10 +1,12 @@
 import { Eye, MapPin, Ruler } from "lucide-react";
 import { InfoPageLayout, IconBox, SectionTitle, card, displayTitle } from "@/components/layouts/InfoPageLayout";
 import { pageMetadata } from "@/lib/site";
+import { Kicker } from "@/components/typography/Kicker";
 
 export const metadata = pageMetadata({
   title: "Refund Policy",
-  description: "Bandit Brothers refund and cancellation policy: all sales are final. No cancellations, refunds or returns once an order is placed.",
+  description:
+    "Bandit Brothers refund and cancellation policy: all sales are final. No cancellations, refunds or returns once an order is placed.",
   path: "/refunds",
   image: null, // opengraph-image.tsx
 });
@@ -15,9 +17,21 @@ const VERDICTS = [
 ];
 
 const CHECKS = [
-  { icon: <Ruler />, title: "Check your size", body: "Sizes are listed on every product page. Unsure? Message us before ordering." },
-  { icon: <Eye />, title: "Look twice at the design", body: "Swipe through every photo. Product, design and colour are exactly what ships." },
-  { icon: <MapPin />, title: "Confirm your address", body: "We deliver to the address you enter, so double-check the pincode and phone." },
+  {
+    icon: <Ruler />,
+    title: "Check your size",
+    body: "Sizes are listed on every product page. Unsure? Message us before ordering.",
+  },
+  {
+    icon: <Eye />,
+    title: "Look twice at the design",
+    body: "Swipe through every photo. Product, design and colour are exactly what ships.",
+  },
+  {
+    icon: <MapPin />,
+    title: "Confirm your address",
+    body: "We deliver to the address you enter, so double-check the pincode and phone.",
+  },
 ];
 
 export default function RefundsPage() {
@@ -30,7 +44,7 @@ export default function RefundsPage() {
       <section className="grid md:grid-cols-2 gap-4 pt-12 md:pt-14">
         {VERDICTS.map(v => (
           <div key={v.word} className={`${card} md:p-8`}>
-            <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground">{v.kicker}</p>
+            <Kicker className="mb-0">{v.kicker}</Kicker>
             <div
               className={`${displayTitle} text-6xl md:text-7xl mt-4 line-through decoration-bandit-orange decoration-[6px]`}
               aria-label={`No ${v.word.toLowerCase()}`}>

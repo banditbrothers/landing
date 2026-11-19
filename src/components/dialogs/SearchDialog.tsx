@@ -2,6 +2,7 @@
 
 import Fuse, { IFuseOptions } from "fuse.js";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense, useMemo, useRef, useState } from "react";
@@ -11,20 +12,26 @@ import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import VisuallyHidden from "../ui/visually-hidden";
 import { SearchIcon, XMarkIcon } from "../../Icons/icons";
 import { LoadingIcon } from "../misc/Loading";
-import { SOLD_OUT_IMAGE, Sticker } from "../cards/ShopCard";
-import { isListed } from "../layouts/ProductGridLayout";
+import { SOLD_OUT_IMAGE, Sticker } from "@/components/misc/Stickers";
+import { isListed } from "@/utils/product";
 import { ProductVariant } from "@/types/product";
 import { useVariants } from "@/hooks/useVariants";
-import { ACTIVE_PRODUCTS, DESIGN_CATEGORIES, DESIGN_COLOR_OBJ, DESIGNS_OBJ, PRODUCTS_OBJ } from "@/data/products";
+import { ACTIVE_PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { DESIGN_CATEGORIES, DESIGN_COLOR_OBJ, DESIGNS_OBJ } from "@/data/designs";
 import { formatCurrency } from "@/utils/price";
 import { track } from "@/utils/analytics";
-import { getProductVariantUrl } from "@/utils/share";
+import { routes } from "@/utils/routes";
 import {
   getProductVariantName,
   getProductVariantPrice,
   isVariantOutOfStock,
   sortOutOfStockLast,
 } from "@/utils/product";
+import { Kicker } from "@/components/typography/Kicker";
+
+const URL_SYNC_DEBOUNCE_MS = 300;
+// Only track the term once typing has paused this long
+const SEARCH_TRACK_DELAY_MS = 1500;
 
 const stripPunctuation = (s: string) => s.replace(/[^a-zA-Z0-9 ]/g, "");
 const design = (v: ProductVariant) => DESIGNS_OBJ[v.designId];
@@ -51,13 +58,14 @@ const ResultRow = ({ variant, active, onHover }: { variant: ProductVariant; acti
   const name = getProductVariantName(variant);
   return (
     <Link
-      href={getProductVariantUrl(variant)}
+      href={routes.variant(variant)}
       onMouseEnter={onHover}
       ref={el => {
         if (active) el?.scrollIntoView({ block: "nearest" });
       }}
       className={`flex items-center gap-3 rounded-xl p-2 pr-3 transition-colors ${active ? "bg-secondary" : ""}`}>
       <span className="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden bg-card">
+        <Skeleton className="absolute inset-0 rounded-none" />
         <Image
           fill
           src={variant.images.mockup[0]}
@@ -106,14 +114,14 @@ function SearchDialogContent() {
     setText(value);
     setActive(0);
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setParam(value), 300);
+    timerRef.current = setTimeout(() => setParam(value), URL_SYNC_DEBOUNCE_MS);
     // Only the term they settle on, not every keystroke
     if (trackRef.current) clearTimeout(trackRef.current);
     const settled = stripPunctuation(value).trim();
     if (settled.length >= 2)
       trackRef.current = setTimeout(
         () => track("products_searched", { query: settled, results: fuse.search(settled).length }),
-        1500
+        SEARCH_TRACK_DELAY_MS
       );
   };
 
@@ -129,7 +137,7 @@ function SearchDialogContent() {
       setActive(i => (i + (e.key === "ArrowDown" ? 1 : -1) + shown.length) % shown.length);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      router.push(getProductVariantUrl(shown[Math.min(active, shown.length - 1)]));
+      router.push(routes.variant(shown[Math.min(active, shown.length - 1)]));
     }
   };
 
@@ -188,7 +196,7 @@ function SearchDialogContent() {
         <div className="flex-1 min-h-0 sm:max-h-[60vh] overflow-y-auto p-2 md:p-3">
           {!term && (
             <div className="px-2 pt-2 pb-4">
-              <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-3">Try</p>
+              <Kicker>Try</Kicker>
               {chips}
             </div>
           )}

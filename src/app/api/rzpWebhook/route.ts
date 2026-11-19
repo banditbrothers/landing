@@ -7,6 +7,7 @@ import { sendWhatsappOrderConfirmation } from "@/actions/whatsapp";
 import { getDiscordOrderMessage, getDiscordPaymentLinkPaidMessage } from "@/utils/discordMessages";
 import { Order } from "@/types/order";
 import { isProduction } from "@/utils/misc";
+import { CURRENCY, toPaise } from "@/utils/price";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 
 // Server-side so revenue is counted even if the customer closes the tab after paying.
@@ -23,7 +24,7 @@ const captureOrderPaid = (order: Order, payment: { id: string; method: string })
       properties: {
         order_id: order.id,
         revenue: order.total,
-        currency: "INR",
+        currency: CURRENCY,
         payment_id: payment.id,
         payment_method: payment.method,
         is_international: !!order.isInternational,
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
     }
 
     // payment.captured. A payment for less than the order total (e.g. one tagged with another order's id) never marks it paid.
-    if (payment.amount < Math.round(order.total * 100)) {
+    if (payment.amount < toPaise(order.total)) {
       console.error("Webhook: payment below order total, not marking paid", dbId, payment.id, payment.amount);
       return new Response("Amount mismatch", { status: 200 });
     }

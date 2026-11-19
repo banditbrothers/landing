@@ -5,14 +5,16 @@ import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { familyOf, isListed, ProductGridLayout } from "@/components/layouts/ProductGridLayout";
-import { Sticker } from "@/components/cards/ShopCard";
+import { ProductGridLayout } from "@/components/layouts/ProductGridLayout";
+import { familyOf, isListed } from "@/utils/product";
+import { Sticker } from "@/components/misc/Stickers";
 import { FitTitle } from "@/components/typography/FitTitle";
 import { HowToWearDialog } from "@/components/dialogs/HowToWearDialog";
 import { SizingDialog } from "@/components/dialogs/SizingDialog";
 import { useVariants } from "@/hooks/useVariants";
-import { PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { DEFAULT_SIZE, PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
 import { formatCurrency } from "@/utils/price";
+import { routes } from "@/utils/routes";
 
 export function ProductPageContent() {
   const { data: variants } = useVariants();
@@ -58,7 +60,7 @@ export function ProductPageContent() {
           : {
               tag: "One size",
               title: "Fits most",
-              text: `${product.dimensions["one-size"] ?? ""} of 4-way stretch fabric.`,
+              text: `${product.dimensions[DEFAULT_SIZE] ?? ""} of 4-way stretch fabric.`,
               image: product.baseImages?.mockup[0],
               open: null,
             };
@@ -124,11 +126,11 @@ export function ProductPageContent() {
         </HelperTag>
       </header>
 
-      <div className="flex gap-1.5 border-b border-border overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-1.5 border-b border-border overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {tabs.map(p => (
           <Link
             key={p.id}
-            href={`/shop/${p.id}`}
+            href={routes.product(p.id)}
             aria-current={p.id === productId ? "page" : undefined}
             className={`px-4 py-3.5 text-[15px] whitespace-nowrap border-b-2 -mb-px transition-colors ${
               p.id === productId

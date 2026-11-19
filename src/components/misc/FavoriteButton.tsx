@@ -1,25 +1,33 @@
 "use client";
 
-import { useEffect } from "react";
-import { useState } from "react";
-import { HeartIconOutline, HeartIconSolid } from "../../Icons/icons";
+import { HeartIcon } from "lucide-react";
+import { useFavorites } from "@/components/stores/favorites";
+import { cn } from "@/lib/utils";
 
-export const FavoriteButton = ({ selected, toggle }: { selected: boolean; toggle: () => void }) => {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => setIsMounted(true), []);
-
-  const UnselectedIcon = (
-    <HeartIconOutline className="w-5 h-5 text-muted-foreground hover:text-primary transition-colors" />
-  );
-
-  let Icon = UnselectedIcon;
-  if (isMounted && selected)
-    Icon = <HeartIconSolid className="w-5 h-5 text-bandit-orange hover:text-bandit-orange/80 transition-colors" />;
-
+export const FavoriteButton = ({
+  variantId,
+  className,
+  iconClassName,
+}: {
+  variantId: string;
+  className?: string;
+  iconClassName?: string;
+}) => {
+  const { isFavorite, toggleFav } = useFavorites();
+  const on = isFavorite(variantId);
   return (
-    <button className="z-10 p-2 bg-background/80 rounded-full" onClick={toggle}>
-      {Icon}
+    <button
+      type="button"
+      aria-label={on ? "Remove from favourites" : "Add to favourites"}
+      onClick={e => {
+        e.preventDefault(); // cards wrap this in a Link
+        toggleFav(variantId);
+      }}
+      className={className}>
+      <HeartIcon
+        suppressHydrationWarning // favourites load from localStorage after hydration
+        className={cn(iconClassName, on ? "fill-bandit-orange stroke-bandit-orange" : "fill-none stroke-current")}
+      />
     </button>
   );
 };

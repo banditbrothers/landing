@@ -2,11 +2,14 @@ import type { DiscordMessage } from "@/types/discord";
 import { Order } from "@/types/order";
 import { getAddressString } from "./address";
 import { getDate } from "./timestamp";
+import { SITE_URL } from "@/lib/site";
 import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
 import { Review } from "@/types/review";
 import { StockNotification } from "@/types/stockNotification";
 import { getSizeLabel } from "./product";
-import { getReferralSourceLabel } from "@/constants/order";
+import { getPaymentMethodLabel, getReferralSourceLabel } from "@/constants/order";
+import { formatCurrency } from "./price";
+import { routes } from "@/utils/routes";
 
 export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
   return {
@@ -26,18 +29,17 @@ export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
               .map(variant => `${variant.quantity}x ${variant.variantId} - (${getSizeLabel(variant.size)})`)
               .join("\n"),
           },
-          { name: "Total", value: `₹${order.total}` },
-          { name: "View Order", value: `[View Order](https://www.banditbrothers.in/order/${order.id})` },
+          { name: "Total", value: formatCurrency(order.total) },
+          { name: "View Order", value: `[View Order](${SITE_URL}${routes.order(order.id)})` },
         ],
-        timestamp: new Date(getDate(order.createdAt)).toISOString(),
+        timestamp: getDate(order.createdAt).toISOString(),
       },
     ],
   } satisfies DiscordMessage;
 };
 
 export const getDiscordOrderMessage = (order: Order) => {
-  let paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
-  if (order.paymentMode === "manual") paymentMethod = "Manual";
+  const paymentMethod = getPaymentMethodLabel(order);
 
   return {
     content: `🎉 We have a new order! \nSend ${
@@ -55,7 +57,7 @@ export const getDiscordOrderMessage = (order: Order) => {
           { name: "Shipping Region", value: order.isInternational ? "🌍 International" : "🇮🇳 Domestic" },
           {
             name: "Payment Details",
-            value: `${paymentMethod} / ₹${order.total} ${order.couponCode ? `(${order.couponCode})` : ""}`,
+            value: `${paymentMethod} / ${formatCurrency(order.total)} ${order.couponCode ? `(${order.couponCode})` : ""}`,
           },
           { name: "Address", value: getAddressString(order.address) },
           {
@@ -65,7 +67,7 @@ export const getDiscordOrderMessage = (order: Order) => {
               .join("\n"),
           },
         ],
-        timestamp: new Date(getDate(order.createdAt)).toISOString(),
+        timestamp: getDate(order.createdAt).toISOString(),
       },
     ],
   } satisfies DiscordMessage;
@@ -103,7 +105,7 @@ export const getDiscordStockNotificationMessage = (request: StockNotification, v
           { name: "Email", value: request.email ?? "-" },
           { name: "Phone", value: request.phone ?? "-" },
         ],
-        timestamp: new Date(getDate(request.createdAt)).toISOString(),
+        timestamp: getDate(request.createdAt).toISOString(),
       },
     ],
   } satisfies DiscordMessage;

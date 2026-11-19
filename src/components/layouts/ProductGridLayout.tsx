@@ -6,16 +6,25 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { HeartIcon, PackageCheckIcon, StarIcon } from "lucide-react";
-import { ShopCard, Sticker, Swatch } from "../cards/ShopCard";
+import { ShopCard } from "@/components/cards/ShopCard";
+import { Sticker } from "@/components/misc/Stickers";
+import { Swatch } from "@/components/misc/Swatch";
 import { useFavorites } from "../stores/favorites";
 import { LoadingIcon } from "../misc/Loading";
 import { LoadMoreTrigger } from "../misc/LoadMoreTrigger";
 import { FitTitle } from "../typography/FitTitle";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { DesignColor, ProductVariant } from "@/types/product";
-import { DESIGN_COLOR_OBJ, DESIGN_COLORS, DESIGNS, DESIGNS_OBJ } from "@/data/products";
-import { getProductVariantName, isVariantOutOfStock, sortOutOfStockLast } from "@/utils/product";
-import { getProductVariantUrl } from "@/utils/share";
+import { DESIGN_COLOR_OBJ, DESIGN_COLORS, DESIGNS, DESIGNS_OBJ } from "@/data/designs";
+import {
+  familyOf,
+  getProductVariantName,
+  groupByFamily,
+  isListed,
+  isVariantOutOfStock,
+  sortOutOfStockLast,
+} from "@/utils/product";
+import { routes } from "@/utils/routes";
 
 const SORT_OPTIONS = [
   { value: "newest-arrivals", label: "Newest" },
@@ -29,18 +38,6 @@ const PAGE_SIZE = 16;
 
 // Only offer colours some design's swatch actually uses
 const SWATCH_COLORS = DESIGN_COLORS.filter(c => DESIGNS.some(d => d.swatch.includes(c.id)));
-
-// Colour variants of one design share a `family` key
-export const familyOf = (designId: string) => DESIGNS_OBJ[designId]?.family ?? designId;
-
-export const isListed = (v: ProductVariant) => v.isAvailable !== false && v.images.mockup.length > 0;
-
-/** Colour-family key -> its variants, in input order */
-export const groupByFamily = (variants: ProductVariant[]) => {
-  const map = new Map<string, ProductVariant[]>();
-  variants.forEach(v => map.set(familyOf(v.designId), [...(map.get(familyOf(v.designId)) ?? []), v]));
-  return map;
-};
 
 const designName = (v: ProductVariant) => DESIGNS_OBJ[v.designId].name;
 
@@ -142,7 +139,7 @@ const ProductGridLayoutContent = ({ productVariants }: { productVariants: Produc
       {/* Sticky toolbar under the fixed navbar */}
       <div className="sticky top-[var(--nav-h)] transition-[top] duration-300 z-30 -mx-4 md:-mx-8 px-4 md:px-8 py-3 bg-background/90 backdrop-blur-md border-b border-border">
         <div className="flex flex-wrap md:flex-nowrap items-center gap-2.5">
-          <div className="flex gap-2 overflow-x-auto basis-full md:basis-auto md:flex-1 min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex gap-2 overflow-x-auto overflow-y-hidden basis-full md:basis-auto md:flex-1 min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <Pill on={bestOnly} onClick={() => toggle("best-sellers", bestOnly)}>
               <StarIcon className="w-3.5 h-3.5" /> Most wanted
             </Pill>
@@ -156,7 +153,7 @@ const ProductGridLayoutContent = ({ productVariants }: { productVariants: Produc
 
           <span className="hidden md:block w-px h-6 bg-border shrink-0" />
 
-          <div className="flex gap-2.5 items-center flex-1 md:flex-none min-w-0 overflow-x-auto p-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex gap-2.5 items-center flex-1 md:flex-none min-w-0 overflow-x-auto overflow-y-hidden p-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {SWATCH_COLORS.map(({ id, name, hex }) => {
               const on = selectedColors.includes(id);
               return (
@@ -231,7 +228,7 @@ const FamilyEditorial = ({ members }: { members: ProductVariant[] }) => {
   const distinctColours = new Set(members.map(v => DESIGNS_OBJ[v.designId].swatch.join())).size === members.length;
   return (
     <Link
-      href={getProductVariantUrl(members[0])}
+      href={routes.variant(members[0])}
       className="col-span-2 grid md:grid-cols-2 rounded-2xl overflow-hidden bg-card min-h-[340px] group">
       <div className="p-5 md:p-7 flex flex-col justify-between gap-4 order-2 md:order-1">
         <div>
@@ -250,7 +247,11 @@ const FamilyEditorial = ({ members }: { members: ProductVariant[] }) => {
         {distinctColours ? (
           <div className="flex gap-1.5 flex-wrap">
             {members.map(v => (
-              <Swatch key={v.id} colors={DESIGNS_OBJ[v.designId].swatch} className="w-[22px] h-[22px] rounded-md" />
+              <Swatch
+                key={v.id}
+                colors={DESIGNS_OBJ[v.designId].swatch}
+                className="w-[22px] h-[22px] rounded-md border border-white/25"
+              />
             ))}
           </div>
         ) : (

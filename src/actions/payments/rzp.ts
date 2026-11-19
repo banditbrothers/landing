@@ -6,6 +6,7 @@ import { rzp } from "@/lib/razorpay";
 import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase-admin";
 import { Order } from "@/types/order";
+import { CURRENCY, toPaise } from "@/utils/price";
 
 const amountsSchema = z.object({
   subtotal: z.number().positive(),
@@ -37,8 +38,8 @@ export const createPaymentLinkForInternationalOrder = async (
   }
 
   const link = await rzp.paymentLink.create({
-    amount: Math.round(total * 100),
-    currency: "INR",
+    amount: toPaise(total),
+    currency: CURRENCY,
     notes: { dbId: orderId },
     customer: { name: order.name, email: order.email, contact: order.phone },
   });

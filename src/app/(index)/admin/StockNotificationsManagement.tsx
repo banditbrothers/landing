@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
@@ -14,26 +14,22 @@ import { StockNotification } from "@/types/stockNotification";
 import { ProductVariant } from "@/types/product";
 import { getProductVariantName, getSizeLabel } from "@/utils/product";
 import { PRODUCTS_OBJ } from "@/data/products";
-import { getDate } from "@/utils/timestamp";
+import { formattedDateTimeLong } from "@/utils/timestamp";
+import { useAdminLoad } from "./adminHooks";
 
 export const StockNotificationsManagement = () => {
   const [requests, setRequests] = useState<StockNotification[]>([]);
   const [variants, setVariants] = useState<Record<string, ProductVariant>>({});
-  const [isLoading, setIsLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
 
-  useEffect(() => {
-    Promise.all([getStockNotifications(), getVariantsAdmin()])
-      .then(([requests, variants]) => {
-        setRequests(requests);
-        setVariants(Object.fromEntries(variants.map(v => [v.id, v])));
-      })
-      .catch(error => {
-        console.error("Error loading stock requests:", error);
-        toast.error("Failed to load stock requests");
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+  const isLoading = useAdminLoad(
+    () => Promise.all([getStockNotifications(), getVariantsAdmin()]),
+    ([requests, variants]) => {
+      setRequests(requests);
+      setVariants(Object.fromEntries(variants.map(v => [v.id, v])));
+    },
+    "stock requests"
+  );
 
   const handleMarkNotified = async (ids: string[], item: string) => {
     const who = ids.length > 1 ? `all ${ids.length} customers` : "this customer";
@@ -134,12 +130,14 @@ export const StockNotificationsManagement = () => {
                       </TableCell>
                       <TableCell className="text-right text-2xl font-bold tabular-nums">{ids.length}</TableCell>
                       <TableCell
-                        className={`text-right tabular-nums ${stock === 0 ? "text-destructive font-semibold" : ""}`}
-                      >
+                        className={`text-right tabular-nums ${stock === 0 ? "text-destructive font-semibold" : ""}`}>
                         {stock ?? "–"}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button size="sm" variant="outline" onClick={() => handleMarkNotified(ids, `${variantLabel(variantId)} (${getSizeLabel(size)})`)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleMarkNotified(ids, `${variantLabel(variantId)} (${getSizeLabel(size)})`)}>
                           <Check className="w-4 h-4 mr-1" /> Mark all notified
                         </Button>
                       </TableCell>
@@ -197,11 +195,19 @@ export const StockNotificationsManagement = () => {
                   <TableCell>{getSizeLabel(request.size)}</TableCell>
                   <TableCell>{request.email ?? "–"}</TableCell>
                   <TableCell>{request.phone ?? "–"}</TableCell>
-                  <TableCell>{new Date(getDate(request.createdAt)).toLocaleString("en-IN")}</TableCell>
+                  <TableCell>{formattedDateTimeLong(request.createdAt)}</TableCell>
                   <TableCell>{stock ?? "Not tracked"}</TableCell>
                   <TableCell>
                     {request.status === "pending" ? (
-                      <Button size="sm" variant="outline" onClick={() => handleMarkNotified([request.id], `${variantLabel(request.variantId)} (${getSizeLabel(request.size)})`)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          handleMarkNotified(
+                            [request.id],
+                            `${variantLabel(request.variantId)} (${getSizeLabel(request.size)})`
+                          )
+                        }>
                         <Check className="w-4 h-4 mr-1" /> Mark notified
                       </Button>
                     ) : (

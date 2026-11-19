@@ -64,6 +64,8 @@ export const theme = {
       },
       "bandit-orange": "#fd6e00",
       "bandit-red": "#9C0006",
+      // Near-black brown for text on bandit-orange
+      "bandit-ink": "#160900",
       "bandit-white": "#ffffff",
       "valentine-pink": "#FF69B4",
     },

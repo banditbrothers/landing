@@ -1,6 +1,4 @@
-import { useEffect } from "react";
-
-import { Order } from "@/types/order";
+import { Order, OrderStatus } from "@/types/order";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { getOrders } from "@/actions/orders";
@@ -13,20 +11,20 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency } from "@/utils/price";
 import { getAddressString } from "@/utils/address";
-import {
-  Pagination,
-  PaginationPrevious,
-  PaginationItem,
-  PaginationContent,
-  PaginationLink,
-  PaginationNext,
-} from "@/components/ui/pagination";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EyeIcon } from "@/Icons/icons";
 import { SignatureIcon, Globe2, LinkIcon } from "lucide-react";
 import { getWhatsappOrderReviewLink } from "@/utils/whatsappMessageLinks";
 import { InternationalOrderPaymentDialog } from "./InternationalOrderPaymentDialog";
-import { toast } from "sonner";
+import { useAdminLoad, usePaged, AdminPagination } from "./adminHooks";
+
+const ORDER_ROW_STYLE: Record<OrderStatus, string> = {
+  paid: "bg-green-500/10 hover:bg-green-500/20",
+  initiated: "bg-yellow-500/10 hover:bg-yellow-500/20",
+  "payment-failed": "bg-destructive/10 hover:bg-destructive/20",
+  cancelled: "",
+  "admin-cancelled": "",
+};
 
 type FilterOrder =
   | {
@@ -47,27 +45,27 @@ const MAX_ORDERS_LIMIT = 50;
 
 export function OrderManagement() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedInternationalOrder, setSelectedInternationalOrder] = useState<Order | null>(null);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [nameFilter, setNameFilter] = useState("");
   const [phoneFilter, setPhoneFilter] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const {
+    page: currentPage,
+    setPage: setCurrentPage,
+    pages: totalPages,
+    pageItems: currentPageOrders,
+  } = usePaged(filteredOrders, itemsPerPage);
 
-  useEffect(() => {
-    getOrders(MAX_ORDERS_LIMIT)
-      .then(orders => {
-        setOrders(orders);
-        setFilteredOrders(orders);
-      })
-      .catch(error => {
-        console.error("Error loading orders:", error);
-        toast.error("Failed to load orders. Reload the page; you may need to log in again.");
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+  const isLoading = useAdminLoad(
+    () => getOrders(MAX_ORDERS_LIMIT),
+    orders => {
+      setOrders(orders);
+      setFilteredOrders(orders);
+    },
+    "orders"
+  );
 
   const showDialog = (order: Order) => {
     setSelectedOrder(order);
@@ -126,15 +124,6 @@ export function OrderManagement() {
     setCurrentPage(1);
   };
 
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
-  const startIndexOnCurrentPage = (currentPage - 1) * itemsPerPage;
-  const endIndexOnCurrentPage = startIndexOnCurrentPage + itemsPerPage;
-  const currentPageOrders = filteredOrders.slice(startIndexOnCurrentPage, endIndexOnCurrentPage);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
   if (isLoading) return <LoadingScreen />;
 
   return (
@@ -184,17 +173,7 @@ export function OrderManagement() {
               </TableHeader>
               <TableBody>
                 {currentPageOrders.map(order => (
-                  <TableRow
-                    key={order.id}
-                    className={`${
-                      order.status === "payment-failed"
-                        ? "bg-destructive/10 hover:bg-destructive/20"
-                        : order.status === "paid"
-                          ? "bg-green-500/10 hover:bg-green-500/20"
-                          : order.status === "initiated"
-                            ? "bg-yellow-500/10 hover:bg-yellow-500/20"
-                            : ""
-                    }`}>
+                  <TableRow key={order.id} className={ORDER_ROW_STYLE[order.status]}>
                     <TableCell>{formattedDateTimeLong(order.createdAt)}</TableCell>
 
                     <TableCell>{order.name}</TableCell>
@@ -237,7 +216,7 @@ export function OrderManagement() {
                             const link = getWhatsappOrderReviewLink(order);
                             window.open(link, "_blank");
                           }}>
-                          <SignatureIcon className={`w-4 h-4 ${order.reviewId ? "text-[#00ff00]" : ""}`} />
+                          <SignatureIcon className={`w-4 h-4 ${order.reviewId ? "text-green-500" : ""}`} />
                         </Button>
                       )}
 
@@ -254,31 +233,7 @@ export function OrderManagement() {
           </div>
 
           <div className="mt-4 flex justify-center">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <button disabled={currentPage === 1} onClick={() => handlePageChange(Math.max(1, currentPage - 1))}>
-                    <PaginationPrevious className={currentPage === 1 ? "pointer-events-none opacity-50" : ""} />
-                  </button>
-                </PaginationItem>
-
-                {[...Array(totalPages)].map((_, i) => (
-                  <PaginationItem key={i + 1}>
-                    <button onClick={() => handlePageChange(i + 1)}>
-                      <PaginationLink isActive={currentPage === i + 1}>{i + 1}</PaginationLink>
-                    </button>
-                  </PaginationItem>
-                ))}
-
-                <PaginationItem>
-                  <button
-                    disabled={currentPage === totalPages}
-                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}>
-                    <PaginationNext className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""} />
-                  </button>
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+            <AdminPagination page={currentPage} pages={totalPages} onChange={setCurrentPage} />
           </div>
         </CardContent>
       </Card>

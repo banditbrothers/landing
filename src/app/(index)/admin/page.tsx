@@ -14,6 +14,8 @@ import { ReviewManagement } from "./ReviewManagement";
 import { ProductManagement } from "./ProductsManagement";
 import { StockNotificationsManagement } from "./StockNotificationsManagement";
 
+const ERROR_VISIBLE_MS = 3000;
+
 export default function ProtectedAdminPage() {
   const isMobile = useIsMobile();
 
@@ -34,7 +36,7 @@ export default function ProtectedAdminPage() {
   }, [isAdmin]);
 
   useEffect(() => {
-    if (error) setTimeout(() => setError(""), 3000);
+    if (error) setTimeout(() => setError(""), ERROR_VISIBLE_MS);
   }, [error]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

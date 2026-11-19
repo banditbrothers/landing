@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { ArrowUpRight, Instagram, Mail, MessageCircle } from "lucide-react";
-import { Sticker } from "@/components/cards/ShopCard";
-import { CONTACT, InfoPageLayout, IconBox, SectionTitle, card } from "@/components/layouts/InfoPageLayout";
+import { Sticker } from "@/components/misc/Stickers";
+import { CONTACT } from "@/lib/site";
+import { InfoPageLayout, IconBox, SectionTitle, card } from "@/components/layouts/InfoPageLayout";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: "Contact Us",
-  description: "Reach Bandit Brothers on WhatsApp, phone, email or Instagram for sizing help, order updates and bulk orders.",
+  description:
+    "Reach Bandit Brothers on WhatsApp, phone, email or Instagram for sizing help, order updates and bulk orders.",
   path: "/contact",
   image: null, // opengraph-image.tsx
 });
@@ -31,8 +33,15 @@ const TIPS = [
     title: "Read the policies",
     body: (
       <>
-        Most &ldquo;where&apos;s my order&rdquo; answers live in <Link href="/shipping" className={orange}>Shipping</Link>. Returns are covered in{" "}
-        <Link href="/refunds" className={orange}>Refunds</Link>.
+        Most &ldquo;where&apos;s my order&rdquo; answers live in{" "}
+        <Link href="/shipping" className={orange}>
+          Shipping
+        </Link>
+        . Returns are covered in{" "}
+        <Link href="/refunds" className={orange}>
+          Refunds
+        </Link>
+        .
       </>
     ),
   },
@@ -62,7 +71,8 @@ export default function ContactPage() {
             )}
             <IconBox className={c.hot ? "!bg-black/10 !text-black" : ""}>{c.icon}</IconBox>
             <div>
-              <small className={`text-[13px] tracking-[0.08em] uppercase ${c.hot ? "text-black/70" : "text-muted-foreground"}`}>
+              <small
+                className={`text-[13px] tracking-[0.08em] uppercase ${c.hot ? "text-black/70" : "text-muted-foreground"}`}>
                 {c.label}
               </small>
               <div className="text-lg font-bold tracking-tight mt-1.5 [overflow-wrap:anywhere]">{c.value}</div>
@@ -81,7 +91,9 @@ export default function ContactPage() {
         <div className="grid md:grid-cols-3 gap-4">
           {TIPS.map((t, i) => (
             <div key={t.title} className={card}>
-              <div className="font-calera text-5xl leading-[0.8] text-bandit-orange">{String(i + 1).padStart(2, "0")}</div>
+              <div className="font-calera text-5xl leading-[0.8] text-bandit-orange">
+                {String(i + 1).padStart(2, "0")}
+              </div>
               <h3 className="text-lg font-semibold mt-4 mb-2">{t.title}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{t.body}</p>
             </div>

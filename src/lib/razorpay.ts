@@ -1,6 +1,7 @@
 import "server-only";
 // Not "use server": a public createRzpOrder would let anyone attach any order's id to a payment of their choosing.
 import Razorpay from "razorpay";
+import { CURRENCY, toPaise } from "@/utils/price";
 
 export const rzp = new Razorpay({
   key_id: process.env.NEXT_PUBLIC_RZP_KEY_ID!,
@@ -8,4 +9,4 @@ export const rzp = new Razorpay({
 });
 
 export const createRzpOrder = (amount: number, dbId: string) =>
-  rzp.orders.create({ notes: { dbId }, amount: Math.round(amount * 100), currency: "INR" });
+  rzp.orders.create({ notes: { dbId }, amount: toPaise(amount), currency: CURRENCY });

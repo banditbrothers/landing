@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { createStockNotification } from "@/actions/stockNotifications";
 import { getSizeLabel } from "@/utils/product";
 import { track } from "@/utils/analytics";
+import { DEFAULT_SIZE } from "@/data/products";
 
 // Remembered on this device so later "Notify me" requests are pre-filled
 const CONTACT_STORAGE_KEY = "notify-me-contact";
@@ -81,7 +82,7 @@ export const NotifyMeDialog = ({ open, onOpenChange, variantId, variantName, siz
     }
   };
 
-  const sizeText = size !== "one-size" ? ` (${getSizeLabel(size)})` : "";
+  const sizeText = size !== DEFAULT_SIZE ? ` (${getSizeLabel(size)})` : "";
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

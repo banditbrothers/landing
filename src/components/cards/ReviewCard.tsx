@@ -7,7 +7,8 @@ import { StarRating } from "../misc/StarRating";
 import { useVariants } from "@/hooks/useVariants";
 import { PRODUCTS_OBJ } from "@/data/products";
 import { getProductVariantName } from "@/utils/product";
-import { getProductVariantUrl } from "@/utils/share";
+import { routes } from "@/utils/routes";
+import { getTimestamp, SECONDS_PER_DAY } from "@/utils/timestamp";
 
 const words = (name: string) =>
   name
@@ -28,14 +29,14 @@ const initials = (name: string) => {
 
 const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
-  ["year", 31536000],
-  ["month", 2592000],
-  ["week", 604800],
-  ["day", 86400],
+  ["year", 365 * SECONDS_PER_DAY],
+  ["month", 30 * SECONDS_PER_DAY],
+  ["week", 7 * SECONDS_PER_DAY],
+  ["day", SECONDS_PER_DAY],
 ];
 const timeAgo = (seconds: number) => {
-  const diff = Date.now() / 1000 - seconds;
-  const [unit, size] = UNITS.find(([, s]) => diff >= s) ?? ["day", 86400];
+  const diff = getTimestamp() - seconds;
+  const [unit, size] = UNITS.find(([, s]) => diff >= s) ?? ["day", SECONDS_PER_DAY];
   return rtf.format(-Math.floor(diff / size), unit);
 };
 
@@ -60,7 +61,7 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
     <article
       id={`r-${review.id}`}
       className={`scroll-mt-28 rounded-2xl border overflow-hidden transition hover:-translate-y-0.5 ${
-        loud ? "bg-bandit-orange border-bandit-orange text-[#160900]" : "bg-card border-border hover:border-zinc-600"
+        loud ? "bg-bandit-orange border-bandit-orange text-bandit-ink" : "bg-card border-border hover:border-zinc-600"
       }`}>
       {photo && (
         <div className="relative aspect-[4/5] bg-secondary">
@@ -81,10 +82,12 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
         <div className="flex items-center justify-between gap-3">
           <StarRating
             value={review.rating}
-            className={`[&_svg]:w-[15px] [&_svg]:h-[15px] ${loud ? "[&_.fill-bandit-orange]:fill-[#160900] [&_.fill-bandit-orange]:text-[#160900]" : ""}`}
+            className={`[&_svg]:w-[15px] [&_svg]:h-[15px] ${loud ? "[&_.fill-bandit-orange]:fill-bandit-ink [&_.fill-bandit-orange]:text-bandit-ink" : ""}`}
           />
           {/* Server-rendered pages can be up to a day old, so "6 days ago" may become "last week" on the client */}
-          <small suppressHydrationWarning className={`text-xs ${loud ? "text-[#160900]/70" : "text-muted-foreground"}`}>
+          <small
+            suppressHydrationWarning
+            className={`text-xs ${loud ? "text-bandit-ink/70" : "text-muted-foreground"}`}>
             {timeAgo(review.createdAt)}
           </small>
         </div>
@@ -96,7 +99,7 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
           }>
           {review.title.trim()}
         </h3>
-        <p className={`text-[15px] leading-relaxed mt-2.5 ${loud ? "text-[#160900]/80" : "text-zinc-300"}`}>
+        <p className={`text-[15px] leading-relaxed mt-2.5 ${loud ? "text-bandit-ink/80" : "text-zinc-300"}`}>
           {review.comment}
         </p>
 
@@ -105,21 +108,24 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
             {bought.map(v => (
               <Link
                 key={v.id}
-                href={getProductVariantUrl(v)}
+                href={routes.variant(v)}
                 aria-current={v.id === currentVariantId ? "page" : undefined}
                 className={`inline-flex items-center gap-2 max-w-full min-h-9 py-[3px] pl-[3px] pr-3.5 rounded-[18px] text-[13px] transition-colors aria-[current]:ring-1 aria-[current]:ring-bandit-orange ${
                   loud
-                    ? "bg-[#160900]/[.12] hover:bg-[#160900] hover:text-bandit-orange"
+                    ? "bg-bandit-ink/[.12] hover:bg-bandit-ink hover:text-bandit-orange"
                     : "bg-secondary hover:bg-bandit-orange/10 hover:text-bandit-orange"
                 }`}>
                 {v.images.mockup[0] && (
-                  <Image
-                    src={v.images.mockup[0]}
-                    alt=""
-                    width={30}
-                    height={30}
-                    className="w-[30px] h-[30px] shrink-0 rounded-full object-cover"
-                  />
+                  <span className="relative w-[30px] h-[30px] shrink-0 rounded-full overflow-hidden">
+                    <Skeleton className="absolute inset-0 rounded-none" />
+                    <Image
+                      src={v.images.mockup[0]}
+                      alt=""
+                      width={30}
+                      height={30}
+                      className="relative w-full h-full object-cover"
+                    />
+                  </span>
                 )}
                 {/* One text run so long names wrap as a sentence instead of splitting into two columns */}
                 <span className="leading-snug">
@@ -134,10 +140,10 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
         )}
 
         <div
-          className={`flex items-center gap-2.5 mt-4 pt-4 border-t border-dashed text-sm ${loud ? "border-[#160900]/25" : "border-border"}`}>
+          className={`flex items-center gap-2.5 mt-4 pt-4 border-t border-dashed text-sm ${loud ? "border-bandit-ink/25" : "border-border"}`}>
           <span
             className={`grid place-items-center w-[34px] h-[34px] rounded-full text-[13px] font-bold ${
-              loud ? "bg-[#160900] text-bandit-orange" : "bg-bandit-orange text-[#160900]"
+              loud ? "bg-bandit-ink text-bandit-orange" : "bg-bandit-orange text-bandit-ink"
             }`}>
             {initials(review.name)}
           </span>
@@ -145,7 +151,7 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
           {review.source === "website" && (
             <span
               className={`ml-auto inline-flex items-center gap-1 text-[11px] tracking-[0.1em] uppercase ${
-                loud ? "text-[#160900]/70" : "text-muted-foreground"
+                loud ? "text-bandit-ink/70" : "text-muted-foreground"
               }`}>
               <Check className={`w-3.5 h-3.5 ${loud ? "" : "text-bandit-orange"}`} strokeWidth={2.4} />
               Verified buyer

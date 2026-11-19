@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { ReviewCard, shortName } from "@/components/cards/ReviewCard";
 import { StarRating } from "@/components/misc/StarRating";
 import { LoadMoreTrigger } from "@/components/misc/LoadMoreTrigger";
@@ -11,15 +11,31 @@ import { Reveal, SectionHead } from "@/components/misc/Reveal";
 import { ReviewWithoutEmail as Review } from "@/types/review";
 import type { RatingSummary } from "@/lib/reviews";
 import { Scorecard } from "@/components/misc/Scorecard";
+import { Kicker } from "@/components/typography/Kicker";
 
 const LIMIT = 12;
 
 // Short, photo-less reviews become orange pull quotes; every third one stays plain so they don't clump
 const isLoud = (review: Review, i: number) => !review.images.length && review.title.trim().length <= 22 && i % 3 !== 0;
 
+// Wall columns at Tailwind's md / lg breakpoints; 1 on the server (it can't know the width)
+const MD = "(min-width: 768px)";
+const LG = "(min-width: 1024px)";
+const useColumnCount = () =>
+  useSyncExternalStore(
+    onChange => {
+      const queries = [MD, LG].map(q => window.matchMedia(q));
+      queries.forEach(q => q.addEventListener("change", onChange));
+      return () => queries.forEach(q => q.removeEventListener("change", onChange));
+    },
+    () => (window.matchMedia(LG).matches ? 3 : window.matchMedia(MD).matches ? 2 : 1),
+    () => 1
+  );
+
 // All approved reviews come from the server (one cached read); the wall just reveals them LIMIT at a time
 export default function ReviewsContent({ rating, reviews }: { rating: RatingSummary | null; reviews: Review[] }) {
   const [shown, setShown] = useState(LIMIT);
+  const cols = useColumnCount();
   // Photo strip + CTA use the first page only, so loading more doesn't reshuffle them
   const photos = reviews.slice(0, LIMIT).filter(r => r.images.length > 0);
 
@@ -35,7 +51,7 @@ export default function ReviewsContent({ rating, reviews }: { rating: RatingSumm
 
       <header className="grid lg:grid-cols-[1.35fr_1fr] gap-8 lg:gap-12 items-end pt-8 md:pt-12 pb-12 md:pb-14">
         <div>
-          <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-3">Word on the street</p>
+          <Kicker>Word on the street</Kicker>
           <h1 className="font-calera uppercase leading-[0.9] text-[17vw] md:text-[clamp(4.5rem,10.5vw,10rem)]">
             Fellow bandits
             <br />
@@ -52,7 +68,7 @@ export default function ReviewsContent({ rating, reviews }: { rating: RatingSumm
 
       <section className="border-t border-border pt-12 md:pt-14">
         <SectionHead
-          kicker="Newest first"
+          kicker="Straight from the gang"
           title={
             <>
               The whole <span className="text-bandit-orange">wall</span>
@@ -63,10 +79,19 @@ export default function ReviewsContent({ rating, reviews }: { rating: RatingSumm
         {reviews.length === 0 ? (
           <h3 className="text-2xl font-semibold tracking-tight text-center my-32">No Reviews Yet</h3>
         ) : (
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-5">
-            {reviews.slice(0, shown).map((review, i) => (
-              <div key={review.id} className="break-inside-avoid mb-5">
-                <ReviewCard review={review} loud={isLoud(review, i)} priority={i < 3} />
+          // Review i always sits in column i % cols, so revealing more only appends to the bottoms
+          // (CSS `columns` rebalanced every card on each reveal)
+          <div className="flex gap-5 items-start">
+            {Array.from({ length: cols }, (_, c) => (
+              <div key={c} className="flex-1 min-w-0 flex flex-col gap-5">
+                {reviews
+                  .slice(0, shown)
+                  .map(
+                    (review, i) =>
+                      i % cols === c && (
+                        <ReviewCard key={review.id} review={review} loud={isLoud(review, i)} priority={i < 3} />
+                      )
+                  )}
               </div>
             ))}
           </div>
@@ -78,7 +103,7 @@ export default function ReviewsContent({ rating, reviews }: { rating: RatingSumm
 
       <Reveal className="mt-20 grid md:grid-cols-[1.3fr_1fr] gap-8 items-center rounded-[26px] border border-border bg-card p-7 md:p-12 overflow-hidden">
         <div>
-          <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground">Your turn</p>
+          <Kicker className="mb-0">Your turn</Kicker>
           <h2 className="font-calera uppercase leading-[0.9] text-[clamp(2.75rem,6vw,5.5rem)] mt-2.5">
             Wear your <span className="text-bandit-orange">mischief</span>.
           </h2>

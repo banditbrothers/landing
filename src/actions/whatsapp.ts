@@ -1,6 +1,7 @@
 import "server-only";
 // Deliberately NOT "use server" (same as discord.ts): a server action would let anyone message our customers.
 import type { Order } from "@/types/order";
+import { GRAPH_API_URL } from "@/constants/meta";
 
 // Must match the language picked for the templates in WhatsApp Manager ("English" = en, "English (US)" = en_US)
 const TEMPLATE_LANGUAGE = "en";
@@ -16,7 +17,7 @@ const firstName = (name: string) => name.trim().split(/\s+/)[0] || "Bandit";
 // Never throws: a failed WhatsApp send must not fail the order or the Razorpay webhook. Returns whether it was sent.
 const sendTemplate = async (phone: string, template: string, bodyParams: string[], buttonParam: string) => {
   try {
-    const response = await fetch(`https://graph.facebook.com/v23.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`, {
+    const response = await fetch(`${GRAPH_API_URL}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,

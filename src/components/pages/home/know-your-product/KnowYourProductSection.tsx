@@ -28,9 +28,7 @@ export const KnowYourProductSection = () => {
                   sizes="(min-width: 768px) 33vw, 100vw"
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
-                <span
-                  className="absolute left-4 bottom-1 font-calera text-7xl leading-none text-transparent"
-                  style={{ WebkitTextStroke: "1.5px #fd6e00" }}>
+                <span className="absolute left-4 bottom-1 font-calera text-7xl leading-none text-transparent [-webkit-text-stroke:1.5px_theme(colors.bandit-orange)]">
                   0{i + 1}
                 </span>
               </div>

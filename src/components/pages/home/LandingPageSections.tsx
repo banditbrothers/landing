@@ -9,7 +9,8 @@ import { TestimonialsSection } from "@/components/pages/home/testimonials/Testim
 import { InstagramFeedSection } from "@/components/pages/home/instagram/InstagramFeedSection";
 import { HowToWearSection } from "@/components/pages/home/how-to-wear/HowToWearSection";
 import { Reveal } from "@/components/misc/Reveal";
-import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/data/products";
+import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/constants/shipping";
+import { formatCurrency } from "@/utils/price";
 
 const TICKER = [
   "Wear your mischief",
@@ -54,7 +55,7 @@ const CODE = [
     icon: Truck,
     title: "Ships free",
     text: MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING
-      ? `Free shipping across India on orders over ₹${MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING}.`
+      ? `Free shipping across India on orders over ${formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}.`
       : "Shipped across India.",
   },
 ];

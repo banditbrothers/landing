@@ -1,7 +1,7 @@
 import { getApprovedReviews, getRatingSummary } from "@/lib/reviews";
 import ReviewsContent from "./content";
 
-export const revalidate = 86400; // 24h, matches the reviews cache
+export const revalidate = 86400; // 24h, = REVIEWS_CACHE_SECONDS in lib/reviews.ts (Next needs a literal here)
 
 export default async function ReviewsPage() {
   // Never break the page over reviews

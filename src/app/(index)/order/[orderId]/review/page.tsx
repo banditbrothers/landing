@@ -12,7 +12,9 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import * as z from "zod";
+import { reviewFieldsSchema } from "@/schemas";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 import { StarRatingInput } from "@/components/misc/StarRating";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -27,51 +29,27 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Collections } from "@/constants/collections";
 import { createReview } from "@/actions/reviews";
 import { getProductVariantName, getSizeLabel } from "@/utils/product";
-import { getProductVariantUrl } from "@/utils/share";
-import { Sticker } from "@/components/cards/ShopCard";
+import { routes } from "@/utils/routes";
+import { Sticker } from "@/components/misc/Stickers";
 import { track } from "@/utils/analytics";
+import { Kicker } from "@/components/typography/Kicker";
+import { Breadcrumb } from "@/components/misc/Breadcrumb";
+import { OrderHeading } from "../OrderHeading";
+import { Panel } from "@/components/misc/Panel";
 
 signInAnonymously();
-
-const reviewSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  comment: z.string().min(10, "Comment must be at least 10 characters"),
-  rating: z.number().min(1, "Oops! You forgot to rate us 5 stars!").max(5),
-});
 
 // Only 4 and 5 read as good; 1-3 are all some flavour of letdown
 const VERDICTS = ["Pick a rating", "Total miss", "Disappointed", "Not quite there", "Good enough", "Legendary"];
 
-const Kicker = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-3">{children}</p>
-);
-
-const Panel = ({ className = "", children }: { className?: string; children: React.ReactNode }) => (
-  <div className={`rounded-[22px] border border-border bg-card ${className}`}>{children}</div>
-);
-
 const PageHeader = ({ order, head, accent, copy }: { order: Order; head: string; accent: string; copy: string }) => (
   <>
-    <nav className="text-[13px] text-muted-foreground flex gap-2 pt-4" aria-label="Breadcrumb">
-      <Link href="/" className="hover:text-foreground">
-        Home
-      </Link>
-      <span className="opacity-50">/</span>
-      <Link href={`/order/${order.id}`} className="hover:text-foreground">
-        Order {order.id}
-      </Link>
-      <span className="opacity-50">/</span>
-      <span className="text-foreground">Review</span>
-    </nav>
+    <Breadcrumb items={[{ label: `Order ${order.id}`, href: routes.order(order.id) }, { label: "Review" }]} />
     <div className="pt-8 md:pt-12">
       <Kicker>
         Order <span className="normal-case tracking-normal font-mono">{order.id}</span> · Review
       </Kicker>
-      <h1 className="font-calera uppercase leading-[0.9] text-[17vw] md:text-[clamp(4.5rem,9vw,8rem)]">
-        {head} <span className="text-bandit-orange">{accent}</span>.
-      </h1>
-      <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md mt-5">{copy}</p>
+      <OrderHeading head={head} accent={accent} copy={copy} />
     </div>
   </>
 );
@@ -89,8 +67,8 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
   const [isCompressing, setIsCompressing] = useState<boolean>(false);
   const [images, setImages] = useState<File[]>([]);
 
-  const form = useForm<z.infer<typeof reviewSchema>>({
-    resolver: zodResolver(reviewSchema),
+  const form = useForm<z.infer<typeof reviewFieldsSchema>>({
+    resolver: zodResolver(reviewFieldsSchema),
     mode: "onTouched",
     defaultValues: { name: "", title: "", comment: "", rating: 0 },
   });
@@ -120,7 +98,7 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
     }
   }, [order, form]);
 
-  const onSubmit = async (data: z.infer<typeof reviewSchema>) => {
+  const onSubmit = async (data: z.infer<typeof reviewFieldsSchema>) => {
     if (!order) {
       console.error("[OrderReviewPage] Order not found while submitting review");
       return;
@@ -199,17 +177,21 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
       </header>
 
       {/* Mobile: the haul as a thumbnail strip above the form */}
-      <div className="lg:hidden flex items-center gap-2 overflow-x-auto pb-6">
+      <div className="lg:hidden flex items-center gap-2 overflow-x-auto overflow-y-hidden pb-6">
         {items.map(item => (
-          <Image
+          <span
             key={`${item.variantId}-${item.size}`}
-            width={56}
-            height={56}
-            quality={40}
-            alt={item.name}
-            src={item.variant.images.mockup[0]}
-            className="w-14 h-14 shrink-0 rounded-[14px] object-cover bg-secondary"
-          />
+            className="relative w-14 h-14 shrink-0 rounded-[14px] overflow-hidden">
+            <Skeleton className="absolute inset-0 rounded-none" />
+            <Image
+              width={56}
+              height={56}
+              quality={40}
+              alt={item.name}
+              src={item.variant.images.mockup[0]}
+              className="relative w-full h-full object-cover"
+            />
+          </span>
         ))}
         <p className="text-xs text-muted-foreground ml-1 shrink-0">
           {itemCount} {itemCount === 1 ? "item" : "items"}
@@ -328,17 +310,20 @@ export default function OrderReviewPage({ params }: OrderPageProps) {
             {items.map(({ variant, name, size, quantity, variantId }) => (
               <Link
                 key={`${variantId}-${size}`}
-                href={getProductVariantUrl(variant)}
+                href={routes.variant(variant)}
                 target="_blank"
                 className="flex items-center gap-4 py-4 group">
-                <Image
-                  width={64}
-                  height={64}
-                  quality={40}
-                  alt={name}
-                  src={variant.images.mockup[0]}
-                  className="w-16 h-16 shrink-0 rounded-[14px] object-cover bg-secondary"
-                />
+                <span className="relative w-16 h-16 shrink-0 rounded-[14px] overflow-hidden">
+                  <Skeleton className="absolute inset-0 rounded-none" />
+                  <Image
+                    width={64}
+                    height={64}
+                    quality={40}
+                    alt={name}
+                    src={variant.images.mockup[0]}
+                    className="relative w-full h-full object-cover"
+                  />
+                </span>
                 <div className="min-w-0">
                   <p className="font-medium truncate group-hover:text-bandit-orange">{name}</p>
                   <p className="text-sm text-muted-foreground mt-0.5">
@@ -375,7 +360,7 @@ const ReviewSubmitted = ({ order }: { order: Order }) => (
             Back to the shop <ArrowRightIcon className="w-4 h-4" />
           </Link>
           <Link
-            href={`/order/${order.id}`}
+            href={routes.order(order.id)}
             className="rounded-full border border-border text-sm px-5 py-2.5 hover:border-muted-foreground">
             View order
           </Link>

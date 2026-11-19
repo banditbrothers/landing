@@ -1,4 +1,4 @@
-import { CONTACT } from "@/components/layouts/InfoPageLayout";
+import { CONTACT } from "@/lib/site";
 import {
   ORANGE,
   TextCard,

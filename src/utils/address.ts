@@ -16,3 +16,17 @@ export const getAddressString = (address: Address) => {
   stringAddress += `, ${zip}`;
   return stringAddress;
 };
+
+// "+358-18" -> "358"
+export const getDialCode = (countryCode?: string) =>
+  Country.getCountryByCode(countryCode ?? "")
+    ?.phonecode.replace(/^\+/, "")
+    .split("-")[0];
+
+// Customers type the number without the country code (it's shown as a prefix); store it with one
+export const withDialCode = (phone: string, dialCode?: string) => {
+  const cleaned = phone.replace(/[^\d+]/g, "");
+  if (cleaned.startsWith("+") || !dialCode) return cleaned;
+  const digits = cleaned.replace(/^0+/, "");
+  return digits.startsWith(dialCode) && digits.length > 10 ? `+${digits}` : `+${dialCode}${digits}`;
+};

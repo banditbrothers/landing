@@ -34,7 +34,7 @@ const Toaster = ({ style, ...props }: ToasterProps) => (
       unstyled: true,
       classNames: {
         toast:
-          "left-0 right-0 mx-auto !w-fit max-w-full flex items-center gap-2.5 rounded-[26px] bg-black border border-border py-1.5 px-4 [&:has([data-icon])]:pl-1.5 text-sm text-foreground shadow-[0_16px_40px_-14px_#000]",
+          "left-0 right-0 mx-auto !w-fit max-w-full flex items-center gap-2.5 rounded-full bg-black border border-border py-1.5 px-4 [&:has([data-icon])]:pl-1.5 [&:has([data-icon]):has([data-description])]:pl-3.5 text-sm text-foreground shadow-[0_16px_40px_-14px_#000]",
         icon: "!size-[30px] !m-0 shrink-0 overflow-hidden rounded-full",
         content: "min-w-0 py-1",
         title: "font-medium leading-snug",

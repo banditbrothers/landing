@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,11 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { ProductVariant } from "@/types/product";
 import { updateVariant } from "@/actions/products";
-import { uploadToS3 } from "@/utils/s3Upload";
 import { toast } from "sonner";
-import { Upload, Loader2 } from "lucide-react";
-import { MockupImageGrid } from "./MockupImageGrid";
-import { processImage } from "@/utils/image";
+import { Loader2 } from "lucide-react";
+import { MockupImageGrid, MockupUploadButton } from "./MockupImageGrid";
 import { PRODUCTS_OBJ } from "@/data/products";
 import { parseStockInputs, StockInputs, StockInputValues, toStockInputs } from "./StockInputs";
 
@@ -30,7 +28,6 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [stockInputs, setStockInputs] = useState<StockInputValues>({});
   const [mockupImages, setMockupImages] = useState<string[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize form data when variant changes
   useEffect(() => {
@@ -105,32 +102,6 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !variant) return;
-
-    setIsUploadingImage(true);
-    try {
-      // Check if the image is a webp and if not, convert it to webp, then compress
-      const processedFile = await processImage(file);
-
-      // Generate S3 key and upload
-      const imageUrl = await uploadToS3(processedFile, variant.productId, variant.designId);
-
-      // Saved to the variant on "Save Changes"
-      setMockupImages(prev => [...prev, imageUrl]);
-      toast.success("Image uploaded. Save to apply.");
-    } catch (error) {
-      toast.error("Failed to upload image");
-      console.error(error);
-    } finally {
-      setIsUploadingImage(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
-  };
-
   if (!variant) return null;
 
   return (
@@ -146,29 +117,16 @@ export const EditVariantDialog = ({ variant, isOpen, onClose, onSave }: EditVari
           {/* Mockup Images */}
           <div className="space-y-2">
             <Label>Mockup Images</Label>
-            <p className="text-sm text-muted-foreground">Drag or use the arrows to reorder. The first image is the cover.</p>
+            <p className="text-sm text-muted-foreground">
+              Drag or use the arrows to reorder. The first image is the cover.
+            </p>
             <MockupImageGrid images={mockupImages} onChange={setMockupImages} />
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploadingImage}>
-                {isUploadingImage ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload New Image
-                  </>
-                )}
-              </Button>
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-            </div>
+            <MockupUploadButton
+              productId={variant.productId}
+              designId={variant.designId}
+              onUploaded={url => setMockupImages(prev => [...prev, url])}
+              onUploadingChange={setIsUploadingImage}
+            />
           </div>
 
           {/* Form Fields */}

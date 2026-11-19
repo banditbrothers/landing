@@ -4,7 +4,7 @@ import { ReviewStatus } from "@/types/review";
 
 import { getReviewsAdmin, updateReview } from "@/actions/reviews";
 import { Review } from "@/types/review";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { LoadingScreen } from "@/components/misc/Loading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,30 +12,25 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, EyeIcon, XMarkIcon } from "@/Icons/icons";
-import {
-  Pagination,
-  PaginationPrevious,
-  PaginationItem,
-  PaginationContent,
-  PaginationLink,
-  PaginationNext,
-} from "@/components/ui/pagination";
+import { formattedDateTimeLong } from "@/utils/timestamp";
+import { useAdminLoad, usePaged, AdminPagination } from "./adminHooks";
+
+const REVIEW_STATUS_STYLE: Record<ReviewStatus, string> = {
+  approved: "bg-green-100 text-green-800",
+  rejected: "bg-red-100 text-red-800",
+  pending: "bg-yellow-100 text-yellow-800",
+};
 
 export function ReviewManagement() {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    getReviewsAdmin()
-      .then(setReviews)
-      .catch(error => {
-        console.error("Error loading reviews:", error);
-        toast.error("Failed to load reviews. Reload the page; you may need to log in again.");
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+  const isLoading = useAdminLoad(getReviewsAdmin, setReviews, "reviews");
+  const {
+    page: currentPage,
+    setPage: setCurrentPage,
+    pages: totalPages,
+    pageItems: currentPageReviews,
+  } = usePaged(reviews);
 
   const handleStatusChange = async (reviewId: string, status: ReviewStatus) => {
     try {
@@ -46,11 +41,6 @@ export function ReviewManagement() {
       toast.error("Failed to update review status", { description: (e as Error).message });
     }
   };
-
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(reviews.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentPageReviews = reviews.slice(startIndex, startIndex + itemsPerPage);
 
   if (isLoading) return <LoadingScreen />;
 
@@ -77,7 +67,7 @@ export function ReviewManagement() {
             <TableBody>
               {currentPageReviews.map(review => (
                 <TableRow key={review.id}>
-                  <TableCell>{new Date(review.createdAt * 1000).toLocaleDateString()}</TableCell>
+                  <TableCell>{formattedDateTimeLong(review.createdAt)}</TableCell>
                   <TableCell>
                     <div className="flex flex-col">
                       <span>{review.name}</span>
@@ -99,14 +89,7 @@ export function ReviewManagement() {
                     ))}
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        review.status === "approved"
-                          ? "bg-green-100 text-green-800"
-                          : review.status === "rejected"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}>
+                    <span className={`px-2 py-1 rounded-full text-xs ${REVIEW_STATUS_STYLE[review.status]}`}>
                       {review.status.toUpperCase()}
                     </span>
                   </TableCell>
@@ -149,31 +132,7 @@ export function ReviewManagement() {
         </div>
 
         <div className="mt-4 flex justify-center">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <button disabled={currentPage === 1} onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}>
-                  <PaginationPrevious className={currentPage === 1 ? "pointer-events-none opacity-50" : ""} />
-                </button>
-              </PaginationItem>
-
-              {[...Array(totalPages)].map((_, i) => (
-                <PaginationItem key={i + 1}>
-                  <button onClick={() => setCurrentPage(i + 1)}>
-                    <PaginationLink isActive={currentPage === i + 1}>{i + 1}</PaginationLink>
-                  </button>
-                </PaginationItem>
-              ))}
-
-              <PaginationItem>
-                <button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}>
-                  <PaginationNext className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""} />
-                </button>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <AdminPagination page={currentPage} pages={totalPages} onChange={setCurrentPage} />
         </div>
       </CardContent>
       <Dialog open={selectedReview !== null} onOpenChange={() => setSelectedReview(null)}>

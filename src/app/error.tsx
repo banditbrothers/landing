@@ -3,7 +3,8 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import posthog from "posthog-js";
-import { CONTACT, displayTitle } from "@/components/layouts/InfoPageLayout";
+import { CONTACT } from "@/lib/site";
+import { displayTitle } from "@/components/layouts/InfoPageLayout";
 
 // Catches render errors below the root layout, so the navbar and footer stay up.
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {

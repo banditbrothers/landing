@@ -1,12 +1,17 @@
 import { ProductPageContents } from "@/components/pages/variant-product-page";
 import { breadcrumbLd, LdScript } from "@/components/seo/JsonLd";
-import { DESIGNS_OBJ, PRODUCTS, PRODUCTS_OBJ, SHIPPING_COST } from "@/data/products";
+import { PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { DESIGNS_OBJ } from "@/data/designs";
+import { SHIPPING_COST } from "@/constants/shipping";
 import { getCatalog } from "@/lib/catalog";
 import { getApprovedReviews, getBoughtTogether, getRatingSummary } from "@/lib/reviews";
 import { pageMetadata, SITE_NAME, SITE_URL, truncate } from "@/lib/site";
 import { getProductVariantName, getProductVariantPrice, getSKU, isVariantOutOfStock } from "@/utils/product";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getDate } from "@/utils/timestamp";
+import { routes } from "@/utils/routes";
+import { CURRENCY } from "@/utils/price";
 
 type VariantPageProps = { params: Promise<{ productId: string; designId: string }> };
 
@@ -34,7 +39,7 @@ export async function generateMetadata({ params }: VariantPageProps): Promise<Me
   return pageMetadata({
     title: name,
     description: truncate(`${name} by Bandit Brothers. ${variant?.description ?? product.description.join(" ")}`),
-    path: `/shop/${productId}/${designId}`,
+    path: routes.variant({ productId, designId }),
     image: null, // opengraph-image.tsx
   });
 }
@@ -61,6 +66,9 @@ export default async function VariantPage({ params }: VariantPageProps) {
   const ordered = (ids: string[]) =>
     reviews.filter(r => r.source === "website" && r.variantIds.some(id => ids.includes(id)));
   const designReviews = [...new Set([...ordered([sku]), ...ordered(designSkus)])];
+  // Stable sort: keeps newest-first within photo / no-photo
+  const withPhotosFirst = (list: typeof reviews) =>
+    list.toSorted((a, b) => +(b.images.length > 0) - +(a.images.length > 0));
 
   // Co-purchases for this variant first, then for the same design on other gear
   const boughtWith = [...new Set([sku, ...designSkus].flatMap(id => boughtTogether[id] ?? []))].filter(
@@ -68,7 +76,7 @@ export default async function VariantPage({ params }: VariantPageProps) {
   );
 
   const product = PRODUCTS_OBJ[productId];
-  const path = `/shop/${productId}/${designId}`;
+  const path = routes.variant({ productId, designId });
   const name = variant && `${getProductVariantName(variant)} ${product.name}`;
   const productLd = variant && {
     "@context": "https://schema.org",
@@ -83,14 +91,14 @@ export default async function VariantPage({ params }: VariantPageProps) {
       "@type": "Offer",
       url: `${SITE_URL}${path}`,
       price: getProductVariantPrice(variant),
-      priceCurrency: "INR",
+      priceCurrency: CURRENCY,
       itemCondition: "https://schema.org/NewCondition",
       availability: `https://schema.org/${isVariantOutOfStock(variant) ? "OutOfStock" : "InStock"}`,
       shippingDetails: {
         "@type": "OfferShippingDetails",
         shippingDestination: { "@type": "DefinedRegion", addressCountry: "IN" },
         // Single-item rate; free shipping over MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING is a cart rule
-        shippingRate: { "@type": "MonetaryAmount", value: SHIPPING_COST, currency: "INR" },
+        shippingRate: { "@type": "MonetaryAmount", value: SHIPPING_COST, currency: CURRENCY },
       },
       hasMerchantReturnPolicy: {
         "@type": "MerchantReturnPolicy",
@@ -108,7 +116,7 @@ export default async function VariantPage({ params }: VariantPageProps) {
       review: designReviews.slice(0, 5).map(r => ({
         "@type": "Review",
         author: { "@type": "Person", name: r.name },
-        datePublished: new Date(r.createdAt * 1000).toISOString().slice(0, 10),
+        datePublished: getDate(r.createdAt).toISOString().slice(0, 10),
         reviewRating: { "@type": "Rating", ratingValue: r.rating },
         ...(r.comment && { reviewBody: r.comment }),
       })),
@@ -124,7 +132,7 @@ export default async function VariantPage({ params }: VariantPageProps) {
             breadcrumbLd([
               ["Home", "/"],
               ["Shop", "/shop"],
-              [`${product.name}s`, `/shop/${productId}`],
+              [`${product.name}s`, routes.product(productId)],
               [name!, path],
             ]),
           ]}
@@ -135,8 +143,11 @@ export default async function VariantPage({ params }: VariantPageProps) {
         productId={productId}
         rating={reviews.length ? getRatingSummary(reviews) : null}
         reviewCount={designReviews.length}
-        // No reviews for this design yet → latest store reviews, labelled as such
-        reviews={(designReviews.length ? designReviews : reviews).slice(0, 6)}
+        // This design's reviews first, topped up to 6 with the latest store reviews; photo reviews lead each group
+        reviews={[
+          ...withPhotosFirst(designReviews),
+          ...withPhotosFirst(reviews.filter(r => !designReviews.includes(r))),
+        ].slice(0, 6)}
         boughtWith={boughtWith.slice(0, 12)}
       />
     </>

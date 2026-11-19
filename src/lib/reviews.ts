@@ -4,8 +4,11 @@ import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase-admin";
 import { ReviewWithoutEmail } from "@/types/review";
 import { OrderedVariant } from "@/types/product";
+import { SECONDS_PER_DAY } from "@/utils/timestamp";
 
 const REVIEWS_TAG = "reviews";
+// /reviews and variant pages set `export const revalidate` to the same value (it must be a literal there)
+export const REVIEWS_CACHE_SECONDS = SECONDS_PER_DAY;
 
 /** breakdown = review counts for 5★ → 1★ */
 export type RatingSummary = { average: number; count: number; breakdown: number[] };
@@ -27,7 +30,7 @@ export const getApprovedReviews = unstable_cache(
     });
   },
   ["approved-reviews"],
-  { revalidate: 86400, tags: [REVIEWS_TAG] }
+  { revalidate: REVIEWS_CACHE_SECONDS, tags: [REVIEWS_TAG] }
 );
 
 export const getRatingSummary = (reviews: ReviewWithoutEmail[]): RatingSummary => ({
@@ -44,12 +47,15 @@ export const revalidateReviews = () => revalidateTag(REVIEWS_TAG, { expire: 0 })
 // ponytail: scans every paid order; limit to recent orders if paid orders reach the tens of thousands
 export const getBoughtTogether = unstable_cache(
   async () => {
-    const snapshot = await firestore().collection(Collections.orders).where("status", "==", "paid").select("variants").get();
+    const snapshot = await firestore()
+      .collection(Collections.orders)
+      .where("status", "==", "paid")
+      .select("variants")
+      .get();
     const counts: Record<string, Record<string, number>> = {};
     for (const doc of snapshot.docs) {
       const ids = [...new Set(((doc.get("variants") ?? []) as OrderedVariant[]).map(v => v.variantId))];
-      for (const a of ids)
-        for (const b of ids) if (a !== b) (counts[a] ??= {})[b] = (counts[a][b] ?? 0) + 1;
+      for (const a of ids) for (const b of ids) if (a !== b) (counts[a] ??= {})[b] = (counts[a][b] ?? 0) + 1;
     }
     return Object.fromEntries(
       Object.entries(counts).map(([id, others]) => [
@@ -62,5 +68,5 @@ export const getBoughtTogether = unstable_cache(
     );
   },
   ["bought-together"],
-  { revalidate: 86400 }
+  { revalidate: SECONDS_PER_DAY }
 );

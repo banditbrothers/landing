@@ -1,4 +1,4 @@
-import { DESIGN_CATEGORIES, DESIGN_COLORS } from "@/data/products";
+import { DESIGN_CATEGORIES, DESIGN_COLORS } from "@/data/designs";
 
 export type DesignCategory = (typeof DESIGN_CATEGORIES)[number]["id"];
 export type DesignColor = (typeof DESIGN_COLORS)[number]["id"];

@@ -4,6 +4,7 @@ import { Collections } from "@/constants/collections";
 import { firestore } from "@/lib/firebase-admin";
 import { ProductVariant } from "@/types/product";
 import { isProductActive } from "@/data/products";
+import { SECONDS_PER_HOUR } from "@/utils/timestamp";
 
 const CATALOG_TAG = "variants";
 
@@ -15,7 +16,7 @@ const getCachedCatalog = unstable_cache(
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as ProductVariant[];
   },
   ["catalog"],
-  { revalidate: 3600, tags: [CATALOG_TAG] }
+  { revalidate: SECONDS_PER_HOUR, tags: [CATALOG_TAG] }
 );
 
 /** All available variants of active products, cached on the server. null if Firestore failed. */

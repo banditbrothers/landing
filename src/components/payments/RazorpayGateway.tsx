@@ -32,7 +32,9 @@ export type RazorpayPaymentGatewayRef = {
 export const RazorpayPaymentGateway = ({ ref, onSuccess, onCancel, onFailed }: RazorpayPaymentGatewayProps) => {
   const handlePayment = (order: Order) => {
     if (typeof window.Razorpay === "undefined") {
-      toast.warning("Payment window didn't load", { description: "Refresh the page and try again. Your bag is saved." });
+      toast.warning("Payment window didn't load", {
+        description: "Refresh the page and try again. Your bag is saved.",
+      });
       return false;
     }
 
@@ -43,7 +45,7 @@ export const RazorpayPaymentGateway = ({ ref, onSuccess, onCancel, onFailed }: R
 
     const options = {
       key: process.env.NEXT_PUBLIC_RZP_KEY_ID!,
-      amount: order.total * 100,
+      amount: order.rzp.amount, // paise, as created by createRzpOrder
       currency: order.rzp.currency,
       order_id: order.rzp.orderId,
       prefill: { name: order.name, email: order.email, contact: order.phone, method: "upi" },

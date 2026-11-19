@@ -1,4 +1,4 @@
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { CONTACT, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 export function JsonLd() {
   const organization = {
@@ -7,11 +7,11 @@ export function JsonLd() {
     name: SITE_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/logo-full-socials.png`,
-    sameAs: ["https://www.instagram.com/be.a.banditbrother/"],
-    email: "wearebanditbrothers@gmail.com",
+    sameAs: [CONTACT.instagram],
+    email: CONTACT.email,
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+91-7977884773",
+      telephone: CONTACT.phoneIntl,
       contactType: "customer service",
     },
   };

@@ -52,9 +52,11 @@ export const deductStockForOrder = async (orderId: string) => {
   // Stock is only checked (not held) at checkout, so two buyers can both pay for the last unit. Record and alert.
   // ponytail: detect-and-alert only; reserve stock at order creation if limited drops make this common.
   let oversold: OversoldLine[] = [];
+  let stockWritten = false;
 
   await db.runTransaction(async tx => {
     oversold = []; // transactions can retry
+    stockWritten = false;
     const orderSnap = await tx.get(orderRef);
     if (!orderSnap.exists) return;
     const order = orderSnap.data() as Order;
@@ -80,12 +82,16 @@ export const deductStockForOrder = async (orderId: string) => {
         }
         updates[`stock.${item.size}`] = Math.max(0, current - item.quantity);
       }
-      if (Object.keys(updates).length) tx.update(snap.ref, updates);
+      if (Object.keys(updates).length) {
+        tx.update(snap.ref, updates);
+        stockWritten = true;
+      }
     }
 
     tx.update(orderRef, { stockDeducted: true, ...(oversold.length && { oversold }) });
   });
-  revalidateCatalog();
+  // Each reset makes the next page load re-read every variant; skip it for untracked sizes and repeat calls
+  if (stockWritten) revalidateCatalog();
 
   if (oversold.length) {
     const lines = oversold.map(o => `• ${o.variantId} (${getSizeLabel(o.size)}): short by ${o.short}`).join("\n");

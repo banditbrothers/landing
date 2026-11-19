@@ -1,125 +1,30 @@
 "use client";
 
+import { FavoriteButton } from "@/components/misc/FavoriteButton";
 import { useState } from "react";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { toast } from "sonner";
-import { HeartIcon } from "lucide-react";
 import { useCart } from "@/components/stores/cart";
-import { useFavorites } from "@/components/stores/favorites";
-import { useVariants } from "@/hooks/useVariants";
-import { DesignColor, ProductVariant } from "@/types/product";
-import { DESIGN_COLOR_OBJ, DESIGNS_OBJ, MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING, PRODUCTS_OBJ } from "@/data/products";
+import { ProductVariant } from "@/types/product";
+import { PRODUCTS_OBJ } from "@/data/products";
+import { DESIGNS_OBJ } from "@/data/designs";
 import { formatCurrency } from "@/utils/price";
-import { getProductVariantUrl } from "@/utils/share";
-import { getFreeShippingAmount } from "@/utils/cart";
-import { trackVariantAddToCart } from "@/utils/analytics";
+import { routes } from "@/utils/routes";
 import {
   exceedsStock,
   getProductVariantName,
   getProductVariantPrice,
-  getSizeStock,
+  getUnitsLeft,
+  isNewDrop,
   isSizeInStock,
   isVariantOutOfStock,
   LOW_STOCK_THRESHOLD,
 } from "@/utils/product";
-
-const NEW_DROP_SECONDS = 60 * 60 * 24 * 30;
-
-// Units left across tracked sizes; undefined when nothing is tracked
-export const getUnitsLeft = (variant: ProductVariant) => {
-  const tracked = (PRODUCTS_OBJ[variant.productId]?.sizes ?? [])
-    .map(s => getSizeStock(variant, s))
-    .filter((n): n is number => n !== undefined);
-  return tracked.length ? tracked.reduce((a, b) => a + b, 0) : undefined;
-};
-
-export const isNewDrop = (variant: ProductVariant) => Date.now() / 1000 - variant.createdAt < NEW_DROP_SECONDS;
-
-export const Sticker = ({
-  tone = "orange",
-  children,
-}: {
-  tone?: "orange" | "light" | "ghost";
-  children: React.ReactNode;
-}) => (
-  <span
-    className={`inline-block text-[11px] font-bold tracking-[0.1em] uppercase px-2 py-1 rounded shadow-[0_2px_0_rgba(0,0,0,.35)] ${
-      tone === "orange"
-        ? "bg-bandit-orange text-black -rotate-3"
-        : tone === "light"
-          ? "bg-foreground text-background rotate-2"
-          : "bg-secondary text-foreground shadow-none"
-    }`}>
-    {children}
-  </span>
-);
-
-/** One colourway chip; two colours render as a diagonal split */
-export const Swatch = ({ colors, className = "" }: { colors: DesignColor[]; className?: string }) => {
-  const [a = "#555", b] = colors.map(c => DESIGN_COLOR_OBJ[c].hex);
-  return (
-    <i
-      className={`block shrink-0 ${className}`}
-      // border-box origin: otherwise the gradient tiles under a (translucent) border and bleeds at the corners
-      style={{ background: b ? `linear-gradient(135deg, ${a} 50%, ${b} 50%) border-box` : a }}
-    />
-  );
-};
-
-// Muted, not drained: the print should still be recognisable behind the stamp
-export const SOLD_OUT_IMAGE = "grayscale-[.45] brightness-[.8]";
-
-// Literal caps: Calera's lowercase set has filled counters, so O and D lose their holes
-export const SoldOutLabel = ({ className = "" }: { className?: string }) => (
-  <span
-    className={`inline-block font-calera whitespace-nowrap text-bandit-red border-[3px] border-bandit-red rounded-lg px-3 md:px-4 pt-1.5 -rotate-12 ${className}`}>
-    SOLD OUT
-  </span>
-);
-
-/** Stamp centred over a product image */
-export const SoldOutStamp = ({ className = "text-2xl md:text-4xl" }: { className?: string }) => (
-  <span className="absolute inset-0 z-[1] grid place-items-center pointer-events-none">
-    <SoldOutLabel className={className} />
-  </span>
-);
-
-/** Adds to cart and toasts the free-shipping progress; `openCart` opens the bag instead of offering a "View bag" link */
-export const useAddToCart = () => {
-  const { cart, coupon, updateCartItem, openCart } = useCart();
-  const { data: variants } = useVariants();
-
-  return (variant: ProductVariant, size: string, quantity = 1, options: { openCart?: boolean } = {}) => {
-    const price = getProductVariantPrice(variant);
-    const name = getProductVariantName(variant);
-    trackVariantAddToCart({
-      productId: variant.productId,
-      designId: variant.designId,
-      variantId: variant.id,
-      variantName: name,
-      price,
-      quantity,
-    });
-    updateCartItem(variant.id, quantity, size);
-
-    const total = getFreeShippingAmount(cart, variants, coupon) + price * quantity;
-    const left = MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING === null ? null : MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING - total;
-    const thumb = variant.images.mockup[0];
-    toast.success(`${name} added`, {
-      icon: thumb ? <Image src={thumb} alt="" width={30} height={30} className="size-full object-cover" /> : undefined,
-      description:
-        left === null
-          ? undefined
-          : left > 0
-            ? `${formatCurrency(left)} away from free shipping`
-            : "Free shipping unlocked",
-      action: options.openCart ? undefined : { label: "View bag", onClick: openCart },
-    });
-    if (options.openCart) openCart();
-  };
-};
+import { useAddToCart } from "@/hooks/useAddToCart";
+import { SOLD_OUT_IMAGE, SoldOutStamp, Sticker } from "@/components/misc/Stickers";
+import { Swatch } from "@/components/misc/Swatch";
 
 type ShopCardProps = {
   variant: ProductVariant;
@@ -138,7 +43,6 @@ export const ShopCard = ({
 }: ShopCardProps) => {
   const [activeId, setActiveId] = useState(initial.id);
   const variant = family.find(v => v.id === activeId) ?? initial;
-  const { isFavorite, toggleFav } = useFavorites();
   const { cart } = useCart();
   const addToCart = useAddToCart();
 
@@ -152,7 +56,7 @@ export const ShopCard = ({
   const name = getProductVariantName(variant);
   // Colour families share a "Name - Shade" naming; the folded card shows just the design name
   const title = showGearName ? product.name : colourways > 1 ? name.split(" - ")[0] : name;
-  const href = getProductVariantUrl(variant);
+  const href = routes.variant(variant);
 
   const inCart = (size: string) => cart.find(i => i.variantId === variant.id && i.size === size)?.quantity ?? 0;
   const quickSizes = product.sizes.length <= 2 ? product.sizes.filter(s => isSizeInStock(variant, s)) : [];
@@ -190,21 +94,11 @@ export const ShopCard = ({
 
         {soldOut && <SoldOutStamp />}
 
-        <button
-          type="button"
-          aria-label={isFavorite(variant.id) ? "Remove from favourites" : "Add to favourites"}
-          onClick={e => {
-            e.preventDefault();
-            toggleFav(variant.id);
-          }}
-          className="absolute top-2.5 right-2.5 z-[2] grid place-items-center w-9 h-9 rounded-full bg-black/55 backdrop-blur text-white">
-          <HeartIcon
-            className="w-[18px] h-[18px]"
-            suppressHydrationWarning
-            fill={isFavorite(variant.id) ? "#fd6e00" : "none"}
-            stroke={isFavorite(variant.id) ? "#fd6e00" : "currentColor"}
-          />
-        </button>
+        <FavoriteButton
+          variantId={variant.id}
+          className="absolute top-2.5 right-2.5 z-[2] grid place-items-center w-9 h-9 rounded-full bg-black/55 backdrop-blur text-white"
+          iconClassName="w-[18px] h-[18px]"
+        />
 
         {/* Quick add slides up on hover (desktop only) */}
         {!soldOut && (

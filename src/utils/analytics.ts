@@ -1,7 +1,10 @@
 import posthog from "posthog-js";
-import { trackMetaViewContent, trackMetaAddToCart } from "./metaPixel";
+import { trackMetaViewContent, trackMetaAddToCart, trackMetaPurchase } from "./metaPixel";
 import { ProductVariant } from "@/types/product";
+import { CartItem, Order } from "@/types/order";
 import { getProductVariantPrice } from "./product";
+import { getCartItemCount } from "./cart";
+import { CURRENCY } from "@/utils/price";
 
 /** Generic PostHog event; a no-op outside production (PostHog is only initialised there) */
 export const track = (event: string, properties?: Record<string, unknown>) => posthog.capture(event, properties);
@@ -50,7 +53,14 @@ export const trackVariantView = ({
   price: number;
 }) => {
   // PostHog tracking
-  posthog.capture("variant_viewed", { product_id: productId, design_id: designId, variant_id: variantId, variant_name: variantName, price, currency: "INR" });
+  posthog.capture("variant_viewed", {
+    product_id: productId,
+    design_id: designId,
+    variant_id: variantId,
+    variant_name: variantName,
+    price,
+    currency: CURRENCY,
+  });
 
   // Meta Pixel tracking
   trackMetaViewContent({
@@ -87,7 +97,7 @@ export const trackVariantAddToCart = ({
     price,
     quantity,
     value: price * quantity,
-    currency: "INR",
+    currency: CURRENCY,
   });
 
   // Meta Pixel tracking
@@ -103,4 +113,20 @@ export const trackVariantAddToCart = ({
 
 export const trackVariantShare = ({ productId, designId }: { productId: string; designId: string }) => {
   posthog.capture("variant_share", { product_id: productId, design_id: designId });
+};
+
+/** Order paid (or placed as cash): PostHog + Meta Pixel */
+export const trackPurchase = ({
+  orderId,
+  paymentMode,
+  value,
+  cart,
+}: {
+  orderId: string;
+  paymentMode: Order["paymentMode"];
+  value: number;
+  cart: CartItem[];
+}) => {
+  track("order_completed", { order_id: orderId, payment_mode: paymentMode, revenue: value, currency: CURRENCY });
+  trackMetaPurchase({ contentIds: cart.map(item => item.variantId), value, numItems: getCartItemCount(cart), orderId });
 };

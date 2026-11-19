@@ -43,7 +43,7 @@ export const HowToWearSection = () => {
       </div>
 
       {/* Mugshot wall: fanned + tilted, straighten on hover. Scrolls sideways on mobile. */}
-      <div className="flex md:justify-center gap-4 md:gap-0 overflow-x-auto md:overflow-visible snap-x snap-mandatory px-4 md:px-8 py-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex md:justify-center gap-4 md:gap-0 overflow-x-auto overflow-y-hidden md:overflow-visible snap-x snap-mandatory px-4 md:px-8 py-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {MUGSHOTS.map((src, i) => (
           <m.div
             key={src}
@@ -101,9 +101,7 @@ export const HowToWearSection = () => {
             {WAYS.map((way, i) => (
               <Reveal key={way} delay={i * 0.04} y={14}>
                 <li className="group flex items-center gap-3 rounded-xl border border-border px-3 py-3 transition hover:border-bandit-orange hover:bg-bandit-orange/10">
-                  <span
-                    className="font-calera text-2xl leading-none text-transparent transition group-hover:text-bandit-orange"
-                    style={{ WebkitTextStroke: "1px #fd6e00" }}>
+                  <span className="font-calera text-2xl leading-none text-transparent transition group-hover:text-bandit-orange [-webkit-text-stroke:1px_theme(colors.bandit-orange)]">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="text-sm">{way}</span>

@@ -1,12 +1,12 @@
 import { ProductVariant } from "@/types/product";
-import { getProductVariantUrl } from "@/utils/share";
+import { routes } from "@/utils/routes";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export function ClickableProductBadge(props: { children: React.ReactNode; variant: ProductVariant }) {
   const router = useRouter();
 
-  const productLink = getProductVariantUrl(props.variant);
+  const productLink = routes.variant(props.variant);
 
   return (
     <Link href={productLink} onMouseEnter={() => router.prefetch(productLink)}>

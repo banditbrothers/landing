@@ -4,7 +4,8 @@ import Link from "next/link";
 import { m } from "motion/react";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import { scrollTo } from "@/utils/misc";
-import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/data/products";
+import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/constants/shipping";
+import { formatCurrency } from "@/utils/price";
 
 const LINES = ["Wear", "Your", "Mischief."];
 const ease = [0.2, 0.7, 0.2, 1] as const;
@@ -82,7 +83,7 @@ export const HeroSection = () => {
         <div className="max-w-screen-2xl mx-auto px-4 md:px-8 h-12 flex items-center justify-between text-[11px] md:text-xs tracking-[0.18em] uppercase text-white/70">
           <span>
             {MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING
-              ? `Free shipping ₹${MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING}+`
+              ? `Free shipping ${formatCurrency(MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING)}+`
               : "Ships across India"}
           </span>
           <span className="hidden md:inline">4-way Quick-Dri fabric</span>

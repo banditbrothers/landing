@@ -1,4 +1,5 @@
 import { isProduction } from "@/utils/misc";
+import type { Order } from "@/types/order";
 
 export const REFERRAL_SOURCES = [
   { id: "facebook-instagram-ads", label: "Facebook / Instagram Ads" },
@@ -45,3 +46,8 @@ export const DEFAULT_ORDER_VALUES = isProduction
         zip: "400001",
       },
     };
+
+export const getPaymentMethodLabel = (order: Order) => {
+  if (order.paymentMode === "rzp") return order.rzp.paymentMethod?.toUpperCase();
+  return order.paymentMode === "manual" ? "Manual" : "Cash";
+};
