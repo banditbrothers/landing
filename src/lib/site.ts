@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 export const SITE_URL = "https://www.banditbrothers.in";
 export const SITE_NAME = "Bandit Brothers";
+export const META_PIXEL_ID = "1407174127410687";
 export const SITE_DESCRIPTION =
   "Bandit Brothers — premium bandanas and headwear. Wear your mischief. Shop bold designs, best sellers, and comfortable everyday style. Made in India.";
 

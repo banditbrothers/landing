@@ -12,7 +12,7 @@ import { MetaPixelProvider } from "@/provider/metaPixel";
 import { TanstackQueryProvider } from "@/provider/TanstackQuery";
 import { MotionProvider } from "@/provider/MotionProvider";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { DEFAULT_OG_IMAGE, META_PIXEL_ID, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
@@ -66,7 +66,7 @@ export default function RootLayout({
             height="1"
             width="1"
             style={{ display: "none" }}
-            src="https://www.facebook.com/tr?id=1023145726553010&ev=PageView&noscript=1"
+            src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
             alt=""
           />
         </noscript>
