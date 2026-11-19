@@ -68,7 +68,7 @@ export const Gallery = ({ variant, soldOut }: { variant: ProductVariant; soldOut
           type="button"
           aria-label="Share"
           onClick={() => shareVariant(variant)}
-          className="sm:hidden absolute top-2 right-2 grid place-items-center w-10 h-10 rounded-full bg-black/60 backdrop-blur text-white">
+          className="sm:hidden absolute bottom-2 right-2 grid place-items-center w-10 h-10 rounded-full bg-black/60 backdrop-blur text-white">
           <ShareIcon className="w-[18px] h-[18px]" />
         </button>
         <div className="absolute top-4 left-4 flex gap-2 pointer-events-none">

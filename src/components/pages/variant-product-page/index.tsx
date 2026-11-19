@@ -20,7 +20,6 @@ import { useVariants } from "@/hooks/useVariants";
 import type { RatingSummary } from "@/lib/reviews";
 import { ReviewWithoutEmail } from "@/types/review";
 import { DEFAULT_SIZE, PRODUCTS_OBJ } from "@/data/products";
-import { DESIGN_CATEGORIES_OBJ, DESIGNS_OBJ } from "@/data/designs";
 import { formatCurrency } from "@/utils/price";
 import { getFreeShippingProgress } from "@/utils/cart";
 import { shareVariant } from "@/utils/share";
@@ -120,7 +119,6 @@ export const ProductPageContents = ({
 
   const name = getProductVariantName(variant);
   const price = getProductVariantPrice(variant);
-  const design = DESIGNS_OBJ[variant.designId];
   const product = PRODUCTS_OBJ[variant.productId];
   const soldOut = sizeStock === 0;
   const canAdd = !soldOut && maxAddable !== 0;
@@ -153,9 +151,7 @@ export const ProductPageContents = ({
 
         {/* Buy box */}
         <div className="min-w-0">
-          <span className="text-xs tracking-[0.18em] uppercase text-muted-foreground">
-            {product.name} · {DESIGN_CATEGORIES_OBJ[design.category]?.name}
-          </span>
+          <span className="text-xs tracking-[0.18em] uppercase text-muted-foreground">{product.name}</span>
           <FitTitle
             as="h1"
             text={name}

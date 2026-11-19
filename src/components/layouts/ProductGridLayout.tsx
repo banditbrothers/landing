@@ -1,30 +1,16 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { HeartIcon, PackageCheckIcon, StarIcon } from "lucide-react";
 import { ShopCard } from "@/components/cards/ShopCard";
-import { Sticker } from "@/components/misc/Stickers";
-import { Swatch } from "@/components/misc/Swatch";
 import { useFavorites } from "../stores/favorites";
 import { LoadingIcon } from "../misc/Loading";
 import { LoadMoreTrigger } from "../misc/LoadMoreTrigger";
-import { FitTitle } from "../typography/FitTitle";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { DesignColor, ProductVariant } from "@/types/product";
 import { DESIGN_COLOR_OBJ, DESIGN_COLORS, DESIGNS, DESIGNS_OBJ } from "@/data/designs";
-import {
-  familyOf,
-  getProductVariantName,
-  groupByFamily,
-  isListed,
-  isVariantOutOfStock,
-  sortOutOfStockLast,
-} from "@/utils/product";
-import { routes } from "@/utils/routes";
+import { familyOf, groupByFamily, isListed, isVariantOutOfStock, sortOutOfStockLast } from "@/utils/product";
 
 const SORT_OPTIONS = [
   { value: "newest-arrivals", label: "Newest" },
@@ -53,7 +39,7 @@ const Pill = ({ on, onClick, children }: { on: boolean; onClick: () => void; chi
     type="button"
     aria-pressed={on}
     onClick={onClick}
-    className={`shrink-0 inline-flex items-center gap-2 h-9 px-3 sm:px-4 rounded-full [&>svg]:hidden sm:[&>svg]:block border text-sm whitespace-nowrap transition-colors ${
+    className={`shrink-0 inline-flex items-center gap-2 h-9 px-3 sm:px-4 rounded-full border text-sm whitespace-nowrap transition-colors ${
       on
         ? "bg-foreground text-background border-foreground font-semibold"
         : "border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground/60"
@@ -116,28 +102,10 @@ const ProductGridLayoutContent = ({ productVariants }: { productVariants: Produc
 
   const activeCount = selectedColors.length + +bestOnly + +favOnly + +inStockOnly;
 
-  // Editorial tile for the biggest colour family, only on the unfiltered first page.
-  // "Hide sold out" doesn't count: families come from `filtered`, so the tile just drops the sold-out shades.
-  const biggest = [...families.values()].sort((a, b) => b.length - a.length)[0] ?? [];
-  const familyMembers = biggest.length >= 4 ? biggest : [];
-  const showEditorial = activeCount === +inStockOnly && familyMembers.length > 0 && results.length > 6;
-
-  const cards = results
-    .slice(0, shown)
-    .map((v, i) => (
-      <ShopCard
-        key={v.id}
-        variant={v}
-        priority={i < 4}
-        family={selectedColors.length ? undefined : families.get(familyOf(v.designId))}
-      />
-    ));
-  if (showEditorial) cards.splice(6, 0, <FamilyEditorial key="editorial" members={familyMembers} />);
-
   return (
     <>
       {/* Sticky toolbar under the fixed navbar */}
-      <div className="sticky top-[var(--nav-h)] transition-[top] duration-300 z-30 -mx-4 md:-mx-8 px-4 md:px-8 py-3 bg-background/90 backdrop-blur-md border-b border-border">
+      <div className="sticky top-[var(--nav-h)] transition-[top] duration-300 z-30 -mx-4 md:-mx-8 px-4 md:px-8 py-3 bg-background/90 backdrop-blur-md after:absolute after:inset-x-4 md:after:inset-x-8 after:bottom-0 after:h-px after:bg-border">
         <div className="flex flex-wrap md:flex-nowrap items-center gap-2.5">
           <div className="flex gap-2 overflow-x-auto overflow-y-hidden basis-full md:basis-auto md:flex-1 min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <Pill on={bestOnly} onClick={() => toggle("best-sellers", bestOnly)}>
@@ -211,7 +179,16 @@ const ProductGridLayoutContent = ({ productVariants }: { productVariants: Produc
             <p className="text-muted-foreground">Nothing matches those filters. Loosen up a little.</p>
           </div>
         ) : (
-          cards
+          results
+            .slice(0, shown)
+            .map((v, i) => (
+              <ShopCard
+                key={v.id}
+                variant={v}
+                priority={i < 4}
+                family={selectedColors.length ? undefined : families.get(familyOf(v.designId))}
+              />
+            ))
         )}
       </div>
 
@@ -219,60 +196,6 @@ const ProductGridLayoutContent = ({ productVariants }: { productVariants: Produc
         <LoadMoreTrigger key={shown} onReach={() => setPaging({ key: filterKey, shown: shown + PAGE_SIZE })} />
       )}
     </>
-  );
-};
-
-const FamilyEditorial = ({ members }: { members: ProductVariant[] }) => {
-  const title = getProductVariantName(members[0]).split(" - ")[0];
-  // Same rule as ShopCard: swatches/colour copy only when each member looks different
-  const distinctColours = new Set(members.map(v => DESIGNS_OBJ[v.designId].swatch.join())).size === members.length;
-  return (
-    <Link
-      href={routes.variant(members[0])}
-      className="col-span-2 grid md:grid-cols-2 rounded-2xl overflow-hidden bg-card min-h-[340px] group">
-      <div className="p-5 md:p-7 flex flex-col justify-between gap-4 order-2 md:order-1">
-        <div>
-          <Sticker>
-            {members.length} {distinctColours ? "colourways" : "options"}
-          </Sticker>
-        </div>
-        <div>
-          <FitTitle as="h3" text={title} max="4rem" className="font-calera uppercase leading-[0.9]" />
-          <p className="text-sm text-muted-foreground mt-2.5">
-            {distinctColours
-              ? `One design, ${members.length} shades. Pick the one that matches your ride.`
-              : `One series, ${members.length} designs. Pick the one that's yours.`}
-          </p>
-        </div>
-        {distinctColours ? (
-          <div className="flex gap-1.5 flex-wrap">
-            {members.map(v => (
-              <Swatch
-                key={v.id}
-                colors={DESIGNS_OBJ[v.designId].swatch}
-                className="w-[22px] h-[22px] rounded-md border border-white/25"
-              />
-            ))}
-          </div>
-        ) : (
-          <span className="text-sm text-muted-foreground">{members.length} options</span>
-        )}
-      </div>
-      <div className="grid grid-cols-2 grid-rows-2 order-1 md:order-2">
-        {members.slice(0, 4).map(v => (
-          <div key={v.id} className="relative aspect-square md:aspect-auto overflow-hidden">
-            <Skeleton className="absolute inset-0 rounded-none" />
-            <Image
-              fill
-              src={v.images.mockup[0]}
-              alt=""
-              sizes="(min-width: 768px) 15vw, 50vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-        ))}
-      </div>
-    </Link>
   );
 };
 

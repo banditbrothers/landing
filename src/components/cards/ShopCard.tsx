@@ -96,7 +96,7 @@ export const ShopCard = ({
 
         <FavoriteButton
           variantId={variant.id}
-          className="absolute top-2.5 right-2.5 z-[2] grid place-items-center w-9 h-9 rounded-full bg-black/55 backdrop-blur text-white"
+          className="absolute top-1.5 right-1.5 z-[2] grid place-items-center w-9 h-9 rounded-full bg-black/55 backdrop-blur text-white"
           iconClassName="w-[18px] h-[18px]"
         />
 
