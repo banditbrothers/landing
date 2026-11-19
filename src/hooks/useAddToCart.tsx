@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { toast } from "sonner";
-import { useCart } from "@/components/stores/cart";
+import { openCart, useCart } from "@/components/stores/cart";
 import { useVariants } from "@/hooks/useVariants";
 import { ProductVariant } from "@/types/product";
 import { formatCurrency } from "@/utils/price";
@@ -12,7 +12,7 @@ import { getProductVariantName, getProductVariantPrice } from "@/utils/product";
 
 /** Adds to cart and toasts the free-shipping progress; `openCart` opens the bag instead of offering a "View bag" link */
 export const useAddToCart = () => {
-  const { cart, coupon, updateCartItem, openCart } = useCart();
+  const { cart, coupon, updateCartItem } = useCart();
   const { data: variants } = useVariants();
 
   return (variant: ProductVariant, size: string, quantity = 1, options: { openCart?: boolean } = {}) => {

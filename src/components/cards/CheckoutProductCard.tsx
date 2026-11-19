@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { QuantityStepper } from "../misc/QuantityStepper";
-import { useCart } from "../stores/cart";
+import { closeCartForNavigation } from "../stores/cart";
 import { formatCurrency } from "@/utils/price";
 import { ProductVariant } from "@/types/product";
 import { routes } from "@/utils/routes";
@@ -24,8 +24,6 @@ export const CheckoutProductCard = ({
   updateCartItemBy,
   removeCartItem,
 }: CheckoutProductCardProps) => {
-  const closeCart = useCart(s => s.closeCart);
-
   const name = getProductVariantName(variant);
   const price = getProductVariantPrice(variant);
   const stock = getSizeStock(variant, size);
@@ -33,7 +31,11 @@ export const CheckoutProductCard = ({
 
   return (
     <div className="flex gap-3 py-4 border-b border-border last:border-b-0">
-      <Link href={url} onClick={closeCart} className="w-[72px] h-[72px] sm:w-20 sm:h-20 relative shrink-0">
+      <Link
+        href={url}
+        replace
+        onClick={closeCartForNavigation}
+        className="w-[72px] h-[72px] sm:w-20 sm:h-20 relative shrink-0">
         <Skeleton className="absolute inset-0 rounded-lg" />
         <Image
           fill
@@ -45,7 +47,7 @@ export const CheckoutProductCard = ({
       </Link>
       <div className="flex-1 min-w-0">
         <div className="flex justify-between gap-3 text-sm">
-          <Link href={url} onClick={closeCart} className="font-medium hover:underline">
+          <Link href={url} replace onClick={closeCartForNavigation} className="font-medium hover:underline">
             {name}
           </Link>
           <span className="shrink-0">{formatCurrency(price)}</span>

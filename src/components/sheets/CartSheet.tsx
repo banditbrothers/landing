@@ -2,7 +2,7 @@
 
 import { Button } from "../ui/button";
 
-import { useCart } from "@/components/stores/cart";
+import { closeCart, closeCartForNavigation, useCart, useIsCartOpen } from "@/components/stores/cart";
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { CheckoutProductCard } from "../cards/CheckoutProductCard";
@@ -15,7 +15,8 @@ import { LoadingIcon } from "@/components/misc/Loading";
 import { ArrowRight, Truck } from "lucide-react";
 
 export const CartSheet = () => {
-  const { cart: cartItems, coupon, isCartOpen, closeCart, updateCartItem, removeCartItem } = useCart();
+  const { cart: cartItems, coupon, updateCartItem, removeCartItem } = useCart();
+  const isCartOpen = useIsCartOpen();
   const { data: variants, isReady } = useVariants();
 
   const subtotal = getCartSubtotal(cartItems, variants);
@@ -24,9 +25,10 @@ export const CartSheet = () => {
 
   const router = useRouter();
 
+  // Replace the cart's history entry, so back from checkout returns to this page
   const handleCheckout = () => {
-    router.push("/checkout");
-    closeCart();
+    closeCartForNavigation();
+    router.replace("/checkout");
   };
 
   const cartContent =

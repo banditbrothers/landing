@@ -10,7 +10,7 @@ import { scrollTo } from "@/utils/misc";
 
 import { Button } from "./ui/button";
 import { ShoppingBagIcon, SearchIcon } from "../Icons/icons";
-import { useCart, useCartHydrated } from "@/components/stores/cart";
+import { openCart, useCart, useCartHydrated } from "@/components/stores/cart";
 import { LoadingIcon } from "./misc/Loading";
 import { useParamBasedFeatures } from "@/hooks/useParamBasedFeature";
 import { ACTIVE_PRODUCTS } from "@/data/products";
@@ -191,7 +191,6 @@ const FreeShippingMeter = () => {
 
 const CartButton = () => {
   const cartItems = useCart(state => state.cart);
-  const { openCart } = useCart();
   // The server can't see the cart (localStorage), so count 0 until it loads instead of mismatching the server HTML
   const cartHydrated = useCartHydrated();
 

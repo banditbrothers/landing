@@ -16,10 +16,6 @@ type CartState = {
   removeCartItem: (id: string, size?: string) => void;
   clearCart: () => void;
 
-  isCartOpen: boolean;
-  closeCart: () => void;
-  openCart: () => void;
-
   coupon: Coupon | null;
   setCoupon: (coupon: Coupon | null) => void;
   clearCoupon: () => void;
@@ -31,13 +27,6 @@ export const useCart = create<CartState>()(
       set => ({
         cart: [],
         coupon: null,
-        isCartOpen: false,
-
-        closeCart: () => set({ isCartOpen: false }),
-        openCart: () => {
-          track("cart_viewed");
-          set({ isCartOpen: true });
-        },
 
         updateCartItem: (id, quantity = 1, size = DEFAULT_SIZE) => {
           if (quantity < 0) track("cart_item_removed", { variant_id: id, size, quantity: -quantity });
@@ -84,6 +73,43 @@ export const useCart = create<CartState>()(
     { name: "cart" }
   )
 );
+
+// The cart is open exactly when the current history entry says so: opening pushes a flagged entry (same URL),
+// so the phone's back button closes it. Not in the store: per tab, and a store copy can disagree with history.
+const CART_HISTORY_KEY = "cartOpen";
+const CART_HISTORY_EVENT = "cart-history-change"; // pushState/replaceState don't fire popstate
+
+const isCartOpenNow = () => !!window.history.state?.[CART_HISTORY_KEY];
+
+const subscribeToCartOpen = (onChange: () => void) => {
+  window.addEventListener("popstate", onChange);
+  window.addEventListener(CART_HISTORY_EVENT, onChange);
+  return () => {
+    window.removeEventListener("popstate", onChange);
+    window.removeEventListener(CART_HISTORY_EVENT, onChange);
+  };
+};
+
+export const useIsCartOpen = () => useSyncExternalStore(subscribeToCartOpen, isCartOpenNow, () => false);
+
+export const openCart = () => {
+  if (isCartOpenNow()) return;
+  track("cart_viewed");
+  // Spread Next's own history state, or its popstate handler hard-reloads the page
+  window.history.pushState({ ...window.history.state, [CART_HISTORY_KEY]: true }, "");
+  window.dispatchEvent(new Event(CART_HISTORY_EVENT));
+};
+
+export const closeCart = () => {
+  if (isCartOpenNow()) window.history.back();
+};
+
+/** For links out of the cart, which then `replace` this entry: going back as well would race their navigation */
+export const closeCartForNavigation = () => {
+  if (!isCartOpenNow()) return;
+  window.history.replaceState({ ...window.history.state, [CART_HISTORY_KEY]: false }, "");
+  window.dispatchEvent(new Event(CART_HISTORY_EVENT));
+};
 
 /** False on the server and until the cart has loaded from localStorage, so pages don't flash an empty cart. */
 // `persist` is undefined on the server (no localStorage), hence the `?.`
