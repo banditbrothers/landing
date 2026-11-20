@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Space_Grotesk } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import { CSPostHogProvider } from "@/provider/posthog";
 import { Toaster } from "@/components/ui/sonner";
@@ -86,6 +87,7 @@ export default function RootLayout({
             </TanstackQueryProvider>
           </CSPostHogProvider>
         </MetaPixelProvider>
+        <Analytics />
       </body>
     </html>
   );
