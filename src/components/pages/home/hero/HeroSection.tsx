@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { m } from "motion/react";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import { scrollTo } from "@/utils/misc";
 import { MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING } from "@/constants/shipping";
 import { formatCurrency } from "@/utils/price";
 
 const LINES = ["Wear", "Your", "Mischief."];
-const ease = [0.2, 0.7, 0.2, 1] as const;
+// CSS rather than Motion so the sequence starts on first paint, in step with the navbar, instead of after hydration.
+// fill-mode-both keeps each piece hidden through its delay.
+const ENTER = "animate-in fill-mode-both ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:animate-none";
 
 export const HeroSection = () => {
   return (
@@ -28,36 +29,28 @@ export const HeroSection = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
 
       <div className="relative z-10 h-full max-w-screen-2xl mx-auto px-4 md:px-8 flex flex-col justify-end pb-24 md:pb-20">
-        <m.p
-          className="text-xs md:text-sm tracking-[0.25em] uppercase text-white/80 mb-4 flex items-center gap-3"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease }}>
+        <p
+          className={`${ENTER} fade-in slide-in-from-left-5 duration-500 delay-150 text-xs md:text-sm tracking-[0.25em] uppercase text-white/80 mb-4 flex items-center gap-3`}>
           <span className="h-px w-10 bg-bandit-orange" />
           <span>
             Bandanas · Balaclavas · <span className="whitespace-nowrap">Made in India</span>
           </span>
-        </m.p>
+        </p>
 
         <h1 className="font-calera uppercase text-white leading-[0.85] text-[clamp(4.5rem,17vw,13rem)]">
           {LINES.map((line, i) => (
             <span key={line} className="block overflow-hidden pb-[0.04em]">
-              <m.span
-                className={`block ${i === 2 ? "text-bandit-orange" : ""}`}
-                initial={{ y: "105%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.9, delay: 0.4 + i * 0.12, ease }}>
+              <span
+                className={`${ENTER} slide-in-from-bottom-[105%] duration-700 block ${i === 2 ? "text-bandit-orange" : ""}`}
+                style={{ animationDelay: `${200 + i * 80}ms` }}>
                 {line}
-              </m.span>
+              </span>
             </span>
           ))}
         </h1>
 
-        <m.div
-          className="mt-8 flex flex-col md:flex-row md:items-end justify-between gap-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.95, ease }}>
+        <div
+          className={`${ENTER} fade-in slide-in-from-bottom-5 duration-500 delay-500 mt-8 flex flex-col md:flex-row md:items-end justify-between gap-6`}>
           <p className="text-base md:text-lg text-white/80 max-w-md leading-relaxed">
             Quick-Dri headwear in loud prints, built for long rides, hot days and bad ideas.
           </p>
@@ -74,14 +67,11 @@ export const HeroSection = () => {
               Best sellers
             </button>
           </div>
-        </m.div>
+        </div>
       </div>
 
-      <m.div
-        className="absolute bottom-0 inset-x-0 z-10 border-t border-white/10 bg-black/60"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.3 }}>
+      <div
+        className={`${ENTER} fade-in duration-500 delay-500 absolute bottom-0 inset-x-0 z-10 border-t border-white/10 bg-black/60`}>
         <div className="max-w-screen-2xl mx-auto px-4 md:px-8 h-12 flex items-center justify-between text-[11px] md:text-xs tracking-[0.18em] uppercase text-white/70">
           <span>
             {MIN_ORDER_AMOUNT_FOR_FREE_SHIPPING
@@ -97,7 +87,7 @@ export const HeroSection = () => {
             Scroll <ArrowDown className="h-3.5 w-3.5 animate-bounce" />
           </button>
         </div>
-      </m.div>
+      </div>
     </section>
   );
 };

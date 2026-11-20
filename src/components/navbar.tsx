@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, Suspense, useSyncExternalStore } from "react";
-import { m } from "motion/react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { usePathname } from "next/navigation";
@@ -34,6 +33,8 @@ const LINKS = [
 
 export default function NavBar() {
   const pathname = usePathname();
+  // Frozen at first render: the slide is for landing on home, not for client navigations back to it
+  const [slidesIn] = useState(pathname === "/");
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isRowHidden, setIsRowHidden] = useState(false);
@@ -66,13 +67,11 @@ export default function NavBar() {
 
   return (
     <>
-      <m.header
+      {/* CSS, not Motion: it starts on first paint instead of waiting for hydration with the bar off-screen */}
+      <header
         className={`fixed top-0 inset-x-0 right-scroll-bar-position z-50 transition-colors duration-300 border-b ${
           isSolid ? "bg-background border-border" : "bg-transparent border-transparent"
-        }`}
-        initial={{ y: isHomePath ? -100 : 0 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}>
+        } ${slidesIn ? "animate-in slide-in-from-top [animation-duration:500ms] motion-reduce:animate-none" : ""}`}>
         <div className="max-w-screen-2xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between gap-3">
           <Link
             href="/"
@@ -128,7 +127,7 @@ export default function NavBar() {
             </div>
           </div>
         )}
-      </m.header>
+      </header>
       {/* Pages pad for row 1 only; this covers row 2. The home hero sits under the transparent bar instead. */}
       {showRow2 && !isHomePath && <div className="h-10" aria-hidden />}
     </>
