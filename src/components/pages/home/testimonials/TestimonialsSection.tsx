@@ -1,13 +1,9 @@
 "use client";
 
-import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ReviewWithoutEmail } from "@/types/review";
-import { StarRating } from "@/components/misc/StarRating";
-import { ClickableProductBadge } from "@/components/badges/ClickableProductBadges";
-import { useVariants } from "@/hooks/useVariants";
-import { getProductVariantName } from "@/utils/product";
+import { ReviewCard } from "@/components/cards/ReviewCard";
 import { Reveal, SectionHead } from "@/components/misc/Reveal";
 
 const FEATURED_REVIEWS: ReviewWithoutEmail[] = [
@@ -58,17 +54,24 @@ const FEATURED_REVIEWS: ReviewWithoutEmail[] = [
     ],
     status: "approved",
   },
+  {
+    id: "JSLHa02RDDUx2N0ZU9ma",
+    name: "Asmaa Ahmed",
+    title: "Superb bandanas with unique themes",
+    comment: "Great experience, something different and price factor also pocket friendly. Overall good in quality",
+    rating: 5,
+    source: "website",
+    orderId: "7SaCy63KNsQH1ktLRdMq",
+    createdAt: 1756316480,
+    variantIds: ["BANDANA-LOOKS_FISHY", "BANDANA-MEOW_MEOW"],
+    images: [
+      "https://firebasestorage.googleapis.com/v0/b/banditbrothers-5253.firebasestorage.app/o/reviews%2FJSLHa02RDDUx2N0ZU9ma%2F0.jpg?alt=media&token=dc3a2ba1-7543-4e54-85f6-259cdcaa8462",
+    ],
+    status: "approved",
+  },
 ];
 
-const titleCase = (name: string) =>
-  name
-    .split(" ")
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(" ");
-
 export const TestimonialsSection = () => {
-  const { data: variants } = useVariants();
-
   return (
     <section id="reviews" className="scroll-mt-20 max-w-screen-2xl mx-auto px-4 md:px-8">
       <SectionHead
@@ -86,41 +89,11 @@ export const TestimonialsSection = () => {
         </Link>
       </SectionHead>
 
-      <div className="grid md:grid-cols-3 gap-4 md:gap-5">
+      {/* Swipe row below lg so the section stays one card tall on phones */}
+      <div className="flex gap-4 -mx-4 px-4 md:-mx-8 md:px-8 scroll-px-4 md:scroll-px-8 overflow-x-auto overflow-y-hidden snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-4 lg:gap-5 lg:mx-0 lg:px-0 lg:overflow-visible">
         {FEATURED_REVIEWS.map((review, i) => (
-          <Reveal key={review.id} delay={i * 0.1} className={i === 1 ? "md:mt-12" : ""}>
-            <figure className="group h-full flex flex-col rounded-3xl bg-card border border-border overflow-hidden transition hover:-translate-y-1 hover:border-bandit-orange/60">
-              {review.images[0] && (
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <SkeletonImage
-                    src={review.images[0]}
-                    alt={review.title}
-                    fill
-                    sizes="(min-width: 768px) 33vw, 100vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                </div>
-              )}
-              <div className="p-6 flex flex-col gap-3 flex-1">
-                <StarRating value={review.rating} />
-                <h3 className="font-calera uppercase text-2xl leading-tight">&ldquo;{review.title}&rdquo;</h3>
-                <blockquote className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
-                  {review.comment}
-                </blockquote>
-                <figcaption className="mt-auto pt-4 border-t border-border flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-sm font-medium">{titleCase(review.name)}</span>
-                  {review.source === "website" &&
-                    review.variantIds.map(id => {
-                      const variant = variants.find(v => v.id === id);
-                      return variant ? (
-                        <ClickableProductBadge variant={variant} key={id}>
-                          {getProductVariantName(variant)}
-                        </ClickableProductBadge>
-                      ) : null;
-                    })}
-                </figcaption>
-              </div>
-            </figure>
+          <Reveal key={review.id} delay={i * 0.1} className="w-[80%] sm:w-[45%] shrink-0 snap-start lg:w-auto">
+            <ReviewCard review={review} />
           </Reveal>
         ))}
       </div>

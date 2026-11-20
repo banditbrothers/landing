@@ -59,7 +59,7 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
   return (
     <article
       id={`r-${review.id}`}
-      className={`scroll-mt-28 rounded-2xl border overflow-hidden transition hover:-translate-y-0.5 ${
+      className={`h-full flex flex-col scroll-mt-28 rounded-2xl border overflow-hidden transition hover:-translate-y-0.5 ${
         loud ? "bg-bandit-orange border-bandit-orange text-bandit-ink" : "bg-card border-border hover:border-zinc-600"
       }`}>
       {photo && (
@@ -75,7 +75,7 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
         </div>
       )}
 
-      <div className={loud ? "px-6 pt-7 pb-5" : "p-5 md:p-6"}>
+      <div className={`flex-1 flex flex-col ${loud ? "px-6 pt-7 pb-5" : "p-5 md:p-6"}`}>
         {loud && <span className="block font-calera text-[90px] leading-[0.5] h-8">“</span>}
         <div className="flex items-center justify-between gap-3">
           <StarRating
@@ -97,7 +97,7 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
           }>
           {review.title.trim()}
         </h3>
-        <p className={`text-[15px] leading-relaxed mt-2.5 ${loud ? "text-bandit-ink/80" : "text-zinc-300"}`}>
+        <p className={`flex-1 text-[15px] leading-relaxed mt-2.5 ${loud ? "text-bandit-ink/80" : "text-zinc-300"}`}>
           {review.comment}
         </p>
 
@@ -139,19 +139,19 @@ export const ReviewCard = ({ review, loud = false, priority = false, currentVari
         <div
           className={`flex items-center gap-2.5 mt-4 pt-4 border-t border-dashed text-sm ${loud ? "border-bandit-ink/25" : "border-border"}`}>
           <span
-            className={`grid place-items-center w-[34px] h-[34px] rounded-full text-[13px] font-bold ${
+            className={`shrink-0 grid place-items-center w-[34px] h-[34px] rounded-full text-[13px] font-bold ${
               loud ? "bg-bandit-ink text-bandit-orange" : "bg-bandit-orange text-bandit-ink"
             }`}>
             {initials(review.name)}
           </span>
-          {shortName(review.name)}
+          <span className="min-w-0 truncate">{shortName(review.name)}</span>
           {review.source === "website" && (
             <span
-              className={`ml-auto inline-flex items-center gap-1 text-[11px] tracking-[0.1em] uppercase ${
+              className={`ml-auto shrink-0 whitespace-nowrap inline-flex items-center gap-1 text-[11px] tracking-[0.1em] uppercase ${
                 loud ? "text-bandit-ink/70" : "text-muted-foreground"
               }`}>
               <Check className={`w-3.5 h-3.5 ${loud ? "" : "text-bandit-orange"}`} strokeWidth={2.4} />
-              Verified buyer
+              Verified
             </span>
           )}
         </div>
