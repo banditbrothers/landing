@@ -1,7 +1,7 @@
 import { PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
 import { DESIGNS_OBJ } from "@/data/designs";
 import { getTimestamp, SECONDS_PER_DAY } from "@/utils/timestamp";
-import { ProductVariant } from "@/types/product";
+import { Product, ProductVariant } from "@/types/product";
 
 export const getSKU = (productId: string, designId: string) => {
   return `${productId.toUpperCase().replaceAll("-", "_")}-${designId.toUpperCase().replaceAll("-", "_")}`;
@@ -56,6 +56,9 @@ export const getFirstInStockSize = (variant: ProductVariant): string | undefined
 export const sortOutOfStockLast = (variants: ProductVariant[]) => {
   return [...variants.filter(v => !isVariantOutOfStock(v)), ...variants.filter(isVariantOutOfStock)];
 };
+
+/** Every product name pluralises with a plain "s" today ("Tube Bandanas", "Balaclavas") */
+export const getProductPluralName = (product: Product) => `${product.name}s`;
 
 export const exceedsStock = (variant: ProductVariant, size: string, quantity: number) => {
   const stock = getSizeStock(variant, size);

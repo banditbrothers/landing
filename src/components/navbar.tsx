@@ -19,6 +19,7 @@ import { ProductVariant } from "@/types/product";
 import { getCartItemCount, getFreeShippingProgress } from "@/utils/cart";
 import { formatCurrency } from "@/utils/price";
 import { routes } from "@/utils/routes";
+import { getProductPluralName } from "@/utils/product";
 import { VARIANTS_QUERY_KEY } from "@/hooks/useVariants";
 
 // Keep in sync with the h-16 / h-10 rows below; pages read --nav-h for sticky offsets
@@ -27,7 +28,7 @@ const ROW_2 = 40;
 
 const LINKS = [
   { href: "/shop", label: "Shop all" },
-  ...ACTIVE_PRODUCTS.map(p => ({ href: routes.product(p.id), label: `${p.name}s` })),
+  ...ACTIVE_PRODUCTS.map(p => ({ href: routes.product(p.id), label: getProductPluralName(p) })),
   { href: "/reviews", label: "Reviews" },
 ];
 

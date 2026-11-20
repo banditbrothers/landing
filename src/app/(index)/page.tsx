@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 
 import { HeroSection } from "@/components/pages/home/hero/HeroSection";
 import { LandingPageSections } from "@/components/pages/home/LandingPageSections";
+import { getApprovedReviews, getRatingSummary } from "@/lib/reviews";
 import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+
+export const revalidate = 86400; // 24h, = REVIEWS_CACHE_SECONDS in lib/reviews.ts (Next needs a literal here)
 
 export const metadata: Metadata = {
   title: {
@@ -28,11 +31,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Never break the home page over reviews
+  const reviews = await getApprovedReviews().catch(error => {
+    console.error("Error fetching reviews:", error);
+    return null;
+  });
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <HeroSection />
-      <LandingPageSections />
+      <LandingPageSections rating={reviews ? getRatingSummary(reviews) : null} />
     </div>
   );
 }

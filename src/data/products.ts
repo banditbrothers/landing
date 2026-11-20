@@ -7,6 +7,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "bandana",
     name: "Tube Bandana",
+    tagline: "The OG. 12+ ways to wear it.",
     description: [
       "Stay stylish and protected with our premium bandanas—designed for bikers, runners, and outdoor adventurers.",
       "Made from breathable, lightweight fabric, these versatile headwraps offer UV protection, sweat absorption, and dust resistance, making them ideal for long rides and outdoor activities.",
@@ -32,6 +33,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "balaclava",
     name: "Balaclava",
+    tagline: "Full cover for full send.",
     description: [
       "Stay stylish and protected with our premium balaclavas — designed for bikers and outdoor adventurers.",
       "Made from breathable, lightweight fabric, these versatile headwraps offer UV protection, sweat absorption, and dust resistance, making them ideal for long rides and outdoor activities.",
@@ -57,6 +59,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "square-bandana",
     name: "Square Bandana",
+    tagline: "Kerchief-style, pocket-ready.",
     description: [
       "Add a bold twist to your look with our versatile Kerchief styled square pocket bandanas.",
       "Perfect for bikers, travelers, or everyday style, these lightweight bandanas can be worn as a headwrap, neck scarf, wrist tie, or even a mask.",

@@ -54,6 +54,8 @@ export type Product = {
   sizeLabels?: Record<string, string>;
   material: string;
   dimensions: Record<string, string>;
+  // One-liner on the home page gear tiles
+  tagline?: string;
   // Generic product images (no specific design)
   baseImages?: ImageSet;
   // false = hidden from the storefront (catalog, nav, sitemap) and not orderable. Old orders, reviews and admin still see it

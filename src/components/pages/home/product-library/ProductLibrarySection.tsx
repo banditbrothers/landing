@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { GearTile } from "@/components/cards/GearTile";
 
 import { useVariants } from "@/hooks/useVariants";
 import { ACTIVE_PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
@@ -21,12 +22,6 @@ import {
 import { Reveal, SectionHead } from "@/components/misc/Reveal";
 import { SOLD_OUT_IMAGE, SoldOutStamp } from "@/components/misc/Stickers";
 import { FamilySwatches } from "@/components/misc/FamilySwatches";
-
-const GEAR_COPY: Record<string, string> = {
-  bandana: "The OG. 12+ ways to wear it.",
-  balaclava: "Full cover for full send.",
-  "square-bandana": "Kerchief-style, pocket-ready.",
-};
 
 // Bento of product types
 export const ShopByGear = () => {
@@ -60,37 +55,16 @@ export const ShopByGear = () => {
                   ? "col-span-2 h-[240px] md:h-auto"
                   : "col-span-1 md:col-span-2 h-[220px] md:h-auto"
             }>
-            <Link
+            <GearTile
               href={routes.product(product.id)}
-              className="group relative isolate block h-full rounded-2xl overflow-hidden bg-card">
-              <SkeletonImage
-                skeletonClassName="-z-10"
-                fill
-                src={product.baseImages?.mockup?.[0]}
-                alt={product.name}
-                sizes="(min-width: 768px) 50vw, 100vw"
-                className="object-cover -z-10 transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent from-30% to-black/85" />
-              <span className="absolute top-4 left-5 text-xs tracking-[0.18em] text-white/80">0{i + 1}</span>
-              <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-3">
-                <div>
-                  <h3
-                    className={`font-calera uppercase leading-[0.9] text-white ${
-                      i === 0 ? "text-[clamp(3rem,7vw,6.5rem)]" : "text-[clamp(1.75rem,3.5vw,3.5rem)]"
-                    }`}>
-                    {product.name}
-                  </h3>
-                  <p className="text-sm text-white/80 mt-2">
-                    {GEAR_COPY[product.id] && <span className="hidden sm:inline">{GEAR_COPY[product.id]} · </span>}
-                    from {formatCurrency(product.basePrice)}
-                  </p>
-                </div>
-                <span className="hidden md:grid shrink-0 place-items-center w-12 h-12 rounded-full bg-white text-black transition duration-300 group-hover:bg-bandit-orange group-hover:-rotate-45">
-                  <ArrowRight className="w-5 h-5" />
-                </span>
-              </div>
-            </Link>
+              image={product.baseImages?.mockup?.[0]}
+              title={product.name}
+              titleClassName={i === 0 ? "text-[clamp(3rem,7vw,6.5rem)]" : "text-[clamp(1.75rem,3.5vw,3.5rem)]"}
+              sizes="(min-width: 768px) 50vw, 100vw"
+              kicker={`0${i + 1}`}>
+              {product.tagline && <span className="hidden sm:inline">{product.tagline} · </span>}
+              from {formatCurrency(product.basePrice)}
+            </GearTile>
           </Reveal>
         ))}
       </div>
