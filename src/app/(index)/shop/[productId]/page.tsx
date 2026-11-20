@@ -29,11 +29,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <div>
       <LdScript
-        data={breadcrumbLd([
-          ["Home", "/"],
-          ["Shop", "/shop"],
-          [`${PRODUCTS_OBJ[productId].name}s`, routes.product(productId)],
-        ])}
+        data={[
+          breadcrumbLd([
+            ["Home", "/"],
+            ["Shop", "/shop"],
+            [`${PRODUCTS_OBJ[productId].name}s`, routes.product(productId)],
+          ]),
+        ]}
       />
       <ProductPageContent />
     </div>

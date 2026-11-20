@@ -33,7 +33,7 @@ export const ShopByGear = () => {
         kicker="Shop by gear"
         title={
           <>
-            Pick your <span className="text-bandit-orange">poison</span>
+            Pick your <span className="text-bandit-orange">loot</span>
           </>
         }>
         <Link
@@ -182,7 +182,7 @@ export const ProductLibrary = () => {
     <>
       <section id="library-bestsellers" className="scroll-mt-20 max-w-screen-2xl mx-auto">
         <div className="px-4 md:px-8">
-          <SectionHead kicker="Most wanted" title="Best sellers" />
+          <SectionHead kicker="Best sellers" title="Most wanted" />
         </div>
         <Rail variants={bestSellers} ranked />
       </section>
@@ -191,10 +191,10 @@ export const ProductLibrary = () => {
         <section id="library-new" className="max-w-screen-2xl mx-auto">
           <div className="px-4 md:px-8">
             <SectionHead
-              kicker="Fresh off the press"
+              kicker="New drops"
               title={
                 <>
-                  New <span className="text-bandit-orange">drops</span>
+                  Fresh off the <span className="text-bandit-orange">press</span>
                 </>
               }
             />

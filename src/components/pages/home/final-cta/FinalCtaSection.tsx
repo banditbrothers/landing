@@ -39,7 +39,7 @@ export const FinalCtaSection = ({ rating }: { rating: RatingSummary | null }) =>
               ✦
             </span>
             <div>
-              <p className="text-xs tracking-[0.2em] uppercase opacity-70">Still scrolling?</p>
+              <p className="text-xs font-bold tracking-[0.2em] uppercase">Still scrolling?</p>
               <h2 className="font-calera uppercase leading-[0.82] text-[clamp(3.5rem,6vw,6rem)] mt-3">
                 Be a bandit
                 <br />

@@ -48,7 +48,7 @@ export const InstagramFeedSection = () => {
           href={CONTACT.instagram}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 h-11 px-5 rounded-full border border-border text-sm hover:border-bandit-orange w-fit">
+          className="inline-flex items-center gap-2 h-11 px-5 rounded-full border border-border text-sm whitespace-nowrap hover:border-bandit-orange w-fit shrink-0">
           <Image src={InstagramIcon} alt="" width={18} height={18} />
           Follow on Instagram
         </Link>

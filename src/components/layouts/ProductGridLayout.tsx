@@ -106,8 +106,8 @@ const ProductGridLayoutContent = ({ productVariants }: { productVariants: Produc
     <>
       {/* Sticky toolbar under the fixed navbar */}
       <div className="sticky top-[var(--nav-h)] transition-[top] duration-300 z-30 -mx-4 md:-mx-8 px-4 md:px-8 py-3 bg-background/90 backdrop-blur-md after:absolute after:inset-x-4 md:after:inset-x-8 after:bottom-0 after:h-px after:bg-border">
-        <div className="flex flex-wrap md:flex-nowrap items-center gap-2.5">
-          <div className="flex gap-2 overflow-x-auto overflow-y-hidden basis-full md:basis-auto md:flex-1 min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex flex-wrap lg:flex-nowrap items-center gap-2.5">
+          <div className="flex gap-2 overflow-x-auto overflow-y-hidden basis-full lg:basis-auto lg:flex-1 min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <Pill on={bestOnly} onClick={() => toggle("best-sellers", bestOnly)}>
               <StarIcon className="w-3.5 h-3.5" /> Most wanted
             </Pill>
@@ -119,9 +119,9 @@ const ProductGridLayoutContent = ({ productVariants }: { productVariants: Produc
             </Pill>
           </div>
 
-          <span className="hidden md:block w-px h-6 bg-border shrink-0" />
+          <span className="hidden lg:block w-px h-6 bg-border shrink-0" />
 
-          <div className="flex gap-2.5 items-center flex-1 md:flex-none min-w-0 overflow-x-auto overflow-y-hidden p-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex gap-2.5 items-center flex-1 lg:flex-none min-w-0 overflow-x-auto overflow-y-hidden p-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {SWATCH_COLORS.map(({ id, name, hex }) => {
               const on = selectedColors.includes(id);
               return (

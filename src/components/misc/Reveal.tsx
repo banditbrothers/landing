@@ -1,6 +1,7 @@
 "use client";
 
 import { m } from "motion/react";
+import { Kicker } from "@/components/typography/Kicker";
 
 // Fades + lifts children in once when they scroll into view
 export const Reveal = ({
@@ -36,7 +37,7 @@ export const SectionHead = ({
 }) => (
   <Reveal className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 md:mb-10">
     <div>
-      <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">{kicker}</p>
+      <Kicker>{kicker}</Kicker>
       <h2 className="font-calera uppercase leading-[0.9] text-[clamp(2.75rem,7vw,5.5rem)]">{title}</h2>
     </div>
     {children}

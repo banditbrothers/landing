@@ -87,11 +87,9 @@ export default function NavBar() {
           </Link>
           {showActions && (
             <div className="flex gap-1.5 md:gap-2">
-              {!isCheckout && (
-                <Suspense fallback={<LoadingIcon />}>
-                  <SearchButton />
-                </Suspense>
-              )}
+              <Suspense fallback={<LoadingIcon />}>
+                <SearchButton />
+              </Suspense>
               <CartButton />
             </div>
           )}

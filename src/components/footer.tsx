@@ -62,9 +62,9 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div className="col-span-2 md:col-span-1 max-w-sm">
             <p className="font-calera uppercase leading-[0.9] text-4xl md:text-5xl">
-              Ride loud.
+              Wear your
               <br />
-              <span className="text-bandit-orange">Cover up.</span>
+              <span className="text-bandit-orange">Mischief</span>
             </p>
             <p className="mt-5 text-sm text-muted-foreground leading-relaxed">
               Bandanas and balaclavas for riders and everyone else.

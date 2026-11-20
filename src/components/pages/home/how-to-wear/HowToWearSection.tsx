@@ -6,7 +6,9 @@ import { m } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { Reveal, SectionHead } from "@/components/misc/Reveal";
 
-const MUGSHOTS = [1, 2, 3, 4, 5].map(n => `/how-to-wear/mugshot-${n}.webp`);
+// Suspect 1 and 3 photos are deliberately swapped.
+const MUGSHOT_ORDER = [3, 2, 1, 4, 5];
+const MUGSHOTS = MUGSHOT_ORDER.map(n => `/how-to-wear/mugshot-${n}.webp`);
 const TILTS = [-7, 4, -3, 6, -5];
 
 export const WAYS = [

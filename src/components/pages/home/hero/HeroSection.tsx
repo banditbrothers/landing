@@ -37,7 +37,7 @@ export const HeroSection = () => {
           </span>
         </p>
 
-        <h1 className="font-calera uppercase text-white leading-[0.85] text-[clamp(4.5rem,17vw,13rem)]">
+        <h1 className="font-calera uppercase text-white leading-[0.85] text-[15vw] sm:text-[clamp(4.5rem,17vw,13rem)]">
           {LINES.map((line, i) => (
             <span key={line} className="block overflow-hidden pb-[0.04em]">
               <span

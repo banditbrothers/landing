@@ -27,13 +27,16 @@ export function JsonLd() {
   return <LdScript data={[organization, website]} />;
 }
 
-// Escapes "<" so text from reviews/Firestore can't close the script tag
-export const LdScript = ({ data }: { data: object }) => (
-  <script
-    type="application/ld+json"
-    dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
-  />
-);
+// One script per object: some Safari extensions read r["@context"] on the parsed JSON and throw on an array.
+// Escapes "<" so text from reviews/Firestore can't close the script tag.
+export const LdScript = ({ data }: { data: object[] }) =>
+  data.map((item, i) => (
+    <script
+      key={i}
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(item).replace(/</g, "\\u003c") }}
+    />
+  ));
 
 export const breadcrumbLd = (crumbs: [name: string, path: string][]) => ({
   "@context": "https://schema.org",

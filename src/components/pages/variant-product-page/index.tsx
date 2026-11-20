@@ -276,7 +276,7 @@ export const ProductPageContents = ({
           )}
           {!soldOut && maxAddable === 0 && (
             <div className="text-sm mb-3.5 text-muted-foreground">
-              You already have all available units in your cart.
+              That&apos;s all the loot there is, and it&apos;s already in your cart.
             </div>
           )}
           {!soldOut && maxAddable !== 0 && sizeStock !== undefined && sizeStock <= LOW_STOCK_THRESHOLD && (
