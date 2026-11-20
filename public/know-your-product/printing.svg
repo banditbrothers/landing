@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" font-family="'Space Grotesk', Helvetica, Arial, sans-serif">
+  <defs>
+    <style>@font-face{font-family:Calera;src:url(data:font/woff2;base64,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) format('woff2')}@font-face{font-family:'Space Grotesk';font-weight:700;src:url(data:font/woff2;base64,d09GMgABAAAAAAXQAA8AAAAAC3wAAAV4AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGiIbgnYcKgZgP1NUQVQqAGQRCAqJNIcyATYCJANQCyoABCAFg3IHIBtFCaOilNGhA/zlAT1E5Ql7EIQIqSGhQthZSEttuQW5p8fGhYPdcMSMT4yL19BB+9NKs8VjcMyC/nGsnPeTLPwcEMkroQQkV3Xq7NpdXyBVWV0FKFvXU1VV5FDnf/Kyn2ZWrbPQVErHzAAopCw0S/K0r6cFeJOJssnm9pugDQ7hEQYSJAmCVCOwHmUwstsICgyAnhuWlixOi5tVoYk7F2jFbBCia96GR4nD3y/1vbvGs9NOPzw9s4h8/6IoKlZJOqFoHnABD6ez0YB4PFCcbSNE+xYwYaZmdo2x/74ItAEAE5hEqtpJp24IATeHI+qst3oh/l7e1QLxIqD8R0C36o4WGAgEJDI1xu2G6EIBwYg8DIhATDeU9YsuQHdfEPULUV8wz1HAC49oVwGUX/2A8grlFwDKJSpcflj4T/hf7i+VDr6V3XiG8mKficSv96P8s+0vAqyZsUQL4rUbMQCxmxFJZCqqgqBmzUKdy9oyZ6MEAtBe/HSUvnn9BXnkEUvq9phxO6cf7JMgAAfti+gKnMmEdINfZ88FgLdMObnuHY8Q38gcgAD65xxgCkqkRqAPAsZEPWvruhAAI4A2ewkAAwH0QQn0oTgG6JIIBVM0TCycvE62AFPUdCxs3NHPLd+Khea+7qtegqCfKOp/OoH0AWAJMAj0ANAPiPKrtoyDpfHmUcXLiCP6VL5UbO+qQ72VD7qJtnw1X/YzfupivuBZObjaW7yG4dMcpr/D74ufya0pNYa7PHS9KQ+/5hbDK8SbD3NuqZR3duXUThuz3Xcar/ZzYfQnutrN5fddySlbe8jRQ5v5rhgbyxfzrdt+wTu6nK8m8CW/5FfcxCCZ/CVoJvjOM5WX8bnSBS3XSriFAS84S2vFrUTEtt8mWZB7MlRDlJHq5gUJNfQs62VAbW7snjbNs2vtmEfn5OrE4+nmUePm1mZfPLCTZ99M9FnZq3+9B+3gc14vBoyLbhV11alKcJ5dGM2SgX8+lo0TLeG7SwqUc3vHF5hyo3PFtPHk2HxTdnSOCB8LliIrF83cNXO8eGTKvHnj+keiFVqHQe/wmfeZHH69QeuUY5H4cfPmAeEKqdiZQWbs15JAOEXydlNJaiZwGbtU2vHhOpqzuimRgdkfbzAfHzQa1RZJ9I62vJqxGqzs9X3ItHRK+rQ3lknJDLjOtSuGYS+G7s4M0isOvB2NUaO5r2Q5JnJfXYj1hh8EscIP5fecSEXELIOraWvhG8Q3zRma2m12+YyHjISZTW4y0CVASCOqeKJSIl4tKaM/kGodkGcupUfTlzIXAoFFlNP5HnGsUmo7jLUfwV9PuzFifvKpgZM3MAk8GuewNgCPa5xY12ilRqhKm0KjJfh4MvqGqgwJNSyBQ6WShVtYFksXh6iypkRS8p6tyJPNyx21NbCqypzQwpa7VCpVWY8AXmn7SCrZp4Xl8qtwvCo/z4vj3rtQTvT0ns/QBTq80acJyvKMgOH3o7qBq507/4OGH4CvjzNWA/g+/+jQ0U+LZddBhQEQ/qE+InzFi2sZhHL2rT611D+wF2BZhZFpOMEhMjA77/pgEXVqjhWCi5qnzmdroIia1e91BTJihRGDI/CADgJ9+FBtdKYldlfdCpS2OvARfI4suMYxHX5xgs1+7I15nGRkGOyKuTGKCdrmzjMVqc0qaLRqM0aHerXqdEnDwZpRGm8UVjs9jJWr9OUZdGjVBXVqJLczBhvclRWQWrftrGuoQ2dz51VGXdpkUoKJqVZ9VqlbBQajVs0rlRpNWrF0lmvRqLyG6axGC6ZOFPp0tUfPR+i33q3kVq1W3E3VKxwMLF2S0rNY9krrXtp06Dcho9Vr3ZPG268AAnb/SxFaNamCAqCsw6EA) format('woff2')}</style>
+    <radialGradient id="glow" cx="72%" cy="45%" r="55%">
+      <stop offset="0" stop-color="#fd6e00" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#fd6e00" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="dye" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fd6e00"/>
+      <stop offset=".5" stop-color="#ff3d6e"/>
+      <stop offset="1" stop-color="#7a5cff"/>
+    </linearGradient>
+    <g id="fibre-grey"><circle r="22" fill="#2c2c33" stroke="#55555f" stroke-width="3"/></g>
+    <g id="fibre-dyed"><circle r="22" fill="url(#dye)"/><circle r="22" fill="none" stroke="#ffffff" stroke-opacity=".25" stroke-width="2"/></g>
+  </defs>
+  <rect width="800" height="600" fill="#131316"/>
+  <rect width="800" height="600" fill="url(#glow)"/>
+  <g transform="translate(0,-30)">
+  <line x1="400" y1="200" x2="400" y2="440" stroke="#ffffff" stroke-opacity=".12" stroke-width="2" stroke-dasharray="6 8"/>
+
+  <!-- left: ink film sitting on top of the fibres, cracking -->
+  <g opacity=".75">
+    <use href="#fibre-grey" x="90" y="340"/><use href="#fibre-grey" x="140" y="340"/>
+    <use href="#fibre-grey" x="190" y="340"/><use href="#fibre-grey" x="240" y="340"/>
+    <use href="#fibre-grey" x="290" y="340"/><use href="#fibre-grey" x="340" y="340"/>
+    <use href="#fibre-grey" x="115" y="385"/><use href="#fibre-grey" x="165" y="385"/>
+    <use href="#fibre-grey" x="215" y="385"/><use href="#fibre-grey" x="265" y="385"/>
+    <use href="#fibre-grey" x="315" y="385"/>
+    <g fill="#d94f2b">
+      <path d="M66 300h70l-6 18H66z"/>
+      <path d="M144 300h82l-4 10l-6 8H138z"/>
+      <path d="M234 300h60l6 18H228z"/>
+      <path d="M302 300h62v18H308z"/>
+    </g>
+    <g fill="#d94f2b" opacity=".9">
+      <path d="M150 268l14 6l-4 12l-14-4z"/>
+      <path d="M296 258l12 4l-2 12l-12-2z"/>
+    </g>
+  </g>
+
+  <!-- right: dye turned to gas, now inside every fibre -->
+  <g fill="#ff8a3d" opacity=".55">
+    <circle cx="470" cy="250" r="5"/><circle cx="520" cy="270" r="4"/><circle cx="560" cy="245" r="6"/>
+    <circle cx="610" cy="275" r="4"/><circle cx="650" cy="250" r="5"/><circle cx="700" cy="268" r="4"/>
+    <circle cx="740" cy="245" r="5"/>
+  </g>
+  <use href="#fibre-dyed" x="460" y="340"/><use href="#fibre-dyed" x="510" y="340"/>
+  <use href="#fibre-dyed" x="560" y="340"/><use href="#fibre-dyed" x="610" y="340"/>
+  <use href="#fibre-dyed" x="660" y="340"/><use href="#fibre-dyed" x="710" y="340"/>
+  <use href="#fibre-dyed" x="485" y="385"/><use href="#fibre-dyed" x="535" y="385"/>
+  <use href="#fibre-dyed" x="585" y="385"/><use href="#fibre-dyed" x="635" y="385"/>
+  <use href="#fibre-dyed" x="685" y="385"/>
+
+  </g>
+
+  <g fill="#ffffff" font-weight="700" letter-spacing="2" text-anchor="middle">
+    <text x="215" y="100" font-size="28" font-family="Calera" font-weight="400" opacity=".55">SURFACE PRINT</text>
+    <text x="215" y="130" font-size="20" fill="#ff6b6b" opacity=".8">SITS ON TOP · CRACKS</text>
+    <text x="600" y="100" font-size="28" font-family="Calera" font-weight="400" fill="#fd6e00">SUBLIMATION</text>
+    <text x="600" y="130" font-size="20" opacity=".8">INK BECOMES THE FIBRE</text>
+    <text x="600" y="420" font-size="20" opacity=".6">INK → GAS → FIBRE</text>
+  </g>
+</svg>

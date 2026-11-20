@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" font-family="'Space Grotesk', Helvetica, Arial, sans-serif">
+  <defs>
+    <style>@font-face{font-family:Calera;src:url(data:font/woff2;base64,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) format('woff2')}@font-face{font-family:'Space Grotesk';font-weight:700;src:url(data:font/woff2;base64,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) format('woff2')}</style>
+    <radialGradient id="glow" cx="60%" cy="45%" r="60%">
+      <stop offset="0" stop-color="#fd6e00" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#fd6e00" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a2216"/>
+      <stop offset="1" stop-color="#1c110b"/>
+    </linearGradient>
+    <g id="drop"><path d="M0-14C6-5 9 0 9 5a9 9 0 0 1-18 0c0-5 3-10 9-19z" fill="#6cc4ff"/></g>
+    <marker id="arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#6cc4ff"/>
+    </marker>
+  </defs>
+  <rect width="800" height="600" fill="#131316"/>
+  <rect width="800" height="600" fill="url(#glow)"/>
+
+  <!-- vapour leaving the outer face -->
+  <g fill="none" stroke="#e8e8ee" stroke-width="5" stroke-linecap="round" opacity=".55">
+    <path d="M300 230c-14-18 14-30 0-48s14-30 0-48"/>
+    <path d="M420 230c-14-18 14-30 0-48s14-30 0-48"/>
+    <path d="M540 230c-14-18 14-30 0-48s14-30 0-48"/>
+    <path d="M660 230c-14-18 14-30 0-48s14-30 0-48"/>
+  </g>
+
+  <!-- knit: two staggered rows of yarn cross-sections -->
+  <g fill="#26262d" stroke="#fd6e00" stroke-width="3">
+    <ellipse cx="200" cy="300" rx="34" ry="22"/><ellipse cx="290" cy="300" rx="34" ry="22"/>
+    <ellipse cx="380" cy="300" rx="34" ry="22"/><ellipse cx="470" cy="300" rx="34" ry="22"/>
+    <ellipse cx="560" cy="300" rx="34" ry="22"/><ellipse cx="650" cy="300" rx="34" ry="22"/>
+    <ellipse cx="740" cy="300" rx="34" ry="22"/>
+    <ellipse cx="155" cy="350" rx="34" ry="22"/><ellipse cx="245" cy="350" rx="34" ry="22"/>
+    <ellipse cx="335" cy="350" rx="34" ry="22"/><ellipse cx="425" cy="350" rx="34" ry="22"/>
+    <ellipse cx="515" cy="350" rx="34" ry="22"/><ellipse cx="605" cy="350" rx="34" ry="22"/>
+    <ellipse cx="695" cy="350" rx="34" ry="22"/><ellipse cx="785" cy="350" rx="34" ry="22"/>
+  </g>
+
+  <!-- sweat pulled up through the knit -->
+  <g stroke="#6cc4ff" stroke-width="4" stroke-dasharray="2 12" stroke-linecap="round" fill="none" marker-end="url(#arr)">
+    <path d="M290 455V255"/><path d="M425 455V255"/><path d="M560 455V255"/><path d="M695 455V255"/>
+  </g>
+
+  <!-- skin with sweat -->
+  <rect y="480" width="800" height="120" fill="url(#skin)"/>
+  <g>
+    <use href="#drop" x="290" y="468"/><use href="#drop" x="425" y="468"/>
+    <use href="#drop" x="560" y="468"/><use href="#drop" x="695" y="468"/>
+  </g>
+
+  <g fill="#ffffff" font-weight="700" letter-spacing="2">
+    <text x="40" y="70" font-size="36" font-family="Calera" font-weight="400" fill="#fd6e00">QUICK-DRI</text>
+    <text x="40" y="112" font-size="28" opacity=".8">SWEAT OUT. AIR IN.</text>
+    <text x="760" y="70" font-size="22" text-anchor="end" opacity=".7">EVAPORATES FAST</text>
+    <text x="760" y="420" font-size="22" text-anchor="end" fill="#6cc4ff">WICKED AWAY</text>
+    <text x="760" y="560" font-size="22" text-anchor="end" opacity=".5">SKIN</text>
+  </g>
+</svg>

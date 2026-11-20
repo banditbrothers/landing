@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight, Droplets, Palette, Truck, Wind } from "lucide-react";
 
 import { ProductLibrary, ShopByGear } from "@/components/pages/home/product-library/ProductLibrarySection";
-import { KnowYourProductSection } from "@/components/pages/home/know-your-product/KnowYourProductSection";
+// import { KnowYourProductSection } from "@/components/pages/home/know-your-product/KnowYourProductSection";
 import { TestimonialsSection } from "@/components/pages/home/testimonials/TestimonialsSection";
 import { InstagramFeedSection } from "@/components/pages/home/instagram/InstagramFeedSection";
 import { HowToWearSection } from "@/components/pages/home/how-to-wear/HowToWearSection";
@@ -109,7 +109,8 @@ export function LandingPageSections() {
       <BanditCode />
       <HowToWearSection />
       <TestimonialsSection />
-      <KnowYourProductSection />
+      {/* Hidden until the new explainer illustrations are signed off */}
+      {/* <KnowYourProductSection /> */}
       <InstagramFeedSection />
       <FinalCta />
     </div>
