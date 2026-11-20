@@ -1,6 +1,7 @@
 import { ACTIVE_PRODUCTS } from "@/data/products";
 import { getCatalog } from "@/lib/catalog";
 import {
+  BODY_FONT,
   GREY,
   ORANGE,
   loadCalera,
@@ -29,7 +30,7 @@ export default async function Image() {
   ]);
 
   return toShareImageResponse(
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#0a0a0a", fontFamily: "Calera" }}>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#0a0a0a", fontFamily: BODY_FONT }}>
       <div style={{ display: "flex", height: PHOTO_H }}>
         {ACTIVE_PRODUCTS.map((product, i) => (
           <div key={product.id} style={{ display: "flex", position: "relative", width: tileW, height: PHOTO_H, background: "#171717" }}>
@@ -66,7 +67,6 @@ export default async function Image() {
           <div style={{ fontSize: 24, color: GREY, letterSpacing: 2 }}>banditbrothers.in</div>
         </div>
       </div>
-    </div>,
-    calera
+    </div>
   );
 }

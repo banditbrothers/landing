@@ -3,6 +3,7 @@ import {
   ORANGE,
   TextCard,
   loadCalera,
+  renderBrand,
   renderThinText,
   shareImageContentType,
   shareImageSize,
@@ -22,10 +23,13 @@ const CHANNELS = [
 // Title on the left, every way to reach us on the right
 export default async function Image() {
   const calera = await loadCalera();
-  const title = await renderThinText("HOLLER AT THE BANDITS", 74, 540, calera);
+  const [title, brand] = await Promise.all([
+    renderThinText("HOLLER AT THE BANDITS", 74, 540, calera),
+    renderBrand(calera),
+  ]);
 
   return toShareImageResponse(
-    <TextCard>
+    <TextCard brand={brand}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <img src={title.src} width={title.width} height={title.height} alt="" />
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
@@ -37,7 +41,6 @@ export default async function Image() {
           ))}
         </div>
       </div>
-    </TextCard>,
-    calera
+    </TextCard>
   );
 }

@@ -16,6 +16,9 @@ const el = (type, style, children) => ({ type, props: { style, children } });
 const img = (src, width, height) => ({ type: "img", props: { src, width, height } });
 
 const calera = await readFile("src/fonts/calera-display-regular-400.otf");
+// Small text in Calera loses its counters (see BODY_FONT in src/lib/shareImage.tsx), so it uses the body font
+const spaceGrotesk = await readFile("src/fonts/space-grotesk-medium-500.ttf");
+const body = { fontFamily: "Space Grotesk" };
 const mugshots = await Promise.all(
   MUGSHOTS.map(async name =>
     dataUri(
@@ -51,8 +54,8 @@ const card = el(
         img(dataUri(logoPng.data, "image/png"), logoW, LOGO_H),
         el("div", { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 14 }, [
           el("div", { fontSize: 58, color: "#fff", letterSpacing: 2 }, "WEAR YOUR MISCHIEF"),
-          el("div", { fontSize: 25, color: "#a3a3a3", letterSpacing: 3 }, "BANDANAS  /  BALACLAVAS  /  JERSEYS"),
-          el("div", { fontSize: 25, color: "#fd6e00", letterSpacing: 2 }, "banditbrothers.in"),
+          el("div", { ...body, fontSize: 25, color: "#a3a3a3", letterSpacing: 3 }, "BANDANAS  /  BALACLAVAS"),
+          el("div", { ...body, fontSize: 26, color: "#fd6e00", letterSpacing: 1 }, "banditbrothers.in"),
         ]),
       ]
     ),
@@ -62,7 +65,10 @@ const card = el(
 const png = new ImageResponse(card, {
   width: W,
   height: H,
-  fonts: [{ name: "Calera", data: calera, style: "normal", weight: 400 }],
+  fonts: [
+    { name: "Calera", data: calera, style: "normal", weight: 400 },
+    { name: "Space Grotesk", data: spaceGrotesk, style: "normal", weight: 500 },
+  ],
 });
 const jpeg = await sharp(Buffer.from(await png.arrayBuffer())).jpeg({ quality: 82, mozjpeg: true }).toBuffer();
 await writeFile("public/og-default.jpg", jpeg);

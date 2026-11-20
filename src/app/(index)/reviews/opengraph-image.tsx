@@ -4,6 +4,7 @@ import {
   ORANGE,
   TextCard,
   loadCalera,
+  renderBrand,
   renderThinText,
   shareImageContentType,
   shareImageSize,
@@ -25,13 +26,14 @@ export default async function Image() {
   const calera = await loadCalera();
   const reviews = await getApprovedReviews().catch(() => []);
   const { average, count } = getRatingSummary(reviews);
-  const [title, rating] = await Promise.all([
+  const [title, rating, brand] = await Promise.all([
     renderThinText("WORD ON THE STREET", 84, 560, calera),
     renderThinText(count ? average.toFixed(1) : "5.0", 190, 400, calera),
+    renderBrand(calera),
   ]);
 
   return toShareImageResponse(
-    <TextCard footer="banditbrothers.in/reviews">
+    <TextCard brand={brand} footer="banditbrothers.in/reviews">
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <img src={title.src} width={title.width} height={title.height} alt="" />
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 16 }}>
@@ -44,7 +46,6 @@ export default async function Image() {
           {count > 0 && <div style={{ fontSize: 24, color: GREY, letterSpacing: 2 }}>{`FROM ${count} REVIEWS`}</div>}
         </div>
       </div>
-    </TextCard>,
-    calera
+    </TextCard>
   );
 }

@@ -15,7 +15,13 @@ export const GREY = "#a3a3a3";
 
 const PHOTO = shareImageSize.height; // square photo on the left, full height
 
-export const loadCalera = () => readFile(join(process.cwd(), "src/fonts/calera-display-regular-400.otf"));
+const fontPath = (file: string) => join(process.cwd(), "src/fonts", file);
+export const loadCalera = () => readFile(fontPath("calera-display-regular-400.otf"));
+
+// Calera is a display face: below headline size its counters (the holes in B, D, O, R) are about a pixel wide and
+// anti-aliasing plus JPEG fill them in. So live text is always the site's body font, and Calera only appears as a
+// renderThinText image. Don't set fontFamily: "Calera" on live text.
+export const BODY_FONT = "Space Grotesk";
 
 /** Remote URL, or a path under public/ ("/how-to-wear/x.webp"), as a cover-cropped JPEG data URI. null on failure. */
 export const toJpegDataUri = async (src: string, width = PHOTO, height = PHOTO) => {
@@ -36,10 +42,11 @@ export const toJpegDataUri = async (src: string, width = PHOTO, height = PHOTO) 
 };
 
 /** Lays out the card with next/og, then re-encodes it as a small JPEG. */
-export const toShareImageResponse = async (element: React.ReactElement, calera: Buffer) => {
+export const toShareImageResponse = async (element: React.ReactElement) => {
+  const body = await readFile(fontPath("space-grotesk-medium-500.ttf"));
   const png = new ImageResponse(element, {
     ...shareImageSize,
-    fonts: [{ name: "Calera", data: calera, style: "normal", weight: 400 }],
+    fonts: [{ name: BODY_FONT, data: body, style: "normal", weight: 500 }],
   });
   const jpeg = await sharp(Buffer.from(await png.arrayBuffer()))
     .jpeg({ quality: 82, mozjpeg: true })
@@ -52,27 +59,34 @@ export const toShareImageResponse = async (element: React.ReactElement, calera: 
 // text at 2x, erode the glyph mask (blur, then raise the alpha cut-off), trim, and scale back down.
 const THIN_SCALE = 2;
 
-export const renderThinText = async (text: string, fontSize: number, maxWidth: number, calera: Buffer) => {
+export const renderThinText = async (
+  text: string,
+  fontSize: number,
+  maxWidth: number,
+  calera: Buffer,
+  color = "#ffffff"
+) => {
   const width = maxWidth * THIN_SCALE;
   const height = Math.ceil(fontSize * 1.1 * 4) * THIN_SCALE; // room for up to 4 lines; trimmed below
   const layer = new ImageResponse(
-    (
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-          fontFamily: "Calera",
-          fontSize: fontSize * THIN_SCALE,
-          lineHeight: 1.1,
-          color: "#fff",
-        }}>
-        {text}
-      </div>
-    ),
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        fontFamily: "Calera",
+        fontSize: fontSize * THIN_SCALE,
+        lineHeight: 1.1,
+        color: "#fff",
+      }}>
+      {text}
+    </div>,
     { width, height, fonts: [{ name: "Calera", data: calera, style: "normal", weight: 400 }] }
   );
 
-  const alpha = await sharp(Buffer.from(await layer.arrayBuffer())).extractChannel(3).png().toBuffer();
+  const alpha = await sharp(Buffer.from(await layer.arrayBuffer()))
+    .extractChannel(3)
+    .png()
+    .toBuffer();
   const blurred = await sharp(alpha)
     .blur(fontSize * THIN_SCALE * 0.035)
     .png()
@@ -82,17 +96,23 @@ export const renderThinText = async (text: string, fontSize: number, maxWidth: n
     .linear(255 / 40, -(255 / 40) * 175)
     .png()
     .toBuffer();
-  const white = await sharp({ create: { width, height, channels: 3, background: "#ffffff" } })
+  const filled = await sharp({ create: { width, height, channels: 3, background: color } })
     .joinChannel(mask)
     .png()
     .toBuffer();
-  const trimmed = await sharp(white).trim().png().toBuffer({ resolveWithObject: true });
+  const trimmed = await sharp(filled).trim().png().toBuffer({ resolveWithObject: true });
 
   const w = Math.round(trimmed.info.width / THIN_SCALE);
   const h = Math.round(trimmed.info.height / THIN_SCALE);
   const png = await sharp(trimmed.data).resize(w, h).png().toBuffer();
   return { src: `data:image/png;base64,${png.toString("base64")}`, width: w, height: h };
 };
+
+type ThinText = Awaited<ReturnType<typeof renderThinText>>;
+
+/** The orange "BANDIT BROTHERS" line at the top of the cards. */
+export const renderBrand = (calera: Buffer, fontSize = 36) =>
+  renderThinText("BANDIT BROTHERS", fontSize, 600, calera, ORANGE);
 
 const TEXT_COLUMN = shareImageSize.width - PHOTO - 2 * 56; // right column minus its padding
 
@@ -106,49 +126,55 @@ export const renderShareImage = async ({
   title: string;
 }) => {
   const calera = await loadCalera();
-  const [photo, titleImage] = await Promise.all([
+  const [photo, titleImage, brand] = await Promise.all([
     imageUrl ? toJpegDataUri(imageUrl) : null,
     renderThinText(title.toUpperCase(), title.length > 22 ? 60 : 72, TEXT_COLUMN, calera),
+    renderBrand(calera, 40),
   ]);
 
   return toShareImageResponse(
-    (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        background: "#0a0a0a",
+        color: "#fff",
+        fontFamily: BODY_FONT,
+      }}>
+      {photo && <img src={photo} width={PHOTO} height={PHOTO} style={{ objectFit: "cover" }} alt="" />}
       <div
         style={{
-          width: "100%",
-          height: "100%",
+          flex: 1,
           display: "flex",
-          background: "#0a0a0a",
-          color: "#fff",
-          fontFamily: "Calera",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "56px 56px 48px",
+          backgroundImage: "radial-gradient(circle at 100% 0%, rgba(253,110,0,0.22), transparent 60%)",
         }}>
-        {photo && <img src={photo} width={PHOTO} height={PHOTO} style={{ objectFit: "cover" }} alt="" />}
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            padding: "56px 56px 48px",
-            backgroundImage: "radial-gradient(circle at 100% 0%, rgba(253,110,0,0.22), transparent 60%)",
-          }}>
-          <div style={{ fontSize: 40, color: ORANGE }}>BANDIT BROTHERS</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            <div style={{ fontSize: 26, letterSpacing: 4, color: GREY, textTransform: "uppercase" }}>{eyebrow}</div>
-            <img src={titleImage.src} width={titleImage.width} height={titleImage.height} alt="" />
-          </div>
-          <div style={{ fontSize: 26, color: GREY }}>banditbrothers.in</div>
+        <img src={brand.src} width={brand.width} height={brand.height} alt="" />
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <div style={{ fontSize: 26, letterSpacing: 4, color: GREY, textTransform: "uppercase" }}>{eyebrow}</div>
+          <img src={titleImage.src} width={titleImage.width} height={titleImage.height} alt="" />
         </div>
+        <div style={{ fontSize: 26, color: GREY }}>banditbrothers.in</div>
       </div>
-    ),
-    calera
+    </div>
   );
 };
 
 const WALL_GAP = 42;
 
 /** Text-only card: brand at the top, children in the middle, domain at the bottom, on a faint lineup wall. */
-export const TextCard = ({ children, footer = "banditbrothers.in" }: { children: React.ReactNode; footer?: string }) => (
+export const TextCard = ({
+  brand,
+  children,
+  footer = "banditbrothers.in",
+}: {
+  brand: ThinText;
+  children: React.ReactNode;
+  footer?: string;
+}) => (
   <div
     style={{
       width: "100%",
@@ -158,7 +184,7 @@ export const TextCard = ({ children, footer = "banditbrothers.in" }: { children:
       background: "#0a0a0a",
       backgroundImage: "radial-gradient(circle at 100% 100%, rgba(253,110,0,0.28), transparent 55%)",
       color: "#fff",
-      fontFamily: "Calera",
+      fontFamily: BODY_FONT,
     }}>
     {Array.from({ length: Math.floor(shareImageSize.height / WALL_GAP) }, (_, i) => (
       <div
@@ -182,7 +208,7 @@ export const TextCard = ({ children, footer = "banditbrothers.in" }: { children:
         justifyContent: "space-between",
         padding: "56px 64px 48px",
       }}>
-      <div style={{ fontSize: 36, color: ORANGE }}>BANDIT BROTHERS</div>
+      <img src={brand.src} width={brand.width} height={brand.height} alt="" />
       {children}
       <div style={{ fontSize: 24, color: GREY, letterSpacing: 2 }}>{footer}</div>
     </div>
@@ -190,16 +216,26 @@ export const TextCard = ({ children, footer = "banditbrothers.in" }: { children:
 );
 
 /** Text-only card with one big title, for pages with nothing to picture (policies). */
-export const renderTitleCard = async ({ eyebrow, title, footer }: { eyebrow: string; title: string; footer?: string }) => {
+export const renderTitleCard = async ({
+  eyebrow,
+  title,
+  footer,
+}: {
+  eyebrow: string;
+  title: string;
+  footer?: string;
+}) => {
   const calera = await loadCalera();
-  const titleImage = await renderThinText(title.toUpperCase(), 104, 1000, calera);
+  const [titleImage, brand] = await Promise.all([
+    renderThinText(title.toUpperCase(), 104, 1000, calera),
+    renderBrand(calera),
+  ]);
   return toShareImageResponse(
-    <TextCard footer={footer}>
+    <TextCard brand={brand} footer={footer}>
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         <div style={{ fontSize: 26, letterSpacing: 4, color: GREY }}>{eyebrow.toUpperCase()}</div>
         <img src={titleImage.src} width={titleImage.width} height={titleImage.height} alt="" />
       </div>
-    </TextCard>,
-    calera
+    </TextCard>
   );
 };
