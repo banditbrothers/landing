@@ -13,17 +13,17 @@ const ease = [0.2, 0.7, 0.2, 1] as const;
 export const HeroSection = () => {
   return (
     <section id="hero" className="relative h-[100svh] min-h-[600px] overflow-hidden">
-      <m.video
+      {/* Poster is the video's first frame, so the hero paints before the video decodes. */}
+      <video
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        initial={{ scale: 1.15 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 2.4, ease }}>
+        preload="auto"
+        poster="/hero-poster.webp"
+        className="absolute inset-0 w-full h-full object-cover">
         <source src="/hero-bg.mp4" type="video/mp4" />
-      </m.video>
+      </video>
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-background" />
       <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
 
@@ -70,7 +70,7 @@ export const HeroSection = () => {
             </Link>
             <button
               onClick={() => scrollTo("library-bestsellers")}
-              className="inline-flex items-center h-12 md:h-14 px-6 md:px-7 rounded-full border border-white/30 text-white backdrop-blur-sm transition hover:border-white hover:bg-white/10">
+              className="inline-flex items-center h-12 md:h-14 px-6 md:px-7 rounded-full border border-white/30 bg-black/20 text-white transition hover:border-white hover:bg-white/10">
               Best sellers
             </button>
           </div>
@@ -78,7 +78,7 @@ export const HeroSection = () => {
       </div>
 
       <m.div
-        className="absolute bottom-0 inset-x-0 z-10 border-t border-white/10 bg-black/30 backdrop-blur-md"
+        className="absolute bottom-0 inset-x-0 z-10 border-t border-white/10 bg-black/60"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 1.3 }}>
