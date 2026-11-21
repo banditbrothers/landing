@@ -5,10 +5,11 @@ import Link from "next/link";
 import { m } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { Reveal, SectionHead } from "@/components/misc/Reveal";
+import { cn } from "@/lib/utils";
 
-// Suspect 1 and 3 photos are deliberately swapped.
-const MUGSHOT_ORDER = [3, 2, 1, 4, 5];
-const MUGSHOTS = MUGSHOT_ORDER.map(n => `/how-to-wear/mugshot-${n}.webp`);
+// The desktop fan reads best with suspects 1 and 3 swapped; the mobile scroller keeps natural order.
+const MUGSHOT_ORDER = { mobile: [1, 2, 3, 4, 5], desktop: [3, 2, 1, 4, 5] };
+const mugshotSrc = (n: number) => `/how-to-wear/mugshot-${n}.webp`;
 const TILTS = [-7, 4, -3, 6, -5];
 
 export const WAYS = [
@@ -45,9 +46,9 @@ export const HowToWearSection = () => {
 
       {/* Mugshot wall: fanned + tilted, straighten on hover. Scrolls sideways on mobile. */}
       <div className="flex md:justify-center gap-4 md:gap-0 overflow-x-auto overflow-y-hidden md:overflow-visible snap-x snap-mandatory px-4 md:px-8 py-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {MUGSHOTS.map((src, i) => (
+        {MUGSHOT_ORDER.desktop.map((desktopN, i) => (
           <m.div
-            key={src}
+            key={i}
             className="snap-center shrink-0 w-[62vw] sm:w-[40vw] md:w-[22%] md:-mx-3 first:ml-0 relative hover:!z-20"
             style={{ zIndex: i % 2 ? 2 : 1 }}
             initial={{ opacity: 0, y: 60, rotate: 0 }}
@@ -56,15 +57,14 @@ export const HowToWearSection = () => {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ type: "spring", stiffness: 120, damping: 16, delay: i * 0.07 }}>
             <div className="bg-white p-2 pb-8 rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
-              <div className="relative aspect-square">
-                <SkeletonImage
-                  src={src}
-                  alt="Bandit Brothers lineup"
-                  fill
-                  sizes="(min-width: 768px) 22vw, 62vw"
-                  className="object-cover"
-                />
-              </div>
+              {desktopN === MUGSHOT_ORDER.mobile[i] ? (
+                <Mugshot n={desktopN} />
+              ) : (
+                <>
+                  <Mugshot n={MUGSHOT_ORDER.mobile[i]} className="md:hidden" />
+                  <Mugshot n={desktopN} className="hidden md:block" />
+                </>
+              )}
               <p className="font-calera text-black text-lg text-center mt-2 uppercase">
                 Suspect #{String(i + 1).padStart(3, "0")}
               </p>
@@ -121,3 +121,16 @@ export const HowToWearSection = () => {
     </section>
   );
 };
+
+// Each photo gets its own box so a display:none (lazy, never-fetched) image keeps its skeleton hidden too.
+const Mugshot = ({ n, className }: { n: number; className?: string }) => (
+  <div className={cn("relative aspect-square", className)}>
+    <SkeletonImage
+      src={mugshotSrc(n)}
+      alt="Bandit Brothers lineup"
+      fill
+      sizes="(min-width: 768px) 22vw, 62vw"
+      className="object-cover"
+    />
+  </div>
+);
