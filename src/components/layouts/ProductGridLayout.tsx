@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ChevronDownIcon, HeartIcon, PackageCheckIcon, StarIcon } from "lucide-react";
+import { ChevronDownIcon, HeartIcon, PackageCheckIcon, RulerDimensionLineIcon, StarIcon } from "lucide-react";
 import { ShopCard } from "@/components/cards/ShopCard";
 import { useFavorites } from "../stores/favorites";
 import { LoadingIcon } from "../misc/Loading";
@@ -143,6 +143,7 @@ const ProductGridLayoutContent = ({ productVariants }: { productVariants: Produc
               <Popover>
                 <PopoverTrigger asChild>
                   <Pill on={selectedSizes.length > 0}>
+                    <RulerDimensionLineIcon className="w-3.5 h-3.5" />
                     {selectedSizes.length === 0
                       ? "Size"
                       : selectedSizes.length > 2
