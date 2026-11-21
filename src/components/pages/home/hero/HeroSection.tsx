@@ -32,9 +32,7 @@ export const HeroSection = () => {
         <p
           className={`${ENTER} fade-in slide-in-from-left-5 duration-500 delay-150 text-xs md:text-sm tracking-[0.25em] uppercase text-white/80 mb-4 flex items-center gap-3`}>
           <span className="h-px w-10 bg-bandit-orange" />
-          <span>
-            Bandanas · Balaclavas · <span className="whitespace-nowrap">Made in India</span>
-          </span>
+          <span>Proudly made in India</span>
         </p>
 
         <h1 className="font-calera uppercase text-white leading-[0.85] text-[15vw] sm:text-[clamp(4.5rem,17vw,13rem)]">
