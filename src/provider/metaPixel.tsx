@@ -3,8 +3,8 @@
 import { Suspense, useEffect } from "react";
 import ReactPixel from "react-facebook-pixel";
 import { usePathname, useSearchParams } from "next/navigation";
+import { META_PIXEL_ID } from "@/lib/site";
 
-const PIXEL_ID = "1407174127410687";
 
 function MetaPixelTracker() {
   const pathname = usePathname();
@@ -12,7 +12,7 @@ function MetaPixelTracker() {
 
   useEffect(() => {
     // Initialize pixel
-    ReactPixel.init(PIXEL_ID, undefined, {
+    ReactPixel.init(META_PIXEL_ID, undefined, {
       autoConfig: true,
       debug: process.env.NODE_ENV === "development",
     });

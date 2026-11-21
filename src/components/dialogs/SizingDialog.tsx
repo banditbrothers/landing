@@ -1,6 +1,8 @@
+"use client";
+
 import { Dialog, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import Image from "next/image";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 
 type SizingDialogProps = {
   open: boolean;
@@ -18,7 +20,8 @@ export function SizingDialog({ open, onClose }: SizingDialogProps) {
         </VisuallyHidden>
 
         <div className="relative w-full h-full aspect-video max-h-[80vh]">
-          <Image
+          <SkeletonImage
+            skeletonClassName="rounded-lg"
             fill
             priority
             src="/sizing-guide/jersey.webp"

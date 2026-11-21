@@ -44,3 +44,8 @@ next-env.d.ts
 firebase-service-account-admin.json
 firestore-debug.log
 functions/firebase-debug.log
+bandit-brothers-sales-by-size.xlsx
+.mockups/*
+public/mockups/*
+# Playwright MCP screenshots/logs
+/.playwright-mcp

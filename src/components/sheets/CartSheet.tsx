@@ -2,35 +2,63 @@
 
 import { Button } from "../ui/button";
 
-import { useCart } from "@/components/stores/cart";
+import { closeCart, closeCartForNavigation, useCart, useIsCartOpen } from "@/components/stores/cart";
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { CheckoutProductCard } from "../cards/CheckoutProductCard";
 import { useRouter } from "next/navigation";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { BULK_BUY_COUPON, RUNNING_COUPON } from "@/components/typography/coupons";
+import { RUNNING_COUPON } from "@/components/typography/coupons";
 import { formatCurrency } from "@/utils/price";
 import { useVariants } from "@/hooks/useVariants";
-import { getCartSubtotal } from "@/utils/cart";
+import { cartHasStockIssue, getCartSubtotal, getFreeShippingProgress } from "@/utils/cart";
 import { LoadingIcon } from "@/components/misc/Loading";
+import { ArrowRight, Truck } from "lucide-react";
 
 export const CartSheet = () => {
-  const { cart: cartItems, isCartOpen, closeCart, updateCartItem, removeCartItem } = useCart();
+  const { cart: cartItems, coupon, updateCartItem, removeCartItem } = useCart();
+  const isCartOpen = useIsCartOpen();
   const { data: variants, isReady } = useVariants();
 
   const subtotal = getCartSubtotal(cartItems, variants);
+  const hasStockIssue = cartHasStockIssue(cartItems, variants);
+  const freeShipping = getFreeShippingProgress(cartItems, variants, coupon);
 
-  const CartContent = () => {
-    if (cartItems.length > 0 && !isReady) {
-      return (
-        <div className="flex h-full items-center justify-center py-4">
-          <LoadingIcon />
-        </div>
-      );
-    }
+  const router = useRouter();
 
-    return (
-      <div className="flex h-full flex-col gap-4 py-4">
+  // Replace the cart's history entry, so back from checkout returns to this page
+  const handleCheckout = () => {
+    closeCartForNavigation();
+    router.replace("/checkout");
+  };
+
+  const cartContent =
+    cartItems.length > 0 && !isReady ? (
+      <div className="flex h-full items-center justify-center py-4">
+        <LoadingIcon />
+      </div>
+    ) : (
+      <div className="flex h-full flex-col py-4">
+        {cartItems.length > 0 && freeShipping && (
+          <div className="text-xs mb-3">
+            <p className="flex items-center gap-1.5">
+              <Truck className="w-4 h-4 text-bandit-orange" />
+              {freeShipping.unlocked ? (
+                "Free shipping unlocked"
+              ) : (
+                <span>
+                  <span className="text-bandit-orange">{formatCurrency(freeShipping.left)}</span> away from free
+                  shipping
+                </span>
+              )}
+            </p>
+            <div className="h-1 bg-secondary rounded-full mt-2 overflow-hidden">
+              <div
+                className="h-full bg-bandit-orange transition-[width] duration-500"
+                style={{ width: `${freeShipping.pct}%` }}
+              />
+            </div>
+          </div>
+        )}
         <RUNNING_COUPON.CartMessageElement />
 
         {cartItems.map(item => {
@@ -51,11 +79,10 @@ export const CartSheet = () => {
 
         {cartItems.length === 0 && (
           <div className="text-center text-muted h-full flex items-center justify-center">
-            <p className="text-3xl font-semibold sm:text-5xl flex flex-col gap-3">
-              {"“No Bandit Should Be Without Any Loot”".split(" ").map((char, i) => (
-                <span key={i} className="italic">
-                  {char}
-                </span>
+            {/* Literal caps: Calera's lowercase set has filled counters */}
+            <p className="font-calera text-4xl leading-[0.95] sm:text-6xl flex flex-col gap-1">
+              {"“NO BANDIT SHOULD BE WITHOUT ANY LOOT”".split(" ").map((word, i) => (
+                <span key={i}>{word}</span>
               ))}
             </p>
           </div>
@@ -69,103 +96,46 @@ export const CartSheet = () => {
         )} */}
       </div>
     );
-  };
 
-  const CartFooter = () => {
-    const router = useRouter();
-
-    const handleCheckout = () => {
-      router.push("/order");
-      closeCart();
-    };
-
-    return (
-      <div className="flex flex-col gap-2 w-full items-center pt-4">
-        <div className="w-full text-sm">
-          <div className="flex justify-between mb-1">
-            <span>Subtotal</span>
-            <span>{formatCurrency(subtotal, 2)}</span>
-          </div>
-          <p className="text-muted-foreground text-xs mb-2">Coupons can be applied on the next page</p>
+  const cartFooter = (
+    <div className="flex flex-col gap-2 w-full items-center pt-4">
+      <div className="w-full text-sm">
+        <div className="flex justify-between items-baseline mb-1">
+          <span className="text-muted-foreground text-xs uppercase tracking-[0.12em]">Subtotal</span>
+          <span className="font-calera text-2xl">{formatCurrency(subtotal)}</span>
         </div>
-        <Button disabled={cartItems.length === 0 || !isReady} className="w-full" onClick={handleCheckout}>
-          Checkout
-        </Button>
-        <Button variant="ghost" className="w-full" onClick={closeCart}>
-          Continue Shopping
-        </Button>
+        <p className="text-muted-foreground text-xs mb-2">Shipping and coupons at checkout</p>
       </div>
-    );
-  };
+      <Button
+        disabled={cartItems.length === 0 || !isReady || hasStockIssue}
+        className="w-full h-12 rounded-xl bg-bandit-orange text-black text-base hover:bg-bandit-orange hover:brightness-110"
+        onClick={handleCheckout}>
+        Checkout <ArrowRight className="w-4 h-4" />
+      </Button>
+      <Button variant="ghost" className="w-full text-muted-foreground" onClick={closeCart}>
+        Continue shopping
+      </Button>
+    </div>
+  );
 
   return (
     <Sheet open={isCartOpen} onOpenChange={closeCart}>
-      <SheetContent>
+      <SheetContent className="w-full sm:max-w-[420px] p-4 sm:p-6">
         <div className="h-full flex flex-col">
           <SheetHeader>
-            <SheetTitle>Cart</SheetTitle>
+            <SheetTitle className="font-calera text-3xl sm:text-4xl font-normal leading-none text-left">
+              YOUR LOOT
+              {cartItems.length > 0 && (
+                <span className="text-bandit-orange text-lg align-middle ml-2">
+                  ({cartItems.reduce((n, i) => n + i.quantity, 0)})
+                </span>
+              )}
+            </SheetTitle>
           </SheetHeader>
-          <div className="flex-1 overflow-y-auto">
-            <CartContent />
-          </div>
-          <CartFooter />
+          <div className="flex-1 overflow-y-auto">{cartContent}</div>
+          {cartFooter}
         </div>
       </SheetContent>
     </Sheet>
-  );
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const PromotionsAccordion = () => {
-  return (
-    <Accordion type="single" collapsible className="bg-muted/50 rounded-lg">
-      <AccordionItem value="promotions" className="border-none">
-        <AccordionTrigger className="px-4 py-3 hover:no-underline">
-          <h3 className="font-medium text-sm">Active Promotions</h3>
-        </AccordionTrigger>
-        <AccordionContent className="px-4 pb-4">
-          <div className="grid gap-3">
-            {/* Site-wide Discount */}
-            <div className="relative overflow-hidden rounded-lg p-3 border border-primary/10">
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0 h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
-                  <span className="text-primary text-lg font-semibold">%</span>
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-sm text-foreground">Site-wide Discount</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">Enjoy 5% off on all products</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Bulk Purchase Offer */}
-            <div className="relative overflow-hidden rounded-lg p-3 border border-primary/10">
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0 h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
-                  <span className="text-primary text-lg font-semibold">4x</span>
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-sm text-foreground">Bulk Purchase Offer</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">Buy 4 for ₹1000</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Free Shipping */}
-            <div className="relative overflow-hidden rounded-lg p-3 border border-primary/10">
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0 h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
-                  <span className="text-primary text-lg">🚚</span>
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-sm text-foreground">Free Shipping</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">On all orders above ₹750</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
   );
 };

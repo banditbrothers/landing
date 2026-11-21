@@ -1,4 +1,5 @@
 import { isProduction } from "@/utils/misc";
+import type { Order } from "@/types/order";
 
 export const REFERRAL_SOURCES = [
   { id: "facebook-instagram-ads", label: "Facebook / Instagram Ads" },
@@ -10,10 +11,9 @@ export const REFERRAL_SOURCES = [
   { id: "others", label: "Others" },
 ] as const;
 
-export const getReferralSourceLabel = (id: string): string => {
-  const source = REFERRAL_SOURCES.find(s => s.id === id);
-  return source ? source.label : id;
-};
+// Older orders have no referralSource; Discord rejects empty embed fields
+export const getReferralSourceLabel = (id?: string): string =>
+  REFERRAL_SOURCES.find(s => s.id === id)?.label ?? (id || "Unknown");
 
 export const DEFAULT_ORDER_VALUES = isProduction
   ? {
@@ -46,3 +46,8 @@ export const DEFAULT_ORDER_VALUES = isProduction
         zip: "400001",
       },
     };
+
+export const getPaymentMethodLabel = (order: Order) => {
+  if (order.paymentMode === "rzp") return order.rzp.paymentMethod?.toUpperCase();
+  return order.paymentMode === "manual" ? "Manual" : "Cash";
+};

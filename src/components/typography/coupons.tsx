@@ -1,6 +1,7 @@
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { Copy } from "lucide-react";
 
 export const BULK_BUY_COUPON = {
   code: "LOOT4B4NDITS",
@@ -22,13 +23,19 @@ const STANDARD_COUPON = {
   code: "BEABANDIT",
   name: "Site-wide 5% off",
   CartMessageElement: () => (
-    <CouponCardContainer>
-      <CouponCardContentWrapper>
-        <span>
-          Get <FeaturedText>5% off</FeaturedText> on all orders, use code <CouponText code={STANDARD_COUPON.code} />
-          <span className="ml-1 animate-pulse">🧡</span>
+    <CouponCardContainer className="justify-between gap-3 rounded-xl px-3.5 py-3">
+      <span className="min-w-0">
+        {/* Literal caps: Calera's lowercase set has filled counters */}
+        <span className="block font-calera text-base leading-tight">
+          PSST, <FeaturedText>BANDIT.</FeaturedText>
         </span>
-      </CouponCardContentWrapper>
+        <span className="block text-xs text-muted-foreground mt-0.5">5% off everything</span>
+      </span>
+      <CouponText
+        className="flex items-center gap-1.5 border border-dashed border-bandit-orange rounded-lg px-2.5 py-1.5 text-xs font-medium tracking-wider whitespace-nowrap"
+        code={STANDARD_COUPON.code}>
+        <Copy className="w-3.5 h-3.5" />
+      </CouponText>
     </CouponCardContainer>
   ),
 };
@@ -59,7 +66,7 @@ const CouponCardContainer = ({ children, className }: React.HTMLAttributes<HTMLD
   return (
     <div
       className={cn(
-        "flex items-center justify-center bg-primary/5 rounded-lg p-3 border border-primary/10",
+        "flex items-center bg-card rounded-lg px-3 py-2.5",
         className
       )}>
       {children}
@@ -68,7 +75,7 @@ const CouponCardContainer = ({ children, className }: React.HTMLAttributes<HTMLD
 };
 
 const CouponCardContentWrapper = ({ children, className }: React.HTMLAttributes<HTMLSpanElement>) => {
-  return <span className={cn("text-center leading-normal text-xs text-muted-foreground", className)}>{children}</span>;
+  return <span className={cn("leading-normal text-xs text-muted-foreground", className)}>{children}</span>;
 };
 
 const FeaturedText = ({ children, className, ...rest }: React.HTMLAttributes<HTMLSpanElement>) => {
@@ -83,18 +90,21 @@ type CouponTextProps = React.HTMLAttributes<HTMLButtonElement> & {
   code: string;
 };
 
-const CouponText = ({ code, ...rest }: CouponTextProps) => {
+const CouponText = ({ code, children, ...rest }: CouponTextProps) => {
   const { copy } = useCopyToClipboard();
 
   const handleCopy = () => {
     copy(code);
-    toast.success("Coupon code copied to clipboard");
+    toast.success(`${code} copied`, { description: "Paste it at checkout." });
   };
 
   return (
     <FeaturedText className="font-semibold">
       <button type="button" onClick={handleCopy}>
-        <span {...rest}>{code}</span>
+        <span {...rest}>
+          {code}
+          {children}
+        </span>
       </button>
     </FeaturedText>
   );

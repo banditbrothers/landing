@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,13 +9,14 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductVariant } from "@/types/product";
 import { createVariant } from "@/actions/products";
-import { uploadToS3, generateImageKey } from "@/utils/s3Upload";
 import { getSKU } from "@/utils/product";
-import { DESIGNS, PRODUCTS } from "@/data/products";
+import { PRODUCTS, PRODUCTS_OBJ } from "@/data/products";
+import { DESIGNS } from "@/data/designs";
+import { parseStockInputs, StockInputs, StockInputValues } from "./StockInputs";
 import { toast } from "sonner";
-import Image from "next/image";
-import { Upload, Loader2, Plus } from "lucide-react";
-import { processImage } from "@/utils/image";
+import { MockupImageGrid, MockupUploadButton } from "./MockupImageGrid";
+import { Plus } from "lucide-react";
+import { LoadingIcon } from "@/components/misc/Loading";
 import { getTimestamp } from "@/utils/timestamp";
 
 interface AddVariantDialogProps {
@@ -33,7 +34,6 @@ interface FormData {
   price?: number;
   isAvailable: boolean;
   isBestSeller: boolean;
-  isDiscoverable: boolean;
   mockupImages: string[];
 }
 
@@ -46,12 +46,11 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
     price: undefined,
     isAvailable: true,
     isBestSeller: false,
-    isDiscoverable: true,
     mockupImages: [],
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [stockInputs, setStockInputs] = useState<StockInputValues>({});
 
   const checkVariantExists = (productId: string, designId: string): boolean => {
     return existingVariants.some(variant => variant.productId === productId && variant.designId === designId);
@@ -86,7 +85,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
         price: formData.price || undefined,
         isAvailable: formData.isAvailable,
         isBestSeller: formData.isBestSeller,
-        isDiscoverable: formData.isDiscoverable,
+        stock: parseStockInputs(stockInputs, PRODUCTS_OBJ[formData.productId]?.sizes ?? []),
         images: {
           mockup: formData.mockupImages,
           detail: [],
@@ -97,6 +96,10 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
       };
 
       const createdVariant = await createVariant(sku, newVariant);
+      if ("error" in createdVariant) {
+        toast.error(createdVariant.error);
+        return;
+      }
 
       toast.success("Variant created successfully!");
       onSave(createdVariant);
@@ -118,51 +121,10 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
       price: undefined,
       isAvailable: true,
       isBestSeller: false,
-      isDiscoverable: true,
       mockupImages: [],
     });
+    setStockInputs({});
     onClose();
-  };
-
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !formData.designId || !formData.productId) {
-      toast.error("Please select both product and design first");
-      return;
-    }
-
-    setIsUploadingImage(true);
-    try {
-      // Check if the image is a webp and if not, convert it to webp, then compress
-      const processedFile = await processImage(file);
-
-      // Generate S3 key and upload
-      const key = generateImageKey(formData.designId, formData.productId);
-      const imageUrl = await uploadToS3(processedFile, key);
-
-      // Add new image to form data
-      setFormData(prev => ({
-        ...prev,
-        mockupImages: [...prev.mockupImages, imageUrl],
-      }));
-
-      toast.success("Image uploaded successfully");
-    } catch (error) {
-      toast.error("Failed to upload image");
-      console.error(error);
-    } finally {
-      setIsUploadingImage(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
-  };
-
-  const removeImage = (indexToRemove: number) => {
-    setFormData(prev => ({
-      ...prev,
-      mockupImages: prev.mockupImages.filter((_, index) => index !== indexToRemove),
-    }));
   };
 
   const currentVariantExists =
@@ -253,52 +215,17 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
               <span className="text-red-500">*</span>
             </Label>
             <div className="space-y-4">
-              {/* Current Images */}
-              {formData.mockupImages.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {formData.mockupImages.map((imageUrl, index) => (
-                    <div key={index} className="relative group">
-                      <div className="relative w-full h-32 rounded-lg overflow-hidden bg-muted border">
-                        <Image src={imageUrl} alt={`Mockup ${index + 1}`} fill className="object-cover" />
-                      </div>
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="absolute top-2 right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
-                        onClick={() => removeImage(index)}>
-                        ×
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <MockupImageGrid
+                images={formData.mockupImages}
+                onChange={mockupImages => setFormData(prev => ({ ...prev, mockupImages }))}
+              />
 
-              {/* Upload Button */}
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploadingImage || !formData.designId || !formData.productId}
-                className="w-full border-dashed border-2 h-12 bg-muted/50 hover:bg-muted/80 transition-colors">
-                {isUploadingImage ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Mockup Image
-                  </>
-                )}
-              </Button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/jpg,image/png,image/webp"
-                className="hidden"
-                onChange={handleImageUpload}
+              <MockupUploadButton
+                productId={formData.productId}
+                designId={formData.designId}
+                onUploaded={url => setFormData(prev => ({ ...prev, mockupImages: [...prev.mockupImages, url] }))}
+                onUploadingChange={setIsUploadingImage}
+                className="w-full border-dashed border-2 h-12 bg-muted/50 hover:bg-muted/80 transition-colors"
               />
               {(!formData.designId || !formData.productId) && (
                 <p className="text-sm text-muted-foreground/80">
@@ -343,6 +270,14 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
             />
           </div> */}
 
+          {formData.productId && (
+            <StockInputs
+              sizes={PRODUCTS_OBJ[formData.productId]?.sizes ?? []}
+              value={stockInputs}
+              onChange={setStockInputs}
+            />
+          )}
+
           {/* Switches */}
           <div className="space-y-4 p-4 bg-muted/30 rounded-lg border">
             <div className="flex items-center justify-between">
@@ -366,17 +301,6 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
                 onCheckedChange={checked => setFormData(prev => ({ ...prev, isBestSeller: checked }))}
               />
             </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="isDiscoverable" className="text-sm font-medium text-foreground">
-                Is Discoverable
-              </Label>
-              <Switch
-                id="isDiscoverable"
-                checked={formData.isDiscoverable}
-                onCheckedChange={checked => setFormData(prev => ({ ...prev, isDiscoverable: checked }))}
-              />
-            </div>
           </div>
 
           {/* Action Buttons */}
@@ -398,7 +322,7 @@ export const AddVariantDialog = ({ isOpen, onClose, onSave, existingVariants }: 
               className="min-w-[120px]">
               {isLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <LoadingIcon className="w-4 h-4 mr-2" />
                   Creating...
                 </>
               ) : (

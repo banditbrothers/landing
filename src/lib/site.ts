@@ -1,4 +1,56 @@
+import type { Metadata } from "next";
+
 export const SITE_URL = "https://www.banditbrothers.in";
 export const SITE_NAME = "Bandit Brothers";
+export const META_PIXEL_ID = "1407174127410687";
 export const SITE_DESCRIPTION =
   "Bandit Brothers — premium bandanas and headwear. Wear your mischief. Shop bold designs, best sellers, and comfortable everyday style. Made in India.";
+
+const WHATSAPP_NUMBER = "917977884773";
+export const CONTACT = {
+  phone: "+91 79778 84773",
+  phoneIntl: "+91-7977884773",
+  whatsappNumber: WHATSAPP_NUMBER,
+  whatsapp: `https://wa.me/${WHATSAPP_NUMBER}`,
+  email: "hello@banditbrothers.in",
+  instagram: "https://www.instagram.com/be.a.banditbrother/",
+  instagramHandle: "@be.a.banditbrother",
+};
+
+// Built by scripts/generate-og-image.mjs
+export const DEFAULT_OG_IMAGE = {
+  url: "/og-default.jpg",
+  width: 1200,
+  height: 630,
+  alt: "Bandit Brothers — Wear your Mischief. Bandanas, balaclavas and jerseys.",
+};
+
+/** Cuts at a word boundary so search snippets don't end mid-word. */
+export const truncate = (text: string, max = 160) =>
+  text.length <= max ? text : text.slice(0, text.lastIndexOf(" ", max - 1)).replace(/[\s,.;:—-]+$/, "") + "…";
+
+/**
+ * Full metadata for a page. Next.js replaces (not merges) openGraph/twitter objects from parent layouts,
+ * so every page gets the complete set here: canonical, og:url/type/site_name, and the brand appended once.
+ */
+export const pageMetadata = ({
+  title,
+  description,
+  path,
+  image = DEFAULT_OG_IMAGE,
+}: {
+  title: string;
+  description: string;
+  path: string;
+  /** null = the route has an opengraph-image.tsx; Next adds og:image itself and Twitter falls back to it */
+  image?: string | typeof DEFAULT_OG_IMAGE | null;
+}): Metadata => {
+  const fullTitle = `${title} | ${SITE_NAME}`; // og/twitter titles don't get the layout's title template
+  return {
+    title, // the root layout's template appends " | Bandit Brothers"
+    description,
+    alternates: { canonical: path },
+    openGraph: { type: "website", siteName: SITE_NAME, url: path, title: fullTitle, description, ...(image && { images: image }) },
+    twitter: { card: "summary_large_image", title: fullTitle, description, ...(image && { images: image }) },
+  };
+};

@@ -1,54 +1,136 @@
-import { ImageCarousel } from "@/components/carousels/ImageCarousel";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+"use client";
 
-const images = [
-  "/how-to-wear/mugshot-2.webp",
-  "/how-to-wear/mugshot-1.webp",
-  "/how-to-wear/mugshot-3.webp",
-  "/how-to-wear/mugshot-4.webp",
-  "/how-to-wear/mugshot-5.webp",
-  "/how-to-wear.webp",
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
+import Link from "next/link";
+import { m } from "motion/react";
+import { ArrowRight } from "lucide-react";
+import { Reveal, SectionHead } from "@/components/misc/Reveal";
+import { cn } from "@/lib/utils";
+
+// The desktop fan reads best with suspects 1 and 3 swapped; the mobile scroller keeps natural order.
+const MUGSHOT_ORDER = { mobile: [1, 2, 3, 4, 5], desktop: [3, 2, 1, 4, 5] };
+const mugshotSrc = (n: number) => `/how-to-wear/mugshot-${n}.webp`;
+const TILTS = [-7, 4, -3, 6, -5];
+
+export const WAYS = [
+  "Neck gaiter",
+  "Face mask",
+  "Headband",
+  "Helmet liner",
+  "Pirate wrap",
+  "Hood",
+  "Balaclava",
+  "Wristband",
+  "Ponytail tie",
+  "Beanie",
+  "Sweatband",
+  "Cap liner",
 ];
 
 export const HowToWearSection = () => {
   return (
-    <section id="how-to-wear" className="scroll-mt-16 py-20 bg-background">
-      <div className="mx-auto px-4 max-w-6xl">
-        <div className="flex flex-col items-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-center text-foreground">How to Wear A Bandana</h2>
-        </div>
+    <section id="how-to-wear" className="scroll-mt-20 overflow-hidden">
+      <div className="max-w-screen-2xl mx-auto px-4 md:px-8">
+        <SectionHead
+          kicker="The lineup"
+          title={
+            <>
+              Caught <span className="text-bandit-orange whitespace-nowrap">red-handed</span>
+            </>
+          }>
+          <p className="text-muted-foreground max-w-sm md:text-right">
+            Our usual suspects, booked for wearing the same bandana way too many ways.
+          </p>
+        </SectionHead>
+      </div>
 
-        <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-12 md:gap-16">
-          <div className="relative aspect-square w-full md:w-1/2 2xl:w-3/5 rounded-lg">
-            <ImageCarousel
-              alt="How to Wear"
-              images={images}
-              indicatorType="preview"
-              indicatorConfig={{ position: "horizontal" }}
+      {/* Mugshot wall: fanned + tilted, straighten on hover. Scrolls sideways on mobile. */}
+      <div className="flex md:justify-center gap-4 md:gap-0 overflow-x-auto overflow-y-hidden md:overflow-visible snap-x snap-mandatory px-4 md:px-8 py-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {MUGSHOT_ORDER.desktop.map((desktopN, i) => (
+          <m.div
+            key={i}
+            className="snap-center shrink-0 w-[62vw] sm:w-[40vw] md:w-[22%] md:-mx-3 first:ml-0 relative hover:!z-20"
+            style={{ zIndex: i % 2 ? 2 : 1 }}
+            initial={{ opacity: 0, y: 60, rotate: 0 }}
+            whileInView={{ opacity: 1, y: 0, rotate: TILTS[i] }}
+            whileHover={{ rotate: 0, y: -14, scale: 1.04 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ type: "spring", stiffness: 120, damping: 16, delay: i * 0.07 }}>
+            <div className="bg-white p-2 pb-8 rounded-sm shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+              {desktopN === MUGSHOT_ORDER.mobile[i] ? (
+                <Mugshot n={desktopN} />
+              ) : (
+                <>
+                  <Mugshot n={MUGSHOT_ORDER.mobile[i]} className="md:hidden" />
+                  <Mugshot n={desktopN} className="hidden md:block" />
+                </>
+              )}
+              <p className="font-calera text-black text-lg text-center mt-2 uppercase">
+                Suspect #{String(i + 1).padStart(3, "0")}
+              </p>
+            </div>
+          </m.div>
+        ))}
+      </div>
+
+      <div className="max-w-screen-2xl mx-auto px-4 md:px-8 mt-12 md:mt-16 grid md:grid-cols-[1fr_1.2fr] gap-8 md:gap-14 items-center">
+        <Reveal>
+          <div className="relative aspect-square rounded-3xl overflow-hidden">
+            <SkeletonImage
+              src="/how-to-wear.webp"
+              alt="How to wear your bandana"
+              fill
+              sizes="(min-width: 768px) 45vw, 100vw"
+              className="object-cover"
             />
           </div>
-
-          <div className="w-full md:w-1/2 2xl:w-2/5 space-y-8">
-            <h3 className="text-2xl font-semibold text-foreground text-center md:text-left">
-              One Bandana, Endless Possibilities
+        </Reveal>
+        <div>
+          <Reveal>
+            <h3 className="font-calera uppercase leading-[0.9] text-[clamp(2.5rem,5vw,4.5rem)]">
+              One bandana.
+              <br />
+              <span className="text-bandit-orange">Endless alibis.</span>
             </h3>
-            <p className="text-muted-foreground text-lg leading-relaxed text-center md:text-left">
-              Our premium bandanas are designed for maximum versatility and style. Wear them as bandanas, face masks,
-              neck warmers, headbands, or even as wristbands.
+            <p className="text-muted-foreground text-lg leading-relaxed mt-5 max-w-lg">
+              Stretchy tube, zero seams where it matters. Pull it, twist it, fold it: it&apos;s whatever the day needs.
             </p>
-            <div className="flex md:justify-start justify-center">
-              <Link href="/products">
-                <Button variant="bandit-hover" className="group w-fit">
-                  Get Yours Now
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
-            </div>
-          </div>
+          </Reveal>
+          <ol className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-8">
+            {WAYS.map((way, i) => (
+              <Reveal key={way} delay={i * 0.04} y={14}>
+                <li className="group flex items-center gap-3 rounded-xl border border-border px-3 py-3 transition hover:border-bandit-orange hover:bg-bandit-orange/10">
+                  <span className="font-calera text-2xl leading-none text-transparent transition group-hover:text-bandit-orange [-webkit-text-stroke:1px_theme(colors.bandit-orange)]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-sm">{way}</span>
+                </li>
+              </Reveal>
+            ))}
+          </ol>
+          <Reveal delay={0.2}>
+            <Link
+              href="/shop/bandana"
+              className="group mt-8 inline-flex items-center gap-2 h-12 px-6 rounded-full bg-foreground text-background font-semibold transition hover:bg-bandit-orange hover:text-black">
+              Get a bandana
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </Reveal>
         </div>
       </div>
     </section>
   );
 };
+
+// Each photo gets its own box so a display:none (lazy, never-fetched) image keeps its skeleton hidden too.
+const Mugshot = ({ n, className }: { n: number; className?: string }) => (
+  <div className={cn("relative aspect-square", className)}>
+    <SkeletonImage
+      src={mugshotSrc(n)}
+      alt="Bandit Brothers lineup"
+      fill
+      sizes="(min-width: 768px) 22vw, 62vw"
+      className="object-cover"
+    />
+  </div>
+);

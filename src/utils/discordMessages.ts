@@ -2,9 +2,14 @@ import type { DiscordMessage } from "@/types/discord";
 import { Order } from "@/types/order";
 import { getAddressString } from "./address";
 import { getDate } from "./timestamp";
-import { getWhatsappOrderConfirmationLink } from "./whatsappMessageLinks";
+import { SITE_URL } from "@/lib/site";
+import { waLink } from "./whatsappMessageLinks";
 import { Review } from "@/types/review";
-import { getReferralSourceLabel } from "@/constants/order";
+import { StockNotification } from "@/types/stockNotification";
+import { getSizeLabel } from "./product";
+import { getPaymentMethodLabel, getReferralSourceLabel } from "@/constants/order";
+import { formatCurrency } from "./price";
+import { routes } from "@/utils/routes";
 
 export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
   return {
@@ -18,25 +23,26 @@ export const getDiscordPaymentLinkPaidMessage = (order: Order) => {
           { name: "Name", value: order.name },
           { name: "Referral Source", value: getReferralSourceLabel(order.referralSource) },
           { name: "Address", value: getAddressString(order.address) },
-          { name: "Products", value: order.variants.map(variant => `${variant.quantity}x ${variant.variantId} - (${variant.size})`).join("\n") },
-          { name: "Total", value: `₹${order.total}` },
-          { name: "View Order", value: `[View Order](https://www.banditbrothers.in/order/${order.id})` },
+          {
+            name: "Products",
+            value: order.variants
+              .map(variant => `${variant.quantity}x ${variant.variantId} - (${getSizeLabel(variant.size)})`)
+              .join("\n"),
+          },
+          { name: "Total", value: formatCurrency(order.total) },
+          { name: "View Order", value: `[View Order](${SITE_URL}${routes.order(order.id)})` },
         ],
-        timestamp: new Date(getDate(order.createdAt)).toISOString(),
+        timestamp: getDate(order.createdAt).toISOString(),
       },
     ],
   } satisfies DiscordMessage;
-}
+};
 
 export const getDiscordOrderMessage = (order: Order) => {
-  let paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
-  if (order.paymentMode === "manual") paymentMethod = "Manual";
-  
+  const paymentMethod = getPaymentMethodLabel(order);
 
   return {
-    content: `🎉 We have a new order! \nSend ${
-      order.name
-    } their order info + shipping details by clicking [here](${getWhatsappOrderConfirmationLink(order)})`,
+    content: `🎉 We have a new order! \n[WhatsApp ${order.name}](${waLink(order.phone)})`,
     embeds: [
       {
         title: "Order Details",
@@ -49,15 +55,17 @@ export const getDiscordOrderMessage = (order: Order) => {
           { name: "Shipping Region", value: order.isInternational ? "🌍 International" : "🇮🇳 Domestic" },
           {
             name: "Payment Details",
-            value: `${paymentMethod} / ₹${order.total} ${order.couponCode ? `(${order.couponCode})` : ""}`,
+            value: `${paymentMethod} / ${formatCurrency(order.total)} ${order.couponCode ? `(${order.couponCode})` : ""}`,
           },
           { name: "Address", value: getAddressString(order.address) },
           {
             name: "Products",
-            value: order.variants.map(variant => `${variant.quantity}x ${variant.variantId} - (${variant.size})`).join("\n"),
+            value: order.variants
+              .map(variant => `${variant.quantity}x ${variant.variantId} - (${getSizeLabel(variant.size)})`)
+              .join("\n"),
           },
         ],
-        timestamp: new Date(getDate(order.createdAt)).toISOString(),
+        timestamp: getDate(order.createdAt).toISOString(),
       },
     ],
   } satisfies DiscordMessage;
@@ -77,6 +85,25 @@ export const getDiscordReviewMessage = (review: Review) => {
           { name: "Comment", value: review.comment },
           { name: "Contains Images", value: review.images.length > 0 ? "Yes" : "No" },
         ],
+      },
+    ],
+  } satisfies DiscordMessage;
+};
+
+export const getDiscordStockNotificationMessage = (request: StockNotification, variantName: string) => {
+  return {
+    content: `🔔 Someone wants to know when ${variantName} (${getSizeLabel(request.size)}) is back in stock`,
+    embeds: [
+      {
+        title: "Back-in-Stock Request",
+        color: 0xfd6e00,
+        fields: [
+          { name: "Variant", value: `${variantName} (${request.variantId})` },
+          { name: "Size", value: getSizeLabel(request.size) },
+          { name: "Email", value: request.email ?? "-" },
+          { name: "Phone", value: request.phone ?? "-" },
+        ],
+        timestamp: getDate(request.createdAt).toISOString(),
       },
     ],
   } satisfies DiscordMessage;

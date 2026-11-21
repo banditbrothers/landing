@@ -2,10 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
+/* body only: on html too, the cart's scroll lock (body overflow: hidden) stops propagating to the
+   viewport, makes body a scroll container and un-sticks the variant page gallery */
 body {
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow-x: clip; /* not hidden: hidden makes body a scroll container and breaks position: sticky */
 }
 
 body {
@@ -37,6 +38,7 @@ a {
 
 @layer base {
   :root {
+    --nav-h: 104px; /* navbar.tsx sets this live: 64px row + 40px category row when shown */
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 98%;
@@ -122,4 +124,34 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* ScrollFade: typed properties so the fade widths transition (a mask gradient on its own can't) */
+@property --fade-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --fade-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+.scroll-fade {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--fade-start),
+    #000 calc(100% - var(--fade-end)),
+    transparent
+  );
+  transition:
+    --fade-start 300ms ease-out,
+    --fade-end 300ms ease-out;
+}
+.scroll-fade[data-fade-start] {
+  --fade-start: 40px;
+}
+.scroll-fade[data-fade-end] {
+  --fade-end: 40px;
 }

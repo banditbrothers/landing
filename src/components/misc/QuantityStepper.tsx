@@ -7,9 +7,10 @@ type QuantityStepperProps = {
   quantity: number;
   increment: () => void;
   decrement: () => void;
+  max?: number;
 };
 
-export const QuantityStepper = ({ quantity, increment, decrement }: QuantityStepperProps) => {
+export const QuantityStepper = ({ quantity, increment, decrement, max }: QuantityStepperProps) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -33,7 +34,8 @@ export const QuantityStepper = ({ quantity, increment, decrement }: QuantityStep
         type="button"
         size="icon"
         className="h-8 w-8 rounded-r-full hover:bg-transparent"
-        onClick={() => increment()}>
+        disabled={isMounted && max !== undefined && quantity >= max}
+        onClick={() => (max === undefined || quantity < max) && increment()}>
         <PlusIcon className="w-4 h-4" />
       </Button>
     </div>

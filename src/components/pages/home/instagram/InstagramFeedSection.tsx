@@ -2,10 +2,14 @@
 
 import { getInstagramFeed } from "@/lib/instagram";
 import Image from "next/image";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 import Link from "next/link";
+import { CONTACT } from "@/lib/site";
 import { useEffect, useState } from "react";
 import { MessageCircleIcon } from "lucide-react";
 import { HeartIconSolid, InstagramIcon } from "@/Icons/icons";
+import { Reveal, SectionHead } from "@/components/misc/Reveal";
+
 type InstagramPost = {
   id: string;
   caption: string;
@@ -22,54 +26,60 @@ export const InstagramFeedSection = () => {
   const [feed, setFeed] = useState<InstagramPost[]>([]);
 
   useEffect(() => {
-    const fetchFeed = async () => {
-      const feed = await getInstagramFeed();
-      setFeed(feed.data);
-    };
-    fetchFeed();
+    getInstagramFeed()
+      .then(res => setFeed(res?.data ?? []))
+      .catch(() => setFeed([]));
   }, []);
 
+  // if (!feed.length) return null;
+
   return (
-    <section id="instagram-feed" className="w-full max-w-7xl mx-auto container">
-      <div className="flex flex-col items-center mb-12">
-        <h2 className="text-3xl font-bold text-primary">Follow Our Journey</h2>
-        <Link href="https://www.instagram.com/be.a.banditbrother/" target="_blank" rel="noopener noreferrer">
-          <span className="flex items-center gap-2 mt-2">
-            <Image src={InstagramIcon} alt="Instagram" width={20} height={20} />
-            <p className="text-bandit-orange">be.a.banditbrother</p>
+    <section id="instagram-feed" className="max-w-screen-2xl mx-auto px-4 md:px-8">
+      <SectionHead
+        kicker="Follow the gang"
+        title={
+          <span className="max-md:text-[0.85em]">
+            @be.a.
+            <wbr />
+            <span className="text-bandit-orange">bandit</span>brother
           </span>
+        }>
+        <Link
+          href={CONTACT.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 h-11 px-5 rounded-full border border-border text-sm whitespace-nowrap hover:border-bandit-orange w-fit shrink-0">
+          <Image src={InstagramIcon} alt="" width={18} height={18} />
+          Follow on Instagram
         </Link>
-      </div>
+      </SectionHead>
 
-      <div className="grid grid-cols-3 gap-[2px] max-w-5xl mx-auto px-4">
-        {feed?.map((post: InstagramPost) => (
-          <Link
-            key={post.id}
-            href={post.permalink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative aspect-[3/4] group overflow-hidden bg-primary">
-            <Image
-              fill
-              src={post.media_type === "VIDEO" ? post.thumbnail_url : post.media_url}
-              alt={post.caption ?? "Instagram post"}
-              className="object-cover transition-transform duration-300 group-hover:scale-110"
-            />
-
-            <div className="absolute inset-0 bg-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="flex items-center justify-center h-full">
-                <div className="flex items-center gap-4 text-black font-semibold">
-                  <span className="flex items-center gap-1">
-                    <HeartIconSolid className="w-4 h-4 text-bandit-orange" /> {post.like_count}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <MessageCircleIcon className="w-4 h-4 fill-bandit-orange stroke-transparent" />
-                    {post.comments_count}
-                  </span>
-                </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-3">
+        {feed.map((post, i) => (
+          <Reveal key={post.id} delay={i * 0.06}>
+            <Link
+              href={post.permalink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative block aspect-[3/4] group overflow-hidden rounded-2xl bg-card">
+              <SkeletonImage
+                fill
+                src={post.media_type === "VIDEO" ? post.thumbnail_url : post.media_url}
+                alt={post.caption ?? "Instagram post"}
+                sizes="(min-width: 1024px) 16vw, 50vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 text-white font-semibold">
+                <span className="flex items-center gap-1">
+                  <HeartIconSolid className="w-4 h-4 text-bandit-orange" /> {post.like_count}
+                </span>
+                <span className="flex items-center gap-1">
+                  <MessageCircleIcon className="w-4 h-4 fill-bandit-orange stroke-transparent" />
+                  {post.comments_count}
+                </span>
               </div>
-            </div>
-          </Link>
+            </Link>
+          </Reveal>
         ))}
       </div>
     </section>

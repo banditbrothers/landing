@@ -1,4 +1,5 @@
 import { LoaderPinwheelIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function LoadingScreen() {
   return (
@@ -8,6 +9,6 @@ export function LoadingScreen() {
   );
 }
 
-export function LoadingIcon() {
-  return <LoaderPinwheelIcon className="animate-spin" />;
+export function LoadingIcon({ className }: { className?: string }) {
+  return <LoaderPinwheelIcon className={cn("animate-spin", className)} />;
 }

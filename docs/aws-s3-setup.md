@@ -8,10 +8,10 @@ Add the following environment variables to your `.env.local` file:
 
 ```
 # AWS S3 Configuration
-NEXT_PUBLIC_AWS_REGION=us-east-1
-NEXT_PUBLIC_AWS_ACCESS_KEY_ID=your-access-key-id
-NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY=your-secret-access-key
-NEXT_PUBLIC_AWS_S3_BUCKET=your-bucket-name
+S3_REGION=us-east-1
+S3_ACCESS_KEY_ID=your-access-key-id
+S3_SECRET_ACCESS_KEY=your-secret-access-key
+S3_BUCKET=your-bucket-name
 ```
 
 ## Setting Up AWS S3 Bucket

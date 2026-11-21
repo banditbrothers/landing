@@ -1,32 +1,29 @@
-import { Design } from "@/types/product";
+import { ProductVariant } from "@/types/product";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { shared } from "use-broadcast-ts";
+import { track } from "@/utils/analytics";
 
 type FavoritesState = {
-  favorites: Design["id"][];
-  toggleFav: (designId: Design["id"]) => void;
-  isFavorite: (designId: Design["id"]) => boolean;
+  favorites: ProductVariant["id"][];
+  toggleFav: (variantId: ProductVariant["id"]) => void;
 };
 
-export const useFavorites = create<FavoritesState>()(
+const useFavoritesStore = create<FavoritesState>()(
   shared(
     persist(
-      (set, get) => ({
+      set => ({
         favorites: [],
 
-        toggleFav: (designId: Design["id"]) => {
+        toggleFav: (variantId: ProductVariant["id"]) => {
           set(state => {
-            const isFavorite = state.favorites.includes(designId);
+            const isFavorite = state.favorites.includes(variantId);
+            track(isFavorite ? "favorite_removed" : "favorite_added", { variant_id: variantId });
             if (isFavorite) {
-              return { favorites: state.favorites.filter(id => id !== designId) };
+              return { favorites: state.favorites.filter(id => id !== variantId) };
             }
-            return { favorites: [...state.favorites, designId] };
+            return { favorites: [...state.favorites, variantId] };
           });
-        },
-
-        isFavorite: (designId: Design["id"]) => {
-          return get().favorites.includes(designId);
         },
       }),
       { name: "favorites", storage: createJSONStorage(() => localStorage) }
@@ -34,3 +31,10 @@ export const useFavorites = create<FavoritesState>()(
     { name: "favorites" }
   )
 );
+
+export const useFavorites = () => {
+  // Read through the hook, not get(): during hydration the hook returns the initial (empty) state like the server did,
+  // while get() already has localStorage loaded and causes a hydration mismatch.
+  const { favorites, toggleFav } = useFavoritesStore();
+  return { favorites, toggleFav, isFavorite: (variantId: ProductVariant["id"]) => favorites.includes(variantId) };
+};

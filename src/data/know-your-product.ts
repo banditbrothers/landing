@@ -2,7 +2,7 @@ export const knowYourProduct = [
   {
     id: "fabric",
     title: "Fabric",
-    image: "/know-your-product/fabric.webp",
+    image: "/know-your-product/fabric.svg",
     description:
       "Unlike the usual blended cotton or low-quality polyester options out there, we've armed our brothers with something better. Meet Quick-Dri DryFit fabric—engineered to keep you",
     extendedDescription:
@@ -11,7 +11,7 @@ export const knowYourProduct = [
   {
     id: "stitching",
     title: "Stitching",
-    image: "/know-your-product/stitching.webp",
+    image: "/know-your-product/stitching.svg",
     description:
       "Say goodbye to bulky, scratchy seams! Our stitching is the unsung hero of premium apparel, offering a smooth, chafe-free finish that feels like a second skin.",
 
@@ -21,7 +21,7 @@ export const knowYourProduct = [
   {
     id: "printing",
     title: "Printing",
-    image: "/know-your-product/printing.webp",
+    image: "/know-your-product/printing.svg",
     description:
       "Our printing is the gold standard for bold, vibrant, and ultra-durable designs. Here's the magic: the ink transforms into gas and bonds directly with the fabric's fibers, creating prints that",
 

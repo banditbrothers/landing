@@ -1,22 +1,12 @@
+// Keeps the first and last character of each part, so short values never throw ("a" stays "a")
+const mask = (s: string) => (s.length <= 2 ? s : `${s[0]}${"*".repeat(s.length - 2)}${s[s.length - 1]}`);
+
 export const redactEmail = (email: string): string => {
-  const [username, domain] = email.split("@");
-  const redactedUsername = `${username[0]}${"*".repeat(username.length - 2)}${username[username.length - 1]}`;
-  const redactedDomain = `${domain[0]}${"*".repeat(domain.length - 2)}${domain[domain.length - 1]}`;
-  return `${redactedUsername}@${redactedDomain}`;
+  const [username = "", domain = ""] = email.split("@");
+  return `${mask(username)}@${mask(domain)}`;
 };
 
-export const redactName = (name: string): string => {
-  // redact all but the first and last characters of each word
-  return name
-    .trim()
-    .split(" ")
-    .filter(word => word.length > 2)
-    .map(word => {
-      return `${word[0]}${"*".repeat(word.length - 2)}${word[word.length - 1]}`;
-    })
-    .join(" ");
-};
+export const redactName = (name: string): string => name.trim().split(/\s+/).map(mask).join(" ");
 
-export const redactPhone = (phone: string): string => {
-  return `${phone.slice(0, 1)}${"*".repeat(phone.length - 4)}${phone.slice(phone.length - 3)}`;
-};
+export const redactPhone = (phone: string): string =>
+  phone.length <= 4 ? phone : `${phone.slice(0, 1)}${"*".repeat(phone.length - 4)}${phone.slice(-3)}`;

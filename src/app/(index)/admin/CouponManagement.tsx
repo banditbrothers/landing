@@ -1,11 +1,9 @@
-import { useEffect } from "react";
-
 import { useCouponActions } from "@/hooks/useCouponActions";
 import { Coupon } from "@/types/coupon";
 import { useState } from "react";
 import { getCoupons } from "@/actions/coupons";
 import { toast } from "sonner";
-import { getDate, getTimestamp } from "@/utils/timestamp";
+import { formattedDateTimeLong, getTimestamp, toTimestamp } from "@/utils/timestamp";
 import { Button } from "@/components/ui/button";
 import { LoadingIcon, LoadingScreen } from "@/components/misc/Loading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +16,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getVariantsAdmin } from "@/actions/products";
 import { ProductVariant } from "@/types/product";
 import { Checkbox } from "@/components/ui/checkbox";
+import { formatCurrency } from "@/utils/price";
+import { useAdminLoad } from "./adminHooks";
 
 export function CouponManagement() {
   const { addCoupon, couponLoading, updateCoupon } = useCouponActions();
@@ -26,15 +26,14 @@ export function CouponManagement() {
   const [variants, setVariants] = useState<ProductVariant[]>([]);
   const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
   const [showDialog, setShowDialog] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    Promise.all([getCoupons(), getVariantsAdmin()]).then(([coupons, variants]) => {
+  const isLoading = useAdminLoad(
+    () => Promise.all([getCoupons(), getVariantsAdmin()]),
+    ([coupons, variants]) => {
       setCoupons(coupons);
       setVariants(variants);
-      setIsLoading(false);
-    });
-  }, []);
+    },
+    "coupons"
+  );
 
   const handleAddCoupon = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -70,13 +69,18 @@ export function CouponManagement() {
       discountType: couponType as "fixed" | "percentage",
       discount: Number(couponDiscount),
       minOrderAmount: Number(couponMinAmount),
-      expiresAt: expiresAt ? Math.floor(expiresAt.getTime() / 1000) : null,
+      expiresAt: expiresAt ? toTimestamp(expiresAt) : null,
       createdAt: getTimestamp(),
       isActive: true,
-      applicableVariants: selectedVariants,
+      // Every variant ticked = all variants ([]), so variants added later are covered too
+      applicableVariants: selectedVariants.length === variants.length ? [] : selectedVariants,
     };
 
     const newCoupon = await addCoupon(coupon);
+    if ("error" in newCoupon) {
+      toast.error(newCoupon.error);
+      return;
+    }
     setCoupons(prev => [newCoupon, ...prev]);
     setShowDialog(false);
     setSelectedVariants([]);
@@ -141,8 +145,8 @@ export function CouponManagement() {
                     <TableCell className="font-medium">{coupon.code}</TableCell>
                     <TableCell>
                       {coupon.discountType === "fixed"
-                        ? `₹${coupon.discount} off on orders above ₹${coupon.minOrderAmount}`
-                        : `${coupon.discount}% off on orders above ₹${coupon.minOrderAmount}`}
+                        ? `${formatCurrency(coupon.discount)} off on orders above ${formatCurrency(coupon.minOrderAmount)}`
+                        : `${coupon.discount}% off on orders above ${formatCurrency(coupon.minOrderAmount)}`}
                     </TableCell>
                     <TableCell>
                       {coupon.applicableVariants && coupon.applicableVariants.length > 0
@@ -151,7 +155,7 @@ export function CouponManagement() {
                           }`
                         : "All variants"}
                     </TableCell>
-                    <TableCell>{coupon.expiresAt ? getDate(coupon.expiresAt).toLocaleString() : "Never"}</TableCell>
+                    <TableCell>{coupon.expiresAt ? formattedDateTimeLong(coupon.expiresAt) : "Never"}</TableCell>
                     <TableCell>
                       <Switch
                         id={`coupon-${coupon.id}-active`}
@@ -175,19 +179,19 @@ export function CouponManagement() {
           </DialogHeader>
           <form className="grid gap-4" onSubmit={handleAddCoupon}>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="code" className="text-right">
+              <Label htmlFor="couponCode" className="text-right">
                 Code
               </Label>
               <Input id="couponCode" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
+              <Label htmlFor="couponName" className="text-right">
                 Name
               </Label>
               <Input id="couponName" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
+              <Label htmlFor="couponDescription" className="text-right">
                 Description
               </Label>
               <Input id="couponDescription" className="col-span-3" />
@@ -207,19 +211,19 @@ export function CouponManagement() {
               </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="discount" className="text-right">
+              <Label htmlFor="couponDiscount" className="text-right">
                 Discount
               </Label>
               <Input id="couponDiscount" type="number" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="minAmount" className="text-right">
+              <Label htmlFor="couponMinAmount" className="text-right">
                 Min Amount
               </Label>
               <Input id="couponMinAmount" type="number" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="expires" className="text-right">
+              <Label htmlFor="couponExpires" className="text-right">
                 Expires At
               </Label>
               <Input id="couponExpires" type="date" className="col-span-3" />

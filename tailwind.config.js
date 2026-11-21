@@ -63,10 +63,16 @@ export const theme = {
         5: "hsl(var(--chart-5))",
       },
       "bandit-orange": "#fd6e00",
+      "bandit-red": "#9C0006",
+      // Near-black brown for text on bandit-orange
+      "bandit-ink": "#160900",
       "bandit-white": "#ffffff",
       "valentine-pink": "#FF69B4",
     },
     keyframes: {
+      marquee: {
+        to: { transform: "translateX(-50%)" },
+      },
       "accordion-down": {
         from: {
           height: "0",
@@ -85,6 +91,7 @@ export const theme = {
       },
     },
     animation: {
+      marquee: "marquee 40s linear infinite",
       "accordion-down": "accordion-down 0.2s ease-out",
       "accordion-up": "accordion-up 0.2s ease-out",
     },

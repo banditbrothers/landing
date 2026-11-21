@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Space_Grotesk } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import { CSPostHogProvider } from "@/provider/posthog";
 import { Toaster } from "@/components/ui/sonner";
@@ -12,7 +13,7 @@ import { MetaPixelProvider } from "@/provider/metaPixel";
 import { TanstackQueryProvider } from "@/provider/TanstackQuery";
 import { MotionProvider } from "@/provider/MotionProvider";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { DEFAULT_OG_IMAGE, META_PIXEL_ID, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const Calera = localFont({
   src: "../fonts/calera-display-regular-400.otf",
@@ -35,15 +36,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${SITE_NAME} - Wear your Mischief`,
     description: SITE_DESCRIPTION,
-    url: SITE_URL,
     siteName: SITE_NAME,
-    images: "/logo-full-socials.png",
+    images: DEFAULT_OG_IMAGE,
     type: "website",
   },
   twitter: {
     title: `${SITE_NAME} - Wear your Mischief`,
     description: SITE_DESCRIPTION,
-    images: "/logo-full-socials.png",
+    images: DEFAULT_OG_IMAGE,
     card: "summary_large_image",
   },
   other: {
@@ -67,7 +67,7 @@ export default function RootLayout({
             height="1"
             width="1"
             style={{ display: "none" }}
-            src="https://www.facebook.com/tr?id=1023145726553010&ev=PageView&noscript=1"
+            src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
             alt=""
           />
         </noscript>
@@ -76,7 +76,7 @@ export default function RootLayout({
         <MetaPixelProvider>
           <CSPostHogProvider>
             <TanstackQueryProvider>
-              <Toaster theme={theme} richColors position="top-right" expand />
+              <Toaster />
               <main>
                 <MotionProvider>
                   <Navbar />
@@ -87,6 +87,7 @@ export default function RootLayout({
             </TanstackQueryProvider>
           </CSPostHogProvider>
         </MetaPixelProvider>
+        <Analytics />
       </body>
     </html>
   );

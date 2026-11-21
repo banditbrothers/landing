@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Order } from "@/types/order";
-import { updateOrder } from "@/actions/orders";
 import { createPaymentLinkForInternationalOrder } from "@/actions/payments/rzp";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { LoadingIcon } from "@/components/misc/Loading";
+import { formatCurrency } from "@/utils/price";
 
 interface InternationalOrderPaymentDialogProps {
   onClose: () => void;
@@ -31,7 +31,7 @@ export const InternationalOrderPaymentDialog = ({ onClose, order, onUpdate }: In
     discount: order.discount,
   });
   const [isLoading, setIsLoading] = useState(false);
-  const { isCopied, copy } = useCopyToClipboard(3000);
+  const { copy } = useCopyToClipboard(3000);
 
   const calculateTotal = () => {
     return formData.subtotal + formData.shipping - formData.discount;
@@ -51,28 +51,20 @@ export const InternationalOrderPaymentDialog = ({ onClose, order, onUpdate }: In
 
     setIsLoading(true);
     try {
-      // Update the order in Firebase
-      const updateData = {
-        subtotal: formData.subtotal,
-        shipping: formData.shipping,
-        discount: formData.discount,
-        total: newTotal,
-      };
+      // Saves the amounts and creates the link in one server call (any earlier link is cancelled)
+      const result = await createPaymentLinkForInternationalOrder(order.id, formData);
+      if ("error" in result) {
+        toast.error(result.error);
+        return;
+      }
+      onUpdate(result.order);
+      const paymentLink = result.order.paymentLink!.url;
 
-      await updateOrder(order.id, updateData);
-
-      // Create payment link using the new total
-      const paymentLink = await createPaymentLinkForInternationalOrder(order, newTotal);
-
-      // Copy payment link to clipboard
-      copy(paymentLink);
-
-      // Update the local order object
-      const updatedOrder = { ...order, ...updateData };
-      onUpdate(updatedOrder);
-
-      // Show persistent toast with payment link
-      toast.success("Payment link copied!");
+      // The link is created by now; if the clipboard refuses, show it so it isn't lost.
+      await copy(paymentLink).then(
+        () => toast.success("Payment link copied!"),
+        () => toast.info(`Payment link: ${paymentLink}`, { duration: Infinity })
+      );
 
       onClose();
     } catch (error) {
@@ -153,7 +145,7 @@ export const InternationalOrderPaymentDialog = ({ onClose, order, onUpdate }: In
           <div className="p-4 bg-muted/30 rounded-lg border">
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium text-foreground">Total:</span>
-              <span className="text-lg font-bold text-foreground">₹{calculateTotal().toFixed(2)}</span>
+              <span className="text-lg font-bold text-foreground">{formatCurrency(calculateTotal(), 2)}</span>
             </div>
             <div className="text-xs text-muted-foreground mt-1">Subtotal + Shipping - Discount</div>
           </div>
@@ -170,7 +162,7 @@ export const InternationalOrderPaymentDialog = ({ onClose, order, onUpdate }: In
               className="min-w-[120px]">
               {isLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <LoadingIcon className="w-4 h-4 mr-2" />
                   Updating...
                 </>
               ) : (

@@ -1,12 +1,10 @@
 import { Order } from "@/types/order";
-import { getAddressString } from "./address";
-import { formatCurrency } from "./price";
+import { CONTACT, SITE_URL } from "@/lib/site";
+import { routes } from "@/utils/routes";
 
-const whatsappPhoneNumber = "917977884773";
-
-export const whatsappKnowMoreLink = `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(
-  "Hey, I would like to know more about your products"
-)}`;
+/** wa.me chat link; `to` is the number with its country code */
+export const waLink = (to: string, text?: string) =>
+  `https://wa.me/${to}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
 
 export const getWhatsappNeedHelpWithOrderLink = (orderDetails: Partial<Order>) => {
   let message = `Hey, I need help with my order ${orderDetails.id ? `\n\`ID: ${orderDetails.id}\`` : ""}`;
@@ -17,54 +15,7 @@ export const getWhatsappNeedHelpWithOrderLink = (orderDetails: Partial<Order>) =
       .join("\n")}`;
   }
 
-  const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/${whatsappPhoneNumber}?text=${encodedMessage}`;
-};
-
-export const getWhatsappOrderConfirmationLink = (order: Order) => {
-  const paymentMethod = order.paymentMode === "rzp" ? order.rzp.paymentMethod?.toUpperCase() : "Cash";
-
-  let message: string[] = [];
-  if (order.isInternational) {
-    message = [
-      "Hey, we have received your order!",
-      "",
-      `*Order ID:* ${order.id}`,
-      "",
-      `*Shipping Address:* ${getAddressString(order.address)}`,
-      "",
-      "Check your order details here:",
-      `https://www.banditbrothers.in/order/${order.id}`,
-      "",
-      "A complete breakdown of your order total (including product, and shipping cost) will be shared with you shortly, along with secure payment links and tracking details once everything is ready.",
-      "",
-      "May the Bandits be with you!",
-    ];
-  }
-  else {
-    message = [
-      "Hey, we have received your order!",
-      "",
-      `*Order ID:* ${order.id}`,
-      "",
-      `*Order Total:* ${formatCurrency(order.total, 2)}`,
-      "",
-      `*Shipping Address:* ${getAddressString(order.address)}`,
-      "",
-      `*Payment Method:* ${paymentMethod}`,
-      "",
-      "Check your order details here:",
-      `https://www.banditbrothers.in/order/${order.id}`,
-      "",
-      "You should receive your order in 7-10 days.",
-      "",
-      "May the Bandits be with you!",
-    ];
-  }
-
-  const newMessage = message.join("\n");
-  const encodedMessage = encodeURIComponent(newMessage);
-  return `https://wa.me/${order.phone}?text=${encodedMessage}`;
+  return waLink(CONTACT.whatsappNumber, message);
 };
 
 export const getWhatsappOrderReviewLink = (order: Order) => {
@@ -73,28 +24,23 @@ export const getWhatsappOrderReviewLink = (order: Order) => {
     "We hope you're enjoying your Bandit Brothers bandana!",
     "",
     "We'd love to hear about your experience with our products.",
-    `Click here to share your feedback: https://www.banditbrothers.in/order/${order.id}/review`,
+    `Click here to share your feedback: ${SITE_URL}${routes.orderReview(order.id)}`,
   ].join("\n");
-  const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/${order.phone}?text=${encodedMessage}`;
+  return waLink(order.phone, message);
 };
 
 export const getWhatsappNeedHelpLink = () => {
-  return `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent("Hey, I need help with placing an order on Bandit Brothers")}`;
+  return waLink(CONTACT.whatsappNumber, "Hey, I need help with placing an order on Bandit Brothers");
 };
 
 export const getWhatsappNeedHelpWithOrderIdLink = (orderId: string) => {
-  return `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(`Hey, I need help with order ${orderId}`)}`;
+  return waLink(CONTACT.whatsappNumber, `Hey, I need help with order ${orderId}`);
 };
 
 export const getWhatsappUpdateReviewLink = (reviewId: string, orderId: string) => {
-  return `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(
-    `Hey, I want to update my review for order ${orderId} with id ${reviewId}`
-  )}`;
+  return waLink(CONTACT.whatsappNumber, `Hey, I want to update my review for order ${orderId} with id ${reviewId}`);
 };
 
 export const getWhatsappHelpWithCreateReviewLink = (orderId: string) => {
-  return `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(
-    `Hey, I need help with creating a review for order ${orderId}`
-  )}`;
+  return waLink(CONTACT.whatsappNumber, `Hey, I need help with creating a review for order ${orderId}`);
 };

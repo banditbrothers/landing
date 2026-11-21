@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import Image from "next/image";
+import { SkeletonImage } from "@/components/misc/SkeletonImage";
 
 type HowToWearDialogProps = {
   open: boolean;
@@ -18,7 +18,8 @@ export function HowToWearDialog({ open, onClose }: HowToWearDialogProps) {
         </VisuallyHidden>
 
         <div className="relative aspect-square max-h-[80vh]">
-          <Image
+          <SkeletonImage
+            skeletonClassName="rounded-lg"
             fill
             priority
             src="/how-to-wear.webp"

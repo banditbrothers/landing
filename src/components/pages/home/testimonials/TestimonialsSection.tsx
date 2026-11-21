@@ -1,8 +1,10 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { ReviewCard } from "@/components/cards/ReviewCard";
 import { ReviewWithoutEmail } from "@/types/review";
+import { ReviewCard } from "@/components/cards/ReviewCard";
+import { Reveal, SectionHead } from "@/components/misc/Reveal";
 
 const FEATURED_REVIEWS: ReviewWithoutEmail[] = [
   {
@@ -52,32 +54,48 @@ const FEATURED_REVIEWS: ReviewWithoutEmail[] = [
     ],
     status: "approved",
   },
+  {
+    id: "JSLHa02RDDUx2N0ZU9ma",
+    name: "Asmaa Ahmed",
+    title: "Superb bandanas with unique themes",
+    comment: "Great experience, something different and price factor also pocket friendly. Overall good in quality",
+    rating: 5,
+    source: "website",
+    orderId: "7SaCy63KNsQH1ktLRdMq",
+    createdAt: 1756316480,
+    variantIds: ["BANDANA-LOOKS_FISHY", "BANDANA-MEOW_MEOW"],
+    images: [
+      "https://firebasestorage.googleapis.com/v0/b/banditbrothers-5253.firebasestorage.app/o/reviews%2FJSLHa02RDDUx2N0ZU9ma%2F0.jpg?alt=media&token=dc3a2ba1-7543-4e54-85f6-259cdcaa8462",
+    ],
+    status: "approved",
+  },
 ];
 
 export const TestimonialsSection = () => {
   return (
-    <section id="reviews" className="bg-background text-foreground scroll-mt-16">
-      <div className="container mx-auto px-4 mb-6">
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-6">
-          <h2 className="text-4xl font-bold tracking-tight mb-4">Looking for reviews?</h2>
-          <p className="text-muted-foreground mb-6">Hear It From Our Fellow Bandits</p>
-        </div>
-        <div className="flex flex-col md:flex-row gap-2">
-          {FEATURED_REVIEWS.map(review => (
-            <span className="flex-1" key={review.id}>
-              <ReviewCard review={review} containerStyle={{ minHeight: 720 }} />
-            </span>
-          ))}
-        </div>
+    <section id="reviews" className="scroll-mt-20 max-w-screen-2xl mx-auto px-4 md:px-8">
+      <SectionHead
+        kicker="Word on the street"
+        title={
+          <>
+            Bandits <span className="text-bandit-orange">talk</span>
+          </>
+        }>
+        <Link
+          href="/reviews"
+          className="group inline-flex items-center gap-2 text-sm text-muted-foreground border-b border-border pb-0.5 hover:text-foreground hover:border-bandit-orange w-fit">
+          Read all reviews
+          <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+        </Link>
+      </SectionHead>
 
-        <div className="flex flex-col items-center text-center max-w-2xl mx-auto mt-10">
-          <Link href="/reviews">
-            <Button variant="bandit-hover" className="group">
-              View All Reviews
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </Link>
-        </div>
+      {/* Swipe row below lg so the section stays one card tall on phones */}
+      <div className="flex gap-4 -mx-4 px-4 md:-mx-8 md:px-8 scroll-px-4 md:scroll-px-8 overflow-x-auto overflow-y-hidden snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-4 lg:gap-5 lg:mx-0 lg:px-0 lg:overflow-visible">
+        {FEATURED_REVIEWS.map((review, i) => (
+          <Reveal key={review.id} delay={i * 0.1} className="w-[80%] sm:w-[45%] shrink-0 snap-start lg:w-auto">
+            <ReviewCard review={review} />
+          </Reveal>
+        ))}
       </div>
     </section>
   );
