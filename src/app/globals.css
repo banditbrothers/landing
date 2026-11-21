@@ -125,3 +125,33 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+/* ScrollFade: typed properties so the fade widths transition (a mask gradient on its own can't) */
+@property --fade-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --fade-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+.scroll-fade {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--fade-start),
+    #000 calc(100% - var(--fade-end)),
+    transparent
+  );
+  transition:
+    --fade-start 300ms ease-out,
+    --fade-end 300ms ease-out;
+}
+.scroll-fade[data-fade-start] {
+  --fade-start: 40px;
+}
+.scroll-fade[data-fade-end] {
+  --fade-end: 40px;
+}

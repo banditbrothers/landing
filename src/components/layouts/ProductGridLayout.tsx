@@ -7,6 +7,7 @@ import { ShopCard } from "@/components/cards/ShopCard";
 import { useFavorites } from "../stores/favorites";
 import { LoadingIcon } from "../misc/Loading";
 import { LoadMoreTrigger } from "../misc/LoadMoreTrigger";
+import { ScrollFade } from "../misc/ScrollFade";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { DesignColor, ProductVariant } from "@/types/product";
@@ -138,7 +139,7 @@ const ProductGridLayoutContent = ({ productVariants }: { productVariants: Produc
       {/* Sticky toolbar under the fixed navbar */}
       <div className="sticky top-[var(--nav-h)] transition-[top] duration-300 z-30 -mx-4 md:-mx-8 px-4 md:px-8 py-3 bg-background/90 backdrop-blur-md after:absolute after:inset-x-4 md:after:inset-x-8 after:bottom-0 after:h-px after:bg-border">
         <div className="flex flex-wrap lg:flex-nowrap items-center gap-2.5">
-          <div className="flex gap-2 overflow-x-auto overflow-y-hidden basis-full lg:basis-auto lg:flex-1 min-w-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <ScrollFade className="flex gap-2 basis-full lg:basis-auto lg:flex-1 min-w-0">
             {sizes.length > 1 && (
               <Popover>
                 <PopoverTrigger asChild>
@@ -182,11 +183,11 @@ const ProductGridLayoutContent = ({ productVariants }: { productVariants: Produc
             <Pill on={inStockOnly} onClick={() => toggle("in-stock", inStockOnly)}>
               <PackageCheckIcon className="w-3.5 h-3.5" /> Hide sold out
             </Pill>
-          </div>
+          </ScrollFade>
 
           <span className="hidden lg:block w-px h-6 bg-border shrink-0" />
 
-          <div className="flex gap-2.5 items-center flex-1 lg:flex-none min-w-0 overflow-x-auto overflow-y-hidden p-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <ScrollFade className="flex gap-2.5 items-center flex-1 lg:flex-none min-w-0 p-1.5">
             {SWATCH_COLORS.map(({ id, name, hex }) => {
               const on = selectedColors.includes(id);
               return (
@@ -206,7 +207,7 @@ const ProductGridLayoutContent = ({ productVariants }: { productVariants: Produc
                 />
               );
             })}
-          </div>
+          </ScrollFade>
 
           <Select value={sortBy} onValueChange={v => setParam("sort", v === "newest-arrivals" ? null : v)}>
             <SelectTrigger
