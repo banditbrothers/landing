@@ -35,7 +35,8 @@ export const HeroSection = () => {
           <span>Proudly made in India</span>
         </p>
 
-        <h1 className="font-calera uppercase text-white leading-[0.85] text-[15vw] sm:text-[clamp(4.5rem,17vw,13rem)]">
+        {/* Height cap: 3 lines ≈ 2.7em, and navbar + kicker + copy + strip take ~20rem; without it short wide viewports (iframes) push the title under the navbar. */}
+        <h1 className="font-calera uppercase text-white leading-[0.85] text-[15vw] sm:text-[clamp(3rem,min(17vw,calc((100svh_-_20rem)/2.7)),13rem)]">
           {LINES.map((line, i) => (
             <span key={line} className="block overflow-hidden pb-[0.04em]">
               <span
