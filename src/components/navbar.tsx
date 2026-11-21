@@ -32,7 +32,10 @@ const LINKS = [
 ];
 
 export default function NavBar() {
-  const pathname = usePathname();
+  const rawPathname = usePathname();
+  // Vercel's ISR regeneration of the home page renders with "/index"; without this the cached HTML is the
+  // non-home navbar, hydration fails (#418) and React re-renders the whole page
+  const pathname = rawPathname === "/index" ? "/" : rawPathname;
   // Frozen at first render: the slide is for landing on home, not for client navigations back to it
   const [slidesIn] = useState(pathname === "/");
 

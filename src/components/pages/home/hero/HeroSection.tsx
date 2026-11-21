@@ -9,7 +9,7 @@ import { formatCurrency } from "@/utils/price";
 const LINES = ["Wear", "Your", "Mischief."];
 // CSS rather than Motion so the sequence starts on first paint, in step with the navbar, instead of after hydration.
 // fill-mode-both keeps each piece hidden through its delay.
-const ENTER = "animate-in fill-mode-both ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:animate-none";
+const ENTER = "animate-in fill-mode-both [animation-timing-function:cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:animate-none";
 
 export const HeroSection = () => {
   return (
